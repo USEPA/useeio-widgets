@@ -86,12 +86,38 @@ export class ImpactChart {
         }
         const result = await this.getResult(sectors, indicators);
 
+        const width = 800;
+        const height = 800;
+
+        for (let i = 0; i < indicators.length; i++) {
+            const rowOff = (height / indicators.length) * i;
+            this.svg.append("text")
+                .attr("x", 10)
+                .attr("y", rowOff + 25)
+                .style("font", "italic 16px serif")
+                .text(indicators[i].name);
+                
+            // <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+            for (let j = 0; j < sectors.length; j++) {
+                const colOff = (width / sectors.length) * j;
+                this.svg.append("circle")
+                    .attr("cx", colOff + 25)
+                    .attr("cy", rowOff + 25)
+                    .attr("r", 40 * result.get(i, j))
+                    .attr("stroke", "black")
+                    .attr("fill", "black")
+            }
+        }
+
+        console.log(result);
+        /*
         this.svg.append("rect")
             .attr("width", 800)
             .attr("height", 800)
             .style("fill", "gold")
             .style("stroke", "steelblue")
             .style("stroke-width", "5px");
+        */
     }
 
     private async getSectors(codes: string[]): Promise<webapi.Sector[] | null> {
