@@ -101,3 +101,68 @@ export interface Result {
     data: number[][];
     totals: number[];
 }
+
+export class Matrix {
+
+    public static zeros(rows: number, cols: number): Matrix {
+        const data = new Array<number[]>(rows);
+        for (let row = 0; row < rows; row++) {
+            const v = new Array<number>(cols);
+            for (let col = 0; col < cols; col++) {
+                v[col] = 0;
+            }
+            data[row] = v;
+        }
+        return new Matrix(data);
+    }
+
+    public readonly cols: number;
+    public readonly rows: number;
+
+    constructor(public readonly data: number[][]) {
+        this.rows = data.length;
+        this.cols = this.rows === 0 ? 0 : data[0].length;
+    }
+
+    public get(row: number, col: number): number {
+        return this.data[row][col];
+    }
+
+    public getRow(row: number): number[] {
+        return this.data[row].slice();
+    }
+
+    public getCol(col: number): number[] {
+        const vals = new Array<number>(this.rows);
+        for (let row = 0; row < this.rows; row++) {
+            vals[row] = this.get(row, col);
+        }
+        return vals;
+    }
+
+    public set(row: number, col: number, val: number) {
+        this.data[row][col] = val;
+    }
+
+    public scaleColumns(f: number[]): Matrix {
+        const m = Matrix.zeros(this.rows, this.cols);
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                const v = this.get(row, col) * f[col];
+                m.set(row, col, v);
+            }
+        }
+        return m;
+    }
+
+    public scaleRows(f: number[]): Matrix {
+        const m = Matrix.zeros(this.rows, this.cols);
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                const v = this.get(row, col) * f[row];
+                m.set(row, col, v);
+            }
+        }
+        return m;
+    }
+}

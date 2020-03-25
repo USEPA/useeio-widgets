@@ -46,6 +46,18 @@ export class ImpactChart {
     private api: webapi.WebApi;
     private svg: SVG;
 
+    private defaultIndicators = [
+        "ACID",
+        "ETOX",
+        "EUTR",
+        "GHG",
+        "HTOX",
+        "LAND",
+        "OZON",
+        "SMOG",
+        "WATR",
+    ];
+
     private sectors: webapi.Sector[];
     private indicators: webapi.Indicator[];
 
@@ -62,9 +74,13 @@ export class ImpactChart {
 
     async update(sectorCodes: string[], indicatorCodes?: string[]) {
         this.svg.selectAll("*").remove();
-        
+
         const sectors = await this.getSectors(sectorCodes);
         if (!sectors) {
+            return;
+        }
+        const indicators = await this.getIndicators(indicatorCodes);
+        if (!indicators) {
             return;
         }
 
@@ -97,4 +113,24 @@ export class ImpactChart {
         return r;
     }
 
+    private async getIndicators(codes: string[]): Promise<webapi.Indicator[] | null> {
+        const _codes = !codes || codes.length === 0
+            ? this.defaultIndicators
+            : codes;
+        if (!this.indicators) {
+            this.indicators = await this.api.get("/indicators");
+        }
+        if (!this.indicators) {
+            return null;
+        }
+        const r: webapi.Indicator[] = [];
+        for (const code of _codes) {
+            for (const indicator of this.indicators) {
+                if (code === indicator.code) {
+                    r.push(indicator);
+                }
+            }
+        }
+        return r;
+    }
 }
