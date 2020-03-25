@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { WebApi } from "./webapi";
 
 export function on(divID: string) {
 
@@ -27,6 +28,6 @@ export function on(divID: string) {
         .style("fill", "gold")
         .style("stroke", "steelblue")
         .style("stroke-width", "5px");
-        
+
     // d3.select().append("svg");
 }
