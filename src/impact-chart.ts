@@ -60,6 +60,7 @@ export class ImpactChart {
 
     private sectors: webapi.Sector[];
     private indicators: webapi.Indicator[];
+    private U: webapi.Matrix;
 
     constructor(api: webapi.WebApi, svg: SVG) {
         this.api = api;
@@ -83,6 +84,7 @@ export class ImpactChart {
         if (!indicators) {
             return;
         }
+        const result = await this.getResult(sectors, indicators);
 
         this.svg.append("rect")
             .attr("width", 800)
@@ -132,5 +134,47 @@ export class ImpactChart {
             }
         }
         return r;
+    }
+
+    private async getResult(
+        sectors: webapi.Sector[],
+        indicators: webapi.Indicator[]): Promise<webapi.Matrix | null> {
+
+        if (!this.U) {
+            const data: number[][] = await this.api.get('/matrix/U');
+            this.U = new webapi.Matrix(data);
+        }
+        if (!this.U) {
+            return null;
+        }
+
+        const m = webapi.Matrix.zeros(indicators.length, sectors.length);
+        for (let i = 0; i < indicators.length; i++) {
+            const indicator = indicators[i];
+            let max = 0.0;
+            for (let j = 0; j < sectors.length; j++) {
+                const val = this.U.get(indicator.index, sectors[j].index);
+                m.set(i, j, val);
+                max = Math.max(val, max);
+            }
+
+            // make the results relative
+            for (let j = 0; j < sectors.length; j++) {
+                const val = m.get(i, j);
+                if (val === 0) {
+                    continue;
+                }
+                if (max !== 0) {
+                    m.set(i, j, val / max);
+                } else {
+                    if (val < 0) {
+                        m.set(i, j, -1);
+                    } else {
+                        m.set(i, j, 1);
+                    }
+                }
+            }
+        }
+        return m;
     }
 }
