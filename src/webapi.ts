@@ -22,6 +22,10 @@ export class WebApi {
         req.setRequestHeader(
             "Content-Type",
             "application/json;charset=UTF-8");
+        req.setRequestHeader(
+            "max-age",
+            "86400",
+        )
         if (this.apiKey) {
             req.setRequestHeader(
                 "x-api-key", this.apiKey);

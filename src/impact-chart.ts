@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { WebApi } from "./webapi";
+import * as webapi from "./webapi";
 
 interface Config {
     div: string;
@@ -8,21 +8,15 @@ interface Config {
     apikey?: string;
 }
 
-export async function on(config: Config) {
-
-    svg(`#${config.div}`)
-        .append("rect")
-        .attr("width", 800)
-        .attr("height", 800)
-        .style("fill", "gold")
-        .style("stroke", "steelblue")
-        .style("stroke-width", "5px");
-
-    const webapi = new WebApi(
-        config.endpoint, 
-        config.model, 
+export function on(config: Config): ImpactChart {
+    const root = svg(`#${config.div}`);
+    const api = new webapi.WebApi(
+        config.endpoint,
+        config.model,
         config.apikey);
-    console.log(await webapi.get('/sectors'))
+    const chart =  new ImpactChart(api, root);
+    await chart.init();
+    return chart;
 }
 
 /**
@@ -47,16 +41,40 @@ function svg(divID: string) {
         .style("left", 0)
 }
 
-type SVG =  d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
+type SVG = d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
 
-class ImpactChart {
+export class ImpactChart {
 
-    private webapi: WebApi;
+    private api: webapi.WebApi;
     private svg: SVG;
 
-    constructor(webapi: WebApi, svg: SVG) {
-        this.webapi = webapi;
+    private sectors: webapi.Sector[];
+    private indicators: webapi.Indicator[];
+
+    constructor(api: webapi.WebApi, svg: SVG) {
+        this.api = api;
         this.svg = svg;
     }
 
+    async init() {
+        console.log("load sectors and indicators");
+        this.sectors = await this.api.get("/sectors");
+        console.log(`loaded ${this.sectors.length} sectors`);
+        this.indicators = await this.api.get("/indicators");
+        console.log(`loaded ${this.indicators.length} indicators`);
+        console.log(this.sectors.slice(0, 10))
+    }
+
+    update(sectorCodes: string[], indicatorCodes?: string[], ) {
+        this.svg.empty();
+        if (!sectorCodes) {
+            return;
+        }
+        this.svg.append("rect")
+            .attr("width", 800)
+            .attr("height", 800)
+            .style("fill", "gold")
+            .style("stroke", "steelblue")
+            .style("stroke-width", "5px");
+    }
 }
