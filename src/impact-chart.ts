@@ -16,7 +16,7 @@ export function on(divID: string) {
         .attr("viewBox", "0 0 800 800")
         .style("display", "inline-block")
         .style("position", "absolute")
-        .style("top", "10px")
+        .style("top", 0)
         .style("left", 0)
         // Class to make it responsive.
         // .classed("svg-content-responsive", true)
