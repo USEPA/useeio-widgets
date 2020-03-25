@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const config = {
     entry: {
-        'impact-chart': './src/impact-chart.ts',
+        'ImpactChart': './src/impact-chart.ts',
     },
     module: {
         rules: [
@@ -22,7 +22,7 @@ const config = {
         filename: '[name].js',
         path: buildDir,
         libraryTarget: 'var',
-        library: 'USEEIO'
+        library: ['USEEIO', '[name]'],
     },
 
     plugins: [
