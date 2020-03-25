@@ -21,6 +21,8 @@ const config = {
     output: {
         filename: '[name].js',
         path: buildDir,
+        libraryTarget: 'var',
+        library: 'USEEIO'
     },
 
     plugins: [
