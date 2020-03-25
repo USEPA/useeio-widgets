@@ -1,10 +1,36 @@
 import * as d3 from "d3";
 import { WebApi } from "./webapi";
 
-export function on(divID: string) {
+interface Config {
+    div: string;
+    endpoint: string;
+    model: string;
+    apikey?: string;
+}
 
-    // responsive SVG: https://stackoverflow.com/a/25978286
-    const root = d3.select(`#${divID}`)
+export async function on(config: Config) {
+
+    svg(`#${config.div}`)
+        .append("rect")
+        .attr("width", 800)
+        .attr("height", 800)
+        .style("fill", "gold")
+        .style("stroke", "steelblue")
+        .style("stroke-width", "5px");
+
+    const webapi = new WebApi(
+        config.endpoint, 
+        config.model, 
+        config.apikey);
+    console.log(await webapi.get('/sectors'))
+}
+
+/**
+ * Creates a responsive SVG element.
+ * See: https://stackoverflow.com/a/25978286
+ */
+function svg(divID: string) {
+    return d3.select(divID)
         .append("div")
         .style("display", "inline-block")
         .style("position", "relative")
@@ -19,15 +45,18 @@ export function on(divID: string) {
         .style("position", "absolute")
         .style("top", 0)
         .style("left", 0)
-        // Class to make it responsive.
-        // .classed("svg-content-responsive", true)
-        // Fill with a rectangle for visualization.
-        .append("rect")
-        .attr("width", 800)
-        .attr("height", 800)
-        .style("fill", "gold")
-        .style("stroke", "steelblue")
-        .style("stroke-width", "5px");
+}
 
-    // d3.select().append("svg");
+type SVG =  d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
+
+class ImpactChart {
+
+    private webapi: WebApi;
+    private svg: SVG;
+
+    constructor(webapi: WebApi, svg: SVG) {
+        this.webapi = webapi;
+        this.svg = svg;
+    }
+
 }
