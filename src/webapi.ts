@@ -15,6 +15,7 @@ export class WebApi {
     }
 
     public async get<T>(path: string): Promise<T> {
+        console.log("call API", path);
 
         // prepare the request
         const req = new XMLHttpRequest();

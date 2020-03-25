@@ -14,9 +14,7 @@ export function on(config: Config): ImpactChart {
         config.endpoint,
         config.model,
         config.apikey);
-    const chart =  new ImpactChart(api, root);
-    await chart.init();
-    return chart;
+    return new ImpactChart(api, root);
 }
 
 /**
@@ -57,19 +55,19 @@ export class ImpactChart {
     }
 
     async init() {
-        console.log("load sectors and indicators");
-        this.sectors = await this.api.get("/sectors");
-        console.log(`loaded ${this.sectors.length} sectors`);
         this.indicators = await this.api.get("/indicators");
         console.log(`loaded ${this.indicators.length} indicators`);
         console.log(this.sectors.slice(0, 10))
     }
 
-    update(sectorCodes: string[], indicatorCodes?: string[], ) {
-        this.svg.empty();
-        if (!sectorCodes) {
+    async update(sectorCodes: string[], indicatorCodes?: string[]) {
+        this.svg.selectAll("*").remove();
+        
+        const sectors = await this.getSectors(sectorCodes);
+        if (!sectors) {
             return;
         }
+
         this.svg.append("rect")
             .attr("width", 800)
             .attr("height", 800)
@@ -77,4 +75,26 @@ export class ImpactChart {
             .style("stroke", "steelblue")
             .style("stroke-width", "5px");
     }
+
+    private async getSectors(codes: string[]): Promise<webapi.Sector[] | null> {
+        if (!codes || codes.length === 0) {
+            return null;
+        }
+        if (!this.sectors) {
+            this.sectors = await this.api.get("/sectors");
+        }
+        if (!this.sectors) {
+            return null;
+        }
+        const r: webapi.Sector[] = [];
+        for (const code of codes) {
+            for (const sector of this.sectors) {
+                if (code === sector.code) {
+                    r.push(sector);
+                }
+            }
+        }
+        return r;
+    }
+
 }
