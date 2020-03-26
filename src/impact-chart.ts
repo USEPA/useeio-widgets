@@ -96,7 +96,6 @@ export class ImpactChart {
         const result = await this.getResult(sectors, indicators);
 
         const indicatorCount = indicators.length;
-        const sectorCount = sectors ? sectors.length : 0;
         const columnCount = 2;
         const rowCount = Math.ceil(indicatorCount / columnCount);
 
@@ -125,38 +124,36 @@ export class ImpactChart {
                 .attr("x1", cellOffsetX + 5)
                 .attr("x2", cellOffsetX + 5)
                 .attr("y1", cellOffsetY + cellHeaderHeight)
-                .attr("y2", cellOffsetY + cellChartHeight)
+                .attr("y2", cellOffsetY + cellHeaderHeight + cellChartHeight)
                 .style("stroke-width", 1)
-                .style("stroke", "#e8eaf6");
+                .style("stroke", "#90a4ae");
 
-            /*
-            const rowOff = (height / indicators.length) * i;
-            this.svg.append("text")
-                .attr("x", 10)
-                .attr("y", rowOff + 25)
-                .style("font", "italic 16px serif")
-                .text(indicators[i].name);
-
-            for (let j = 0; j < sectors.length; j++) {
-                const colOff = (width / sectors.length) * j;
-                this.svg.append("circle")
-                    .attr("cx", colOff + 25)
-                    .attr("cy", rowOff + 25)
-                    .attr("r", 40 * result.get(i, j))
-                    .attr("stroke", "black")
-                    .attr("fill", "black")
+            const sectorCount = sectors ? sectors.length : 0;
+            if (sectorCount === 0) {
+                continue;
             }
-            */
-        }
 
-        /*
-        this.svg.append("rect")
-            .attr("width", 800)
-            .attr("height", 800)
-            .style("fill", "gold")
-            .style("stroke", "steelblue")
-            .style("stroke-width", "5px");
-        */
+            const barBoxHeight = cellChartHeight / sectorCount;
+            let barHeight = barBoxHeight - 10;
+            if (barHeight < 0) {
+              barHeight = barBoxHeight;
+            }
+            if (barHeight > 25) {
+              barHeight = 25;
+            }
+            // the vertical margin of the bar within the bar box
+            const barMarginY = (barBoxHeight - barHeight) / 2;
+            for (let j = 0; j < sectorCount; j++) {
+                const y = cellOffsetY + cellHeaderHeight 
+                    + j * barBoxHeight + barMarginY;
+                this.svg.append("rect")
+                    .attr("x", cellOffsetX + 6)
+                    .attr("y", y)
+                    .attr("width", result.get(i, j) * (cellWidth - 11))
+                    .attr("height", barHeight)
+                    .style("fill", "#ffccbc");
+            }
+        }
     }
 
     private async getSectors(codes: string[]): Promise<webapi.Sector[] | null> {
