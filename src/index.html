@@ -2,7 +2,7 @@
 <html>
 
 <body>
-    <div id="impact-chart" style="margin: auto; width: 35%">
+    <div id="impact-chart" style="margin: auto; width: 30%">
     </div>
 </body>
 <script src="lib/d3.min.js"></script>
@@ -10,9 +10,8 @@
 <script>
     var chart = USEEIO.ImpactChart.on({
         div: 'impact-chart',
-        endpoint: 'https://api.edap-cluster.com/useeio/api',
-        model: 'USEEIOv1.2',
-        apikey: 'lySopVteG11Ru0m5ucnRharYBWco1CIGWlxKvro0',
+        endpoint: 'http://localhost/api',
+        model: 'USEEIO',
     });
     chart.update(['1111A0', '111200', '111400', '112120']);
 </script>

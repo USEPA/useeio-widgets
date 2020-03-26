@@ -32,7 +32,7 @@ function svg(divID: string) {
         .style("overflow", "hidden")
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 800 800")
+        .attr("viewBox", "0 0 400 400")
         .style("display", "inline-block")
         .style("position", "absolute")
         .style("top", 0)
@@ -76,28 +76,50 @@ export class ImpactChart {
     async update(sectorCodes: string[], indicatorCodes?: string[]) {
         this.svg.selectAll("*").remove();
 
+        // get the data
         const sectors = await this.getSectors(sectorCodes);
-        if (!sectors) {
-            return;
-        }
         const indicators = await this.getIndicators(indicatorCodes);
-        if (!indicators) {
+        if (!indicators || indicators.length === 0) {
             return;
         }
         const result = await this.getResult(sectors, indicators);
 
-        const width = 800;
-        const height = 800;
+        const width = 400;
+        const height = 400;
+        const indicatorCount = indicators.length;
+        const sectorCount = sectors ? sectors.length : 0;
+        const columnCount = 2;
+        const rowCount = Math.ceil(indicatorCount / columnCount);
+
+        // definition of the chart grid
+        const cellWidth = width / columnCount;
+        const cellHeight = height / rowCount;
+        const cellHeaderHeight = 25;
+        const cellChartHeight = cellHeight - cellHeaderHeight;
 
         for (let i = 0; i < indicators.length; i++) {
+
+            // calculate the cell position
+            const row = Math.floor(i / columnCount);
+            const column = i % columnCount;
+            const cellOffsetX = column * cellWidth;
+            const cellOffsetY = row * cellHeight;
+
+            // render the cell header
+            this.svg.append("text")
+                .attr("x", cellOffsetX + 5)
+                .attr("y", cellOffsetY + 15)
+                .text(indicators[i].name);
+            
+
+            /*
             const rowOff = (height / indicators.length) * i;
             this.svg.append("text")
                 .attr("x", 10)
                 .attr("y", rowOff + 25)
                 .style("font", "italic 16px serif")
                 .text(indicators[i].name);
-                
-            // <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+
             for (let j = 0; j < sectors.length; j++) {
                 const colOff = (width / sectors.length) * j;
                 this.svg.append("circle")
@@ -107,9 +129,9 @@ export class ImpactChart {
                     .attr("stroke", "black")
                     .attr("fill", "black")
             }
+            */
         }
 
-        console.log(result);
         /*
         this.svg.append("rect")
             .attr("width", 800)
@@ -165,6 +187,13 @@ export class ImpactChart {
     private async getResult(
         sectors: webapi.Sector[],
         indicators: webapi.Indicator[]): Promise<webapi.Matrix | null> {
+
+        if (!sectors
+            || !indicators
+            || sectors.length === 0
+            || indicators.length === 0) {
+            return null;
+        }
 
         if (!this.U) {
             const data: number[][] = await this.api.get('/matrix/U');
