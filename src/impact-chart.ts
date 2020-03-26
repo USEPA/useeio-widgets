@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import * as webapi from "./webapi";
+import * as colors from "./colors";
 
 interface Config {
     selector: string;
@@ -117,7 +118,9 @@ export class ImpactChart {
             this.svg.append("text")
                 .attr("x", cellOffsetX + 5)
                 .attr("y", cellOffsetY + cellHeaderHeight - 5)
-                .text(indicators[i].name);
+                .text(indicators[i].name)
+                .style("font-family", "Lato, sans-serif")
+                .style("font-size", "0.9em");
 
             // baseline of the chart
             this.svg.append("line")
@@ -136,22 +139,32 @@ export class ImpactChart {
             const barBoxHeight = cellChartHeight / sectorCount;
             let barHeight = barBoxHeight - 10;
             if (barHeight < 0) {
-              barHeight = barBoxHeight;
+                barHeight = barBoxHeight;
             }
             if (barHeight > 25) {
-              barHeight = 25;
+                barHeight = 25;
             }
             // the vertical margin of the bar within the bar box
             const barMarginY = (barBoxHeight - barHeight) / 2;
             for (let j = 0; j < sectorCount; j++) {
-                const y = cellOffsetY + cellHeaderHeight 
+                const y = cellOffsetY + cellHeaderHeight
                     + j * barBoxHeight + barMarginY;
                 this.svg.append("rect")
                     .attr("x", cellOffsetX + 6)
                     .attr("y", y)
                     .attr("width", result.get(i, j) * (cellWidth - 11))
                     .attr("height", barHeight)
-                    .style("fill", "#ffccbc");
+                    .style("fill", colors.toCSS(colors.getChartColor(j), 0.6))
+                    .on("mouseover", function () {
+                        d3.select(this).style(
+                            "fill", colors.toCSS(colors.getChartColor(j)));
+                    })
+                    .on("mouseout", function() {
+                        d3.select(this).style(
+                            "fill", colors.toCSS(colors.getChartColor(j), 0.6));
+                    })
+                    .append("title")
+                    .text(sectors[j].name);
             }
         }
     }
