@@ -2,14 +2,25 @@ import * as d3 from "d3";
 import * as webapi from "./webapi";
 
 interface Config {
-    div: string;
+    selector: string;
     endpoint: string;
     model: string;
+    width?: number;
+    height?: number;
+    responsive?: boolean;
     apikey?: string;
 }
 
 export function on(config: Config): ImpactChart {
-    const root = svg(`#${config.div}`);
+    const root = config.responsive
+        ? responsiveSVG(config)
+        : d3.select(config.selector)
+            .append("div")
+            .style("margin", "auto")  // center the SVG
+            .style("width", `${config.width || 500}px`)
+            .append("svg")
+            .attr("width", config.width || 500)
+            .attr("height", config.height || 500);
     const api = new webapi.WebApi(
         config.endpoint,
         config.model,
@@ -21,8 +32,10 @@ export function on(config: Config): ImpactChart {
  * Creates a responsive SVG element.
  * See: https://stackoverflow.com/a/25978286
  */
-function svg(divID: string) {
-    return d3.select(divID)
+function responsiveSVG(config: Config) {
+    const width = config.width || 500;
+    const height = config.height || 500;
+    return d3.select(config.selector)
         .append("div")
         .style("display", "inline-block")
         .style("position", "relative")
@@ -32,7 +45,7 @@ function svg(divID: string) {
         .style("overflow", "hidden")
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 400 400")
+        .attr("viewBox", `0 0 ${width} ${height}`)
         .style("display", "inline-block")
         .style("position", "absolute")
         .style("top", 0)
@@ -110,7 +123,7 @@ export class ImpactChart {
                 .attr("x", cellOffsetX + 5)
                 .attr("y", cellOffsetY + 15)
                 .text(indicators[i].name);
-            
+
 
             /*
             const rowOff = (height / indicators.length) * i;
