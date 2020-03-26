@@ -43,3 +43,17 @@ chart.update(['1111A0', '111200', '111400', '112120']);
             }
         }
 ```
+
+```
+// chart grid
+            for (let k = 0; k < 5; k++) {
+                const x = cellOffsetX + 5 + k * (cellWidth - 10) / 5;
+                this.svg.append("line")
+                    .attr("x1", x)
+                    .attr("x2", x)
+                    .attr("y1", cellOffsetY + cellHeaderHeight)
+                    .attr("y2", cellOffsetY + cellChartHeight )
+                    .style("stroke-width", 1)
+                    .style("stroke", "#e8eaf6");
+            }
+```

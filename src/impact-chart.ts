@@ -12,30 +12,15 @@ interface Config {
 }
 
 export function on(config: Config): ImpactChart {
-    const root = config.responsive
-        ? responsiveSVG(config)
-        : d3.select(config.selector)
-            .append("div")
-            .style("margin", "auto")  // center the SVG
-            .style("width", `${config.width || 500}px`)
-            .append("svg")
-            .attr("width", config.width || 500)
-            .attr("height", config.height || 500);
-    const api = new webapi.WebApi(
-        config.endpoint,
-        config.model,
-        config.apikey);
-    return new ImpactChart(api, root);
+    return new ImpactChart(config);
 }
 
 /**
  * Creates a responsive SVG element.
  * See: https://stackoverflow.com/a/25978286
  */
-function responsiveSVG(config: Config) {
-    const width = config.width || 500;
-    const height = config.height || 500;
-    return d3.select(config.selector)
+function responsiveSVG(selector: string, width: number, height: number) {
+    return d3.select(selector)
         .append("div")
         .style("display", "inline-block")
         .style("position", "relative")
@@ -49,15 +34,15 @@ function responsiveSVG(config: Config) {
         .style("display", "inline-block")
         .style("position", "absolute")
         .style("top", 0)
-        .style("left", 0)
+        .style("left", 0);
 }
-
-type SVG = d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
 
 export class ImpactChart {
 
     private api: webapi.WebApi;
-    private svg: SVG;
+    private svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
+    private width: number;
+    private height: number;
 
     private defaultIndicators = [
         "ACID",
@@ -75,15 +60,28 @@ export class ImpactChart {
     private indicators: webapi.Indicator[];
     private U: webapi.Matrix;
 
-    constructor(api: webapi.WebApi, svg: SVG) {
-        this.api = api;
-        this.svg = svg;
-    }
+    constructor(config: Config) {
 
-    async init() {
-        this.indicators = await this.api.get("/indicators");
-        console.log(`loaded ${this.indicators.length} indicators`);
-        console.log(this.sectors.slice(0, 10))
+        this.api = new webapi.WebApi(
+            config.endpoint,
+            config.model,
+            config.apikey);
+
+        // create the root SVG element
+        this.width = config.width || 500;
+        this.height = config.height || 500;
+        this.svg = config.responsive
+            ? responsiveSVG(
+                config.selector,
+                this.width,
+                this.height)
+            : d3.select(config.selector)
+                .append("div")
+                .style("margin", "auto")  // center the SVG
+                .style("width", `${this.width}px`)
+                .append("svg")
+                .attr("width", this.width)
+                .attr("height", this.height);
     }
 
     async update(sectorCodes: string[], indicatorCodes?: string[]) {
@@ -97,16 +95,14 @@ export class ImpactChart {
         }
         const result = await this.getResult(sectors, indicators);
 
-        const width = 400;
-        const height = 400;
         const indicatorCount = indicators.length;
         const sectorCount = sectors ? sectors.length : 0;
         const columnCount = 2;
         const rowCount = Math.ceil(indicatorCount / columnCount);
 
         // definition of the chart grid
-        const cellWidth = width / columnCount;
-        const cellHeight = height / rowCount;
+        const cellWidth = this.width / columnCount;
+        const cellHeight = this.height / rowCount;
         const cellHeaderHeight = 25;
         const cellChartHeight = cellHeight - cellHeaderHeight;
 
@@ -118,12 +114,20 @@ export class ImpactChart {
             const cellOffsetX = column * cellWidth;
             const cellOffsetY = row * cellHeight;
 
-            // render the cell header
+            // indicator name
             this.svg.append("text")
                 .attr("x", cellOffsetX + 5)
-                .attr("y", cellOffsetY + 15)
+                .attr("y", cellOffsetY + cellHeaderHeight - 5)
                 .text(indicators[i].name);
 
+            // baseline of the chart
+            this.svg.append("line")
+                .attr("x1", cellOffsetX + 5)
+                .attr("x2", cellOffsetX + 5)
+                .attr("y1", cellOffsetY + cellHeaderHeight)
+                .attr("y2", cellOffsetY + cellChartHeight)
+                .style("stroke-width", 1)
+                .style("stroke", "#e8eaf6");
 
             /*
             const rowOff = (height / indicators.length) * i;
