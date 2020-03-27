@@ -91,14 +91,24 @@ export class ImpactChart {
 
     async update(sectorCodes: string[], indicatorCodes?: string[]) {
         this.svg.selectAll("*").remove();
+        this.svg.append("text")
+            .text("Loading ...")
+            .attr("x", 40)
+            .attr("y", 40);
 
         // get the data
         const sectors = await this.getSectors(sectorCodes);
         const indicators = await this.getIndicators(indicatorCodes);
         if (!indicators || indicators.length === 0) {
+            this.svg.selectAll("*").remove();
+            this.svg.append("text")
+                .text("empty indicator selection")
+                .attr("x", 40)
+                .attr("y", 40);
             return;
         }
         const result = await this.getResult(sectors, indicators);
+        this.svg.selectAll("*").remove();
 
         const indicatorCount = indicators.length;
         const columnCount = this.columns;
