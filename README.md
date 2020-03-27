@@ -47,67 +47,29 @@ following fields:
   bar charts are organized
 * `responsive: boolean` (optional, experimental): creates a responsive chart
 
-
-
-
-
-
+On the returned chart object, the `update` method can be called which takes an
+array of sector codes and on optional array of indicator codes as input and
+renders the respective charts for this selection. It is save and intended to
+call the `update` method on each selection change of sectors or indicators
+instead of recreating the chart object. Here is an example that uses more
+optional features:
 
 ```ts
 var chart = USEEIO.ImpactChart.on({
-    div: 'impact-chart',
-    endpoint: 'https://api.edap-cluster.com/useeio/api',
-    model: 'USEEIOv1.2',
-    apikey: 'lySopVteG11Ru0m5ucnRharYBWco1CIGWlxKvro0',
+    selector: '#impact-chart',
+    endpoint: 'http://localhost/api',
+    model: 'USEEIO',
+    width: 800,
+    height: 400,
+    columns: 4,
+    responsive: true,
 });
-chart.update(['1111A0', '111200', '111400', '112120']);
-```
-
-```ts
- const sectors = await this.getSectors(sectorCodes);
-        if (!sectors) {
-            return;
-        }
-        const indicators = await this.getIndicators(indicatorCodes);
-        if (!indicators) {
-            return;
-        }
-        const result = await this.getResult(sectors, indicators);
-
-        const width = 800;
-        const height = 800;
-
-        for (let i = 0; i < indicators.length; i++) {
-            const rowOff = (height / indicators.length) * i;
-            this.svg.append("text")
-                .attr("x", 10)
-                .attr("y", rowOff + 25)
-                .style("font", "italic 16px serif")
-                .text(indicators[i].name);
-                
-            // <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
-            for (let j = 0; j < sectors.length; j++) {
-                const colOff = (width / sectors.length) * j;
-                this.svg.append("circle")
-                    .attr("cx", colOff + 25)
-                    .attr("cy", rowOff + 25)
-                    .attr("r", 40 * result.get(i, j))
-                    .attr("stroke", "black")
-                    .attr("fill", "black")
-            }
-        }
-```
-
-```
-// chart grid
-            for (let k = 0; k < 5; k++) {
-                const x = cellOffsetX + 5 + k * (cellWidth - 10) / 5;
-                this.svg.append("line")
-                    .attr("x1", x)
-                    .attr("x2", x)
-                    .attr("y1", cellOffsetY + cellHeaderHeight)
-                    .attr("y2", cellOffsetY + cellChartHeight )
-                    .style("stroke-width", 1)
-                    .style("stroke", "#e8eaf6");
-            }
+chart.update(
+    // sector codes
+    ['1111A0', '111200', '111400', '112120'],
+    // indicator codes
+    ['ACID', 'ENRG', 'ETOX', 'EUTR', 'FOOD', 
+     'GCC', 'HAPS', 'HAZW', 'HC', 'HNC', 'HRSP', 
+     'HTOX', 'LAND', 'METL', 'MINE', 'MSW', 'NREN',
+     'OZON', 'PEST', 'REN', 'SMOG', 'WATR']);
 ```
