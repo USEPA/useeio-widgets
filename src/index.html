@@ -13,11 +13,22 @@
 <script src="ImpactChart.js"></script>
 <script>
     var chart = USEEIO.ImpactChart.on({
-        selector: '#impact-chart',
-        endpoint: 'http://localhost/api',
-        model: 'USEEIO',
-    });
-    chart.update(['1111A0', '111200', '111400', '112120']);
+    selector: '#impact-chart',
+    endpoint: 'http://localhost/api',
+    model: 'USEEIO',
+    width: 800,
+    height: 400,
+    columns: 4,
+    responsive: true,
+});
+chart.update(
+    // sector codes
+    ['1111A0', '111200', '111400', '112120'],
+    // indicator codes
+    ['ACID', 'ENRG', 'ETOX', 'EUTR', 'FOOD', 
+     'GCC', 'HAPS', 'HAZW', 'HC', 'HNC', 'HRSP', 
+     'HTOX', 'LAND', 'METL', 'MINE', 'MSW', 'NREN',
+     'OZON', 'PEST', 'REN', 'SMOG', 'WATR']);
 </script>
 
 </html>
