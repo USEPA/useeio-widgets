@@ -8,6 +8,7 @@ interface Config {
     model: string;
     width?: number;
     height?: number;
+    columns?: number;
     responsive?: boolean;
     apikey?: string;
 }
@@ -44,6 +45,7 @@ export class ImpactChart {
     private svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
     private width: number;
     private height: number;
+    private columns: number;
 
     private defaultIndicators = [
         "ACID",
@@ -68,9 +70,11 @@ export class ImpactChart {
             config.model,
             config.apikey);
 
-        // create the root SVG element
         this.width = config.width || 500;
         this.height = config.height || 500;
+        this.columns = config.columns || 2;
+
+        // create the root SVG element
         this.svg = config.responsive
             ? responsiveSVG(
                 config.selector,
@@ -97,14 +101,14 @@ export class ImpactChart {
         const result = await this.getResult(sectors, indicators);
 
         const indicatorCount = indicators.length;
-        const columnCount = 2;
+        const columnCount = this.columns;
         const rowCount = Math.ceil(indicatorCount / columnCount);
 
         // definition of the chart grid
         const cellWidth = this.width / columnCount;
         const cellHeight = this.height / rowCount;
         const cellHeaderHeight = 25;
-        const cellChartHeight = cellHeight - cellHeaderHeight;
+        const cellChartHeight = cellHeight - cellHeaderHeight - 10;
 
         for (let i = 0; i < indicators.length; i++) {
 
@@ -150,16 +154,16 @@ export class ImpactChart {
                 const y = cellOffsetY + cellHeaderHeight
                     + j * barBoxHeight + barMarginY;
                 this.svg.append("rect")
-                    .attr("x", cellOffsetX + 6)
+                    .attr("x", cellOffsetX + 5)
                     .attr("y", y)
-                    .attr("width", result.get(i, j) * (cellWidth - 11))
+                    .attr("width", result.get(i, j) * (cellWidth - 25))
                     .attr("height", barHeight)
                     .style("fill", colors.toCSS(colors.getChartColor(j), 0.6))
                     .on("mouseover", function () {
                         d3.select(this).style(
                             "fill", colors.toCSS(colors.getChartColor(j)));
                     })
-                    .on("mouseout", function() {
+                    .on("mouseout", function () {
                         d3.select(this).style(
                             "fill", colors.toCSS(colors.getChartColor(j), 0.6));
                     })
