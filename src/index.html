@@ -7,20 +7,34 @@
 </head>
 
 <body>
-    <div id="impact-chart" style="margin: auto; width: 80%">
+    <div id="sector-list" style="height: 250px; float: left; width: 30%;
+    overflow: scroll;">
+    </div>
+    <div id="impact-chart" style="margin: auto; width: 70%">
     </div>
     <div id="filter"></div>
 </body>
 <script src="lib/d3.min.js"></script>
 <script src="HashConfig.js"></script>
+<script src="SectorList.js"></script>
 <script src="ImpactChart.js"></script>
 <script src="FilterWidget.js"></script>
 <script>
 
-    var chart = USEEIO.ImpactChart.on({
-        selector: '#impact-chart',
+    var apiConfig = {
         endpoint: 'http://localhost/api',
         model: 'USEEIO',
+    };
+    var config = USEEIO.HashConfig.create();
+
+    var sectorList = USEEIO.SectorList.on({
+        ...apiConfig,
+        selector: '#sector-list',
+    });
+
+    var chart = USEEIO.ImpactChart.on({
+        ...apiConfig,
+        selector: '#impact-chart',
     });
     chart.update({
         sectors: ['1111A0', '111200', '111400', '112120']
@@ -28,7 +42,6 @@
 
     var filter = USEEIO.FilterWidget.on('#filter');
 
-    var config = USEEIO.HashConfig.create();
     config.onChanged(function (conf) {
         chart.update(conf);
         filter.update(conf);

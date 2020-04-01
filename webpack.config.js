@@ -7,6 +7,7 @@ const config = {
         'ImpactChart': './src/impact-chart.ts',
         'FilterWidget': './src/filter-widget.ts',
         'HashConfig': './src/hash-config.ts',
+        'SectorList': './src/sector-list.ts',
     },
     module: {
         rules: [
