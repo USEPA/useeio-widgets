@@ -6,6 +6,7 @@ const config = {
     entry: {
         'ImpactChart': './src/impact-chart.ts',
         'FilterWidget': './src/filter-widget.ts',
+        'HashConfig': './src/hash-config.ts',
     },
     module: {
         rules: [
