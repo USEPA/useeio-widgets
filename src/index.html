@@ -16,14 +16,23 @@
 <script src="ImpactChart.js"></script>
 <script src="FilterWidget.js"></script>
 <script>
+
     var chart = USEEIO.ImpactChart.on({
         selector: '#impact-chart',
         endpoint: 'http://localhost/api',
         model: 'USEEIO',
     });
-    chart.update(['1111A0', '111200', '111400', '112120']);
+    chart.update({
+        sectors: ['1111A0', '111200', '111400', '112120']
+    });
+
     var filter = USEEIO.FilterWidget.on('#filter');
-    filter.update();
+
+    var config = USEEIO.HashConfig.create();
+    config.onChanged(function (conf) {
+        chart.update(conf);
+        filter.update(conf);
+    });
 </script>
 
 </html>

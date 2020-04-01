@@ -1,8 +1,9 @@
 import * as d3 from "d3";
+import { Config } from "./config";
 import * as webapi from "./webapi";
 import * as colors from "./colors";
 
-interface Config {
+interface ChartConfig {
     selector: string;
     endpoint: string;
     model: string;
@@ -13,7 +14,7 @@ interface Config {
     apikey?: string;
 }
 
-export function on(config: Config): ImpactChart {
+export function on(config: ChartConfig): ImpactChart {
     return new ImpactChart(config);
 }
 
@@ -63,7 +64,7 @@ export class ImpactChart {
     private indicators: webapi.Indicator[];
     private U: webapi.Matrix;
 
-    constructor(config: Config) {
+    constructor(config: ChartConfig) {
 
         this.api = new webapi.WebApi(
             config.endpoint,
@@ -89,7 +90,7 @@ export class ImpactChart {
                 .attr("height", this.height);
     }
 
-    async update(sectorCodes: string[], indicatorCodes?: string[]) {
+    async update(config: Config) {
         this.svg.selectAll("*").remove();
         this.svg.append("text")
             .text("Loading ...")
@@ -97,8 +98,8 @@ export class ImpactChart {
             .attr("y", 40);
 
         // get the data
-        const sectors = await this.getSectors(sectorCodes);
-        const indicators = await this.getIndicators(indicatorCodes);
+        const sectors = await this.getSectors(config.sectors);
+        const indicators = await this.getIndicators(config.indicators);
         if (!indicators || indicators.length === 0) {
             this.svg.selectAll("*").remove();
             this.svg.append("text")
