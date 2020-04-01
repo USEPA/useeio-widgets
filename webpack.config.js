@@ -5,6 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const config = {
     entry: {
         'ImpactChart': './src/impact-chart.ts',
+        'FilterWidget': './src/filter-widget.ts',
     },
     module: {
         rules: [

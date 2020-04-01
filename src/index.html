@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Impact chart example</title>
@@ -8,16 +9,20 @@
 <body>
     <div id="impact-chart" style="margin: auto; width: 80%">
     </div>
+    <div id="filter"></div>
 </body>
 <script src="lib/d3.min.js"></script>
 <script src="ImpactChart.js"></script>
+<script src="FilterWidget.js"></script>
 <script>
     var chart = USEEIO.ImpactChart.on({
-    selector: '#impact-chart',
-    endpoint: 'http://localhost/api',
-    model: 'USEEIO',
-});
-chart.update(['1111A0', '111200', '111400', '112120']);
+        selector: '#impact-chart',
+        endpoint: 'http://localhost/api',
+        model: 'USEEIO',
+    });
+    chart.update(['1111A0', '111200', '111400', '112120']);
+    var filter = USEEIO.FilterWidget.on('#filter');
+    filter.update();
 </script>
 
 </html>
