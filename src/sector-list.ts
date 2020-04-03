@@ -24,6 +24,7 @@ export class SectorList {
     private sectors: Sector[] = [];
     private selection: Sector[] = [];
     private root: d3.Selection<BaseType, any, HTMLElement, any>;
+    private _listeners = new Array<(codes: string[]) => void>();
 
     constructor(config: ListConfig) {
         this.config = config;
@@ -101,7 +102,10 @@ export class SectorList {
                 ? s1.name.localeCompare(s2.name)
                 : 0);
         this.render();
-        // TODO: fire events...
+        const codes = this.selection.map((s) => s.code);
+        for (const fn of this._listeners) {
+            fn(codes);
+        }
     }
 
     private compare(s1: Sector, s2: Sector): number {
@@ -114,6 +118,12 @@ export class SectorList {
             return s1.name.localeCompare(s2.name);
         }
         return s1Selected ? -1 : 1;
+    }
+
+    public onSelectionChanged(fn: (codes: string[]) => void) {
+        if (fn) {
+            this._listeners.push(fn);
+        }
     }
 
 }

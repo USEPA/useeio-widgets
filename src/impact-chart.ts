@@ -133,9 +133,7 @@ export class ImpactChart {
             this.svg.append("text")
                 .attr("x", cellOffsetX + 5)
                 .attr("y", cellOffsetY + cellHeaderHeight - 5)
-                .text(indicators[i].name)
-                .style("font-family", "Lato, sans-serif")
-                .style("font-size", "0.9em");
+                .text(indicators[i].name);
 
             // baseline of the chart
             this.svg.append("line")
