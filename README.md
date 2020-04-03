@@ -1,4 +1,9 @@
-# Impact chart
+# USEEIO Widgets
+...
+
+## Widgets
+
+### Impact chart
 The impact chart widget shows for a selected set of sectors the LCIA results
 of these sectors in comparison to each other where a bar chart is generated
 for each LCIA category.

@@ -4,15 +4,32 @@
 <head>
     <meta charset="utf-8">
     <title>Impact chart example</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="sector-list" style="height: 250px; float: left; width: 30%;
-    overflow: scroll;">
+    <div style="margin: 25px;">
+
+        <div style="float: left; width: 40%;">
+            <h4 style="text-align: center;">Sectors</h4>
+            <div id="sector-list" style="height: 500px; overflow-y: scroll;">
+            </div>
+        </div>
+
+        <div style="float: left; width: 60%">
+            <h4 style="text-align: center;">Indicator results</h4>
+            <div id="impact-chart">
+            </div>
+        </div>
+
+
+        <div id="filter"></div>
+
     </div>
-    <div id="impact-chart" style="margin: auto; width: 70%">
-    </div>
-    <div id="filter"></div>
 </body>
 <script src="lib/d3.min.js"></script>
 <script src="HashConfig.js"></script>

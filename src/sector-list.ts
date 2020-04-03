@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { Sector, WebApi } from "./webapi";
+import { BaseType } from "d3";
 
 
 interface ListConfig {
@@ -19,6 +20,9 @@ export class SectorList {
 
     private webapi: WebApi;
     private config: ListConfig;
+    private sectors: Sector[] = [];
+    private selection: string[] = [];
+    private root: d3.Selection<BaseType, any, HTMLElement, any>;
 
     constructor(config: ListConfig) {
         this.config = config;
@@ -27,18 +31,53 @@ export class SectorList {
     }
 
     async init() {
-        const sectors: Sector[] = await this.webapi.get("/sectors");
-        const root = d3.select(this.config.selector)
+        this.sectors = await this.webapi.get("/sectors");
+        this.sectors.sort((s1, s2) => s1.name.localeCompare(s2.name));
+        this.root = d3.select(this.config.selector)
             .append("div");
-        for (const s of sectors) {
-            root.append("input")
-                .attr("type", "checkbox")
-                .attr("value", s.code);
-            root.append("label")
-                .text(s.name);
-            root.append("br");
-        }
+        this.render();
     }
 
+    private render() {
+        this.root.selectAll("*")
+            .remove();
+
+        const divs = this.root
+            .selectAll("div")
+            .data(this.sectors)
+            .enter()
+            .append("div")
+
+        divs.append("input")
+            .attr("type", "checkbox")
+            .attr("value", (s) => s.code)
+            .property("checked", (s) => this.isSelected(s))
+            .on("click", (s) => this.selectionChanged(s));
+
+        divs.append("label")
+            .text((s) => s.name)
+            .on("click", (s) => this.selectionChanged(s));
+    }
+
+    private isSelected(s: Sector): boolean {
+        if (!s || !s.code) {
+            return false;
+        }
+        return this.selection.indexOf(s.code) >= 0;
+    }
+
+    private selectionChanged(s: Sector) {
+        if (!s || !s.code) {
+            return;
+        }
+        const idx = this.selection.indexOf(s.code);
+        if (idx < 0) {
+            this.selection.push(s.code);
+        } else {
+            this.selection.splice(idx, 1);
+        }
+        this.render();
+        // TODO: fire events...
+    }
 
 }
