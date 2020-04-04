@@ -1,5 +1,4 @@
 const fs = require('fs');
-const http = require('http');
 
 let endpoint = null;
 let apikey = null;
@@ -33,10 +32,13 @@ if (!endpoint) {
     endpoint = 'http://localhost/api';
     console.log("No endpoint set; use default: " + endpoint);
 }
-
 if (!apikey) {
     console.log("No API key set; use none");
 }
+
+const http = endpoint.startsWith('https')
+    ? require('https')
+    : require('http');
 
 // the target folder where we store the downloaded data
 const targetDir = __dirname + '/../build/api';
@@ -46,7 +48,12 @@ async function fetch(path) {
 
         const url = `${endpoint}${path}`;
         console.log(`fetch data from ${url}`)
-        http.get(url, (response) => {
+        const config = {};
+        if (apikey) {
+            config['x-api-key'] = apikey;
+        }
+
+        http.get(url, config, (response) => {
 
             // check the status code
             const status = response.statusCode;
