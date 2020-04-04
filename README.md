@@ -1,7 +1,13 @@
 # USEEIO Widgets
 ...
 
+```
+npm run download -- --endpoint https://path/to/api --apikey some-long-key
+```
+
+```
 npx http-server ./build
+```
 
 ## Widgets
 

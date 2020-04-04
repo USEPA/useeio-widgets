@@ -1,10 +1,45 @@
 const fs = require('fs');
 const http = require('http');
 
-const endpoint = 'http://localhost/api';
+let endpoint = null;
+let apikey = null;
+
+// parse command line arguments
+// --endpoint <API endpoint>
+// --apikey <API key>
+let flag = null;
+for (const arg of process.argv) {
+    if (arg.startsWith('--')) {
+        flag = arg;
+        continue;
+    }
+    if (!flag) {
+        continue;
+    }
+    switch (flag) {
+        case '--endpoint':
+            endpoint = arg;
+            break;
+        case '--apikey':
+            apikey = arg;
+            break;
+        default:
+            break;
+    }
+    flag = null;
+}
+
+if (!endpoint) {
+    endpoint = 'http://localhost/api';
+    console.log("No endpoint set; use default: " + endpoint);
+}
+
+if (!apikey) {
+    console.log("No API key set; use none");
+}
 
 // the target folder where we store the downloaded data
-const targetDir = '../build/api';
+const targetDir = __dirname + '/../build/api';
 
 async function fetch(path) {
     return new Promise((resolve, reject) => {
@@ -51,12 +86,21 @@ async function fetch(path) {
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir);
             }
+            if (!fs.existsSync(dir + '/matrix')) {
+                fs.mkdirSync(dir + '/matrix');
+            }
 
             const paths = [
                 '/sectors',
                 '/flows',
                 '/indicators',
-                '/demands'
+                '/demands',
+                '/matrix/A',
+                '/matrix/B',
+                '/matrix/C',
+                '/matrix/D',
+                '/matrix/L',
+                '/matrix/U'
             ];
             for (const p of paths) {
                 const path = `/${model.id}${p}`
