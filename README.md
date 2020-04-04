@@ -1,6 +1,8 @@
 # USEEIO Widgets
 ...
 
+npx http-server ./build
+
 ## Widgets
 
 ### Impact chart
