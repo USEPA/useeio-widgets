@@ -34,8 +34,17 @@ export class SectorList {
 
     async init() {
         this.sectors = await this.webapi.get("/sectors");
-        this.root = d3.select(this.config.selector)
+        const top = d3.select(this.config.selector)
             .append("div");
+        top.append("div")
+            .style("margin", "5px 15px")
+            .append("input")
+            .attr("type", "search")
+            .attr("placeholder", "Search")
+            .style("width", "100%")
+            .style("height", "2em");
+
+        this.root = top.append("div")
         this.render();
     }
 
