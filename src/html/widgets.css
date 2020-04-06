@@ -7,6 +7,18 @@ code {
     font-family: Consolas, 'Courier New', Courier, monospace;
 }
 
+th {
+    font-weight: normal;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
 .sector-list {
     height: 500px; 
     overflow-y: scroll;

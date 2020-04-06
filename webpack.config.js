@@ -8,6 +8,7 @@ const config = {
         'FilterWidget': './src/filter-widget.ts',
         'HashConfigTransmitter': './src/hash-config-transmitter.ts',
         'SectorList': './src/sector-list.ts',
+        'ImpactHeatmap': './src/impact-heatmap.ts',
     },
     module: {
         rules: [

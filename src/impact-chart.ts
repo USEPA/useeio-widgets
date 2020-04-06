@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { Config, Widget } from "./commons";
-import * as webapi from "./webapi";
+import {Indicator, Sector, Matrix, WebApi} from "./webapi";
 import * as colors from "./colors";
 
 interface ChartConfig {
@@ -44,7 +44,7 @@ function responsiveSVG(selector: string, width: number, height: number) {
 
 export class ImpactChart extends Widget {
 
-    private api: webapi.WebApi;
+    private api: WebApi;
     private svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
     private width: number;
     private height: number;
@@ -62,12 +62,12 @@ export class ImpactChart extends Widget {
         "WATR",
     ];
 
-    private sectors: webapi.Sector[];
-    private indicators: webapi.Indicator[];
-    private U: webapi.Matrix;
+    private sectors: Sector[];
+    private indicators: Indicator[];
+    private U: Matrix;
 
     async init(config: ChartConfig) {
-        this.api = new webapi.WebApi(
+        this.api = new WebApi(
             config.endpoint,
             config.model,
             config.apikey);
@@ -185,7 +185,7 @@ export class ImpactChart extends Widget {
         this.ready();
     }
 
-    private async getSectors(codes: string[]): Promise<webapi.Sector[] | null> {
+    private async getSectors(codes: string[]): Promise<Sector[] | null> {
         if (!codes || codes.length === 0) {
             return null;
         }
@@ -195,7 +195,7 @@ export class ImpactChart extends Widget {
         if (!this.sectors) {
             return null;
         }
-        const r: webapi.Sector[] = [];
+        const r: Sector[] = [];
         for (const code of codes) {
             for (const sector of this.sectors) {
                 if (code === sector.code) {
@@ -206,7 +206,7 @@ export class ImpactChart extends Widget {
         return r;
     }
 
-    private async getIndicators(codes: string[]): Promise<webapi.Indicator[] | null> {
+    private async getIndicators(codes: string[]): Promise<Indicator[] | null> {
         const _codes = !codes || codes.length === 0
             ? this.defaultIndicators
             : codes;
@@ -216,7 +216,7 @@ export class ImpactChart extends Widget {
         if (!this.indicators) {
             return null;
         }
-        const r: webapi.Indicator[] = [];
+        const r: Indicator[] = [];
         for (const code of _codes) {
             for (const indicator of this.indicators) {
                 if (code === indicator.code) {
@@ -228,8 +228,8 @@ export class ImpactChart extends Widget {
     }
 
     private async getResult(
-        sectors: webapi.Sector[],
-        indicators: webapi.Indicator[]): Promise<webapi.Matrix | null> {
+        sectors: Sector[],
+        indicators: Indicator[]): Promise<Matrix | null> {
 
         if (!sectors
             || !indicators
@@ -240,13 +240,13 @@ export class ImpactChart extends Widget {
 
         if (!this.U) {
             const data: number[][] = await this.api.get("/matrix/U");
-            this.U = new webapi.Matrix(data);
+            this.U = new Matrix(data);
         }
         if (!this.U) {
             return null;
         }
 
-        const m = webapi.Matrix.zeros(indicators.length, sectors.length);
+        const m = Matrix.zeros(indicators.length, sectors.length);
         for (let i = 0; i < indicators.length; i++) {
             const indicator = indicators[i];
             let max = 0.0;
