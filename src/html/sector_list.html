@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Sector list</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="width: 50%; margin: auto">
+        <h4 style="text-align: center;">Sectors</h4>
+        <div class="sector-list">
+        </div>
+    </div>
+</body>
+
+<script src="lib/d3.min.js"></script>
+<script src="lib/HashConfigTransmitter.js"></script>
+<script src="lib/SectorList.js"></script>
+
+<script>
+    var config = useeio.HashConfigTransmitter.create();
+    var sectorList = useeio.SectorList.on({
+        endpoint: '/api',
+        model: 'USEEIOv1.2',
+        selector: '.sector-list',
+    });
+    config.join(sectorList);
+</script>
+
+</html>

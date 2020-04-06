@@ -12,20 +12,26 @@ interface ListConfig {
     apikey?: string;
 }
 
+
 export function on(config: ListConfig): SectorList {
     const s = new SectorList(config);
     s.init();
     return s;
 }
 
+
 export class SectorList implements Widget {
 
     private webapi: WebApi;
     private config: ListConfig;
-    private sectors: Sector[] = [];
-    private selection: Sector[] = [];
     private root: d3.Selection<BaseType, any, HTMLElement, any>;
-    private _listeners = new Array<(config: Config) => void>();
+
+    private filterTerm: null | string = null;
+    private sectors: Sector[] = [];
+    private displayed: Sector[] = [];
+    private selection: Sector[] = [];
+
+    private listeners = new Array<(config: Config) => void>();
 
     constructor(config: ListConfig) {
         this.config = config;
@@ -35,28 +41,53 @@ export class SectorList implements Widget {
 
     async init() {
         this.sectors = await this.webapi.get("/sectors");
+        this.displayed = this.sectors;
+
         const top = d3.select(this.config.selector)
             .append("div");
+        const self = this;
         top.append("div")
             .style("margin", "5px 15px")
             .append("input")
             .attr("type", "search")
             .attr("placeholder", "Search")
             .style("width", "100%")
-            .style("height", "2em");
+            .style("height", "2em")
+            .on("input", function () { self.filter(this.value) });
 
         this.root = top.append("div")
         this.render();
     }
 
+    private filter(f: string) {
+        if (!f || f.trim() === "") {
+            this.displayed = this.sectors;
+            this.filterTerm = null;
+        } else {
+            this.filterTerm = f.toLocaleLowerCase().trim();
+            this.displayed = this.sectors.filter((s) => {
+                if (this.selection.indexOf(s) >= 0) {
+                    return true;
+                }
+                if (!s.name) {
+                    return false;
+                }
+                return s.name
+                    .toLocaleLowerCase()
+                    .indexOf(this.filterTerm) >= 0;
+            });
+        }
+        this.render();
+    }
+
     private render() {
-        this.sectors.sort((s1, s2) => this.compare(s1, s2));
+        this.displayed.sort((s1, s2) => this.compare(s1, s2));
         this.root.selectAll("*")
             .remove();
 
         const divs = this.root
             .selectAll("div")
-            .data(this.sectors)
+            .data(this.displayed)
             .enter()
             .append("div")
             .style("margin", "1px")
@@ -115,7 +146,7 @@ export class SectorList implements Widget {
         const config: Config = {
             sectors: this.selection.map((s) => s.code),
         };
-        for (const fn of this._listeners) {
+        for (const fn of this.listeners) {
             fn(config);
         }
     }
@@ -123,18 +154,42 @@ export class SectorList implements Widget {
     private compare(s1: Sector, s2: Sector): number {
         const s1Selected = this.isSelected(s1);
         const s2Selected = this.isSelected(s2);
-        if (s1Selected === s2Selected) {
-            if (!s1.name || !s2.name) {
-                return 0;
-            }
+
+        // both sectors are selected => compare by name
+        if (s1Selected && s2Selected) {
+            return !s1.name || !s2.name
+                ? 0
+                : s1.name.localeCompare(s2.name);
+        }
+
+        // sector 1 or sector 2 is selected
+        if (s1Selected || s2Selected) {
+            return s1Selected ? -1 : 1;
+        }
+
+        // no sector is selected => check the filter term
+        if (!s1.name || !s2.name) {
+            return 0;
+        }
+        if (!this.filterTerm) {
             return s1.name.localeCompare(s2.name);
         }
-        return s1Selected ? -1 : 1;
+
+        // the list is filtered so we know that each
+        // sector name contains the filter term
+        // we rank the sectors higher where the
+        // filter term is more at the beginning of
+        // the sector name
+        const idx1 = s1.name.toLocaleLowerCase()
+            .indexOf(this.filterTerm);
+        const idx2 = s2.name.toLocaleLowerCase()
+            .indexOf(this.filterTerm);
+        return idx1- idx2;
     }
 
     public onChanged(fn: (config: Config) => void) {
         if (fn) {
-            this._listeners.push(fn);
+            this.listeners.push(fn);
         }
     }
 
@@ -147,7 +202,7 @@ export class SectorList implements Widget {
         this.selection = this.sectors.filter(s => {
             return config.sectors.indexOf(s.code) >= 0
         });
-        this.render;
+        this.render();
     }
 
 }
