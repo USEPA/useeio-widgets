@@ -22,3 +22,17 @@ export interface Config {
     indicators?: string[];
 
 }
+
+export interface Widget {
+
+    update(config: Config): void;
+
+    onChanged(fn: (config: Config) => void): void;
+
+}
+
+export interface ConfigTransmitter {
+
+    join(widget: Widget): void;
+
+}

@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { Sector, WebApi } from "./webapi";
 import { BaseType } from "d3";
 import * as colors from "./colors";
+import { Config, Widget } from "./commons";
 
 
 interface ListConfig {
@@ -17,14 +18,14 @@ export function on(config: ListConfig): SectorList {
     return s;
 }
 
-export class SectorList {
+export class SectorList implements Widget {
 
     private webapi: WebApi;
     private config: ListConfig;
     private sectors: Sector[] = [];
     private selection: Sector[] = [];
     private root: d3.Selection<BaseType, any, HTMLElement, any>;
-    private _listeners = new Array<(codes: string[]) => void>();
+    private _listeners = new Array<(config: Config) => void>();
 
     constructor(config: ListConfig) {
         this.config = config;
@@ -111,9 +112,11 @@ export class SectorList {
                 ? s1.name.localeCompare(s2.name)
                 : 0);
         this.render();
-        const codes = this.selection.map((s) => s.code);
+        const config: Config = {
+            sectors: this.selection.map((s) => s.code),
+        };
         for (const fn of this._listeners) {
-            fn(codes);
+            fn(config);
         }
     }
 
@@ -129,10 +132,22 @@ export class SectorList {
         return s1Selected ? -1 : 1;
     }
 
-    public onSelectionChanged(fn: (codes: string[]) => void) {
+    public onChanged(fn: (config: Config) => void) {
         if (fn) {
             this._listeners.push(fn);
         }
+    }
+
+    public update(config: Config) {
+        if (!config || !config.sectors) {
+            this.selection = [];
+            this.render();
+            return;
+        }
+        this.selection = this.sectors.filter(s => {
+            return config.sectors.indexOf(s.code) >= 0
+        });
+        this.render;
     }
 
 }

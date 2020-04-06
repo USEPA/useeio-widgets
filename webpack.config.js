@@ -6,7 +6,7 @@ const config = {
     entry: {
         'ImpactChart': './src/impact-chart.ts',
         'FilterWidget': './src/filter-widget.ts',
-        'HashConfig': './src/hash-config.ts',
+        'HashConfigTransmitter': './src/hash-config-transmitter.ts',
         'SectorList': './src/sector-list.ts',
     },
     module: {
@@ -25,7 +25,7 @@ const config = {
         filename: '[name].js',
         path: buildDir + '/lib',
         libraryTarget: 'var',
-        library: ['USEEIO', '[name]'],
+        library: ['useeio', '[name]'],
     },
 
     plugins: [

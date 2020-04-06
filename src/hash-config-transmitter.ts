@@ -1,18 +1,18 @@
-import { Config } from "./config";
+import { Config, ConfigTransmitter, Widget } from "./commons";
 
 export function create() {
-    return new HashConfig();
+    return new HashConfigTransmitter();
 }
 
-export class HashConfig {
+export class HashConfigTransmitter implements ConfigTransmitter {
 
-    private listeners = new Array<(config: Config) => void>();
+    private widgets = new Array<Widget>();
 
     constructor() {
         window.onhashchange = () => {
             const config = this.parseConfig()
-            for (const listener of this.listeners) {
-                listener(config);
+            for (const widget of this.widgets) {
+                widget.update(config);
             }
         };
     }
@@ -21,8 +21,8 @@ export class HashConfig {
         window.location.hash = "";
     }
 
-    onChanged(consumer: (config: Config) => void) {
-        this.listeners.push(consumer);
+    join(widget: Widget) {
+        this.widgets.push(widget);
     }
 
     private parseConfig(): Config {

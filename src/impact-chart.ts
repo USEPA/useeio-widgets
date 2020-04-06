@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Config } from "./config";
+import { Config } from "./commons";
 import * as webapi from "./webapi";
 import * as colors from "./colors";
 
