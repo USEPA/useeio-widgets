@@ -9,6 +9,7 @@
         "interface-name": false,
         "one-variable-per-declaration": false,
         "semicolon": true,
-        "quotemark": [true, "double"]
+        "quotemark": [true, "double"],
+        "no-empty": false
     }
 }

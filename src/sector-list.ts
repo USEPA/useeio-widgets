@@ -20,7 +20,7 @@ export function on(config: ListConfig): SectorList {
 }
 
 
-export class SectorList implements Widget {
+export class SectorList extends Widget {
 
     private webapi: WebApi;
     private config: ListConfig;
@@ -31,9 +31,8 @@ export class SectorList implements Widget {
     private displayed: Sector[] = [];
     private selection: Sector[] = [];
 
-    private listeners = new Array<(config: Config) => void>();
-
     constructor(config: ListConfig) {
+        super();
         this.config = config;
         this.webapi = new WebApi(
             config.endpoint, config.model, config.apikey);
@@ -123,6 +122,8 @@ export class SectorList implements Widget {
         divs.append("label")
             .text((s) => s.name)
             .on("click", (s) => this.onSelect(s));
+
+        this.ready();
     }
 
     private isSelected(s: Sector): boolean {
@@ -150,13 +151,9 @@ export class SectorList implements Widget {
                 ? s1.name.localeCompare(s2.name)
                 : 0);
         this.render();
-        const config: Config = {
-            source: this,
+        this.fireChange({
             sectors: this.selection.map((s) => s.code),
-        };
-        for (const fn of this.listeners) {
-            fn(config);
-        }
+        });
     }
 
     private compare(s1: Sector, s2: Sector): number {
@@ -195,13 +192,7 @@ export class SectorList implements Widget {
         return idx1 - idx2;
     }
 
-    public onChanged(fn: (config: Config) => void) {
-        if (fn) {
-            this.listeners.push(fn);
-        }
-    }
-
-    public update(config: Config) {
+    protected handleUpdate(config: Config) {
         if (!config || !config.sectors) {
             this.selection = [];
             this.render();

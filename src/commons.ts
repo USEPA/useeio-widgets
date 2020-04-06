@@ -28,12 +28,42 @@ export interface Config {
 
 }
 
-export interface Widget {
+export abstract class Widget {
 
-    update(config: Config): void;
+    private isReady = false;
+    private listeners = new Array<(config: Config) => void>();
+    private queue = new Array<() => void>();
 
-    onChanged(fn: (config: Config) => void): void;
+    update(config: Config) {
+        if (!this.isReady) {
+            this.queue.push(() => this.handleUpdate(config));
+        } else {
+            this.handleUpdate(config);
+        }
+    }
 
+    protected ready() {
+        this.isReady = true;
+        if (this.queue.length === 0) {
+            return;
+        }
+        const fn = this.queue.pop();
+        fn();
+    }
+
+    onChanged(fn: (config: Config) => void) {
+        this.listeners.push(fn);
+    }
+
+    protected fireChange(config: Config) {
+        config.source = this;
+        for (const fn of this.listeners) {
+            fn(config);
+        }
+    }
+
+    protected handleUpdate(config: Config){
+    }
 }
 
 export interface ConfigTransmitter {
