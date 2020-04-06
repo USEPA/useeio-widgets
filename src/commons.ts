@@ -6,8 +6,13 @@
 export interface Config {
 
     /**
+     * The possible sender of an configuration update.
+     */
+    source?: Widget;
+
+    /**
      * The full location hash if this configuration was fetched from
-     * a location hash (window.location.hash). 
+     * a location hash (window.location.hash).
      */
     hash?: string;
 

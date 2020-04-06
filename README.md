@@ -43,7 +43,7 @@ page. These widgets can join a transmitter that collects configuration changes
 and calls the respective update methods of these widgets:
 
 ```js
-widget.join(configTransmitter);
+configTransmitter.join(widget);
 ```
 
 For example, the `HashConfigTransmitter` uses the anchor part of the URL to
@@ -51,8 +51,8 @@ de-/serialize the configuration:
 
 ```js
 const hashTransmitter = new useeio.HashConfigTransmitter();
-sectorList.join(hashTransmitter);
-impactChart.join(hashTransmitter);
+hashTransmitter.join(sectorList);
+hashTransmitter.join(impactChart);
 ```
 
 ### Impact chart

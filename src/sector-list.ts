@@ -53,9 +53,9 @@ export class SectorList implements Widget {
             .attr("placeholder", "Search")
             .style("width", "100%")
             .style("height", "2em")
-            .on("input", function () { self.filter(this.value) });
+            .on("input", function () { self.filter(this.value); });
 
-        this.root = top.append("div")
+        this.root = top.append("div");
         this.render();
     }
 
@@ -81,6 +81,10 @@ export class SectorList implements Widget {
     }
 
     private render() {
+        if (!this.root) {
+            return;
+        }
+
         this.displayed.sort((s1, s2) => this.compare(s1, s2));
         this.root.selectAll("*")
             .remove();
@@ -108,17 +112,17 @@ export class SectorList implements Widget {
                 } else {
                     return colors.toCSS(colors.getChartColor(idx), 0.1);
                 }
-            })
+            });
 
         divs.append("input")
             .attr("type", "checkbox")
             .attr("value", (s) => s.code)
             .property("checked", (s) => this.isSelected(s))
-            .on("click", (s) => this.selectionChanged(s));
+            .on("click", (s) => this.onSelect(s));
 
         divs.append("label")
             .text((s) => s.name)
-            .on("click", (s) => this.selectionChanged(s));
+            .on("click", (s) => this.onSelect(s));
     }
 
     private isSelected(s: Sector): boolean {
@@ -128,13 +132,16 @@ export class SectorList implements Widget {
         return this.selection.indexOf(s) >= 0;
     }
 
-    private selectionChanged(s: Sector) {
-        if (!s || !s.code) {
+    /**
+     * Adds or removes the given sector to or from the selection.
+     */
+    private onSelect(sector: Sector) {
+        if (!sector || !sector.code) {
             return;
         }
-        const idx = this.selection.indexOf(s);
+        const idx = this.selection.indexOf(sector);
         if (idx < 0) {
-            this.selection.push(s);
+            this.selection.push(sector);
         } else {
             this.selection.splice(idx, 1);
         }
@@ -144,6 +151,7 @@ export class SectorList implements Widget {
                 : 0);
         this.render();
         const config: Config = {
+            source: this,
             sectors: this.selection.map((s) => s.code),
         };
         for (const fn of this.listeners) {
@@ -184,7 +192,7 @@ export class SectorList implements Widget {
             .indexOf(this.filterTerm);
         const idx2 = s2.name.toLocaleLowerCase()
             .indexOf(this.filterTerm);
-        return idx1- idx2;
+        return idx1 - idx2;
     }
 
     public onChanged(fn: (config: Config) => void) {
@@ -200,7 +208,7 @@ export class SectorList implements Widget {
             return;
         }
         this.selection = this.sectors.filter(s => {
-            return config.sectors.indexOf(s.code) >= 0
+            return config.sectors.indexOf(s.code) >= 0;
         });
         this.render();
     }

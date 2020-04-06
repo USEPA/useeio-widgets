@@ -7,12 +7,19 @@ export function create() {
 export class HashConfigTransmitter implements ConfigTransmitter {
 
     private widgets = new Array<Widget>();
+    private config: Config = {};
 
     constructor() {
+        this.config = this.parseConfig();
         window.onhashchange = () => {
-            const config = this.parseConfig()
+            this.config = {
+                ...this.config,
+                ...this.parseConfig(),
+            };
             for (const widget of this.widgets) {
-                widget.update(config);
+                if (this.config.source !== widget) {
+                    widget.update(this.config);
+                }
             }
         };
     }
@@ -23,6 +30,14 @@ export class HashConfigTransmitter implements ConfigTransmitter {
 
     join(widget: Widget) {
         this.widgets.push(widget);
+        widget.update(this.config);
+        widget.onChanged((config) => {
+            this.config = {
+                ...this.config,
+                ...config,
+            };
+            this.updateHash();
+        });
     }
 
     private parseConfig(): Config {
@@ -56,5 +71,16 @@ export class HashConfigTransmitter implements ConfigTransmitter {
             }
         }
         return config;
+    }
+
+    private updateHash() {
+        let hash = "#";
+        if (this.config.sectors && this.config.sectors.length > 0) {
+            hash += "sectors=" + this.config.sectors.join(",");
+        }
+        if (this.config.indicators && this.config.indicators.length > 0) {
+            hash += "indicators=" + this.config.indicators.join(",");
+        }
+        window.location.hash = hash;
     }
 }
