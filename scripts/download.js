@@ -48,12 +48,14 @@ async function fetch(path) {
 
         const url = `${endpoint}${path}`;
         console.log(`fetch data from ${url}`)
-        const config = {};
+        const options = {};
         if (apikey) {
-            config['x-api-key'] = apikey;
+            options.headers = {
+                'x-api-key': apikey,
+            };
         }
 
-        http.get(url, config, (response) => {
+        http.get(url, options, (response) => {
 
             // check the status code
             const status = response.statusCode;

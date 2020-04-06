@@ -11,6 +11,50 @@ npx http-server ./build
 
 ## Widgets
 
+## Communication between widgets
+The communication between widgets is done via configuration objects and a set of
+methods that all widgets implement. There are widgets that display data based on
+a configuration (like the `ImpactChart` widget). Calling the `update` method
+with a configuration will update the widget:
+
+```js
+widget.update(config);
+```
+
+Other widgets create new configurations (like the `SectorList` widget). With the
+`onChanged` method it is possible to react on these configuration changes:
+
+```js
+widget.onChanged((config) => {
+  // do something with the updated config
+});
+```
+
+With these methods the widgets can be linked in the following way:
+
+```js
+sectorList.onChanged((config) => {
+  impactChart.update(config);
+});
+```
+
+There can be different widgets that produce and consume configurations on a
+page. These widgets can join a transmitter that collects configuration changes
+and calls the respective update methods of these widgets:
+
+```js
+widget.join(configTransmitter);
+```
+
+For example, the `HashConfigTransmitter` uses the anchor part of the URL to
+de-/serialize the configuration:
+
+```js
+const hashTransmitter = new useeio.HashConfigTransmitter();
+sectorList.join(hashTransmitter);
+impactChart.join(hashTransmitter);
+```
+
 ### Impact chart
 The impact chart widget shows for a selected set of sectors the LCIA results
 of these sectors in comparison to each other where a bar chart is generated

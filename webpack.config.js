@@ -23,7 +23,7 @@ const config = {
     },
     output: {
         filename: '[name].js',
-        path: buildDir,
+        path: buildDir + '/lib',
         libraryTarget: 'var',
         library: ['USEEIO', '[name]'],
     },
