@@ -3,76 +3,52 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Impact chart example</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            font-size: 0.9em;
-        }
-        #sector-list {
-            height: 500px; 
-            overflow-y: scroll;
-            border: lightgray solid 1px;
-        }
-    </style>
+    <title>Sector list</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
 
+
 <body>
-    <div style="margin: 25px;">
-
-        <div style="float: left; width: 40%;">
-            <h4 style="text-align: center;">Sectors</h4>
-            <div id="sector-list">
-            </div>
+    <div style="width: 80%; margin: auto">
+        <h4>Examples</h4>
+        <div>
+            <a href="./sector_list.html#sectors=312120,31151A,312110,312130" target="_blank">
+                Sector list with hash config
+            </a>
+            <pre>
+                <code>
+                    var config = useeio.HashConfigTransmitter.create();
+                    var sectorList = useeio.SectorList.on({
+                        endpoint: '/api',
+                        model: 'USEEIOv1.2',
+                        selector: '.sector-list',
+                    });
+                    config.join(sectorList);
+                </code>
+            </pre>
         </div>
-
-        <div style="float: left; width: 60%">
-            <h4 style="text-align: center;">Indicator results</h4>
-            <div id="impact-chart">
-            </div>
+        <div>
+            <a href="./sector_list_with_impact_chart.html#sectors=312120,31151A,312110,312130" target="_blank">
+                Sector list with linked impact chart
+            </a>
+            <pre>
+                <code>
+                    var sectorList = useeio.SectorList.on({
+                        endpoint: '/api',
+                        model: 'USEEIOv1.2',
+                        selector: '.sector-list',
+                    });
+                    var impactChart = useeio.ImpactChart.on({
+                        endpoint: '/api',
+                        model: 'USEEIOv1.2',
+                        selector: '.impact-chart',
+                    });
+                    var config = useeio.HashConfigTransmitter.create();
+                    config.join(sectorList);
+                    config.join(impactChart);
+                </code>
+            </pre>
         </div>
-
-
-        <div id="filter"></div>
-
-    </div>
 </body>
-<script src="lib/d3.min.js"></script>
-<script src="lib/HashConfigTransmitter.js"></script>
-<script src="lib/SectorList.js"></script>
-<script src="lib/ImpactChart.js"></script>
-<script src="lib/FilterWidget.js"></script>
-<script>
-
-    var apiConfig = {
-        endpoint: '/api',
-        model: 'USEEIOv1.2',
-    };
-    var config = useeio.HashConfigTransmitter.create();
-
-    var sectorList = useeio.SectorList.on({
-        ...apiConfig,
-        selector: '#sector-list',
-    });
-
-    var chart = useeio.ImpactChart.on({
-        ...apiConfig,
-        selector: '#impact-chart',
-    });
-    chart.update({
-        sectors: ['1111A0', '111200', '111400', '112120']
-    });
-
-    sectorList.onSelectionChanged((codes) => {
-        chart.update({sectors: codes});
-    });
-
-    var filter = useeio.FilterWidget.on('#filter');
-
-    config.onChanged(function (conf) {
-        chart.update(conf);
-        filter.update(conf);
-    });
-</script>
 
 </html>

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Config } from "./commons";
+import { Config, Widget } from "./commons";
 import * as webapi from "./webapi";
 import * as colors from "./colors";
 
@@ -15,7 +15,9 @@ interface ChartConfig {
 }
 
 export function on(config: ChartConfig): ImpactChart {
-    return new ImpactChart(config);
+    const chart = new ImpactChart();
+    chart.init(config);
+    return chart;
 }
 
 /**
@@ -40,7 +42,7 @@ function responsiveSVG(selector: string, width: number, height: number) {
         .style("left", 0);
 }
 
-export class ImpactChart {
+export class ImpactChart extends Widget {
 
     private api: webapi.WebApi;
     private svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
@@ -64,8 +66,7 @@ export class ImpactChart {
     private indicators: webapi.Indicator[];
     private U: webapi.Matrix;
 
-    constructor(config: ChartConfig) {
-
+    async init(config: ChartConfig) {
         this.api = new webapi.WebApi(
             config.endpoint,
             config.model,
@@ -88,9 +89,10 @@ export class ImpactChart {
                 .append("svg")
                 .attr("width", this.width)
                 .attr("height", this.height);
+        this.ready();
     }
 
-    async update(config: Config) {
+    async handleUpdate(config: Config) {
         this.svg.selectAll("*").remove();
         this.svg.append("text")
             .text("Loading ...")
@@ -180,6 +182,7 @@ export class ImpactChart {
                     .text(sectors[j].name);
             }
         }
+        this.ready();
     }
 
     private async getSectors(codes: string[]): Promise<webapi.Sector[] | null> {
@@ -236,7 +239,7 @@ export class ImpactChart {
         }
 
         if (!this.U) {
-            const data: number[][] = await this.api.get('/matrix/U');
+            const data: number[][] = await this.api.get("/matrix/U");
             this.U = new webapi.Matrix(data);
         }
         if (!this.U) {

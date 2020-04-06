@@ -11,17 +11,18 @@ export class HashConfigTransmitter implements ConfigTransmitter {
 
     constructor() {
         this.config = this.parseConfig();
-        window.onhashchange = () => {
-            this.config = {
-                ...this.config,
-                ...this.parseConfig(),
-            };
-            for (const widget of this.widgets) {
-                if (this.config.source !== widget) {
-                    widget.update(this.config);
-                }
-            }
+        window.onhashchange = () => this.onHashChanged();
+        window.addEventListener("popstate", () => this.onHashChanged());
+    }
+
+    private onHashChanged() {
+        this.config = {
+            ...this.config,
+            ...this.parseConfig(),
         };
+        for (const widget of this.widgets) {
+            widget.update(this.config);
+        }
     }
 
     clearAll() {

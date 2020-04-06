@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Impact chart example</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="margin: 25px;">
+
+        <div style="float: left; width: 40%;">
+            <h4 style="text-align: center;">Sectors</h4>
+            <div class="sector-list">
+            </div>
+        </div>
+
+        <div style="float: left; width: 60%">
+            <h4 style="text-align: center;">Indicator results</h4>
+            <div class="impact-chart">
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="lib/d3.min.js"></script>
+<script src="lib/HashConfigTransmitter.js"></script>
+<script src="lib/SectorList.js"></script>
+<script src="lib/ImpactChart.js"></script>
+<script src="lib/FilterWidget.js"></script>
+<script>
+
+    var sectorList = useeio.SectorList.on({
+        endpoint: '/api',
+        model: 'USEEIOv1.2',
+        selector: '.sector-list',
+    });
+    var impactChart = useeio.ImpactChart.on({
+        endpoint: '/api',
+        model: 'USEEIOv1.2',
+        selector: '.impact-chart',
+    });
+    var config = useeio.HashConfigTransmitter.create();
+    config.join(sectorList);
+    config.join(impactChart);
+
+</script>
+
+</html>

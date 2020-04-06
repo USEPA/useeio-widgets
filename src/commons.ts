@@ -35,6 +35,9 @@ export abstract class Widget {
     private queue = new Array<() => void>();
 
     update(config: Config) {
+        if (!config || config.source === this) {
+            return;
+        }
         if (!this.isReady) {
             this.queue.push(() => this.handleUpdate(config));
         } else {
@@ -62,7 +65,7 @@ export abstract class Widget {
         }
     }
 
-    protected handleUpdate(config: Config){
+    protected async handleUpdate(config: Config){
     }
 }
 

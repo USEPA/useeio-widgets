@@ -3,6 +3,10 @@ html {
     font-size: 0.9em;
 }
 
+code {
+    font-family: Consolas, 'Courier New', Courier, monospace;
+}
+
 .sector-list {
     height: 500px; 
     overflow-y: scroll;

@@ -192,7 +192,7 @@ export class SectorList extends Widget {
         return idx1 - idx2;
     }
 
-    protected handleUpdate(config: Config) {
+    protected async handleUpdate(config: Config) {
         if (!config || !config.sectors) {
             this.selection = [];
             this.render();
