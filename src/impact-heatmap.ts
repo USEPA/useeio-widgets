@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Config, Widget } from "./commons";
+import { Widget } from "./commons";
 import { Sector, Indicator, Matrix, WebApi, IndicatorGroup } from "./webapi";
 import * as colors from "./colors";
 
@@ -188,17 +188,55 @@ export class ImpactHeatmap extends Widget {
             .attr("href", "#")
             .text(indicator => indicator.code);
 
-        const sectorRow = table.append("tbody")
-            .selectAll("tr")
-            .data(this.selectedSectors)
-            .enter()
-            .append("tr");
+        // generate the rows
+        const maxResults: number[] = [];
+        const minResults: number[] = [];
+        for (const indicator of this.selectedIndicators) {
+            let max;
+            let min;
+            for (const sector of this.selectedSectors) {
+                const r = this.result.get(indicator.index, sector.index);
+                if (max === undefined) {
+                    max = r;
+                    min = r;
+                } else {
+                    max = Math.max(max, r);
+                    min = Math.min(min, r);
+                }
+            }
+            maxResults.push(max);
+            minResults.push(min);
+        }
 
-        sectorRow.append("td")
-            .style("border-top", "lightgray solid 1px")
-            .style("padding", "10px 0px")
-            .style("white-space", "nowrap")
-            .text(sector => sector.name);
+        const tbody = table.append("tbody");
+        for (const sector of this.selectedSectors) {
+            const tr = tbody.append("tr");
 
+            // the sector name
+            tr.append("td")
+                .style("border-top", "lightgray solid 1px")
+                .style("padding", "5px 0px")
+                .style("white-space", "nowrap")
+                .append("a")
+                .attr("href", "#")
+                .text(sector.name);
+
+            // the result cells
+            this.selectedIndicators.forEach((indicator, i) => {
+                const max = maxResults[i];
+                const min = minResults[i];
+                const r = this.result.get(indicator.index, sector.index);
+                const alpha = max === min
+                    ? 0
+                    : 0.1 + 0.9 * (r - min) / (max - min);
+
+                tr.append("td")
+                    .attr("title", `${r.toExponential(2)} ${indicator.unit}`)
+                    .style("background-color", colors.toCSS(
+                        colors.getForIndicatorGroup(indicator.group),
+                        alpha));
+            });
+
+        }
     }
 }
