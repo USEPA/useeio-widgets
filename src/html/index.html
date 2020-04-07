@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Sector list</title>
+    <title>Examples</title>
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
 
@@ -11,6 +11,40 @@
 <body>
     <div style="width: 80%; margin: auto">
         <h4>Examples</h4>
+        <div>
+            <a href="./impact_heatmap.html" target="_blank">
+                Impact heatmap
+            </a>
+            <pre>
+                <code>
+                    var heatmap = useeio.ImpactHeatmap.on({
+                        endpoint: '/api',
+                        model: 'USEEIOv1.2',
+                        selector: '.impact-heatmap',
+                    });
+                </code>
+            </pre>
+        </div>
+        <div>
+            <a href="./impact_chart.html" target="_blank">
+                Impact chart
+            </a>
+            <pre>
+                <code>
+                    var impactChart = useeio.ImpactChart.on({
+                        endpoint: '/api',
+                        model: 'USEEIOv1.2',
+                        selector: '.impact-chart',
+                        columns: 3,
+                        width: 800,
+                        height: 300,
+                    });
+                    impactChart.update({
+                        sectors: ["312120", "31151A", "312110", "312130"],
+                    });
+                </code>
+            </pre>
+        </div>
         <div>
             <a href="./sector_list.html#sectors=312120,31151A,312110,312130" target="_blank">
                 Sector list with hash config

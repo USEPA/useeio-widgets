@@ -1,21 +1,52 @@
 # USEEIO Widgets
-...
+
+## Usage
+In order to build and test the widgets you need to have a current version of
+[Node.js](https://nodejs.org) installed. Make sure that the `node` and `npm`
+commands are available in your systems path (you can test this via `node -v` and
+`npm -v` on the command line which should give you the respective version of
+these tools). The first step is then to install the build tools and
+dependencies:
+
+```bash
+cd useeio-widgets
+npm install
+```
+
+You can build the widget libraries via:
+
+```bash
+npm run build
+```
+
+This should create a `build` folder which contains in the `lib` sub-folder a
+small JavaScript library for each widget. The `build` folder then also contains
+some example HTML files that demonstrate the usage of these widgets. To test
+these examples, you need some data that you can download from an instance of the
+[USEEIO API](https://github.com/USEPA/USEEIO_API) via the following command:
+
+```bash
+npm run download -- --endpoint https://path/to/api --apikey an-optional-api-key
+```
+
+This will mirror the static data of that API into the `build/api` folder. You
+can then start a server that hosts the examples and these data with the
+following command:
 
 ```
-npm run download -- --endpoint https://path/to/api --apikey some-long-key
+npm run server
 ```
 
-```
-npx http-server ./build
-```
+When you then open `http://localhost:8080` in your browser you should see the
+index page with links to the examples.
 
 ## Widgets
 
-## Communication between widgets
-The communication between widgets is done via configuration objects and a set of
-methods that all widgets implement. There are widgets that display data based on
-a configuration (like the `ImpactChart` widget). Calling the `update` method
-with a configuration will update the widget:
+### Communication between widgets
+The communication between the widgets is done via configuration objects and a
+set of methods that all widgets implement. There are widgets that display data
+based on a configuration (like the `ImpactChart` widget). Calling the `update`
+method with a configuration will update the widget:
 
 ```js
 widget.update(config);
