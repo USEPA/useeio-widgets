@@ -18,8 +18,11 @@
             <pre>
                 <code>
                     var heatmap = useeio.ImpactHeatmap.on({
-                        endpoint: '/api',
-                        model: 'USEEIOv1.2',
+                        webapi: {
+                            endpoint: '/api',
+                            model: 'USEEIOv1.2',
+                            asJsonFiles: true,
+                        },
                         selector: '.impact-heatmap',
                     });
                 </code>
@@ -32,8 +35,11 @@
             <pre>
                 <code>
                     var impactChart = useeio.ImpactChart.on({
-                        endpoint: '/api',
-                        model: 'USEEIOv1.2',
+                        webapi: {
+                            endpoint: '/api',
+                            model: 'USEEIOv1.2',
+                            asJsonFiles: true,
+                        },
                         selector: '.impact-chart',
                         columns: 3,
                         width: 800,
@@ -53,8 +59,11 @@
                 <code>
                     var config = useeio.HashConfigTransmitter.create();
                     var sectorList = useeio.SectorList.on({
-                        endpoint: '/api',
-                        model: 'USEEIOv1.2',
+                        webapi: {
+                            endpoint: '/api',
+                            model: 'USEEIOv1.2',
+                            asJsonFiles: true,
+                        },
                         selector: '.sector-list',
                     });
                     config.join(sectorList);
@@ -67,14 +76,17 @@
             </a>
             <pre>
                 <code>
-                    var sectorList = useeio.SectorList.on({
+                    var webapi = {
                         endpoint: '/api',
                         model: 'USEEIOv1.2',
+                        asJsonFiles: true,
+                    };
+                    var sectorList = useeio.SectorList.on({
+                        webapi: webapi,
                         selector: '.sector-list',
                     });
                     var impactChart = useeio.ImpactChart.on({
-                        endpoint: '/api',
-                        model: 'USEEIOv1.2',
+                        webapi: webapi,
                         selector: '.impact-chart',
                     });
                     var config = useeio.HashConfigTransmitter.create();

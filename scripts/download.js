@@ -87,7 +87,7 @@ async function fetch(path) {
         }
 
         const modelText = await fetch('/models');
-        fs.writeFile(targetDir + '/models', modelText, () => { });
+        fs.writeFile(targetDir + '/models.json', modelText, () => { });
         const models = JSON.parse(modelText);
 
         for (const model of models) {
@@ -114,7 +114,7 @@ async function fetch(path) {
             for (const p of paths) {
                 const path = `/${model.id}${p}`
                 const data = await fetch(path);
-                fs.writeFile(dir + p, data, () => { });
+                fs.writeFile(`${dir}${p}.json`, data, () => { });
             }
         }
 

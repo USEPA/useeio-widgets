@@ -126,10 +126,8 @@ following fields:
 
 * `selector: string`: the selector of the HTML element (e.g. the ID of a `div`
   element),
-* `endpoint: string`: the endpoint of an
-  [USEEIO API](https://github.com/USEPA/USEEIO_API) instance
-* `apikey: string` (optional): an API key
-* `model: string`: the ID of the USEEIO model to use
+* `webapi: string`: configuration of the web API (see
+  [USEEIO API](https://github.com/USEPA/USEEIO_API))
 * `width: number` (optional, default `500`): the width of the chart in pixels
 * `height: number` (optional, default `500`): the height of the chart in pixels
 * `columns: number` (optional, default `2`): the number of columns in which the
@@ -145,8 +143,11 @@ recreating the chart object. Here is an example that uses more optional features
 ```ts
 var chart = USEEIO.ImpactChart.on({
     selector: '#impact-chart',
-    endpoint: 'http://localhost/api',
-    model: 'USEEIO',
+    webapi: {
+      endpoint: '/api',
+      model: 'USEEIOv1.2',
+      asJsonFiles: true,
+    },
     width: 800,
     height: 400,
     columns: 4,

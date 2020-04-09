@@ -1,13 +1,14 @@
 import * as d3 from "d3";
 import { Widget } from "./commons";
-import { Sector, Indicator, Matrix, WebApi, IndicatorGroup } from "./webapi";
+import {
+    Sector, Indicator, Matrix, WebApi,
+    IndicatorGroup, WebApiConfig
+} from "./webapi";
 import * as colors from "./colors";
 
 interface HeatmapConfig {
+    webapi: WebApiConfig;
     selector: string;
-    endpoint: string;
-    model: string;
-    apikey?: string;
     sectorCount: number;
 }
 
@@ -51,10 +52,7 @@ export class ImpactHeatmap extends Widget {
     private root: d3.Selection<HTMLDivElement, unknown, HTMLElement, any>;
 
     async init(config: HeatmapConfig) {
-        this.webapi = new WebApi(
-            config.endpoint,
-            config.model,
-            config.apikey);
+        this.webapi = new WebApi(config.webapi);
         this.sectorCount = config.sectorCount
             ? config.sectorCount
             : 10;

@@ -20,8 +20,11 @@
 <script>
 
     var heatmap = useeio.ImpactHeatmap.on({
-        endpoint: '/api',
-        model: 'USEEIOv1.2',
+        webapi: {
+            endpoint: '/api',
+            model: 'USEEIOv1.2',
+            asJsonFiles: true,
+        },
         selector: '.impact-heatmap',
     });
 

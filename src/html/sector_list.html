@@ -22,8 +22,11 @@
 <script>
     var config = useeio.HashConfigTransmitter.create();
     var sectorList = useeio.SectorList.on({
-        endpoint: '/api',
-        model: 'USEEIOv1.2',
+        webapi: {
+            endpoint: '/api',
+            model: 'USEEIOv1.2',
+            asJsonFiles: true,
+        },
         selector: '.sector-list',
     });
     config.join(sectorList);

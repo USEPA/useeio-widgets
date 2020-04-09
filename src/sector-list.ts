@@ -1,15 +1,13 @@
 import * as d3 from "d3";
-import { Sector, WebApi } from "./webapi";
+import { Sector, WebApi, WebApiConfig } from "./webapi";
 import { BaseType } from "d3";
 import * as colors from "./colors";
 import { Config, Widget } from "./commons";
 
 
 interface ListConfig {
+    webapi: WebApiConfig;
     selector: string;
-    endpoint: string;
-    model: string;
-    apikey?: string;
 }
 
 
@@ -34,8 +32,7 @@ export class SectorList extends Widget {
     constructor(config: ListConfig) {
         super();
         this.config = config;
-        this.webapi = new WebApi(
-            config.endpoint, config.model, config.apikey);
+        this.webapi = new WebApi(config.webapi);
     }
 
     async init() {

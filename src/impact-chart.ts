@@ -1,17 +1,15 @@
 import * as d3 from "d3";
 import { Config, Widget } from "./commons";
-import {Indicator, Sector, Matrix, WebApi} from "./webapi";
+import {Indicator, Sector, Matrix, WebApi, WebApiConfig} from "./webapi";
 import * as colors from "./colors";
 
 interface ChartConfig {
+    webapi: WebApiConfig;
     selector: string;
-    endpoint: string;
-    model: string;
     width?: number;
     height?: number;
     columns?: number;
     responsive?: boolean;
-    apikey?: string;
 }
 
 export function on(config: ChartConfig): ImpactChart {
@@ -67,10 +65,7 @@ export class ImpactChart extends Widget {
     private U: Matrix;
 
     async init(config: ChartConfig) {
-        this.api = new WebApi(
-            config.endpoint,
-            config.model,
-            config.apikey);
+        this.api = new WebApi(config.webapi);
 
         this.width = config.width || 500;
         this.height = config.height || 500;

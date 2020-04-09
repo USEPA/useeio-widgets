@@ -1,35 +1,61 @@
+/**
+ * The configuration of the web api.
+ */
+export interface WebApiConfig {
+
+    /**
+     * The enpoint URL of the API.
+     */
+    endpoint: string;
+
+    /**
+     * The ID of the EEIO model to use.
+     */
+    model: string;
+
+    /**
+     * An optional API key.
+     */
+    apikey?: string;
+
+    /**
+     * Indicates whether the `.json` extension should be added
+     * to the request paths. This needs to be set to `true` if
+     * we load the data just as static files from a server.
+     */
+    asJsonFiles?: boolean;
+
+}
+
 
 export class WebApi {
 
-    private endpoint: string;
-    private modelID: string;
-    private apiKey: null | string = null;
+    private conf: WebApiConfig;
 
-    constructor(
-        endpoint: string,
-        modelID: string,
-        apikey?: string) {
-        this.endpoint = endpoint;
-        this.modelID = modelID;
-        this.apiKey = apikey ? apikey : null;
+    constructor(conf: WebApiConfig) {
+        this.conf = conf;
     }
 
     public async get<T>(path: string): Promise<T> {
-        console.log("call API", path);
+        let url = `${this.conf.endpoint}/${this.conf.model}${path}`;
+        if (this.conf.asJsonFiles) {
+            url += ".json";
+        }
+        console.log("GET ", url);
 
         // prepare the request
         const req = new XMLHttpRequest();
-        req.open("GET", `${this.endpoint}/${this.modelID}${path}`);
+        req.open("GET", url);
         req.setRequestHeader(
             "Content-Type",
             "application/json;charset=UTF-8");
         req.setRequestHeader(
             "max-age",
             "86400",
-        )
-        if (this.apiKey) {
+        );
+        if (this.conf.apikey) {
             req.setRequestHeader(
-                "x-api-key", this.apiKey);
+                "x-api-key", this.conf.apikey);
         }
 
         // create the promise
@@ -44,9 +70,9 @@ export class WebApi {
                             + path + ": " + err);
                     }
                 } else {
-                    reject(`request ${path} failed: ${req.statusText}`)
+                    reject(`request ${path} failed: ${req.statusText}`);
                 }
-            }
+            };
             req.send();
         });
     }

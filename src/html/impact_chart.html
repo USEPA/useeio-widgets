@@ -20,8 +20,11 @@
 <script>
 
     var impactChart = useeio.ImpactChart.on({
-        endpoint: '/api',
-        model: 'USEEIOv1.2',
+        webapi: {
+            endpoint: '/api',
+            model: 'USEEIOv1.2',
+            asJsonFiles: true,
+        },
         selector: '.impact-chart',
         columns: 3,
         width: 800,
