@@ -112,8 +112,11 @@ a complete example regarding its usage:
 <script>
     var chart = USEEIO.ImpactChart.on({
         selector: '#impact-chart',
-        endpoint: 'http://localhost/api',
-        model: 'USEEIO',
+        webapi: {
+          endpoint: 'api',
+          model: 'USEEIOv1.2',
+          asJsonFiles: true,
+        },
     });
     chart.update(['1111A0', '111200', '111400', '112120']);
 </script>
@@ -144,7 +147,7 @@ recreating the chart object. Here is an example that uses more optional features
 var chart = USEEIO.ImpactChart.on({
     selector: '#impact-chart',
     webapi: {
-      endpoint: '/api',
+      endpoint: 'api',
       model: 'USEEIOv1.2',
       asJsonFiles: true,
     },
