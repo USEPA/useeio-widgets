@@ -59,7 +59,7 @@ export class ImpactHeatmap extends Widget {
 
     private sectorCount = 10;
     private searchTerm: null | string = null;
-
+    private sortIndicator: null | Indicator = null;
 
     private root: d3.Selection<HTMLDivElement, unknown, HTMLElement, any>;
 
@@ -142,7 +142,15 @@ export class ImpactHeatmap extends Widget {
             .append("a")
             .attr("href", "#")
             .attr("title", (i) => i.name)
-            .text(indicator => indicator.code);
+            .text(indicator => indicator.code)
+            .on("click", (indicator) => {
+                if (this.sortIndicator === indicator) {
+                    this.sortIndicator = null;
+                } else {
+                    this.sortIndicator = indicator;
+                }
+                this.renderRows(indicators);
+            });
 
         table.append("tbody")
             .classed("impact-heatmap-body", true);
@@ -157,7 +165,7 @@ export class ImpactHeatmap extends Widget {
             this.result,
             this.sectorCount,
             this.searchTerm,
-            null);
+            this.sortIndicator);
 
         const ranges = getResultRanges(
             indicators, sectors, this.result);
@@ -182,7 +190,10 @@ export class ImpactHeatmap extends Widget {
             ranges.forEach(range => {
                 const indicator = range[0];
                 const r = this.result.get(indicator.index, sector.index);
-                const alpha = 0.1 + 0.9 * getShare(r, range);
+                let alpha = 0.1 + 0.9 * getShare(r, range);
+                if (this.sortIndicator && this.sortIndicator !== indicator) {
+                    alpha *= 0.25;
+                }
                 tr.append("td")
                     .attr("title", `${r.toExponential(2)} ${indicator.unit}`)
                     .style("background-color", colors.toCSS(
@@ -224,6 +235,15 @@ function selectSectors(
             .map(s => [s, strings.search(s.name, searchTerm)] as Score)
             .filter(score => score[1] >= 0)
             .sort((score1, score2) => score1[1] - score2[1]);
+
+        if (sortIndicator) {
+            scores = scores
+                .map(score => {
+                    const s = score[0];
+                    return [s, result.get(sortIndicator.index, s.index)] as Score;
+                })
+                .sort((score1, score2) => score2[1] - score1[1]);
+        }
 
     } else if (sortIndicator) {
         scores = sectors
