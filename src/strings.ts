@@ -33,3 +33,42 @@ export function cut(s: string, length: number): string {
     }
     return s.substring(0, length - 3) + "...";
 }
+
+/**
+ * Removes the given prefix from the given string if and only if the string
+ * starts with that prefix. Otherwise it returns the unchanged string.
+ */
+export function trimPrefix(s: string, prefix: string): string {
+    if (!s) {
+        return "";
+    }
+    if (!prefix) {
+        return s;
+    }
+    if (!s.startsWith(prefix)) {
+        return s;
+    }
+    return s.substring(0, prefix.length);
+}
+
+/**
+ * Returns true if the given string equals any of the given other strings. It
+ * is case insensitive and ignores leading and trailing whitespaces.
+ */
+export function eq(s: string, ...others: string[]): boolean {
+    if (!others) {
+        return false;
+    }
+    if (s === "") {
+        const i = others.findIndex(other => other === "");
+        return i >= 0;
+    }
+    if (!s) {
+        return false;
+    }
+    const first = s.trim().toLowerCase();
+    const idx = others.findIndex(other => !other
+        ? false
+        : other.trim().toLowerCase() === first);
+    return idx >= 0;
+}

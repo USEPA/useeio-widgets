@@ -1,4 +1,5 @@
 import { Config, ConfigTransmitter, Widget } from "./commons";
+import * as strings from "./strings";
 
 export function create() {
     return new HashConfigTransmitter();
@@ -47,11 +48,7 @@ export class HashConfigTransmitter implements ConfigTransmitter {
         if (!config.hash) {
             return config;
         }
-        let feed = config.hash;
-        if (feed.startsWith("#")) {
-            feed = feed.substring(1);
-        }
-        const parts = feed.split("&");
+        const parts = strings.trimPrefix(config.hash, "#").split("&");
         for (const part of parts) {
             const keyVal = part.split("=");
             if (keyVal.length < 2) {
@@ -61,12 +58,33 @@ export class HashConfigTransmitter implements ConfigTransmitter {
             const val = keyVal[1];
 
             switch (key) {
+
                 case "sectors":
                     config.sectors = val.split(",");
                     break;
+
                 case "indicators":
                     config.indicators = val.split(",");
                     break;
+
+                case "type":
+                case "analysis":
+                    if (strings.eq(val, "consumption")) {
+                        config.analysis = "consumption";
+                    } else if (strings.eq(val, "production")) {
+                        config.analysis = "production";
+                    }
+                    break;
+
+                case "perspective":
+                    if (strings.eq(val, "direct", "supply", "supply chain")) {
+                        config.perspective = "direct";
+                    } else if (strings.eq(val, "upstream", "consumption",
+                        "point of consumption")) {
+                        config.perspective = "upstream";
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -75,13 +93,19 @@ export class HashConfigTransmitter implements ConfigTransmitter {
     }
 
     private updateHash() {
-        let hash = "#";
+        const parts = new Array<string>();
         if (this.config.sectors && this.config.sectors.length > 0) {
-            hash += "sectors=" + this.config.sectors.join(",");
+            parts.push("sectors=" + this.config.sectors.join(","));
         }
         if (this.config.indicators && this.config.indicators.length > 0) {
-            hash += "indicators=" + this.config.indicators.join(",");
+            parts.push("indicators=" + this.config.indicators.join(","));
         }
-        window.location.hash = hash;
+        if (this.config.analysis) {
+            parts.push(`type=${this.config.analysis}`);
+        }
+        if (this.config.perspective) {
+            parts.push(`perspective=${this.config.perspective}`);
+        }
+        window.location.hash = "#" + parts.join("&");
     }
 }

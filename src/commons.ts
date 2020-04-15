@@ -26,7 +26,32 @@ export interface Config {
      */
     indicators?: string[];
 
+    /**
+     * The result perspective ("direct" or "upstream").
+     */
+    perspective?: ResultPerspective;
+
+    /**
+     * The type of the final demand ("consumption" or "production").
+     */
+    analysis?: DemandType;
 }
+
+/**
+ * Describes the `perspective` of a result. This perspective can be "direct"
+ * or "upstream". In the SMM tools the "direct" perspective is also called the
+ * "supply chain" perspective and the "upstream" perspective is also called
+ * the "point of consumption" perspective.
+ */
+type ResultPerspective = "direct" | "upstream";
+
+/**
+ * Describes the type of a demand vector. This is equivalent to the analysis
+ * type in the SMM tools. A demand vector of the type "consumption" includes the
+ * final demand of households, government, etc. wheras a demand vector of the
+ * type "production" focuses on the production of goods and services.
+ */
+type DemandType = "consumption" | "production";
 
 export abstract class Widget {
 
@@ -65,7 +90,7 @@ export abstract class Widget {
         }
     }
 
-    protected async handleUpdate(config: Config){
+    protected async handleUpdate(config: Config) {
     }
 }
 
