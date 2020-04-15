@@ -98,4 +98,5 @@ export interface ConfigTransmitter {
 
     join(widget: Widget): void;
 
+    update(config: Config): void;
 }

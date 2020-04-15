@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Sector list with linked impact chart</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="width: 50%; margin: auto;">
+        <p>
+            This is a simple example that shows how the filter widget could be
+            used with the <i>HashConfigTransmitter</i>. The result perspective
+            can be configured via the <i>perspective</i> parameter. It
+            understands the following values (the values are case insensitive):
+        </p>
+        <ul>
+            <li><a href="#perspective=direct">direct</a> = Supply chain,</li>
+            <li><a href="#perspective=supply">supply</a> = Supply chain,</li>
+            <li><a href="#perspective=supply%20chain">supply chain</a> = Supply chain,</li>
+            <li><a href="#perspective=upstream">upstream</a> = Point of consumption</li>
+            <li><a href="#perspective=point%20of%20consumption">point of consumption</a> = Point of consumption</li>
+        </ul>
+
+        <p>
+            The analysis type can be configured with the <i>type</i> or
+            <i>analysis</i> parameter. It understands the following values:
+        </p>
+        <ul>
+            <li><a href="#type=consumption">consumption</a> = Consumption,</li>
+            <li><a href="#analysis=production">production</a> = Production,</li>
+        </ul>
+        <div id="filter-widget" style="margin-top: 25px;">
+        </div>
+    </div>
+</body>
+<script src="lib/d3.min.js"></script>
+<script src="lib/HashConfigTransmitter.js"></script>
+<script src="lib/FilterWidget.js"></script>
+<script>
+
+    var filter = useeio.FilterWidget.on({
+        selector: '#filter-widget',
+    });
+    var config = useeio.HashConfigTransmitter.create();
+    config.join(filter);
+
+</script>
+
+</html>

@@ -42,13 +42,22 @@ export class HashConfigTransmitter implements ConfigTransmitter {
         });
     }
 
+    update(config: Config) {
+        this.config = {
+            ...this.config,
+            ...config,
+        };
+        this.updateHash();
+    }
+
     private parseConfig(): Config {
         const config: Config = {};
         config.hash = window.location.hash;
         if (!config.hash) {
             return config;
         }
-        const parts = strings.trimPrefix(config.hash, "#").split("&");
+        const parts = strings.trimPrefix(decodeURIComponent(config.hash), "#")
+            .split("&");
         for (const part of parts) {
             const keyVal = part.split("=");
             if (keyVal.length < 2) {
@@ -108,4 +117,5 @@ export class HashConfigTransmitter implements ConfigTransmitter {
         }
         window.location.hash = "#" + parts.join("&");
     }
+
 }

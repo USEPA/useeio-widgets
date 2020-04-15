@@ -48,7 +48,7 @@ export function trimPrefix(s: string, prefix: string): string {
     if (!s.startsWith(prefix)) {
         return s;
     }
-    return s.substring(0, prefix.length);
+    return s.substring(prefix.length);
 }
 
 /**
