@@ -80,7 +80,6 @@ export class ImpactHeatmap extends Widget {
     }
 
     private render() {
-        const self = this;
         this.root.selectAll("*")
             .remove();
 
@@ -119,6 +118,7 @@ export class ImpactHeatmap extends Widget {
             .attr("colspan", g => g[1]);
 
         // the search box
+        const self = this;
         const secondHeader = thead.append("tr");
         secondHeader
             .append("th")
@@ -128,7 +128,7 @@ export class ImpactHeatmap extends Widget {
             .style("width", "100%")
             .on("input", function () {
                 self.searchTerm = this.value;
-                self.render();
+                self.renderRows(indicators);
             });
 
         // the indicator row
@@ -144,7 +144,13 @@ export class ImpactHeatmap extends Widget {
             .attr("title", (i) => i.name)
             .text(indicator => indicator.code);
 
-        // generate the rows
+        table.append("tbody")
+            .classed("impact-heatmap-body", true);
+        this.renderRows(indicators);
+    }
+
+
+    private renderRows(indicators: Indicator[]) {
         const sectors = selectSectors(
             this.sectors,
             indicators,
@@ -152,10 +158,13 @@ export class ImpactHeatmap extends Widget {
             this.sectorCount,
             this.searchTerm,
             null);
+
         const ranges = getResultRanges(
             indicators, sectors, this.result);
 
-        const tbody = table.append("tbody");
+        const tbody = d3.select("tbody.impact-heatmap-body");
+        tbody.selectAll("*").remove();
+
         for (const sector of sectors) {
             const tr = tbody.append("tr");
 
@@ -166,7 +175,8 @@ export class ImpactHeatmap extends Widget {
                 .style("white-space", "nowrap")
                 .append("a")
                 .attr("href", "#")
-                .text(sector.name);
+                .attr("title", `${sector.name} - ${sector.code}\n\n${sector.description}`)
+                .text(strings.cut(sector.name, 40));
 
             // the result cells
             ranges.forEach(range => {
@@ -182,6 +192,7 @@ export class ImpactHeatmap extends Widget {
 
         }
     }
+
 }
 
 /**

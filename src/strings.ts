@@ -20,3 +20,16 @@ export function search(s: string, term: string): number {
     }
     return s.toLowerCase().indexOf(term.toLowerCase());
 }
+
+export function cut(s: string, length: number): string {
+    if (!s) {
+        return "";
+    }
+    if (s.length <= length) {
+        return s;
+    }
+    if (length <= 3) {
+        return s.substring(0, 3);
+    }
+    return s.substring(0, length - 3) + "...";
+}
