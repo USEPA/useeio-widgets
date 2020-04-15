@@ -1,10 +1,12 @@
 import * as d3 from "d3";
+import * as colors from "./colors";
+import * as strings from "./strings";
+
 import { Widget } from "./commons";
 import {
     Sector, Indicator, Matrix, WebApi,
     IndicatorGroup, WebApiConfig
 } from "./webapi";
-import * as colors from "./colors";
 
 interface HeatmapConfig {
     webapi: WebApiConfig;
@@ -25,8 +27,6 @@ export class ImpactHeatmap extends Widget {
     private sectors: Sector[] = [];
     private result: null | Matrix = null;
 
-    private selectedIndicators: Indicator[] = [];
-    private selectedSectors: Sector[] = [];
     private sectorCount = 10;
     private searchTerm: null | string = null;
 
@@ -63,53 +63,27 @@ export class ImpactHeatmap extends Widget {
         this.indicators = await this.webapi.get("/indicators");
         this.result = new Matrix(await this.webapi.get("/matrix/U"));
 
-        this.selectedIndicators = this.indicators.filter(indicator => {
-            return this.defaultIndicators.indexOf(indicator.code) >= 0;
-        });
-        this.selectedSectors = this.rankSectors();
-
         this.render();
         this.ready();
     }
 
-    private rankSectors(): Sector[] {
-        if (!this.sectors) {
-            return [];
-        }
-        if (!this.result || !this.selectedIndicators) {
-            const r = [...this.sectors];
-            r.sort((s1, s2) => {
-                if (!s1.name) {
-                    return -1;
-                }
-                if (!s2.name) {
-                    return 1;
-                }
-                return s1.name.localeCompare(s2.name);
-            });
-            return r.slice(0, this.sectorCount);
-        }
-        const ranked: [Sector, number][] = this.sectors.slice().map(sector => {
-            let val = 0;
-            for (const indicator of this.selectedIndicators) {
-                val += Math.pow(this.result.get(
-                    indicator.index, sector.index), 2);
-            }
-            return [sector, Math.sqrt(val)];
-        });
-        return ranked
-            .sort((r1, r2) => r2[1] - r1[1])
-            .map(r => r[0])
-            .slice(0, this.sectorCount);
-    }
-
     private render() {
+        const self = this;
         this.root.selectAll("*")
             .remove();
 
-        if (!this.selectedIndicators || this.selectedIndicators.length === 0
-            || !this.selectedSectors || this.selectedSectors.length === 0
-            || !this.result) {
+        const indicators = this.indicators.filter(indicator => {
+            return this.defaultIndicators.indexOf(indicator.code) >= 0;
+        });
+        const sectors = rank(
+            this.sectors,
+            indicators,
+            this.result,
+            this.sectorCount,
+            this.searchTerm,
+            null);
+
+        if (!indicators || indicators.length === 0 || !this.result) {
             this.root.append("p")
                 .text("no data")
                 .style("text-align", "center");
@@ -135,7 +109,7 @@ export class ImpactHeatmap extends Widget {
             [IndicatorGroup.ECONOMIC_SOCIAL, 0],
         ];
         let total = 0;
-        for (const indicator of this.selectedIndicators) {
+        for (const indicator of indicators) {
             const idx = groups.findIndex(g => indicator.group === g[0]);
             if (idx < 0) {
                 continue;
@@ -164,10 +138,15 @@ export class ImpactHeatmap extends Widget {
             .append("input")
             .attr("type", "search")
             .attr("placeholder", "Search")
-            .style("width", "100%");
+            .style("width", "100%")
+            .on("input", function() {
+                console.log(this.value);
+                self.searchTerm = this.value;
+                self.render();
+            });
 
         // the indicator row
-        this.selectedIndicators.sort((i1, i2) => {
+        indicators.sort((i1, i2) => {
             if (i1.group === i2.group) {
                 return i1.code.localeCompare(i2.code);
             }
@@ -177,7 +156,7 @@ export class ImpactHeatmap extends Widget {
         });
         secondHeader
             .selectAll("th.indicator")
-            .data(this.selectedIndicators)
+            .data(indicators)
             .enter()
             .append("th")
             .style("border-left", "lightgray solid 1px")
@@ -189,10 +168,10 @@ export class ImpactHeatmap extends Widget {
         // generate the rows
         const maxResults: number[] = [];
         const minResults: number[] = [];
-        for (const indicator of this.selectedIndicators) {
+        for (const indicator of indicators) {
             let max;
             let min;
-            for (const sector of this.selectedSectors) {
+            for (const sector of sectors) {
                 const r = this.result.get(indicator.index, sector.index);
                 if (max === undefined) {
                     max = r;
@@ -207,7 +186,7 @@ export class ImpactHeatmap extends Widget {
         }
 
         const tbody = table.append("tbody");
-        for (const sector of this.selectedSectors) {
+        for (const sector of sectors) {
             const tr = tbody.append("tr");
 
             // the sector name
@@ -220,7 +199,7 @@ export class ImpactHeatmap extends Widget {
                 .text(sector.name);
 
             // the result cells
-            this.selectedIndicators.forEach((indicator, i) => {
+            indicators.forEach((indicator, i) => {
                 const max = maxResults[i];
                 const min = minResults[i];
                 const r = this.result.get(indicator.index, sector.index);
@@ -237,4 +216,55 @@ export class ImpactHeatmap extends Widget {
 
         }
     }
+}
+
+/**
+ * Calculates the selection and order of the sectors that are displayed in
+ * the rows of the heatmap.
+ */
+function rank(
+    sectors: Sector[],
+    indicators: Indicator[],
+    result: Matrix,
+    count: number,
+    searchTerm: string | null,
+    sortIndicator: Indicator | null): Sector[] {
+
+    if (!sectors) {
+        return [];
+    }
+    if (!indicators || indicators.length === 0 || !result) {
+        return sectors
+            .sort((s1, s2) => strings.compare(s1.name, s2.name))
+            .slice(0, count);
+    }
+
+    type Score = [Sector, number];
+    let scores: Score[];
+
+    if (searchTerm) {
+        scores = sectors
+            .map(s => [s, strings.search(s.name, searchTerm)] as Score)
+            .filter(score => score[1] >= 0)
+            .sort((score1, score2) => score1[1] - score2[1]);
+
+    } else if (sortIndicator) {
+        scores = sectors
+            .map(s => [s, result.get(sortIndicator.index, s.index)] as Score)
+            .sort((score1, score2) => score2[1] - score1[1]);
+
+    } else {
+        scores = sectors
+            .map(s => {
+                const total = indicators
+                    .map(i => result.get(i.index, s.index))
+                    .reduce((sum, x) => sum + Math.pow(x, 2), 0);
+                return [s, Math.sqrt(total)] as Score;
+            })
+            .sort((score1, score2) => score2[1] - score1[1]);
+    }
+
+    return scores
+        .map(score => score[0])
+        .slice(0, count);
 }
