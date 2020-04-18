@@ -30,10 +30,10 @@ for (const arg of process.argv) {
 
 if (!endpoint) {
     endpoint = 'http://localhost/api';
-    console.log("No endpoint set; use default: " + endpoint);
+    console.log('No endpoint set; use default: ' + endpoint);
 }
 if (!apikey) {
-    console.log("No API key set; use none");
+    console.log('No API key set; use none');
 }
 
 const http = endpoint.startsWith('https')
@@ -43,6 +43,7 @@ const http = endpoint.startsWith('https')
 // the target folder where we store the downloaded data
 const targetDir = __dirname + '/../build/api';
 
+/** Fetches the resource with the given path from the API. */
 async function fetch(path) {
     return new Promise((resolve, reject) => {
 
@@ -75,9 +76,61 @@ async function fetch(path) {
             }).on('error', reject);
 
         })
-            .on("abort", reject)
-            .on("error", reject);
+            .on('abort', reject)
+            .on('error', reject);
     });
+}
+
+/** Downloads the data of a model with the given ID into the data folder. */
+async function download(modelID) {
+    if (!modelID) {
+        return;
+    }
+
+    // first create the model folders (blocking)
+    const dir = targetDir + '/' + modelID;
+    [dir, dir + '/matrix', dir + '/demands'].forEach(folder => {
+        if (!fs.existsSync(folder)) {
+            fs.mkdirSync(folder);
+        }
+    });
+
+    // download index and matrix files (non-blocking)
+    const paths = [
+        '/sectors',
+        '/flows',
+        '/indicators',
+    ];
+    ['A', 'B', 'C', 'D', 'L', 'U'].forEach(matrix => {
+        paths.push('/matrix/' + matrix);
+    });
+    for (const path of paths) {
+        fetch(`/${modelID}${path}`)
+            .then(data => {
+                const file = `${dir}${path}.json`;
+                console.log('write file', file);
+                fs.writeFile(file, data, () => { });
+            })
+            .catch(error => {
+                console.log('failed to download', path, ':', error);
+            });
+    }
+
+    // download the demand vectors
+    const demandsText = await fetch(`/${modelID}/demands`);
+    fs.writeFile(`${dir}/demands.json`, demandsText, () => { });
+    const demands = JSON.parse(demandsText);
+    for (const demand of demands) {
+        fetch(`/${modelID}/demands/${demand.id}`)
+            .then(data => {
+                const file = `${dir}/demands/${demand.id}.json`;
+                console.log('write file', file);
+                fs.writeFile(file, data, () => { });
+            })
+            .catch(error => {
+                console.log('failed to download demand', demand.id, ':', error);
+            });
+    }
 }
 
 (async function main() {
@@ -85,42 +138,14 @@ async function fetch(path) {
         if (!fs.existsSync(targetDir)) {
             fs.mkdirSync(targetDir);
         }
-
         const modelText = await fetch('/models');
         fs.writeFile(targetDir + '/models.json', modelText, () => { });
         const models = JSON.parse(modelText);
-
         for (const model of models) {
-            const dir = targetDir + '/' + model.id;
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir);
-            }
-            if (!fs.existsSync(dir + '/matrix')) {
-                fs.mkdirSync(dir + '/matrix');
-            }
-
-            const paths = [
-                '/sectors',
-                '/flows',
-                '/indicators',
-                '/demands',
-                '/matrix/A',
-                '/matrix/B',
-                '/matrix/C',
-                '/matrix/D',
-                '/matrix/L',
-                '/matrix/U'
-            ];
-            for (const p of paths) {
-                const path = `/${model.id}${p}`
-                const data = await fetch(path);
-                fs.writeFile(`${dir}${p}.json`, data, () => { });
-            }
+            download(model.id);
         }
-
-
     } catch (e) {
-        console.log("Download failed:")
+        console.log('Download failed:')
         console.log(e);
     }
 })();
