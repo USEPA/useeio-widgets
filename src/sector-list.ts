@@ -96,16 +96,8 @@ export class SectorList extends Widget {
             .style("border", (s) => {
                 const idx = this.selection.indexOf(s);
                 if (idx >= 0) {
-                    const color = colors.toCSS(colors.getChartColor(idx));
                     return `var(--chart-color-${idx + 1}) solid 1px`;
                 }
-            })
-            .style("background-color", (s) => {
-                const idx = this.selection.indexOf(s);
-                if (idx >= 0) {
-                  //  return colors.toCSS(colors.getChartColor(idx), 0.1);
-                }
-                return null;
             });
 
         divs.append("input")

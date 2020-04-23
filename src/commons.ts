@@ -43,7 +43,7 @@ export interface Config {
  * "supply chain" perspective and the "upstream" perspective is also called
  * the "point of consumption" perspective.
  */
-type ResultPerspective = "direct" | "upstream";
+export type ResultPerspective = "direct" | "upstream";
 
 /**
  * Describes the type of a demand vector. This is equivalent to the analysis
@@ -51,7 +51,7 @@ type ResultPerspective = "direct" | "upstream";
  * final demand of households, government, etc. wheras a demand vector of the
  * type "production" focuses on the production of goods and services.
  */
-type DemandType = "consumption" | "production";
+export type DemandType = "consumption" | "production";
 
 export abstract class Widget {
 

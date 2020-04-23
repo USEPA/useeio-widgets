@@ -34,6 +34,10 @@ input[type="text"], input[type="search"], select {
     padding: 0 5px;
 }
 
+label {
+    line-height: 25px;
+}
+
 .text-center {
     text-align: center;
 }
@@ -88,6 +92,29 @@ input[type="text"], input[type="search"], select {
     border-radius: 5px;
     margin: 2px;
     word-wrap: unset;
+}
+
+.useeio-settings-widget {
+    border: lightgray solid 1px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 750px;
+    margin: auto;
+    padding: 15px;
+}
+
+.useeio-settings-widget .settings-row {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.useeio-settings-widget .settings-row label {
+    grid-column: 1 / span 4;
+}
+
+.useeio-settings-widget .settings-row select {
+    grid-column: 5 / span 8;
 }
 
 /* A primitive grid system; does not work in IE or Edge; just for testing */
