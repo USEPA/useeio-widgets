@@ -16,12 +16,11 @@
 </body>
 
 <script src="lib/d3.min.js"></script>
-<script src="lib/HashConfigTransmitter.js"></script>
-<script src="lib/SectorList.js"></script>
+<script src="lib/useeio_widgets.js"></script>
 
 <script>
-    var config = useeio.HashConfigTransmitter.create();
-    var sectorList = useeio.SectorList.on({
+    var config = useeio.hashConfig();
+    var sectorList = useeio.sectorList({
         webapi: {
             endpoint: './api',
             model: 'GAUSEEIO',

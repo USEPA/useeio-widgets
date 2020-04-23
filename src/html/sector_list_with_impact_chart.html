@@ -33,10 +33,7 @@
     </div>
 </body>
 <script src="lib/d3.min.js"></script>
-<script src="lib/HashConfigTransmitter.js"></script>
-<script src="lib/SectorList.js"></script>
-<script src="lib/ImpactChart.js"></script>
-<script src="lib/FilterWidget.js"></script>
+<script src="lib/useeio_widgets.js"></script>
 <script>
 
     var webapi = {
@@ -44,15 +41,15 @@
         model: 'GAUSEEIO',
         asJsonFiles: true,
     };
-    var sectorList = useeio.SectorList.on({
+    var sectorList = useeio.sectorList({
         webapi: webapi,
         selector: '.useeio-sector-list',
     });
-    var impactChart = useeio.ImpactChart.on({
+    var impactChart = useeio.impactChart({
         webapi: webapi,
         selector: '.impact-chart',
     });
-    var config = useeio.HashConfigTransmitter.create();
+    var config = useeio.hashConfig();
     config.join(sectorList);
     config.join(impactChart);
 
