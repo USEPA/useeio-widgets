@@ -38,15 +38,59 @@ input[type="text"], input[type="search"], select {
     text-align: center;
 }
 
-.sector-list {
+/* USEEIO widget styles */
+
+:root {
+    --chart-color-1: #3366cc;
+    --chart-color-2: #dc3912;
+    --chart-color-3: #ff9900;
+    --chart-color-4: #109618;
+    --chart-color-5: #990099;
+    --chart-color-6: #0099c6;
+    --chart-color-7: #dd4477;
+    --chart-color-8: #66aa00;
+    --chart-color-9: #b82e2e;
+    --chart-color-10: #316395;
+    --chart-color-11: #994499;
+    --chart-color-12: #22aa99;
+    --chart-color-13: #aaaa11;
+    --chart-color-14: #6633cc;
+    --chart-color-15: #e67300;
+    --chart-color-16: #8b0707;
+    --chart-color-17: #651067;
+    --chart-color-18: #329262;
+    --chart-color-19: #5574a6;
+    --chart-color-20: #3b3eac;
+    --chart-color-21: #b77322;
+    --chart-color-22: #16d620;
+    --chart-color-23: #b91383;
+    --chart-color-24: #f4359e;
+    --chart-color-25: #9c5935;
+    --chart-color-26: #a9c413;
+    --chart-color-27: #2a778d;
+    --chart-color-28: #668d1c;
+    --chart-color-29: #bea413;
+}
+
+.useeio-sector-list {
     height: 500px;
     width: 100%;
     max-width: 750px;
     margin: auto;
     overflow-y: scroll;
+    overflow-x: scroll;
     border: lightgray solid 1px;
     border-radius: 5px;
 }
+
+.useeio-sector-list .sector-item {
+    height: 25px;
+    border-radius: 5px;
+    margin: 2px;
+    word-wrap: unset;
+}
+
+/* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {
     display: grid;

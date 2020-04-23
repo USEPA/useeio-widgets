@@ -10,7 +10,7 @@
 <body>
     <div class="grid-12">
         <h1 class="col-2 span-10 text-center">Sectors</h1>
-        <div class="col-2 span-10 sector-list">
+        <div class="col-2 span-10 useeio-sector-list">
         </div>
     </div>
 </body>
@@ -24,10 +24,10 @@
     var sectorList = useeio.SectorList.on({
         webapi: {
             endpoint: './api',
-            model: 'USEEIOv1.2',
+            model: 'GAUSEEIO',
             asJsonFiles: true,
         },
-        selector: '.sector-list',
+        selector: '.useeio-sector-list',
     });
     config.join(sectorList);
 </script>

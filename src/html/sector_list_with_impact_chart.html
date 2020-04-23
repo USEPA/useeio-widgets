@@ -19,13 +19,13 @@
         </div>
 
         <div style="float: left; width: 40%;">
-            <h4 style="text-align: center;">Sectors</h4>
-            <div class="sector-list">
+            <h4 class="text-center">Sectors</h4>
+            <div class="useeio-sector-list">
             </div>
         </div>
 
         <div style="float: left; width: 60%">
-            <h4 style="text-align: center;">Indicator results</h4>
+            <h4 class="text-center">Indicator results</h4>
             <div class="impact-chart">
             </div>
         </div>
@@ -46,7 +46,7 @@
     };
     var sectorList = useeio.SectorList.on({
         webapi: webapi,
-        selector: '.sector-list',
+        selector: '.useeio-sector-list',
     });
     var impactChart = useeio.ImpactChart.on({
         webapi: webapi,

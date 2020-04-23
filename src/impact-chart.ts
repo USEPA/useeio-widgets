@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { Config, Widget } from "./commons";
-import {Indicator, Sector, Matrix, WebApi, WebApiConfig} from "./webapi";
+import { Indicator, Sector, Matrix, WebApi, WebApiConfig } from "./webapi";
 import * as colors from "./colors";
 
 interface ChartConfig {
@@ -164,14 +164,13 @@ export class ImpactChart extends Widget {
                     .attr("y", y)
                     .attr("width", result.get(i, j) * (cellWidth - 25))
                     .attr("height", barHeight)
-                    .style("fill", colors.toCSS(colors.getChartColor(j), 0.6))
+                    .style("fill", `var(--chart-color-${j + 1})`)
+                    .style("opacity", "0.6")
                     .on("mouseover", function () {
-                        d3.select(this).style(
-                            "fill", colors.toCSS(colors.getChartColor(j)));
+                        d3.select(this).style("opacity", "1.0");
                     })
                     .on("mouseout", function () {
-                        d3.select(this).style(
-                            "fill", colors.toCSS(colors.getChartColor(j), 0.6));
+                        d3.select(this).style("opacity", "0.6");
                     })
                     .append("title")
                     .text(sectors[j].name);

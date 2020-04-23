@@ -36,7 +36,20 @@ export class SectorList extends Widget {
     }
 
     async init() {
-        this.sectors = await this.webapi.get("/sectors");
+
+        // in a multi-regional model we can have the same sector
+        // but with different location codes multiple times
+        const handled: { [index: string]: boolean } = {};
+        this.sectors = (await this.webapi.get("/sectors") as Sector[])
+            .filter(sector => {
+                if (!handled[sector.code]) {
+                    handled[sector.code] = true;
+                    return true;
+                }
+                return false;
+            });
+
+
         this.displayed = this.sectors;
 
         const top = d3.select(this.config.selector)
@@ -47,12 +60,10 @@ export class SectorList extends Widget {
             .append("input")
             .attr("type", "search")
             .attr("placeholder", "Search")
-            .style("width", "100%")
-            .style("height", "2em")
             .on("input", function () { self.filter(this.value); });
 
         this.root = top.append("div");
-        this.render();
+        this.renderSectorItems();
     }
 
     private filter(f: string) {
@@ -73,10 +84,10 @@ export class SectorList extends Widget {
                     .indexOf(this.filterTerm) >= 0;
             });
         }
-        this.render();
+        this.renderSectorItems();
     }
 
-    private render() {
+    private renderSectorItems() {
         if (!this.root) {
             return;
         }
@@ -90,24 +101,20 @@ export class SectorList extends Widget {
             .data(this.displayed)
             .enter()
             .append("div")
-            .style("margin", "1px")
-            .style("padding", "1px")
+            .classed("sector-item", true)
             .style("border", (s) => {
                 const idx = this.selection.indexOf(s);
-                if (idx < 0) {
-                    return "none";
-                } else {
+                if (idx >= 0) {
                     const color = colors.toCSS(colors.getChartColor(idx));
-                    return `${color} solid 1px`;
+                    return `var(--chart-color-${idx + 1}) solid 1px`;
                 }
             })
             .style("background-color", (s) => {
                 const idx = this.selection.indexOf(s);
-                if (idx < 0) {
-                    return "white";
-                } else {
-                    return colors.toCSS(colors.getChartColor(idx), 0.1);
+                if (idx >= 0) {
+                  //  return colors.toCSS(colors.getChartColor(idx), 0.1);
                 }
+                return null;
             });
 
         divs.append("input")
@@ -147,7 +154,7 @@ export class SectorList extends Widget {
             (s1, s2) => s1.name && s2.name
                 ? s1.name.localeCompare(s2.name)
                 : 0);
-        this.render();
+        this.renderSectorItems();
         this.fireChange({
             sectors: this.selection.map((s) => s.code),
         });
@@ -192,13 +199,13 @@ export class SectorList extends Widget {
     protected async handleUpdate(config: Config) {
         if (!config || !config.sectors) {
             this.selection = [];
-            this.render();
+            this.renderSectorItems();
             return;
         }
         this.selection = this.sectors.filter(s => {
             return config.sectors.indexOf(s.code) >= 0;
         });
-        this.render();
+        this.renderSectorItems();
     }
 
 }
