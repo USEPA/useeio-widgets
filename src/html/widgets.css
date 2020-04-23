@@ -8,10 +8,15 @@ html {
     box-sizing: border-box;
 }
 
+h1 {
+    font-size: 1.7em;
+}
+
 pre, code {
     font-family: Consolas, 'Courier New', Courier, monospace;
     background-color: rgb(248, 249, 250);
     color: rgb(232, 62, 140);
+    border-radius: 5px;
 }
 
 th {
@@ -107,6 +112,7 @@ label {
     display: grid;
     gap: 15px;
     grid-template-columns: repeat(12, 1fr);
+    margin: 15px;
 }
 
 .useeio-settings-widget .settings-row label {
