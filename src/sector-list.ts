@@ -4,24 +4,15 @@ import { BaseType } from "d3";
 import * as colors from "./colors";
 import { Config, Widget } from "./commons";
 
-
-interface ListConfig {
+export interface SectorListConfig {
     webapi: WebApiConfig;
     selector: string;
 }
 
-
-export function on(config: ListConfig): SectorList {
-    const s = new SectorList(config);
-    s.init();
-    return s;
-}
-
-
 export class SectorList extends Widget {
 
     private webapi: WebApi;
-    private config: ListConfig;
+    private config: SectorListConfig;
     private root: d3.Selection<BaseType, any, HTMLElement, any>;
 
     private filterTerm: null | string = null;
@@ -29,7 +20,7 @@ export class SectorList extends Widget {
     private displayed: Sector[] = [];
     private selection: Sector[] = [];
 
-    constructor(config: ListConfig) {
+    constructor(config: SectorListConfig) {
         super();
         this.config = config;
         this.webapi = new WebApi(config.webapi);

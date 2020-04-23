@@ -8,7 +8,6 @@ import {
     IndicatorGroup, WebApiConfig
 } from "./webapi";
 
-
 const DEFAULT_INDICATORS = [
     "ACID",
     "ETOX",
@@ -28,7 +27,6 @@ const DEFAULT_INDICATORS = [
     "PEST",
 ];
 
-
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
     IndicatorGroup.RESOURCE_USE,
@@ -37,17 +35,10 @@ const INDICATOR_GROUPS = [
     IndicatorGroup.ECONOMIC_SOCIAL,
 ];
 
-
-interface HeatmapConfig {
+export interface HeatmapConfig {
     webapi: WebApiConfig;
     selector: string;
     sectorCount: number;
-}
-
-export function on(config: HeatmapConfig): ImpactHeatmap {
-    const heatmap = new ImpactHeatmap();
-    heatmap.init(config);
-    return heatmap;
 }
 
 export class ImpactHeatmap extends Widget {

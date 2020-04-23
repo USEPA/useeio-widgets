@@ -36,14 +36,13 @@
     </div>
 </body>
 <script src="lib/d3.min.js"></script>
-<script src="lib/HashConfigTransmitter.js"></script>
-<script src="lib/FilterWidget.js"></script>
+<script src="lib/useeio_widgets.js"></script>
 <script>
 
-    var filter = useeio.FilterWidget.on({
+    var filter = useeio.filterWidget({
         selector: '#filter-widget',
     });
-    var config = useeio.HashConfigTransmitter.create();
+    var config = useeio.hashConfig();
     config.join(filter);
 
 </script>

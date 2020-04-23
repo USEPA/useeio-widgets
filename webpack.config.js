@@ -4,11 +4,13 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const config = {
     entry: {
-        'ImpactChart': './src/impact-chart.ts',
-        'FilterWidget': './src/filter-widget.ts',
-        'HashConfigTransmitter': './src/hash-config-transmitter.ts',
-        'SectorList': './src/sector-list.ts',
-        'ImpactHeatmap': './src/impact-heatmap.ts',
+        // we could generate a small JS lib for every widget
+        // 'ImpactChart': './src/impact-chart.ts',
+        // 'FilterWidget': './src/filter-widget.ts',
+        // 'HashConfigTransmitter': './src/hash-config-transmitter.ts',
+        // 'SectorList': './src/sector-list.ts',
+        // 'ImpactHeatmap': './src/impact-heatmap.ts',
+        'useeio_widgets': './src/useeio-widgets.ts',
     },
     module: {
         rules: [
@@ -26,7 +28,7 @@ const config = {
         filename: '[name].js',
         path: buildDir + '/lib',
         libraryTarget: 'var',
-        library: ['useeio', '[name]'],
+        library: ['useeio' /*, '[name]' */],
     },
 
     plugins: [

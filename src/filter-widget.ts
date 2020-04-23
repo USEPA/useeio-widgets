@@ -1,10 +1,6 @@
 import * as d3 from "d3";
 import { Widget, Config } from "./commons";
 
-export function on(conf: { selector: string }): FilterWidget {
-    return new FilterWidget(conf.selector);
-}
-
 export class FilterWidget extends Widget {
 
     private selector: string;

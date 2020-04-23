@@ -1,10 +1,6 @@
 import { Config, ConfigTransmitter, Widget } from "./commons";
 import * as strings from "./strings";
 
-export function create() {
-    return new HashConfigTransmitter();
-}
-
 export class HashConfigTransmitter implements ConfigTransmitter {
 
     private widgets = new Array<Widget>();
