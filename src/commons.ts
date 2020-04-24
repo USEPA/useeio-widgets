@@ -29,14 +29,25 @@ export interface Config {
     indicators?: string[];
 
     /**
-     * The result perspective ("direct" or "upstream").
+     * The result perspective.
      */
     perspective?: ResultPerspective;
 
     /**
-     * The type of the final demand ("consumption" or "production").
+     * The type of the demand vector.
      */
     analysis?: DemandType;
+
+    /**
+     * The year of the demand vector.
+     */
+    year?: number;
+
+    /**
+     * An optional location code to filter sectors 
+     * by location in multi-regional models.
+     */
+    location?: string;
 }
 
 export abstract class Widget {

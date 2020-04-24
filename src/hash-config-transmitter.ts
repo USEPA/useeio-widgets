@@ -1,6 +1,6 @@
 import { Config, ConfigTransmitter, Widget } from "./commons";
 import * as strings from "./strings";
-import { ResultPerspective, DemandType } from "./webapi";
+import { ResultPerspective } from "./webapi";
 
 export class HashConfigTransmitter implements ConfigTransmitter {
 
@@ -60,8 +60,11 @@ export class HashConfigTransmitter implements ConfigTransmitter {
             if (keyVal.length < 2) {
                 continue;
             }
-            const key = keyVal[0];
-            const val = keyVal[1];
+            const key = keyVal[0].trim().toLowerCase();
+            const val = keyVal[1].trim();
+            if (key.length === 0 || val.length === 0) {
+                continue;
+            }
 
             switch (key) {
 
@@ -88,6 +91,18 @@ export class HashConfigTransmitter implements ConfigTransmitter {
                         config.perspective = p;
                     }
                     break;
+
+                case "location":
+                    config.location = val;
+                    break;
+
+                case "year":
+                    try {
+                        config.year = parseInt(val);
+                    } catch (e) {
+                        delete config.year;
+                    }
+
                 default:
                     break;
             }
@@ -97,18 +112,23 @@ export class HashConfigTransmitter implements ConfigTransmitter {
 
     private updateHash() {
         const parts = new Array<string>();
-        if (this.config.sectors && this.config.sectors.length > 0) {
-            parts.push("sectors=" + this.config.sectors.join(","));
+        const conf = this.config;
+        if (conf.sectors && conf.sectors.length > 0) {
+            parts.push("sectors=" + conf.sectors.join(","));
         }
-        if (this.config.indicators && this.config.indicators.length > 0) {
-            parts.push("indicators=" + this.config.indicators.join(","));
+        if (conf.indicators && conf.indicators.length > 0) {
+            parts.push("indicators=" + conf.indicators.join(","));
         }
-        if (this.config.analysis) {
-            parts.push(`type=${this.config.analysis}`);
-        }
-        if (this.config.perspective) {
-            parts.push(`perspective=${this.config.perspective}`);
-        }
+        [
+            ["type", conf.analysis],
+            ["perspective", conf.perspective],
+            ["year", conf.year],
+            ["location", conf.location],
+        ].forEach(([key, val]) => {
+            if (val) {
+                parts.push(`${key}=${val}`);
+            }
+        })
         window.location.hash = "#" + parts.join("&");
     }
 }

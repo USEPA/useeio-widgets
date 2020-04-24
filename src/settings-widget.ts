@@ -88,10 +88,10 @@ export class SettingsWidget extends Widget {
 
     private perspectiveRow(config: Config, root: Elem) {
         const perspective: ResultPerspective = config.perspective
-        ? config.perspective
-        : "direct";
-        const row =addRow(root, "Perspective");
-        
+            ? config.perspective
+            : "direct";
+        const row = addRow(root, "Perspective");
+
         // combo box with event handler
         const self = this;
         const combo = row.append("select")
@@ -149,16 +149,20 @@ export class SettingsWidget extends Widget {
         const self = this;
         const combo = row.append("select")
             .attr("value", this.years[0])
-            .on("change", function() {
-                console.log(this.value);
+            .on("change", function () {
+                self.fireChange({
+                    year: parseInt(this.value),
+                })
             });
-        
+
         combo.selectAll("option")
             .data(this.years)
             .enter()
             .append("option")
             .attr("value", year => year)
-            .property("selected", year => year === this.years[0])
+            .property("selected", year => config.year
+                ? year === config.year
+                : year === this.years[0])
             .text(year => year);
     }
 
@@ -168,23 +172,28 @@ export class SettingsWidget extends Widget {
         }
         const row = addRow(root, "Location");
 
+        const self = this;
         const combo = row.append("select")
             .attr("value", this.locations[0])
-            .on("change", function() {
-                console.log(this.value);
+            .on("change", function () {
+                self.fireChange({
+                    location: this.value,
+                })
             });
-        
+
         combo.selectAll("option")
             .data(this.locations)
             .enter()
             .append("option")
             .attr("value", loc => loc)
-            .property("selected", loc => loc === this.locations[0])
+            .property("selected", loc => config.location
+                ? loc === config.location
+                : loc === this.locations[0])
             .text(loc => loc);
     }
 }
 
-function addRow(root: Elem, label: string) : Elem {
+function addRow(root: Elem, label: string): Elem {
     const row = root
         .append("div")
         .classed("settings-row", true);
