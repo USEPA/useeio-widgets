@@ -3,7 +3,7 @@ import { HashConfigTransmitter } from "./hash-config-transmitter";
 import { ImpactHeatmap, HeatmapConfig } from "./impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./impact-chart";
 import { SectorList, SectorListConfig } from "./sector-list";
-import { SettingsWidget } from "./settings-widget";
+import { SettingsWidget, SettingsWidgetConfig } from "./settings-widget";
 
 export function filterWidget(conf: { selector: string }): FilterWidget {
     return new FilterWidget(conf.selector);
@@ -31,6 +31,8 @@ export function sectorList(config: SectorListConfig): SectorList {
     return s;
 }
 
-export function settingsWidget(conf: { selector: string }): SettingsWidget {
-    return new SettingsWidget(conf.selector);
+export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
+    const widget = new SettingsWidget(config);
+    widget.init();
+    return widget;
 }

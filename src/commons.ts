@@ -76,7 +76,7 @@ export abstract class Widget {
         }
     }
 
-    protected async handleUpdate(config: Config) {
+    protected async handleUpdate(_: Config) {
     }
 }
 
