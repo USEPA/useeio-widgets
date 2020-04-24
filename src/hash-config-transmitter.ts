@@ -1,5 +1,6 @@
 import { Config, ConfigTransmitter, Widget } from "./commons";
 import * as strings from "./strings";
+import { ResultPerspective, DemandType } from "./webapi";
 
 export class HashConfigTransmitter implements ConfigTransmitter {
 
@@ -75,21 +76,18 @@ export class HashConfigTransmitter implements ConfigTransmitter {
                 case "type":
                 case "analysis":
                     if (strings.eq(val, "consumption")) {
-                        config.analysis = "consumption";
+                        config.analysis = "Consumption";
                     } else if (strings.eq(val, "production")) {
-                        config.analysis = "production";
+                        config.analysis = "Production";
                     }
                     break;
 
                 case "perspective":
-                    if (strings.eq(val, "direct", "supply", "supply chain")) {
-                        config.perspective = "direct";
-                    } else if (strings.eq(val, "upstream", "consumption",
-                        "point of consumption")) {
-                        config.perspective = "upstream";
+                    const p = getPerspective(val);
+                    if (p) {
+                        config.perspective = p;
                     }
                     break;
-
                 default:
                     break;
             }
@@ -113,5 +111,31 @@ export class HashConfigTransmitter implements ConfigTransmitter {
         }
         window.location.hash = "#" + parts.join("&");
     }
+}
 
+/**
+ * Try to determine the result perspecitve from the value in the URL hash.
+ */
+function getPerspective(val: string): ResultPerspective | null {
+    if (!val) {
+        return null;
+    }
+    switch (val.trim().toLowerCase()) {
+        case "direct":
+        case "direct results":
+        case "supply":
+        case "supply chain":
+            return "direct";
+        case "final":
+        case "final results":
+        case "consumption":
+        case "final consumption":
+        case "point of consumption":
+            return "final";
+        case "intermediate":
+        case "intermediate results":
+            return "intermediate";
+        default:
+            return null;
+    }
 }

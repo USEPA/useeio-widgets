@@ -1,3 +1,5 @@
+import { DemandType, ResultPerspective } from "./webapi";
+
 /**
  * A common configuration object of our widgets. Often our widgets take
  * the same configuration options regarding the data they present (e.g.
@@ -36,22 +38,6 @@ export interface Config {
      */
     analysis?: DemandType;
 }
-
-/**
- * Describes the `perspective` of a result. This perspective can be "direct"
- * or "upstream". In the SMM tools the "direct" perspective is also called the
- * "supply chain" perspective and the "upstream" perspective is also called
- * the "point of consumption" perspective.
- */
-export type ResultPerspective = "direct" | "upstream";
-
-/**
- * Describes the type of a demand vector. This is equivalent to the analysis
- * type in the SMM tools. A demand vector of the type "consumption" includes the
- * final demand of households, government, etc. wheras a demand vector of the
- * type "production" focuses on the production of goods and services.
- */
-export type DemandType = "consumption" | "production";
 
 export abstract class Widget {
 

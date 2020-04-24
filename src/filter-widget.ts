@@ -18,6 +18,7 @@ export class FilterWidget extends Widget {
         const div = d3.select(this.selector)
             .append("div");
 
+        // result perspective
         div.append("b")
             .text("Perspective: ");
         const perspective = div.append("span");
@@ -25,28 +26,23 @@ export class FilterWidget extends Widget {
             case "direct":
                 perspective.text("Supply chain");
                 break;
-            case "upstream":
+            case "final":
                 perspective.text("Point of consumption");
                 break;
             default:
                 perspective.text("nothing selected");
         }
 
+        // analysis type
         div.append("br");
         div.append("b")
             .text("Analysis type: ");
         const analysis = div.append("span");
-        switch (config.analysis) {
-            case "consumption":
-                analysis.text("Consumption");
-                break;
-            case "production":
-                analysis.text("Production");
-                break;
-            default:
-                analysis.text("nothing selected");
+        if (config.analysis) {
+            analysis.text(config.analysis);
+        } else {
+            analysis.text("nothing selected");
         }
-
         this.ready();
     }
 }

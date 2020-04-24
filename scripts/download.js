@@ -32,6 +32,9 @@ if (!endpoint) {
     endpoint = 'http://localhost/api';
     console.log('No endpoint set; use default: ' + endpoint);
 }
+if (endpoint.endsWith('/')) {
+    endpoint = endpoint.substring(0, endpoint.length - 1);
+}
 if (!apikey) {
     console.log('No API key set; use none');
 }

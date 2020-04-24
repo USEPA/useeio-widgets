@@ -111,14 +111,44 @@ export interface Sector {
     description?: string;
 }
 
-export interface IDemandEntry {
+/**
+ * Describes the type of a demand vector. This is equivalent to the analysis
+ * type in the SMM tools. A demand vector of the type "Consumption" includes the
+ * final demand of households, government, etc. wheras a demand vector of the
+ * type "Production" focuses on the production of goods and services.
+ */
+export type DemandType = "Consumption" | "Production";
+
+/**
+ * DemandInfo contains the meta data of a standard demand vector. The request
+ * `<endpoint>/<model id>/demands` returns a list of `DemandInfo` objects.
+ */
+export interface DemandInfo {
+    id: string;
+    year: number;
+    location: string;
+    system: string;
+    type: "Consumption" | "Production";
+}
+
+/**
+ * DemandEntry describes an entry in a specific demand vector. The request
+ * `<endpoint>/<model id>/demands/<demand id>` returns the demand vector with
+ * the given ID as list of such entry objects.
+ */
+export interface DemandEntry {
     sector: string;
     amount: number;
 }
 
+export type ResultPerspective =
+    "direct"
+    | "intermediate"
+    | "final";
+
 export interface CalculationSetup {
-    perspective: string;
-    demand: IDemandEntry[];
+    perspective: ResultPerspective;
+    demand: DemandEntry[];
 }
 
 export interface Result {

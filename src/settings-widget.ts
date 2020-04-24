@@ -1,5 +1,6 @@
 import * as d3 from "d3";
-import { Widget, Config, ResultPerspective, DemandType } from "./commons";
+import { Widget, Config } from "./commons";
+import { ResultPerspective, DemandType } from "./webapi";
 
 export function on(conf: { selector: string }): SettingsWidget {
     return new SettingsWidget(conf.selector);
@@ -25,7 +26,7 @@ export class SettingsWidget extends Widget {
 
     private perspectiveRow(config: Config) {
         const self = this;
-        const perspective = config.perspective
+        const perspective: ResultPerspective = config.perspective
             ? config.perspective
             : "direct";
 
@@ -51,16 +52,16 @@ export class SettingsWidget extends Widget {
             .property("selected", perspective === "direct")
             .text("Suppy chain");
         combo.append("option")
-            .attr("value", "upstream")
-            .property("selected", perspective === "upstream")
+            .attr("value", "final")
+            .property("selected", perspective === "final")
             .text("Point of consumption");
     }
 
     private analysisTypeRow(config: Config) {
         const self = this;
-        const type = config.analysis
+        const type: DemandType = config.analysis
             ? config.analysis
-            : "consumption";
+            : "Consumption";
 
         const row = d3.select(this.selector)
             .append("div")
@@ -80,12 +81,12 @@ export class SettingsWidget extends Widget {
 
         // append options
         combo.append("option")
-            .attr("value", "consumption")
-            .property("selected", type === "consumption")
+            .attr("value", "Consumption")
+            .property("selected", type === "Consumption")
             .text("Consumption");
         combo.append("option")
-            .attr("value", "production")
-            .property("selected", type === "production")
+            .attr("value", "Production")
+            .property("selected", type === "Production")
             .text("Production");
     }
 
