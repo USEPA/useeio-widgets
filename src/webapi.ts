@@ -41,7 +41,6 @@ export class WebApi {
         if (this.conf.asJsonFiles) {
             url += ".json";
         }
-        console.log("GET ", url);
 
         // prepare the request
         const req = new XMLHttpRequest();
@@ -158,6 +157,14 @@ export interface Result {
     totals: number[];
 }
 
+type MatrixName =
+    "A"
+    | "B"
+    | "C"
+    | "D"
+    | "L"
+    | "U";
+
 export class Matrix {
 
     public static zeros(rows: number, cols: number): Matrix {
@@ -219,6 +226,52 @@ export class Matrix {
                 m.set(row, col, v);
             }
         }
+        return m;
+    }
+}
+
+export class Model {
+
+    private _api: WebApi;
+
+    private _sectors: Sector[];
+    private _indicators: Indicator[];
+    private _demands: DemandInfo[];
+    private _matrices: { [index: string]: Matrix };
+
+    constructor(conf: WebApiConfig) {
+        this._api = new WebApi(conf);
+    }
+
+    async sectors(): Promise<Sector[]> {
+        if (!this._sectors) {
+            this._sectors = await this._api.get("/sectors");
+        }
+        return this._sectors;
+    }
+
+    async indicators(): Promise<Indicator[]> {
+        if (!this._indicators) {
+            this._indicators = await this._api.get("/indicators");
+        }
+        return this._indicators;
+    }
+
+    async demands(): Promise<DemandInfo[]> {
+        if (!this._demands) {
+            this._demands = await this._api.get("/demands");
+        }
+        return this._demands;
+    }
+
+    async matrix(name: MatrixName): Promise<Matrix> {
+        let m = this._matrices[name];
+        if (m) {
+            return m;
+        }
+        const data: number[][] = await this._api.get(`/matrix/${name}`);
+        m = new Matrix(data);
+        this._matrices[name] = m;
         return m;
     }
 }

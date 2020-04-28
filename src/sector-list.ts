@@ -1,17 +1,16 @@
 import * as d3 from "d3";
-import { Sector, WebApi, WebApiConfig } from "./webapi";
+import { Sector, Model } from "./webapi";
 import { BaseType } from "d3";
-import * as colors from "./colors";
 import { Config, Widget } from "./commons";
 
 export interface SectorListConfig {
-    webapi: WebApiConfig;
+    model: Model;
     selector: string;
 }
 
 export class SectorList extends Widget {
 
-    private webapi: WebApi;
+    private model: Model;
     private config: SectorListConfig;
     private root: d3.Selection<BaseType, any, HTMLElement, any>;
 
@@ -23,7 +22,7 @@ export class SectorList extends Widget {
     constructor(config: SectorListConfig) {
         super();
         this.config = config;
-        this.webapi = new WebApi(config.webapi);
+        this.model = config.model;
     }
 
     async init() {
@@ -31,7 +30,7 @@ export class SectorList extends Widget {
         // in a multi-regional model we can have the same sector
         // but with different location codes multiple times
         const handled: { [index: string]: boolean } = {};
-        this.sectors = (await this.webapi.get("/sectors") as Sector[])
+        this.sectors = (await this.model.sectors())
             .filter(sector => {
                 if (!handled[sector.code]) {
                     handled[sector.code] = true;

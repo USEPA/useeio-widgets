@@ -4,6 +4,11 @@ import { ImpactHeatmap, HeatmapConfig } from "./impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./impact-chart";
 import { SectorList, SectorListConfig } from "./sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./settings-widget";
+import { WebApiConfig, Model } from "./webapi";
+
+export function model(conf: WebApiConfig): Model {
+    return new Model(conf);
+}
 
 export function filterWidget(conf: { selector: string }): FilterWidget {
     return new FilterWidget(conf.selector);

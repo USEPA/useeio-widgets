@@ -8,10 +8,30 @@
 </head>
 
 <body>
-    <div class="grid-12">
-        <h1 class="col-2 span-10 text-center">Sectors</h1>
-        <div class="col-2 span-10 useeio-sector-list">
-        </div>
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Selecting multiple sectors</h1>
+        <p>
+            With the <code>SectorList</code> widget multiple
+            sectors can be selected from a list. In the example
+            below the sector list is linked to a hash
+            configuration from which another widget could get
+            the selected sectors.
+        </p>
+        <pre>
+            <code>
+    var model = useeio.model({
+        endpoint: './api',
+        model: 'GAUSEEIO',
+        asJsonFiles: true,
+    });
+    var sectorList = useeio.sectorList({
+        model: model,
+        selector: '.useeio-sector-list',
+    });
+    useeio.hashConfig().join(sectorList);
+            </code>
+        </pre>
+        <div class="useeio-sector-list"></div>
     </div>
 </body>
 
@@ -19,16 +39,16 @@
 <script src="lib/useeio_widgets.js"></script>
 
 <script>
-    var config = useeio.hashConfig();
+    var model = useeio.model({
+        endpoint: './api',
+        model: 'GAUSEEIO',
+        asJsonFiles: true,
+    });
     var sectorList = useeio.sectorList({
-        webapi: {
-            endpoint: './api',
-            model: 'GAUSEEIO',
-            asJsonFiles: true,
-        },
+        model: model,
         selector: '.useeio-sector-list',
     });
-    config.join(sectorList);
+    useeio.hashConfig().join(sectorList);
 </script>
 
 </html>
