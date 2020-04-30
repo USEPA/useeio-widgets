@@ -7,7 +7,7 @@
     <style>
         html {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
+            font-weight: bold;
         }
 
         #root {
@@ -24,17 +24,36 @@
     <script src="lib/d3.min.js"></script>
     <script src="lib/useeio_widgets.js"></script>
     <script>
-        var model = useeio.model({
+        const model = useeio.model({
             endpoint: 'http://localhost/api',
             model: 'USEEIO',
         });
 
-        window.onload = function () {
-
-            var root = document.getElementById("root");
-            var div = document.createElement("h1")
-            div.textContent = "Works!";
+        let root;
+        const test = (header, fn) => {
+            const div = document.createElement("div");
             root.appendChild(div)
+            const span = document.createElement("span");
+            span.textContent = "Test: " + header + " ... ";
+            div.append(span);
+            fn().then((r, err) => {
+                if (r && !err) {
+                    span.textContent = span.textContent + "OK";
+                } else {
+                    span.textContent = span.textContent + "ERROR";
+                }
+                console.log(header, ": ", r);
+            });
+        };
+
+        window.onload = () => {
+            root = document.getElementById("root");
+            test("GET sectors", () => model.sectors());
+            test("GET indicators", () => model.indicators());
+            test("GET demands", () => model.demands());
+            test("GET demand", () => model.demands()
+                .then((demands) => model.demand(demands[0].id)))
+            test("GET matrix/U", () => model.matrix("U"));
         }
     </script>
 

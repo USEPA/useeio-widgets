@@ -274,11 +274,14 @@ export class Model {
 
     private _sectors: Sector[];
     private _indicators: Indicator[];
-    private _demands: DemandInfo[];
+    private _demandInfos: DemandInfo[];
     private _matrices: { [index: string]: Matrix };
+    private _demands: { [index: string]: DemandEntry[] };
 
     constructor(conf: WebApiConfig) {
         this._api = new WebApi(conf);
+        this._matrices = {};
+        this._demands = {};
     }
 
     async sectors(): Promise<Sector[]> {
@@ -296,10 +299,20 @@ export class Model {
     }
 
     async demands(): Promise<DemandInfo[]> {
-        if (!this._demands) {
-            this._demands = await this._api.get("/demands");
+        if (!this._demandInfos) {
+            this._demandInfos = await this._api.get("/demands");
         }
-        return this._demands;
+        return this._demandInfos;
+    }
+
+    async demand(id: string): Promise<DemandEntry[]> {
+        let d = this._demands[id];
+        if (d) {
+            return d;
+        }
+        d = await this._api.get(`/demands/${id}`);
+        this._demands[id] = d;
+        return d;
     }
 
     async matrix(name: MatrixName): Promise<Matrix> {
