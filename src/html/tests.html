@@ -46,7 +46,7 @@
             span.textContent = "Test: " + header + " ... ";
             div.append(span);
             fn().then((r, err) => {
-                if (r && !err) {
+                if (!err) {
                     span.textContent = span.textContent + "OK";
                 } else {
                     span.textContent = span.textContent + "ERROR";
@@ -58,6 +58,7 @@
         window.onload = () => {
             root = document.getElementById("root");
             test("GET /sectors", () => model.sectors());
+            test("isMultiRegional", () => model.isMultiRegional());
             test("GET /indicators", () => model.indicators());
             test("GET /demands", () => model.demands());
             test("GET /demand", () => model.demands()

@@ -304,6 +304,24 @@ export class Model {
         return this._sectors;
     }
 
+    async isMultiRegional(): Promise<boolean> {
+        const sectors = await this.sectors();
+        let loc;
+        for (const sector of sectors) {
+            if (!sector.location) {
+                continue;
+            }
+            if (!loc) {
+                loc = sector.location;
+                continue;
+            }
+            if (loc !== sector.location) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     async indicators(): Promise<Indicator[]> {
         if (!this._indicators) {
             this._indicators = await this._api.get("/indicators");
