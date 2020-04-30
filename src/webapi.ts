@@ -27,37 +27,62 @@ export interface WebApiConfig {
 
 }
 
-
+/**
+ * A class for low level web API calls. Use the Model class for typed requests
+ * that also support caching etc.
+ */
 export class WebApi {
 
-    private conf: WebApiConfig;
+    constructor(private conf: WebApiConfig) { }
 
-    constructor(conf: WebApiConfig) {
-        this.conf = conf;
+    /**
+     * This is the only get request that has no prefix of the model ID. For all
+     * other request, just use `get(<path>)` that will automatically add the
+     * model ID as a prefix.
+     */
+    async getModelInfos(): Promise<ModelInfo[]> {
+        let url = `${this.conf.endpoint}/models`;
+        if (this.conf.asJsonFiles) {
+            url += ".json";
+        }
+        return this._get(url);
     }
 
-    public async get<T>(path: string): Promise<T> {
+    /**
+     * Perform a get request on a model. The given path should be the fragment
+     * after the model ID, e.g. `/sectors`.
+     */
+    async get<T>(path: string): Promise<T> {
         let url = `${this.conf.endpoint}/${this.conf.model}${path}`;
         if (this.conf.asJsonFiles) {
             url += ".json";
         }
+        return this._get(url);
+    }
 
-        // prepare the request
-        const req = new XMLHttpRequest();
-        req.open("GET", url);
-        req.setRequestHeader(
-            "Content-Type",
-            "application/json;charset=UTF-8");
-        req.setRequestHeader(
-            "max-age",
-            "86400",
-        );
-        if (this.conf.apikey) {
-            req.setRequestHeader(
-                "x-api-key", this.conf.apikey);
-        }
+    async post<T>(path: string, data: any): Promise<T> {
+        const url = `${this.conf.endpoint}/${this.conf.model}${path}`;
+        const req = this._request("POST", url);
+        return new Promise<T>((resolve, reject) => {
+            req.onload = () => {
+                if (req.status === 200) {
+                    try {
+                        const t: T = JSON.parse(req.responseText);
+                        resolve(t);
+                    } catch (err) {
+                        reject("failed to parse response for POST "
+                            + url + ": " + err);
+                    }
+                } else {
+                    reject(`request POST ${url} failed: ${req.statusText}`);
+                }
+            };
+            req.send(JSON.stringify(data));
+        });
+    }
 
-        // create the promise
+    private async _get<T>(url: string): Promise<T> {
+        const req = this._request("GET", url);
         return new Promise<T>((resolve, reject) => {
             req.onload = () => {
                 if (req.status === 200) {
@@ -66,14 +91,27 @@ export class WebApi {
                         resolve(t);
                     } catch (err) {
                         reject("failed to parse response for: "
-                            + path + ": " + err);
+                            + url + ": " + err);
                     }
                 } else {
-                    reject(`request ${path} failed: ${req.statusText}`);
+                    reject(`request ${url} failed: ${req.statusText}`);
                 }
             };
             req.send();
         });
+    }
+
+    private _request(method: "GET" | "POST", url: string): XMLHttpRequest {
+        const req = new XMLHttpRequest();
+        req.open(method, url);
+        req.setRequestHeader(
+            "Content-Type",
+            "application/json;charset=UTF-8");
+        if (this.conf.apikey) {
+            req.setRequestHeader(
+                "x-api-key", this.conf.apikey);
+        }
+        return req;
     }
 }
 

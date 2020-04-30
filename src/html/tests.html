@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>USEEIO Widgets - simple tests</title>
+    <style>
+        html {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+        }
+
+        #root {
+            margin: 25px auto;
+            width: 75%
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="root"></div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+    <script>
+        var model = useeio.model({
+            endpoint: 'http://localhost/api',
+            model: 'USEEIO',
+        });
+
+        window.onload = function () {
+
+            var root = document.getElementById("root");
+            var div = document.createElement("h1")
+            div.textContent = "Works!";
+            root.appendChild(div)
+        }
+    </script>
+
+</body>
+
+
+</html>

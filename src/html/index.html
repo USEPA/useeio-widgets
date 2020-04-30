@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Examples</title>
+    <title>USEEIO Widgets</title>
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
 
@@ -11,104 +11,87 @@
 <body>
     <div style="max-width: 750px; margin: auto;">
         <h1 class="text-center">USEEIO Widgets</h1>
-        <div>
-            <a href="./impact_heatmap.html" target="_blank">
-                Impact heatmap
-            </a>
-            <pre>
-                <code>
-                    var heatmap = useeio.ImpactHeatmap.on({
-                        webapi: {
-                            endpoint: './api',
-                            model: 'USEEIOv1.2',
-                            asJsonFiles: true,
-                        },
-                        selector: '.impact-heatmap',
-                    });
-                </code>
-            </pre>
-        </div>
-        <div>
-            <a href="./impact_chart.html" target="_blank">
-                Impact chart
-            </a>
-            <pre>
-                <code>
-                    var impactChart = useeio.ImpactChart.on({
-                        webapi: {
-                            endpoint: './api',
-                            model: 'USEEIOv1.2',
-                            asJsonFiles: true,
-                        },
-                        selector: '.impact-chart',
-                        columns: 3,
-                        width: 800,
-                        height: 300,
-                    });
-                    impactChart.update({
-                        sectors: ["312120", "31151A", "312110", "312130"],
-                    });
-                </code>
-            </pre>
-        </div>
-        <div>
-            <a href="./sector_list.html#sectors=312120,31151A,312110,312130" target="_blank">
-                Sector list with hash config
-            </a>
-            <pre>
-                <code>
-                    var config = useeio.HashConfigTransmitter.create();
-                    var sectorList = useeio.SectorList.on({
-                        webapi: {
-                            endpoint: './api',
-                            model: 'USEEIOv1.2',
-                            asJsonFiles: true,
-                        },
-                        selector: '.sector-list',
-                    });
-                    config.join(sectorList);
-                </code>
-            </pre>
-        </div>
-        <div>
-            <a href="./sector_list_with_impact_chart.html#sectors=312120,31151A,312110,312130" target="_blank">
-                Sector list with linked impact chart
-            </a>
-            <pre>
-                <code>
-                    var webapi = {
-                        endpoint: './api',
-                        model: 'USEEIOv1.2',
-                        asJsonFiles: true,
-                    };
-                    var sectorList = useeio.SectorList.on({
-                        webapi: webapi,
-                        selector: '.sector-list',
-                    });
-                    var impactChart = useeio.ImpactChart.on({
-                        webapi: webapi,
-                        selector: '.impact-chart',
-                    });
-                    var config = useeio.HashConfigTransmitter.create();
-                    config.join(sectorList);
-                    config.join(impactChart);
-                </code>
-            </pre>
-        </div>
-        <div>
-            <a href="./filter_widget.html" target="_blank">
-                Filter widget
-            </a>
-            <pre>
-                <code>
-                    var filter = useeio.FilterWidget.on({
-                        selector: '#filter-widget',
-                    });
-                    var config = useeio.HashConfigTransmitter.create();
-                    config.join(filter);
-                </code>
-            </pre>
-        </div>
+        <h2>Basic principles</h2>
+        <p>
+            Each widget is a component that is created with a configuration
+            object with a reference to a USEEIO model, a selector of an HTML
+            element (e.g an ID or class of a
+            <code>div</code> element) where the widget should be mounted, and
+            other widget specific properties. The USEEIO model is created
+            from an API endpoint. If the endpoint just provides cached JSON
+            files, the field <code>asJsonFiles</code> should be set to true
+            when creating the model:
+        </p>
+
+        <pre>
+            <code>
+    var model = useeio.model({
+        endpoint: './api',
+        model: 'GAUSEEIO',
+        asJsonFiles: true,
+    });
+            </code>
+        </pre>
+
+        <p>
+            Such a model caches resources like sectors and matrices that it
+            fetches from the API so that the widgets should use the same
+            model instance. 
+        </p>
+        <p>
+            The communication between the widgets is also done via configuration
+            objects and a set of methods that all widgets implement. Calling the
+            <code>update</code> method will (re-)render the widget with the
+            given configuration:
+        </p>
+        <pre>
+            <code>
+    widget.update(config);
+            </code>
+        </pre>
+        <p>
+            There are widgets that create new configurations (like the
+            <code>SectorList</code> widget). With the <code>onChanged</code>
+            method it is possible to react on these configuration changes:
+
+        <pre>
+            <code>
+    widget.onChanged((config) => {
+        // do something with the updated config
+    });
+            </code>
+        </pre>
+        </p>
+
+        <h2>Examples</h2>
+        <ul>
+            <li>
+                <a href="./filter_widget.html" target="_blank">
+                    Filter widget
+                </a>
+            </li>
+            <li>
+                <a href="./sector_list.html#sectors=312120,31151A,312110,312130" target="_blank">
+                    Sector list
+                </a>
+            </li>
+            <li>
+                <a href="./impact_chart.html" target="_blank">
+                    Impact chart
+                </a>
+            </li>
+            <li>
+                <a href="./sector_list_with_impact_chart.html#sectors=312120,31151A,312110,312130" target="_blank">
+                    Sector list with linked impact chart
+                </a>
+            </li>
+            <li>
+                <a href="./impact_heatmap.html" target="_blank">
+                    Impact heatmap
+                </a>
+            </li>
+        </ul>
+    </div>
 </body>
 
 </html>
