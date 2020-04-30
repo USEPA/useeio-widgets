@@ -266,6 +266,19 @@ export class Matrix {
         }
         return m;
     }
+
+    /**
+     * Performs a matrix vector multiplication with the given vector.
+     */
+    public multiplyVector(v: number[]): number[] {
+        return this.data.map(row => row.reduce((sum, x, j) => {
+            const vj = v[j];
+            if (x && vj) {
+                return sum + (x * vj);
+            }
+            return sum;
+        }, 0));
+    }
 }
 
 export class Model {
@@ -278,8 +291,8 @@ export class Model {
     private _matrices: { [index: string]: Matrix };
     private _demands: { [index: string]: DemandEntry[] };
 
-    constructor(conf: WebApiConfig) {
-        this._api = new WebApi(conf);
+    constructor(private _conf: WebApiConfig) {
+        this._api = new WebApi(_conf);
         this._matrices = {};
         this._demands = {};
     }
@@ -324,5 +337,59 @@ export class Model {
         m = new Matrix(data);
         this._matrices[name] = m;
         return m;
+    }
+
+    async calculate(setup: CalculationSetup): Promise<Result> {
+        if (!this._conf.asJsonFiles) {
+            return this._api.post("/calculate", setup);
+        }
+
+        // try to run the calculation on JSON files
+        const indicators = await this.indicators();
+        const sectors = await this.sectors();
+
+        // prepare the demand vector
+        const demand = new Array(sectors.length).fill(10);
+        const sectorIdx: { [id: string]: number } = {};
+        sectors.reduce((idx, sector) => {
+            idx[sector.id] = sector.index;
+            return idx;
+        }, sectorIdx);
+        setup.demand.forEach(entry => {
+            const i = sectorIdx[entry.sector];
+            if (i === 0 || i) {
+                demand[i] = entry.amount;
+            }
+        });
+
+        // calculate the perspective result
+        const U = await this.matrix("U");
+        let data: number[][];
+        let L: Matrix, s: number[];
+        switch (setup.perspective) {
+            case "direct":
+                L = await this.matrix("L");
+                s = L.multiplyVector(demand);
+                const D = await this.matrix("D");
+                data = D.scaleColumns(s).data;
+                break;
+            case "intermediate":
+                L = await this.matrix("L");
+                s = L.multiplyVector(demand);
+                data = U.scaleColumns(s).data;
+                break;
+            case "final":
+                data = U.scaleColumns(demand).data;
+                break;
+            default:
+                throw new Error(`unknown perspective ${setup.perspective}`);
+        }
+
+        return {
+            data,
+            indicators: indicators.map(indicator => indicator.code),
+            sectors: sectors.map(sector => sector.id),
+            totals: U.multiplyVector(demand),
+        };
     }
 }

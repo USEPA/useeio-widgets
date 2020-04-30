@@ -24,9 +24,18 @@
     <script src="lib/d3.min.js"></script>
     <script src="lib/useeio_widgets.js"></script>
     <script>
+
+        /*
         const model = useeio.model({
             endpoint: 'http://localhost/api',
             model: 'USEEIO',
+        });
+        */
+
+        const model = useeio.model({
+            endpoint: './api',
+            model: 'USEEIO',
+            asJsonFiles: true,
         });
 
         let root;
@@ -48,12 +57,20 @@
 
         window.onload = () => {
             root = document.getElementById("root");
-            test("GET sectors", () => model.sectors());
-            test("GET indicators", () => model.indicators());
-            test("GET demands", () => model.demands());
-            test("GET demand", () => model.demands()
-                .then((demands) => model.demand(demands[0].id)))
+            test("GET /sectors", () => model.sectors());
+            test("GET /indicators", () => model.indicators());
+            test("GET /demands", () => model.demands());
+            test("GET /demand", () => model.demands()
+                .then(demands => model.demand(demands[0].id)))
             test("GET matrix/U", () => model.matrix("U"));
+            test("POST /calculate", () => {
+                return model.demands()
+                    .then(demands => model.demand(demands[0].id))
+                    .then(demand => model.calculate({
+                        perspective: "direct",
+                        demand: demand,
+                    }))
+            });
         }
     </script>
 
