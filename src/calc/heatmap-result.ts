@@ -1,4 +1,4 @@
-import { Result, Model, Sector, Indicator } from "./webapi";
+import { Result, Model, Sector, Indicator } from "../webapi";
 
 export class HeatmapResult {
 

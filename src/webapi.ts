@@ -346,6 +346,35 @@ export class Model {
         return d;
     }
 
+    /**
+     * Get the (first) demand vector for the given specification.
+     */
+    async findDemand(spec: Partial<DemandInfo>): Promise<DemandEntry[] | null> {
+        const demands = await this.demands();
+        const demand = demands.find(d => {
+            if (spec.id && d.id !== spec.id) {
+                return false;
+            }
+            if (spec.type && d.type !== spec.type) {
+                return false;
+            }
+            if (spec.system && d.system !== spec.system) {
+                return false;
+            }
+            if (spec.location && d.location !== spec.location) {
+                return false;
+            }
+            if (spec.year && d.year !== spec.year) {
+                return false;
+            }
+            return true;
+        });
+        if (!demand) {
+            return null;
+        }
+        return this.demand(demand.id);
+    }
+
     async matrix(name: MatrixName): Promise<Matrix> {
         let m = this._matrices[name];
         if (m) {

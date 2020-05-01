@@ -98,7 +98,7 @@ export class HashConfigTransmitter implements ConfigTransmitter {
 
                 case "year":
                     try {
-                        config.year = parseInt(val);
+                        config.year = parseInt(val, 10);
                     } catch (e) {
                         delete config.year;
                     }

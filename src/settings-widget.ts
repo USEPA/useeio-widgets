@@ -151,8 +151,8 @@ export class SettingsWidget extends Widget {
             .attr("value", this.years[0])
             .on("change", function () {
                 self.fireChange({
-                    year: parseInt(this.value),
-                })
+                    year: parseInt(this.value, 10),
+                });
             });
 
         combo.selectAll("option")

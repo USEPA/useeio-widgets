@@ -34,7 +34,7 @@
 
         const model = useeio.model({
             endpoint: './api',
-            model: 'USEEIO',
+            model: 'GAUSEEIO',
             asJsonFiles: true,
         });
 
@@ -62,7 +62,8 @@
             test("GET /indicators", () => model.indicators());
             test("GET /demands", () => model.demands());
             test("GET /demand", () => model.demands()
-                .then(demands => model.demand(demands[0].id)))
+                .then(demands => model.demand(demands[0].id)));
+            test("findDemand", () => model.findDemand({type: "Production"}));
             test("GET matrix/U", () => model.matrix("U"));
             test("POST /calculate", () => {
                 return model.demands()
