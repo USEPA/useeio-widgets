@@ -386,6 +386,14 @@ export class Model {
         return m;
     }
 
+    async column(matrix: MatrixName, index: number): Promise<number[]> {
+        if (!this._conf.asJsonFiles) {
+            return this._api.get(`/matrix/${matrix}?col=${index}`);
+        }
+        const m = await this.matrix(matrix);
+        return m.getCol(index);
+    }
+
     async calculate(setup: CalculationSetup): Promise<Result> {
         if (!this._conf.asJsonFiles) {
             return this._api.post("/calculate", setup);

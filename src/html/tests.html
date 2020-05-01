@@ -65,6 +65,7 @@
                 .then(demands => model.demand(demands[0].id)));
             test("findDemand", () => model.findDemand({type: "Production"}));
             test("GET matrix/U", () => model.matrix("U"));
+            test("GET matrix/L?col=42", () => model.column("L", 42));
             test("POST /calculate", () => {
                 return model.demands()
                     .then(demands => model.demand(demands[0].id))

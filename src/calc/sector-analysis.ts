@@ -1,59 +1,16 @@
-import { IOModel } from "./IOModel";
-import { Matrix } from "./matrix";
-import { IIndicator, ISector } from "./model";
-import * as webapi from "./webapi";
-
-export function load(sector: ISector, ioModel: IOModel, totals: number[],
-    cb: (sa: SectorAnalysis) => void) {
-    const colA = `matrix/A?col=${sector.index}`;
-    const colL = `matrix/L?col=${sector.index}`;
-    webapi.getJson(colA, (purchases: number[]) => {
-        webapi.getJson(colL, (scalings: number[]) => {
-            cb(new SectorAnalysis(sector, purchases, scalings, ioModel, totals));
-        });
-    });
-}
-
-/**
- * Contains the indicator results of a sector analysis related to 1 USD output
- * broken into a part that is related to the direct operations of a sector and a
- * part that is related to the supply chain of that sector.
- */
-export interface IPartition {
-    totalResult: number[];
-    directOperationsResult: number[];
-    supplyChainResult: number[];
-}
-
-/**
- * This is the same as the IPartition result but the supply chain part is
- * further divided into an in-region and out-of-region part.
- */
-export interface IRegionalizedPartition {
-    totalResult: number[];
-    directOperationsResult: number[];
-    supplyChainResultInRegion: number[];
-    supplyChainResultOutOfRegion: number[];
-}
-
-function zeros(len: number): number[] {
-    const z = new Array(len);
-    for (let i = 0; i < len; i++) {
-        z[i] = 0.0;
-    }
-    return z;
-}
+import { Matrix, Sector, Model, Indicator } from "../webapi";
+import { zeros } from "./cals";
 
 export class SectorAnalysis {
 
-    private normU: Matrix;
-    private normD: Matrix;
+    private normU: Matrix | null = null;
+    private normD: Matrix | null = null;
+    private _scalingVector: number[] | null = null;
+    private _purchaseVector: number[] | null = null;
 
     constructor(
-        public sector: ISector,
-        public purchases: number[],
-        public scalingVector: number[],
-        public ioModel: IOModel,
+        public sector: Sector,
+        public model: Model,
         public normalizationTotals: number[],
     ) {
         const nfactors = this.getNormalizationFactors();
@@ -61,76 +18,101 @@ export class SectorAnalysis {
         this.normD = ioModel.D.scaleColumns(scalingVector).scaleRows(nfactors);
     }
 
-    public getEnvironmentalProfile(directOnly=false): number[] {
-        const profile = directOnly
-            ? this.ioModel.D.getCol(this.sector.index)
-            : this.ioModel.U.getCol(this.sector.index);
-        for (let i = 0; i < profile.length; i++) {
-            profile[i] /= this.normalizationTotals[i];
-        }
-        return profile;
+    async getEnvironmentalProfile(directOnly = false): Promise<number[]> {
+        const matrix = directOnly
+            ? this.model.matrix("D")
+            : this.model.matrix("U");
+        const profile = (await matrix).getCol(this.sector.index);
+        return profile.map((x, i) => {
+            const total = this.normalizationTotals[i];
+            return !x || !total
+                ? 0
+                : x / total;
+        });
     }
 
-    public getPartition(): IPartition {
-        const direct = this.ioModel.D.getCol(this.sector.index);
-        const totals = this.ioModel.U.getCol(this.sector.index);
-        const partition: IPartition = {
-            totalResult: totals,
-            directOperationsResult: direct,
-            supplyChainResult: new Array(direct.length),
-        };
-        for (let i = 0; i < direct.length; i++) {
-            partition.supplyChainResult[i] = totals[i] - direct[i];
-        }
-        return partition;
+    /**
+     * A partition contains the indicator results of a sector analysis related
+     * to 1 USD output broken into a part that is related to the `direct`
+     * operations of a sector and a part that is related to the `upstream`
+     * (supply chain) of that sector.
+     */
+    async getPartition(): Promise<{
+        totals: number[], direct: number[], upstream: number[],
+    }> {
+        const D = this.model.matrix("D");
+        const U = this.model.matrix("U");
+        const direct = (await D).getCol(this.sector.index);
+        const totals = (await U).getCol(this.sector.index);
+        const upstream = totals.map((total, i) => total - direct[i]);
+        return { totals, direct, upstream };
     }
 
-    public getRegionalizedPartition(): IRegionalizedPartition {
-        const D = this.ioModel.D.scaleColumns(this.scalingVector);
-        // if the model is not a multi-regional model -> there are no
-        // out-of-region results
-        if (!this.ioModel.isMultiRegional()) {
-            const p = this.getPartition();
+    /**
+     * A regionalized partition is the same as the partition result but the
+     * supply chain part is further divided into an in-region and out-of-region
+     * part.
+     */
+    async getRegionalizedPartition(): Promise<{
+        totals: number[],
+        direct: number[],
+        upstreamInRegion: number[],
+        upstreamOutOfRegion: number[],
+    }> {
+
+        // if the model is not multi-regional, return a simple partition
+        const isMultiRegional = await this.model.isMultiRegional();
+        if (!isMultiRegional) {
+            const p = await this.getPartition();
             return {
-                totalResult: p.totalResult,
-                directOperationsResult: p.directOperationsResult,
-                supplyChainResultInRegion: p.supplyChainResult,
-                supplyChainResultOutOfRegion: zeros(D.rows),
+                totals: p.totals,
+                direct: p.direct,
+                upstreamInRegion: p.upstream,
+                upstreamOutOfRegion: zeros(p.upstream.length),
             };
         }
 
-        const inRegionTotals = zeros(D.rows);
-        const outRegionTotals = zeros(D.rows);
-        const totals = zeros(D.rows);
+        // calculate the partition from the scaled direct results
+        // to correctly assign the upstream contributions to the
+        // respective location
+        const s = await this.scalingVector();
+        const G = (await this.model.matrix("D")).scaleColumns(s);
+        const totals = zeros(G.rows);
+        const direct = zeros(G.rows);
+        const upstreamInRegion = zeros(G.rows);
+        const upstreamOutOfRegion = zeros(G.rows);
+
         const location = this.sector.location;
-        for (let row = 0; row < D.rows; row++) {
-            for (let col = 0; col < D.cols; col++) {
-                const value = D.get(row, col);
+        const sectors = await this.model.sectors();
+        for (let row = 0; row < G.rows; row++) {
+            for (let col = 0; col < G.cols; col++) {
+                const value = G.get(row, col);
                 if (!value) {
                     continue;
                 }
                 totals[row] += value;
                 if (col === this.sector.index) {
+                    direct[row] += value;
                     continue;
                 }
-                const sector = this.ioModel.sectors[col];
+                const sector = sectors[col];
                 if (sector.location === location) {
-                    inRegionTotals[row] += value;
+                    upstreamInRegion[row] += value;
                 } else {
-                    outRegionTotals[row] += value;
+                    upstreamOutOfRegion[row] += value;
                 }
             }
         }
 
         return {
-            totalResult: totals,
-            directOperationsResult: D.getCol(this.sector.index),
-            supplyChainResultInRegion: inRegionTotals,
-            supplyChainResultOutOfRegion: outRegionTotals,
+            totals,
+            direct,
+            upstreamInRegion,
+            upstreamOutOfRegion,
         };
     }
 
-    public getPurchaseContributions(indicator: IIndicator): number[] {
+    public getPurchaseContributions(indicator: Indicator): number[] {
         const impacts = this.ioModel.U.getRow(indicator.index);
         const contributions = this.purchases.slice();
         for (let i = 0; i < contributions.length; i++) {
@@ -183,5 +165,25 @@ export class SectorAnalysis {
             nfactors[i] = 1 / nfactors[i];
         }
         return nfactors;
+    }
+
+    /**
+     * The scaling vector of the sector j of this analysis is the column j of
+     * the Leontief inverse.
+     */
+    async scalingVector(): Promise<number[]> {
+        if (this._scalingVector) {
+            return this._scalingVector;
+        }
+        this._scalingVector = await this.model.column("L", this.sector.index);
+        return this._scalingVector;
+    }
+
+    async purchaseVector(): Promise<number[]> {
+        if (this._purchaseVector) {
+            return this._purchaseVector;
+        }
+        this._purchaseVector = await this.model.column("A", this.sector.index);
+        return this._purchaseVector;
     }
 }
