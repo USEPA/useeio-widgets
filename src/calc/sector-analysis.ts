@@ -1,10 +1,8 @@
-import { Matrix, Sector, Model, Indicator } from "../webapi";
+import { Sector, Model, Indicator } from "../webapi";
 import { zeros } from "./cals";
 
 export class SectorAnalysis {
 
-    private normU: Matrix | null = null;
-    private normD: Matrix | null = null;
     private _scalingVector: number[] | null = null;
     private _purchaseVector: number[] | null = null;
 
@@ -12,11 +10,7 @@ export class SectorAnalysis {
         public sector: Sector,
         public model: Model,
         public normalizationTotals: number[],
-    ) {
-        const nfactors = this.getNormalizationFactors();
-        this.normU = ioModel.U.scaleColumns(purchases).scaleRows(nfactors);
-        this.normD = ioModel.D.scaleColumns(scalingVector).scaleRows(nfactors);
-    }
+    ) { }
 
     async getEnvironmentalProfile(directOnly = false): Promise<number[]> {
         const matrix = directOnly
@@ -112,20 +106,22 @@ export class SectorAnalysis {
         };
     }
 
-    public getPurchaseContributions(indicator: Indicator): number[] {
-        const impacts = this.ioModel.U.getRow(indicator.index);
-        const contributions = this.purchases.slice();
-        for (let i = 0; i < contributions.length; i++) {
-            contributions[i] *= impacts[i];
-        }
-        return contributions;
-    }
+    async getPurchaseContributions(indicators: Indicator | Indicator[]):
+        Promise<number[]> {
+        const U = await this.model.matrix("U");
+        const purchases = await this.purchaseVector();
 
-    public getOverallPurchasesContributions(indicators: IIndicator[]): number[] {
-        const r = zeros(this.scalingVector.length);
+        if (!Array.isArray(indicators)) {
+            const impacts = U.getRow(indicators.index);
+            return purchases.map((x, i) => x * impacts[i]);
+        }
+
+        const nfactors = this.normalizationTotals.map(t => !t ? 0 : 1 / t);
+        const R = U.scaleColumns(purchases).scaleRows(nfactors);
+        const r = zeros(R.cols);
         for (const indicator of indicators) {
             for (let col = 0; col < r.length; col++) {
-                r[col] += this.normU.get(indicator.index, col);
+                r[col] += R.get(indicator.index, col);
             }
         }
         return r;
@@ -133,44 +129,30 @@ export class SectorAnalysis {
 
     /**
      * Get the direct contributions of the respective sectors to the result of
-     * the given indicator. This is the respective row of the matrix D scaled
-     * with the scaling vector of this analysis.
+     * the given indicators. If a single indicator is given, this is the
+     * respective row of the matrix D scaled with the scaling vector of this
+     * analysis.
      */
-    public getContributionsOfOrigins(indicator: IIndicator): number[] {
-        const impacts = this.ioModel.D.getRow(indicator.index);
-        const contributions = this.scalingVector.slice();
-        for (let i = 0; i < contributions.length; i++) {
-            contributions[i] *= impacts[i];
-        }
-        return contributions;
-    }
+    async getContributionsOfOrigins(indicators: Indicator | Indicator[]): Promise<number[]> {
+        const D = await this.model.matrix("D");
+        const scaling = await this.scalingVector();
 
-    public getOverallContributionsOfOrigins(indicators: IIndicator[]): number[] {
+        if (!Array.isArray(indicators)) {
+            const impacts = D.getRow(indicators.index);
+            return scaling.map((x, i) => x * impacts[i]);
+        }
+
+        const nfactors = this.normalizationTotals.map(t => !t ? 0 : 1 / t);
+        const R = D.scaleColumns(scaling).scaleRows(nfactors);
         const r = zeros(this.scalingVector.length);
         for (const indicator of indicators) {
             for (let col = 0; col < r.length; col++) {
-                r[col] += this.normD.get(indicator.index, col);
+                r[col] += R.get(indicator.index, col);
             }
         }
         return r;
     }
 
-    private getNormalizationFactors() {
-        // const nfactors = norm10(totals);
-        const nfactors = this.normalizationTotals.slice();
-        for (let i = 0; i < nfactors.length; i++) {
-            if (nfactors[i] === 0) {
-                continue;
-            }
-            nfactors[i] = 1 / nfactors[i];
-        }
-        return nfactors;
-    }
-
-    /**
-     * The scaling vector of the sector j of this analysis is the column j of
-     * the Leontief inverse.
-     */
     async scalingVector(): Promise<number[]> {
         if (this._scalingVector) {
             return this._scalingVector;
