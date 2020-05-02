@@ -5,6 +5,7 @@ import { ImpactChart, ImpactChartConfig } from "./impact-chart";
 import { SectorList, SectorListConfig } from "./sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./settings-widget";
 import { WebApiConfig, Model } from "./webapi";
+import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
@@ -39,5 +40,10 @@ export function sectorList(config: SectorListConfig): SectorList {
 export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
     const widget = new SettingsWidget(config);
     widget.init();
+    return widget;
+}
+
+export function profileChart(config: ProfileChartConfig): ProfileChart {
+    const widget = new ProfileChart(config);
     return widget;
 }

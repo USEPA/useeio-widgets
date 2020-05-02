@@ -39,11 +39,20 @@ const config = {
                 from: 'node_modules/d3/dist/d3.min.js',
                 to: buildDir + '/lib/d3.min.js', type: 'file'
             },
+            {
+                from: 'node_modules/apexcharts/dist/apexcharts.min.js',
+                to: buildDir + '/lib/apexcharts.min.js', type: 'file'
+            },
+            {
+                from: 'node_modules/apexcharts/dist/apexcharts.css',
+                to: buildDir + '/lib/apexcharts.css', type: 'file'
+            }
         ]),
     ],
 
     externals: {
         "d3": "d3",
+        "apexcharts": "apexcharts",
     }
 };
 
