@@ -3,7 +3,7 @@ import { HashConfigTransmitter } from "./hash-config-transmitter";
 import { ImpactHeatmap, HeatmapConfig } from "./impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./impact-chart";
 import { SectorList, SectorListConfig } from "./sector-list";
-import { SettingsWidget, SettingsWidgetConfig } from "./settings-widget";
+import { SettingsWidget, SettingsWidgetConfig } from "./settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 

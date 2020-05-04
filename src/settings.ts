@@ -2,17 +2,14 @@ import * as d3 from "d3";
 import * as strings from "./strings";
 import { Widget, Config } from "./commons";
 import {
-    DemandInfo,
     DemandType,
+    Model,
     ResultPerspective,
-    Sector,
-    WebApi,
-    WebApiConfig,
 } from "./webapi";
 
 export interface SettingsWidgetConfig {
     selector: string;
-    webapi: WebApiConfig;
+    model: Model;
 }
 
 type Elem = d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
@@ -28,15 +25,15 @@ export class SettingsWidget extends Widget {
     }
 
     async init() {
-        if (!this.config || !this.config.webapi) {
+        if (!this.config || !this.config.model) {
             this.ready();
             return;
         }
 
         // start request
-        const api = new WebApi(this.config.webapi);
-        const sectors = api.get<Sector[]>("/sectors");
-        const demands = api.get<DemandInfo[]>("/demands");
+        const model = this.config.model;
+        const sectors = model.sectors();
+        const demands = model.demands();
 
         // get possible locations from sectors
         (await sectors).forEach(sector => {
@@ -178,7 +175,7 @@ export class SettingsWidget extends Widget {
             .on("change", function () {
                 self.fireChange({
                     location: this.value,
-                })
+                });
             });
 
         combo.selectAll("option")

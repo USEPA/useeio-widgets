@@ -18,31 +18,6 @@
             USEEIO API</a> instance. Click on the examples below to see how
             these widgets can be used.
         </p>
-
-            Each widget is a component that is created with a configuration
-            object with a reference to a USEEIO model, a selector of an HTML
-            element (e.g an ID or class of a <code>div</code> element) where the
-            widget should be mounted, and other widget specific properties. The
-            USEEIO model is created from an API endpoint. If the endpoint just
-            provides cached JSON files, the field <code>asJsonFiles</code>
-            should be set to true when creating the model:
-        </p>
-
-        <pre>
-            <code>
-    var model = useeio.model({
-        endpoint: './api',
-        model: 'GAUSEEIO',
-        asJsonFiles: true,
-    });
-            </code>
-        </pre>
-
-        <p>
-            Such a model caches resources like sectors and matrices that it
-            fetches from the API so that the widgets should use the same
-            model instance. 
-        </p>
         <p>
             The communication between the widgets is also done via configuration
             objects and a set of methods that all widgets implement. Calling the
@@ -72,6 +47,11 @@
             <li>
                 <a href="./00_model.html" target="_blank">
                     Configure a model
+                </a>
+            </li>
+            <li>
+                <a href="./01_settings.html" target="_blank">
+                    Analysis settings
                 </a>
             </li>
             <li>
