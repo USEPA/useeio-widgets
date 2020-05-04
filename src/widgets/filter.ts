@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Widget, Config } from "./commons";
+import { Widget, Config } from "../commons";
 
 export class FilterWidget extends Widget {
 

@@ -1,11 +1,11 @@
 import * as d3 from "d3";
-import * as strings from "./strings";
-import { Widget, Config } from "./commons";
+import * as strings from "../strings";
+import { Widget, Config } from "../commons";
 import {
     DemandType,
     Model,
     ResultPerspective,
-} from "./webapi";
+} from "../webapi";
 
 export interface SettingsWidgetConfig {
     selector: string;
