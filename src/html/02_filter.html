@@ -3,46 +3,60 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Sector list with linked impact chart</title>
+    <title>USEEIO Widgets</title>
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
 
 <body>
-    <div style="width: 50%; margin: auto;">
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Widget configuration</h1>
         <p>
-            This is a simple example that shows how the filter widget could be
-            used with the <i>HashConfigTransmitter</i>. The result perspective
-            can be configured via the <i>perspective</i> parameter. It
-            understands the following values (the values are case insensitive):
+            The communication between the widgets is done via configuration
+            objects and a set of methods that all widgets implement. The widgets
+            can join a configuration transmitter to send or get configuration
+            updates. The settings and filter widget below join a hash
+            configration that serializes the configuration state into the
+            hash/anchor part of the URL. Alternatively, it is possible to just
+            click on links with anchor references to update configrations, e.g.:
         </p>
         <ul>
-            <li><a href="#perspective=direct">direct</a> = Supply chain,</li>
-            <li><a href="#perspective=supply">supply</a> = Supply chain,</li>
-            <li><a href="#perspective=supply%20chain">supply chain</a> = Supply chain,</li>
-            <li><a href="#perspective=upstream">upstream</a> = Point of consumption</li>
-            <li><a href="#perspective=point%20of%20consumption">point of consumption</a> = Point of consumption</li>
+            <li>Perspective: <a href="#perspective=direct">Supply chain</a> or
+                <a href="#perspective=final">Point of consumption</a>
+            </li>
+            <li>Analysis type: <a href="#type=consumption">Consumption</a> or
+                <a href="#analysis=production">Production</a>
+            </li>
         </ul>
 
-        <p>
-            The analysis type can be configured with the <i>type</i> or
-            <i>analysis</i> parameter. It understands the following values:
-        </p>
-        <ul>
-            <li><a href="#type=consumption">consumption</a> = Consumption,</li>
-            <li><a href="#analysis=production">production</a> = Production,</li>
-        </ul>
-        <div id="filter-widget" style="margin-top: 25px;">
+        <div class="useeio-settings-widget">
         </div>
+
+        <p>The filter widget below shows the selected settings:</p>
+
+        <div id="filter-widget"></div>
     </div>
 </body>
 <script src="lib/d3.min.js"></script>
 <script src="lib/useeio_widgets.js"></script>
 <script>
 
+    var model = useeio.model({
+        endpoint: './api',
+        model: 'GAUSEEIO',
+        asJsonFiles: true,
+    });
+
+    var settings = useeio.settingsWidget({
+        model: model,
+        selector: '.useeio-settings-widget',
+    });
+
     var filter = useeio.filterWidget({
         selector: '#filter-widget',
     });
+
     var config = useeio.hashConfig();
+    config.join(settings);
     config.join(filter);
 
 </script>

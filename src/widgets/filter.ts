@@ -1,5 +1,8 @@
 import * as d3 from "d3";
 import { Widget, Config } from "../widget";
+import { scaleDiverging } from "d3";
+
+type Elem = d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
 
 export class FilterWidget extends Widget {
 
@@ -15,13 +18,23 @@ export class FilterWidget extends Widget {
         d3.select(this.selector)
             .selectAll("*")
             .remove();
-        const div = d3.select(this.selector)
-            .append("div");
+        const root = d3.select(this.selector)
+            .append("div")
+            .classed("useeio-filter-widget", true);
 
-        // result perspective
-        div.append("b")
-            .text("Perspective: ");
-        const perspective = div.append("span");
+        this.perspective(root, config);
+        this.analysisType(root, config);
+        this.ready();
+    }
+
+    private perspective(root: Elem, config: Config) {
+        const div = root
+            .append("div")
+            .classed("filter-row", true);
+        div.append("label")
+            .text("Perspective:");
+        const perspective = div.append("span")
+            .classed("filter-value", true);
         switch (config.perspective) {
             case "direct":
                 perspective.text("Supply chain");
@@ -32,17 +45,17 @@ export class FilterWidget extends Widget {
             default:
                 perspective.text("nothing selected");
         }
+    }
 
-        // analysis type
-        div.append("br");
-        div.append("b")
-            .text("Analysis type: ");
-        const analysis = div.append("span");
-        if (config.analysis) {
-            analysis.text(config.analysis);
-        } else {
-            analysis.text("nothing selected");
-        }
-        this.ready();
+    private analysisType(root: Elem, config: Config) {
+        const div = root.append("div")
+            .classed("filter-row", true);
+        div.append("label")
+            .text("Analysis type:");
+        div.append("span")
+            .classed("filter-value", true)
+            .text(config.analysis
+                ? config.analysis
+                : "nothing selected");
     }
 }

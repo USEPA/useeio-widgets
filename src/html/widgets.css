@@ -123,6 +123,24 @@ label {
     grid-column: 5 / span 8;
 }
 
+.useeio-filter-widget {
+    border: lightgray solid 1px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 750px;
+    margin: auto;
+    padding: 15px;
+}
+
+.useeio-filter-widget label {
+    font-weight: bold;
+}
+
+.useeio-filter-widget .filter-value {
+    padding-left: 10px;
+    font-style: italic;
+}
+
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {

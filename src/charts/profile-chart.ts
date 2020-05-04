@@ -1,6 +1,6 @@
 import * as apex from "apexcharts";
 import { Model, Sector, Indicator } from "./../webapi";
-import { Widget, Config } from "../commons";
+import { Widget, Config } from "../widget";
 import { SectorAnalysis } from "../calc/sector-analysis";
 import { max, zeros } from "../calc/cals";
 
