@@ -1,5 +1,5 @@
 import { FilterWidget } from "./widgets/filter";
-import { HashConfigTransmitter } from "./hash-config-transmitter";
+import { HashConfigTransmitter } from "./widget";
 import { ImpactHeatmap, HeatmapConfig } from "./impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./impact-chart";
 import { SectorList, SectorListConfig } from "./sector-list";

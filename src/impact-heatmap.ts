@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import * as colors from "./colors";
 import * as strings from "./strings";
 
-import { Widget } from "./commons";
+import { Widget } from "./widget";
 import {
     Sector, Indicator, Matrix, WebApi,
     IndicatorGroup, WebApiConfig

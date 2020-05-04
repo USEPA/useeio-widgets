@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import * as strings from "../strings";
-import { Widget, Config } from "../commons";
+import { Widget, Config } from "../widget";
 import {
     DemandType,
     Model,

@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Config, Widget } from "./commons";
+import { Config, Widget } from "./widget";
 import { Indicator, Sector, Matrix, WebApi, WebApiConfig } from "./webapi";
 
 export interface ImpactChartConfig {

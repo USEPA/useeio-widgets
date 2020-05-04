@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { Sector, Model } from "./webapi";
 import { BaseType } from "d3";
-import { Config, Widget } from "./commons";
+import { Config, Widget } from "./widget";
 
 export interface SectorListConfig {
     model: Model;
