@@ -100,7 +100,11 @@
                     .then(demand => model.calculate({
                         perspective: "direct",
                         demand: demand,
-                    }))
+                    }));
+            });
+            test("getTotalResults", () => {
+                return model.findDemand({ type: "Production" })
+                    .then(demandID => model.getTotalResults(demandID));
             });
         }
     </script>

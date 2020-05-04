@@ -1,9 +1,13 @@
 import * as d3 from "d3";
-import { Config, Widget } from "./widget";
-import { Indicator, Sector, Matrix, WebApi, WebApiConfig } from "./webapi";
+import { Config, Widget } from "../widget";
+import { Indicator, Sector, Matrix, Model, DemandInfo } from "../webapi";
+import * as colors from "../colors";
+import * as conf from "../config";
+import { SectorAnalysis } from "../calc/sector-analysis";
+import { zeros } from "../calc/cals";
 
 export interface ImpactChartConfig {
-    webapi: WebApiConfig;
+    model: Model;
     selector: string;
     width?: number;
     height?: number;
@@ -35,30 +39,15 @@ function responsiveSVG(selector: string, width: number, height: number) {
 
 export class ImpactChart extends Widget {
 
-    private api: WebApi;
+    private model: Model;
     private svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
     private width: number;
     private height: number;
     private columns: number;
-
-    private defaultIndicators = [
-        "ACID",
-        "ETOX",
-        "EUTR",
-        "GHG",
-        "HTOX",
-        "LAND",
-        "OZON",
-        "SMOG",
-        "WATR",
-    ];
-
     private sectors: Sector[];
-    private indicators: Indicator[];
-    private U: Matrix;
 
     async init(config: ImpactChartConfig) {
-        this.api = new WebApi(config.webapi);
+        this.model = config.model;
 
         this.width = config.width || 500;
         this.height = config.height || 500;
@@ -88,8 +77,7 @@ export class ImpactChart extends Widget {
             .attr("y", 40);
 
         // get the data
-        const sectors = await this.getSectors(config.sectors);
-        const indicators = await this.getIndicators(config.indicators);
+        const indicators = await selectIndicators(this.model, config);
         if (!indicators || indicators.length === 0) {
             this.svg.selectAll("*").remove();
             this.svg.append("text")
@@ -98,7 +86,7 @@ export class ImpactChart extends Widget {
                 .attr("y", 40);
             return;
         }
-        const result = await this.getResult(sectors, indicators);
+        const results = await getSectorResults(this.model, config);
         this.svg.selectAll("*").remove();
 
         const indicatorCount = indicators.length;
@@ -111,7 +99,7 @@ export class ImpactChart extends Widget {
         const cellHeaderHeight = 25;
         const cellChartHeight = cellHeight - cellHeaderHeight - 10;
 
-        for (let i = 0; i < indicators.length; i++) {
+        indicators.forEach((indicator, i) => {
 
             // calculate the cell position
             const row = Math.floor(i / columnCount);
@@ -134,14 +122,14 @@ export class ImpactChart extends Widget {
                 .style("stroke-width", 1)
                 .style("stroke", "#90a4ae");
 
-            const sectorCount = sectors ? sectors.length : 0;
+            const sectorCount = results.length;
             if (sectorCount === 0) {
-                continue;
+                return;
             }
 
             const barBoxHeight = cellChartHeight / sectorCount;
-            let barHeight = barBoxHeight - 10;
-            if (barHeight < 0) {
+            let barHeight = barBoxHeight - 5;
+            if (barHeight < 5) {
                 barHeight = barBoxHeight;
             }
             if (barHeight > 25) {
@@ -149,15 +137,15 @@ export class ImpactChart extends Widget {
             }
             // the vertical margin of the bar within the bar box
             const barMarginY = (barBoxHeight - barHeight) / 2;
-            for (let j = 0; j < sectorCount; j++) {
+            results.forEach((result, j) => {
                 const y = cellOffsetY + cellHeaderHeight
                     + j * barBoxHeight + barMarginY;
                 this.svg.append("rect")
                     .attr("x", cellOffsetX + 5)
                     .attr("y", y)
-                    .attr("width", result.get(i, j) * (cellWidth - 25))
+                    .attr("width", result.profile[indicator.index] * (cellWidth - 25))
                     .attr("height", barHeight)
-                    .style("fill", `var(--chart-color-${j + 1})`)
+                    .style("fill", colors.css(j))
                     .style("opacity", "0.6")
                     .on("mouseover", function () {
                         d3.select(this).style("opacity", "1.0");
@@ -166,100 +154,107 @@ export class ImpactChart extends Widget {
                         d3.select(this).style("opacity", "0.6");
                     })
                     .append("title")
-                    .text(sectors[j].name);
-            }
-        }
+                    .text(result.sector.name);
+            });
+
+        });
         this.ready();
     }
 
-    private async getSectors(codes: string[]): Promise<Sector[] | null> {
-        if (!codes || codes.length === 0) {
-            return null;
+}
+
+async function selectIndicators(model: Model, c: Config): Promise<Indicator[]> {
+    if (!model) return [];
+    const _codes = !c || !c.indicators || c.indicators.length === 0
+        ? conf.DEFAULT_INDICATORS
+        : c.indicators;
+    const indicators = await model.indicators();
+    const selected = [];
+    for (const code of _codes) {
+        const indicator = indicators.find(i => i.code === code);
+        if (indicator) {
+            selected.push(indicator);
         }
-        if (!this.sectors) {
-            this.sectors = await this.api.get("/sectors");
+    }
+    return selected;
+}
+
+type SectorResult = {
+    sector: Partial<Sector>,
+    profile: number[],
+};
+
+async function getSectorResults(model: Model, c: Config): Promise<SectorResult[]> {
+    if (!c || !c.sectors)
+        return [];
+
+    // calculate the environmental profiles; for a single
+    // sector code multiple results are aggregated to a
+    // single result when no location filter is set in a
+    // multi regional model.
+    const totals = await getNormalizationTotals(model, c);
+    const allSectors = await model.sectors();
+    const results: SectorResult[] = [];
+    for (const code of c.sectors) {
+        const sectors = allSectors.filter(s => {
+            if (s.code !== code)
+                return false;
+            if (c.location && s.location !== c.location)
+                return false;
+            return true;
+        });
+        if (sectors.length === 0)
+            continue;
+        const profile = zeros(totals.length);
+        for (const s of sectors) {
+            const analysis = new SectorAnalysis(s, model, totals);
+            const p = await analysis.getEnvironmentalProfile(
+                c.perspective === "direct");
+            p.forEach((x, i) => profile[i] += x);
         }
-        if (!this.sectors) {
-            return null;
-        }
-        const r: Sector[] = [];
-        for (const code of codes) {
-            for (const sector of this.sectors) {
-                if (code === sector.code) {
-                    r.push(sector);
-                }
-            }
-        }
-        return r;
+        const sector = sectors.length === 1
+            ? sectors[0]
+            : {
+                code,
+                name: sectors[0].name
+            };
+        results.push({ sector, profile });
     }
 
-    private async getIndicators(codes: string[]): Promise<Indicator[] | null> {
-        const _codes = !codes || codes.length === 0
-            ? this.defaultIndicators
-            : codes;
-        if (!this.indicators) {
-            this.indicators = await this.api.get("/indicators");
-        }
-        if (!this.indicators) {
-            return null;
-        }
-        const r: Indicator[] = [];
-        for (const code of _codes) {
-            for (const indicator of this.indicators) {
-                if (code === indicator.code) {
-                    r.push(indicator);
-                }
-            }
-        }
-        return r;
+    // scalte the results to the interval [0..1]
+    if (results.length === 0)
+        return [];
+
+    // if we have a single result we scale the profile values to [0..1]
+    if (results.length === 1) {
+        const r = results[0];
+        const max = r.profile.reduce((m, x) => Math.max(m, Math.abs(x)), 0);
+        r.profile = r.profile.map(x => max === 0 ? 0 : x / max);
+        return [r];
     }
 
-    private async getResult(
-        sectors: Sector[],
-        indicators: Indicator[]): Promise<Matrix | null> {
-
-        if (!sectors
-            || !indicators
-            || sectors.length === 0
-            || indicators.length === 0) {
-            return null;
+    // if we have multiple results, we scale them to the max indicator results
+    for (let i = 0; i < totals.length; i++) {
+        const max = results.reduce(
+            (m, r) => Math.max(m, Math.abs(r.profile[i])), 0);
+        for (const r of results) {
+            r.profile[i] = max === 0 ? 0 : r.profile[i] / max;
         }
-
-        if (!this.U) {
-            const data: number[][] = await this.api.get("/matrix/U");
-            this.U = new Matrix(data);
-        }
-        if (!this.U) {
-            return null;
-        }
-
-        const m = Matrix.zeros(indicators.length, sectors.length);
-        for (let i = 0; i < indicators.length; i++) {
-            const indicator = indicators[i];
-            let max = 0.0;
-            for (let j = 0; j < sectors.length; j++) {
-                const val = this.U.get(indicator.index, sectors[j].index);
-                m.set(i, j, val);
-                max = Math.max(val, max);
-            }
-
-            // make the results relative
-            for (let j = 0; j < sectors.length; j++) {
-                const val = m.get(i, j);
-                if (val === 0) {
-                    continue;
-                }
-                if (max !== 0) {
-                    m.set(i, j, val / max);
-                } else {
-                    if (val < 0) {
-                        m.set(i, j, -1);
-                    } else {
-                        m.set(i, j, 1);
-                    }
-                }
-            }
-        }
-        return m;
     }
+
+    return results;
+}
+
+async function getNormalizationTotals(model: Model, c: Config): Promise<number[]> {
+    const demandSpec: Partial<DemandInfo> = {
+        type: c.analysis ? c.analysis : "Consumption",
+    };
+    if (c.location) {
+        demandSpec.location = c.location;
+    }
+    if (c.year) {
+        demandSpec.year = c.year;
+    }
+    const demand = await model.findDemand(demandSpec);
+    return model.getTotalResults(demand);
 }

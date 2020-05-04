@@ -290,11 +290,13 @@ export class Model {
     private _demandInfos: DemandInfo[];
     private _matrices: { [index: string]: Matrix };
     private _demands: { [index: string]: DemandEntry[] };
+    private _totalResults: { [demandID: string]: number[] };
 
     constructor(private _conf: WebApiConfig) {
         this._api = new WebApi(_conf);
         this._matrices = {};
         this._demands = {};
+        this._totalResults = {};
     }
 
     async sectors(): Promise<Sector[]> {
@@ -347,9 +349,9 @@ export class Model {
     }
 
     /**
-     * Get the (first) demand vector for the given specification.
+     * Get the ID of the (first) demand vector for the given specification.
      */
-    async findDemand(spec: Partial<DemandInfo>): Promise<DemandEntry[] | null> {
+    async findDemand(spec: Partial<DemandInfo>): Promise<string | null> {
         const demands = await this.demands();
         const demand = demands.find(d => {
             if (spec.id && d.id !== spec.id) {
@@ -369,10 +371,7 @@ export class Model {
             }
             return true;
         });
-        if (!demand) {
-            return null;
-        }
-        return this.demand(demand.id);
+        return demand ? demand.id : null;
     }
 
     async matrix(name: MatrixName): Promise<Matrix> {
@@ -446,5 +445,36 @@ export class Model {
             sectors: sectors.map(sector => sector.id),
             totals: U.multiplyVector(demand),
         };
+    }
+
+    /**
+     * Get the total indicator result for the given demand vector and
+     * perspective. If the demand vector is specified by an ID, results are
+     * cached.
+     */
+    async getTotalResults(demand: string | DemandEntry[]): Promise<number[]> {
+        if (Array.isArray(demand)) {
+            const setup: CalculationSetup = {
+                perspective: "final",
+                demand,
+            };
+            return (await this.calculate(setup)).totals;
+        }
+
+        // try to get a cached result
+        const totals = this._totalResults[demand];
+        if (totals && totals.length > 0)
+            return totals;
+
+        // calculate and cache the result
+        const demandVector = await this.demand(demand);
+        const result = await this.calculate({
+            perspective: "final",
+            demand: demandVector,
+        });
+        if (!result)
+            return [];
+        this._totalResults[demand] = result.totals;
+        return result.totals;
     }
 }
