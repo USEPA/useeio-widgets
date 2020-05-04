@@ -36,19 +36,21 @@
 <script src="lib/useeio_widgets.js"></script>
 <script>
 
-    var webapi = {
+    var model = useeio.model({
         endpoint: './api',
         model: 'GAUSEEIO',
         asJsonFiles: true,
-    };
+    });
+
     var sectorList = useeio.sectorList({
-        webapi: webapi,
+        model: model,
         selector: '.useeio-sector-list',
     });
     var impactChart = useeio.impactChart({
-        webapi: webapi,
+        model: model,
         selector: '.impact-chart',
     });
+
     var config = useeio.hashConfig();
     config.join(sectorList);
     config.join(impactChart);

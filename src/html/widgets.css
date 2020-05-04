@@ -141,6 +141,10 @@ label {
     font-style: italic;
 }
 
+.useeio-impact-chart-indicator {
+    font-size: 0.8em;
+}
+
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {

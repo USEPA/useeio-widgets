@@ -44,7 +44,6 @@ export class ImpactChart extends Widget {
     private width: number;
     private height: number;
     private columns: number;
-    private sectors: Sector[];
 
     async init(config: ImpactChartConfig) {
         this.model = config.model;
@@ -111,6 +110,7 @@ export class ImpactChart extends Widget {
             this.svg.append("text")
                 .attr("x", cellOffsetX + 5)
                 .attr("y", cellOffsetY + cellHeaderHeight - 5)
+                .classed("useeio-impact-chart-indicator", true)
                 .text(indicators[i].name);
 
             // baseline of the chart
