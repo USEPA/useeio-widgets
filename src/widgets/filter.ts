@@ -1,8 +1,6 @@
 import * as d3 from "d3";
 import { Widget, Config } from "../widget";
-import { scaleDiverging } from "d3";
 
-type Elem = d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
 
 export class FilterWidget extends Widget {
 
@@ -22,40 +20,34 @@ export class FilterWidget extends Widget {
             .append("div")
             .classed("useeio-filter-widget", true);
 
-        this.perspective(root, config);
-        this.analysisType(root, config);
+        addRow(root, "Perspective:", perspective(config));
+        addRow(root, "Analysis type:", config.analysis);
+        addRow(root, "Year:", config.year);
+        addRow(root, "Location:", config.location);
         this.ready();
     }
+}
 
-    private perspective(root: Elem, config: Config) {
-        const div = root
-            .append("div")
-            .classed("filter-row", true);
-        div.append("label")
-            .text("Perspective:");
-        const perspective = div.append("span")
-            .classed("filter-value", true);
-        switch (config.perspective) {
-            case "direct":
-                perspective.text("Supply chain");
-                break;
-            case "final":
-                perspective.text("Point of consumption");
-                break;
-            default:
-                perspective.text("nothing selected");
-        }
+function perspective(config: Config): string | undefined {
+    if (!config.perspective)
+        return undefined;
+    switch (config.perspective) {
+        case "direct":
+            return "Supply chain";
+        case "final":
+            return "Point of consumption";
+        default:
+            return undefined;
     }
+}
 
-    private analysisType(root: Elem, config: Config) {
-        const div = root.append("div")
-            .classed("filter-row", true);
-        div.append("label")
-            .text("Analysis type:");
-        div.append("span")
-            .classed("filter-value", true)
-            .text(config.analysis
-                ? config.analysis
-                : "nothing selected");
-    }
+type Elem = d3.Selection<d3.BaseType, unknown, HTMLElement, any>;
+function addRow(root: Elem, header: string, value: any) {
+    const div = root.append("div")
+        .classed("filter-row", true);
+    div.append("label")
+        .text(header);
+    div.append("span")
+        .classed("filter-value", true)
+        .text(value ? value : "nothing selected");
 }

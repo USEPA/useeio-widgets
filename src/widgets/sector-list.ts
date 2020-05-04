@@ -1,7 +1,8 @@
 import * as d3 from "d3";
-import { Sector, Model } from "./webapi";
+import { Sector, Model } from "../webapi";
 import { BaseType } from "d3";
-import { Config, Widget } from "./widget";
+import { Config, Widget } from "../widget";
+import * as colors from "../colors";
 
 export interface SectorListConfig {
     model: Model;
@@ -95,7 +96,8 @@ export class SectorList extends Widget {
             .style("border", (s) => {
                 const idx = this.selection.indexOf(s);
                 if (idx >= 0) {
-                    return `var(--chart-color-${idx + 1}) solid 1px`;
+                    const color = colors.css(idx);
+                    return `${color} solid 1px`;
                 }
             });
 

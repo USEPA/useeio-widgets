@@ -12,18 +12,10 @@
         <h1 class="text-center">Selecting multiple sectors</h1>
         <p>
             With the <code>SectorList</code> widget multiple
-            sectors can be selected from a list. In the example
-            below the sector list is linked to a hash
-            configuration from which another widget could get
-            the selected sectors.
+            sectors can be selected from a list.
         </p>
         <pre>
             <code>
-    var model = useeio.model({
-        endpoint: './api',
-        model: 'GAUSEEIO',
-        asJsonFiles: true,
-    });
     var sectorList = useeio.sectorList({
         model: model,
         selector: '.useeio-sector-list',

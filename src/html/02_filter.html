@@ -58,7 +58,12 @@
     var config = useeio.hashConfig();
     config.join(settings);
     config.join(filter);
-
+    config.update({
+        perspective: 'direct',
+        analysis: 'Consumption',
+        year: 2007,
+        location: 'US-GA'
+    });
 </script>
 
 </html>

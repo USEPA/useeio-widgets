@@ -2,7 +2,7 @@ import { FilterWidget } from "./widgets/filter";
 import { HashConfigTransmitter } from "./widget";
 import { ImpactHeatmap, HeatmapConfig } from "./impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./impact-chart";
-import { SectorList, SectorListConfig } from "./sector-list";
+import { SectorList, SectorListConfig } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";

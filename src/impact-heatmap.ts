@@ -187,9 +187,8 @@ export class ImpactHeatmap extends Widget {
                 }
                 tr.append("td")
                     .attr("title", `${r.toExponential(2)} ${indicator.unit}`)
-                    .style("background-color", colors.toCSS(
-                        colors.getForIndicatorGroup(indicator.group),
-                        alpha));
+                    .style("background-color", colors.forIndicatorGroup(
+                        indicator.group, alpha));
             });
 
         }
