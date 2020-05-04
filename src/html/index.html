@@ -11,16 +11,21 @@
 <body>
     <div style="max-width: 750px; margin: auto;">
         <h1 class="text-center">USEEIO Widgets</h1>
-        <h2>Basic principles</h2>
         <p>
+            A USEEIO widget is a component that can be embedded into an HTML
+            page to visualize or configure data from an
+            <a href="https://github.com/USEPA/USEEIO_API" target="_blank">
+            USEEIO API</a> instance. Click on the examples below to see how
+            these widgets can be used.
+        </p>
+
             Each widget is a component that is created with a configuration
             object with a reference to a USEEIO model, a selector of an HTML
-            element (e.g an ID or class of a
-            <code>div</code> element) where the widget should be mounted, and
-            other widget specific properties. The USEEIO model is created
-            from an API endpoint. If the endpoint just provides cached JSON
-            files, the field <code>asJsonFiles</code> should be set to true
-            when creating the model:
+            element (e.g an ID or class of a <code>div</code> element) where the
+            widget should be mounted, and other widget specific properties. The
+            USEEIO model is created from an API endpoint. If the endpoint just
+            provides cached JSON files, the field <code>asJsonFiles</code>
+            should be set to true when creating the model:
         </p>
 
         <pre>
@@ -63,8 +68,12 @@
         </pre>
         </p>
 
-        <h2>Examples</h2>
         <ul>
+            <li>
+                <a href="./00_model.html" target="_blank">
+                    Configure a model
+                </a>
+            </li>
             <li>
                 <a href="./filter_widget.html" target="_blank">
                     Filter widget
