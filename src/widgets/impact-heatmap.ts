@@ -1,31 +1,13 @@
 import * as d3 from "d3";
-import * as colors from "./colors";
-import * as strings from "./strings";
+import * as colors from "../colors";
+import * as strings from "../strings";
+import * as conf from "../config";
 
-import { Widget } from "./widget";
+import { Widget } from "../widget";
 import {
-    Sector, Indicator, Matrix, WebApi,
-    IndicatorGroup, WebApiConfig
-} from "./webapi";
-
-const DEFAULT_INDICATORS = [
-    "ACID",
-    "ETOX",
-    "EUTR",
-    "GHG",
-    "HRSP",
-    "HTOX",
-    "OZON",
-    "SMOG",
-    "ENRG",
-    "LAND",
-    "MNRL",
-    "WATR",
-    "CMSW",
-    "CRHW",
-    "METL",
-    "PEST",
-];
+    Sector, Indicator, Matrix,
+    IndicatorGroup, Model
+} from "../webapi";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -36,14 +18,14 @@ const INDICATOR_GROUPS = [
 ];
 
 export interface HeatmapConfig {
-    webapi: WebApiConfig;
+    model: Model;
     selector: string;
     sectorCount: number;
 }
 
 export class ImpactHeatmap extends Widget {
 
-    private webapi: WebApi;
+    private model: Model;
     private indicators: Indicator[] = [];
     private sectors: Sector[] = [];
     private result: null | Matrix = null;
@@ -55,16 +37,16 @@ export class ImpactHeatmap extends Widget {
     private root: d3.Selection<HTMLDivElement, unknown, HTMLElement, any>;
 
     async init(config: HeatmapConfig) {
-        this.webapi = new WebApi(config.webapi);
+        this.model = config.model;
         this.sectorCount = config.sectorCount
             ? config.sectorCount
             : 10;
         this.root = d3.select(config.selector)
             .append("div");
 
-        this.sectors = await this.webapi.get("/sectors");
-        this.indicators = await this.webapi.get("/indicators");
-        this.result = new Matrix(await this.webapi.get("/matrix/U"));
+        this.sectors = await this.model.sectors();
+        this.indicators = await this.model.indicators();
+        this.result = await this.model.matrix("U");
 
         this.render();
         this.ready();
@@ -75,8 +57,7 @@ export class ImpactHeatmap extends Widget {
             .remove();
 
         const indicators = selectIndicators(
-            this.indicators,
-            DEFAULT_INDICATORS);
+            this.indicators, conf.DEFAULT_INDICATORS);
 
         if (!indicators || indicators.length === 0 || !this.result) {
             this.root.append("p")

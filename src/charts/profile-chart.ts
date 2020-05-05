@@ -3,6 +3,7 @@ import { Model, Sector, Indicator } from "./../webapi";
 import { Widget, Config } from "../widget";
 import { SectorAnalysis } from "../calc/sector-analysis";
 import { max, zeros } from "../calc/cals";
+import { model } from "../useeio-widgets";
 
 export interface ProfileChartConfig {
     model: Model;
@@ -41,14 +42,19 @@ export class ProfileChart extends Widget {
             };
         }
 
-        // TODO: calculate the perspective total
+        const demand = await this._chartConfig.model.findDemand({
+            location: config.location ? config.location : undefined,
+            type: config.analysis ? config.analysis : undefined,
+            year: config.year ? config.year : undefined,
+        });
+        const totals = await this._chartConfig.model.getTotalResults(demand);
 
         const profile = zeros(indicators.length);
         for (const sector of sectors) {
             const analysis = new SectorAnalysis(
                 sector,
                 this._chartConfig.model,
-                new Array(indicators.length).fill(1),
+                totals,
             );
             const p = await analysis.getEnvironmentalProfile(
                 config.perspective === "direct");
@@ -88,7 +94,7 @@ export class ProfileChart extends Widget {
                         ranges: [{
                             from: 0,
                             to: indicators.length,
-                            color: "#e83e8c",
+                            color: "#0071bc",
                         }],
                     }
                 }

@@ -18,13 +18,14 @@
 <script src="lib/d3.min.js"></script>
 <script src="lib/useeio_widgets.js"></script>
 <script>
+    var model = useeio.model({
+        endpoint: './api',
+        model: 'GAUSEEIO',
+        asJsonFiles: true,
+    });
 
     var heatmap = useeio.impactHeatmap({
-        webapi: {
-            endpoint: './api',
-            model: 'USEEIOv1.2',
-            asJsonFiles: true,
-        },
+        model: model,
         selector: '.impact-heatmap',
     });
 
