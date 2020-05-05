@@ -5,9 +5,11 @@ import * as conf from "../config";
 
 import { Widget } from "../widget";
 import {
-    Sector, Indicator, Matrix,
-    IndicatorGroup, Model
+    Indicator,
+    IndicatorGroup,
+    Model,
 } from "../webapi";
+import { HeatmapResult } from "../calc/heatmap-result";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -27,8 +29,7 @@ export class ImpactHeatmap extends Widget {
 
     private model: Model;
     private indicators: Indicator[] = [];
-    private sectors: Sector[] = [];
-    private result: null | Matrix = null;
+    private result: null | HeatmapResult = null;
 
     private sectorCount = 10;
     private searchTerm: null | string = null;
@@ -41,13 +42,16 @@ export class ImpactHeatmap extends Widget {
         this.sectorCount = config.sectorCount
             ? config.sectorCount
             : 10;
+
+        this.indicators = await this.model.indicators();
+        const demand = await this.model.findDemand({});
+        const result = await this.model.calculate({
+            perspective: "direct",
+            demand: await this.model.demand(demand),
+        });
+        this.result = await HeatmapResult.from(this.model, result);
         this.root = d3.select(config.selector)
             .append("div");
-
-        this.sectors = await this.model.sectors();
-        this.indicators = await this.model.indicators();
-        this.result = await this.model.matrix("U");
-
         this.render();
         this.ready();
     }
@@ -129,18 +133,10 @@ export class ImpactHeatmap extends Widget {
         this.renderRows(indicators);
     }
 
-
     private renderRows(indicators: Indicator[]) {
-        const sectors = selectSectors(
-            this.sectors,
-            indicators,
-            this.result,
-            this.sectorCount,
-            this.searchTerm,
-            this.sortIndicator);
-
-        const ranges = getResultRanges(
-            indicators, sectors, this.result);
+        const sectors = this.result.getRanking(
+            indicators, this.sectorCount,
+            this.searchTerm, this.sortIndicator);
 
         const tbody = d3.select("tbody.impact-heatmap-body");
         tbody.selectAll("*").remove();
@@ -159,10 +155,10 @@ export class ImpactHeatmap extends Widget {
                 .text(strings.cut(sector.name, 40));
 
             // the result cells
-            ranges.forEach(range => {
-                const indicator = range[0];
-                const r = this.result.get(indicator.index, sector.index);
-                let alpha = 0.1 + 0.9 * getShare(r, range);
+            indicators.forEach(indicator => {
+                const r = this.result.getResult(indicator, sector);
+                const share = this.result.getShare(indicator, sector);
+                let alpha = 0.1 + 0.9 * share;
                 if (this.sortIndicator && this.sortIndicator !== indicator) {
                     alpha *= 0.25;
                 }
@@ -171,70 +167,8 @@ export class ImpactHeatmap extends Widget {
                     .style("background-color", colors.forIndicatorGroup(
                         indicator.group, alpha));
             });
-
         }
     }
-
-}
-
-/**
- * Calculates the selection and order of the sectors that are displayed in
- * the rows of the heatmap.
- */
-function selectSectors(
-    sectors: Sector[],
-    indicators: Indicator[],
-    result: Matrix,
-    count: number,
-    searchTerm: string | null,
-    sortIndicator: Indicator | null): Sector[] {
-
-    if (!sectors) {
-        return [];
-    }
-    if (!indicators || indicators.length === 0 || !result) {
-        return sectors
-            .sort((s1, s2) => strings.compare(s1.name, s2.name))
-            .slice(0, count);
-    }
-
-    type Score = [Sector, number];
-    let scores: Score[];
-
-    if (searchTerm) {
-        scores = sectors
-            .map(s => [s, strings.search(s.name, searchTerm)] as Score)
-            .filter(score => score[1] >= 0)
-            .sort((score1, score2) => score1[1] - score2[1]);
-
-        if (sortIndicator) {
-            scores = scores
-                .map(score => {
-                    const s = score[0];
-                    return [s, result.get(sortIndicator.index, s.index)] as Score;
-                })
-                .sort((score1, score2) => score2[1] - score1[1]);
-        }
-
-    } else if (sortIndicator) {
-        scores = sectors
-            .map(s => [s, result.get(sortIndicator.index, s.index)] as Score)
-            .sort((score1, score2) => score2[1] - score1[1]);
-
-    } else {
-        scores = sectors
-            .map(s => {
-                const total = indicators
-                    .map(i => result.get(i.index, s.index))
-                    .reduce((sum, x) => sum + Math.pow(x, 2), 0);
-                return [s, Math.sqrt(total)] as Score;
-            })
-            .sort((score1, score2) => score2[1] - score1[1]);
-    }
-
-    return scores
-        .map(score => score[0])
-        .slice(0, count);
 }
 
 /**
@@ -280,52 +214,4 @@ function groupCounts(indicators: Indicator[]): GroupCount[] {
             return [group, count] as GroupCount;
         })
         .filter(g => g[1] > 0);
-}
-
-/**
- * An indicator result range: (indicator, minimum, maximum).
- */
-type ResultRange = [Indicator, number, number];
-
-/**
- * Calculates the result ranges of the given indicators and sectors. The ranges
- * are returned in the order of the given indicators.
- */
-function getResultRanges(
-    indicators: Indicator[],
-    sectors: Sector[],
-    result: Matrix): ResultRange[] {
-
-    if (!indicators || indicators.length === 0
-        || !sectors || sectors.length === 0
-        || !result) {
-        return [];
-    }
-
-    return indicators.map(indicator => {
-        let max;
-        let min;
-        for (const sector of sectors) {
-            const r = result.get(indicator.index, sector.index);
-            if (max === undefined) {
-                max = r;
-                min = r;
-            } else {
-                max = Math.max(max, r);
-                min = Math.min(min, r);
-            }
-        }
-        return [indicator, min, max];
-    });
-}
-
-function getShare(result: number, range: ResultRange): number {
-    if (!result || result === 0) {
-        return 0;
-    }
-    const [_, min, max] = range;
-    if (min === max) {
-        return 1;
-    }
-    return (result - min) / (max - min);
 }

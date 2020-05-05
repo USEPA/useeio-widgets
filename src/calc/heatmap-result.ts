@@ -10,7 +10,7 @@ export class HeatmapResult {
         return new HeatmapResult(sectors, r);
     }
 
-    constructor(public sectors: Sector[], public result: Result) {
+    private constructor(public sectors: Sector[], public result: Result) {
         this.normalized = result.data.map((row, i) => {
             const total = result.totals[i];
             return row.map(x => {
@@ -35,9 +35,9 @@ export class HeatmapResult {
                         return 0;
                     }
                     if (max === 0) {
-                        return x >= 0 ? 100 : -100;
+                        return x >= 0 ? 1 : -1;
                     }
-                    return 100 * x / max;
+                    return x / max;
                 });
         });
     }
@@ -59,11 +59,15 @@ export class HeatmapResult {
         return this.value(this.shares, indicator.index, sector.index);
     }
 
-    public getRanking(indicators: Indicator[], count: number, nameFilter: string): Sector[] {
+    public getRanking(indicators: Indicator[], count: number,
+        nameFilter?: string, sortIndicator?: Indicator): Sector[] {
         let filter = null;
         if (nameFilter && nameFilter.trim().length > 0) {
             filter = nameFilter.trim().toLocaleLowerCase();
         }
+        const rankIndicators = sortIndicator
+            ? [sortIndicator]
+            : indicators;
         const ranks: [Sector, number][] = [];
         for (const sector of this.sectors) {
             if (!this.matchesFilter(sector, filter)) {
@@ -71,7 +75,7 @@ export class HeatmapResult {
             }
             ranks.push([
                 sector,
-                this.getRankingValue(sector, indicators),
+                this.getRankingValue(sector, rankIndicators),
             ]);
         }
         ranks.sort((r1, r2) => r2[1] - r1[1]);

@@ -10,13 +10,13 @@ export function forIndicatorGroup(group: IndicatorGroup, alpha?: number): string
         case IndicatorGroup.CHEMICAL_RELEASES:
             return css([230, 122, 10], alpha);
         case IndicatorGroup.ECONOMIC_SOCIAL:
-            return css([66, 142, 85]);
+            return css([66, 142, 85], alpha);
         case IndicatorGroup.IMPACT_POTENTIAL:
-            return css([160, 0, 7]);
+            return css([160, 0, 7], alpha);
         case IndicatorGroup.RESOURCE_USE:
-            return css([77, 124, 161]);
+            return css([77, 124, 161], alpha);
         case IndicatorGroup.WASTE_GENERATED:
-            return css([101, 74, 139]);
+            return css([101, 74, 139], alpha);
         default:
             return css([0, 0, 0]);
     }
