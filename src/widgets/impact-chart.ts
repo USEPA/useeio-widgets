@@ -86,6 +86,7 @@ export class ImpactChart extends Widget {
             return;
         }
         const results = await getSectorResults(this.model, config);
+        makeRelative(results, indicators);
         this.svg.selectAll("*").remove();
 
         const indicatorCount = indicators.length;
@@ -220,28 +221,6 @@ async function getSectorResults(model: Model, c: Config): Promise<SectorResult[]
             };
         results.push({ sector, profile });
     }
-
-    // scalte the results to the interval [0..1]
-    if (results.length === 0)
-        return [];
-
-    // if we have a single result we scale the profile values to [0..1]
-    if (results.length === 1) {
-        const r = results[0];
-        const max = r.profile.reduce((m, x) => Math.max(m, Math.abs(x)), 0);
-        r.profile = r.profile.map(x => max === 0 ? 0 : x / max);
-        return [r];
-    }
-
-    // if we have multiple results, we scale them to the max indicator results
-    for (let i = 0; i < totals.length; i++) {
-        const max = results.reduce(
-            (m, r) => Math.max(m, Math.abs(r.profile[i])), 0);
-        for (const r of results) {
-            r.profile[i] = max === 0 ? 0 : r.profile[i] / max;
-        }
-    }
-
     return results;
 }
 
@@ -257,4 +236,29 @@ async function getNormalizationTotals(model: Model, c: Config): Promise<number[]
     }
     const demand = await model.findDemand(demandSpec);
     return model.getTotalResults(demand);
+}
+
+function makeRelative(results: SectorResult[], indicators: Indicator[]) {
+    if (results.length === 0)
+        return;
+
+    if (results.length === 1) {
+        const r = results[0];
+        const maxval = indicators.reduce((max, indicator) => {
+            return Math.max(max, Math.abs(r.profile[indicator.index]));
+        }, 0);
+        r.profile = r.profile.map(x => maxval === 0 ? 0 : x / maxval);
+        return;
+    }
+
+    indicators.forEach((indicator) => {
+        const i = indicator.index;
+        const maxval = results.reduce(
+            (max, r) => Math.max(max, Math.abs(r.profile[i])), 0);
+        for (const r of results) {
+            r.profile[indicator.index] = maxval === 0
+                ? 0
+                : r.profile[i] / maxval;
+        }
+    });
 }

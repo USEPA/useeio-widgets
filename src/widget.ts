@@ -11,7 +11,7 @@ export interface Config {
     /**
      * The possible sender of an configuration update.
      */
-    source?: Widget;
+    source?: any;
 
     /**
      * The full location hash if this configuration was fetched from
@@ -126,12 +126,12 @@ export class HashConfigTransmitter implements ConfigTransmitter {
 
     join(widget: Widget) {
         this.widgets.push(widget);
-        widget.update(this.config);
         widget.onChanged((config) => {
             this.config = {
                 ...this.config,
                 ...config,
             };
+            this.config.source = widget;
             this.updateHash();
         });
     }
@@ -141,6 +141,7 @@ export class HashConfigTransmitter implements ConfigTransmitter {
             ...this.config,
             ...config,
         };
+        this.config.source = this;
         this.updateHash();
     }
 

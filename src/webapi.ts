@@ -363,9 +363,12 @@ export class Model {
             if (spec.system && d.system !== spec.system) {
                 return false;
             }
+            /* TODO: location codes in the sectors are not the same
+             * as in the demand vectors.
             if (spec.location && d.location !== spec.location) {
                 return false;
             }
+            */
             if (spec.year && d.year !== spec.year) {
                 return false;
             }

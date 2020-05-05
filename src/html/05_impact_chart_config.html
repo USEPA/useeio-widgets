@@ -10,12 +10,15 @@
 <body>
     <div style="margin: 25px;">
 
-        <div style="width: 50%; margin: auto;">
-            <p>You can click on these links to switch between the
-                <a href="#perspective=direct">direct</a> and
-                <a href="#perspective=upstream">upstream</a> result
-                perspective.
+        <div style="max-width: 750px; margin: auto;">
+            <h1 class="text-center">Impact chart with configuration</h1>
+            <p>
+                The settings box, sector list, and impact chart are linked
+                via a hash configuration on this page.
             </p>
+
+            <div class="useeio-settings-widget">
+            </div>
         </div>
 
         <div style="float: left; width: 40%;">
@@ -42,6 +45,11 @@
         asJsonFiles: true,
     });
 
+    var settings = useeio.settingsWidget({
+        model: model,
+        selector: '.useeio-settings-widget',
+    });
+
     var sectorList = useeio.sectorList({
         model: model,
         selector: '.useeio-sector-list',
@@ -52,9 +60,16 @@
     });
 
     var config = useeio.hashConfig();
+    config.join(settings);
     config.join(sectorList);
     config.join(impactChart);
-
+    config.update({
+        perspective: 'direct',
+        analysis: 'Consumption',
+        year: 2007,
+        location: 'US-GA',
+        sectors: ['334111', '334210', '334220'],
+    });
 </script>
 
 </html>
