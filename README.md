@@ -1,11 +1,11 @@
 # USEEIO Widgets
 
 A collection of Javascript widgets with HTML integration examples
-to simplify the easy use and display of results and data from USEEIO models
-in web pages.
+to simplify the use and display of results and data from USEEIO models
+in web pages. 
 
 This repository includes the source code for these widgets
-. See the [build](./wiki/Build.md) instructions and details of their use on the Wiki. 
+. See the build instructions and details of their use on the [Wiki](https://github.com/USEPA/useeio-widgets/wiki/). 
  
 ## List of Widgets
 
