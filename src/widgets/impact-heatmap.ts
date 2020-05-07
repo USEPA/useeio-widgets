@@ -31,7 +31,7 @@ export class ImpactHeatmap extends Widget {
     private indicators: Indicator[] = [];
     private result: null | HeatmapResult = null;
 
-    private sectorCount = 10;
+    private sectorCount = 2000;
     private searchTerm: null | string = null;
     private sortIndicator: null | Indicator = null;
 
@@ -41,7 +41,7 @@ export class ImpactHeatmap extends Widget {
         this.model = config.model;
         this.sectorCount = config.sectorCount
             ? config.sectorCount
-            : 10;
+            : 2000;
 
         this.indicators = await this.model.indicators();
         const demand = await this.model.findDemand({});
@@ -115,10 +115,12 @@ export class ImpactHeatmap extends Widget {
             .append("th")
             .style("border-left", "lightgray solid 1px")
             .attr("class", "indicator")
+            .append("div")
             .append("a")
             .attr("href", "#")
             .attr("title", (i) => i.name)
-            .text(indicator => indicator.code)
+            // .text(indicator => indicator.code) //
+            .text(indicator => indicator.name)
             .on("click", (indicator) => {
                 if (this.sortIndicator === indicator) {
                     this.sortIndicator = null;
