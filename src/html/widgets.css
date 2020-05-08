@@ -153,6 +153,11 @@ label {
     font-style: italic;
 }
 
+.useeio-impact-chart-indicator {
+    font-size: 0.8em;
+    overflow: hidden;
+}
+
 .matrix-title {
     font-family: "Helvetica Neue", Helvetica, "Lato", sans-serif;
     font-size: 34px;
