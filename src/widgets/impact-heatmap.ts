@@ -157,7 +157,7 @@ export class ImpactHeatmap extends Widget {
                 .style("padding", "5px 0px")
                 .style("white-space", "nowrap")
                 .append("a")
-                .attr("href", "#")
+                .attr("href", `05_impact_chart_config.html#sectors=${sector.code}`)
                 .attr("title", `${sector.name} - ${sector.code}\n\n${sector.description}`)
                 .text(`${sector.code} - ${strings.cut(sector.name, 60)}`);
 
