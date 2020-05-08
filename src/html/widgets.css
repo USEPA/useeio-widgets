@@ -107,6 +107,8 @@ label {
     border-radius: 5px;
     margin: 2px;
     word-wrap: unset;
+    font-size: 0.8em;
+    overflow: hidden;
 }
 
 .useeio-settings-widget {
