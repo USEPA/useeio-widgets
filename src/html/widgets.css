@@ -32,6 +32,7 @@ th.indicator > div {
 }
 a {
     text-decoration: none;
+    color: #555;
 }
 
 a:hover {
@@ -39,11 +40,13 @@ a:hover {
 }
 
 input[type="text"], input[type="search"], select {
-    width: 100%;
-    height: 2.2em;
+    width: 98.5%;
+    height: 30px;
+    font-size: 18px;
     border: 1px solid lightgray;
     border-radius: 5px;
-    padding: 0 5px;
+    margin-right: 15px;
+    padding: 0 5px 0 10px;
 }
 
 label {
@@ -148,13 +151,24 @@ label {
     font-style: italic;
 }
 
-.useeio-impact-chart-indicator {
-    font-sizeX: 0.8em;
+.matrix-title {
+    font-family: "Helvetica Neue", Helvetica, "Lato", sans-serif;
+    font-size: 34px;
+    font-weight: 300;
+    text-align: left;
 }
-
+.indicator-row {
+    height: 170px;
+}
+.indicator {
+    font-size: 0.8em;
+}
 .impact-heatmap-body {
     font-size: 0.8em;
+}
+.impact-heatmap-body a {
     text-decoration: none;
+    color: none;
 }
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
