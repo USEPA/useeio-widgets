@@ -31,7 +31,7 @@ export class ImpactHeatmap extends Widget {
     private indicators: Indicator[] = [];
     private result: null | HeatmapResult = null;
 
-    private sectorCount = 10;
+    private sectorCount = 2000;
     private searchTerm: null | string = null;
     private sortIndicator: null | Indicator = null;
 
@@ -41,7 +41,7 @@ export class ImpactHeatmap extends Widget {
         this.model = config.model;
         this.sectorCount = config.sectorCount
             ? config.sectorCount
-            : 10;
+            : 2000;
 
         this.indicators = await this.model.indicators();
         const demand = await this.model.findDemand({});
@@ -77,10 +77,10 @@ export class ImpactHeatmap extends Widget {
         const thead = table.append("thead");
         const firstHeader = thead.append("tr");
         firstHeader.append("th")
-            .text("Goods & services")
-            .style("width", "20%");
+            
 
         // create the group headers
+        /*
         const groups = groupCounts(indicators);
         const total = groups.reduce((sum, g) => sum + g[1], 0);
         firstHeader.selectAll("th.indicator-group")
@@ -91,17 +91,22 @@ export class ImpactHeatmap extends Widget {
             .text(g => g[0])
             .style("width", g => `${80 * g[1] / total}%`)
             .style("border-left", "lightgray solid 1px")
+            .style("border-bottom", "lightgray solid 1px")
             .attr("colspan", g => g[1]);
+        */
 
         // the search box
         const self = this;
-        const secondHeader = thead.append("tr");
+        const secondHeader = thead.append("tr").attr("class","indicator-row");
         secondHeader
             .append("th")
+            .text("Goods & Services")
+            .attr("class", "matrix-title")
+            /* .style("width", "20%") */
+
             .append("input")
             .attr("type", "search")
-            .attr("placeholder", "Search")
-            .style("width", "100%")
+            .attr("placeholder", "search")
             .on("input", function () {
                 self.searchTerm = this.value;
                 self.renderRows(indicators);
@@ -113,12 +118,14 @@ export class ImpactHeatmap extends Widget {
             .data(indicators)
             .enter()
             .append("th")
-            .style("border-left", "lightgray solid 1px")
+            /* .style("border-left", "lightgray solid 1px") */
             .attr("class", "indicator")
+            .append("div")
             .append("a")
             .attr("href", "#")
             .attr("title", (i) => i.name)
-            .text(indicator => indicator.code)
+            // .text(indicator => indicator.code) //
+            .text(indicator => indicator.name)
             .on("click", (indicator) => {
                 if (this.sortIndicator === indicator) {
                     this.sortIndicator = null;
@@ -152,7 +159,7 @@ export class ImpactHeatmap extends Widget {
                 .append("a")
                 .attr("href", "#")
                 .attr("title", `${sector.name} - ${sector.code}\n\n${sector.description}`)
-                .text(strings.cut(sector.name, 40));
+                .text(`${sector.code} - ${strings.cut(sector.name, 60)}`);
 
             // the result cells
             indicators.forEach(indicator => {
