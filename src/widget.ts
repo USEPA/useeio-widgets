@@ -110,6 +110,26 @@ export class HashConfigTransmitter implements ConfigTransmitter {
         window.addEventListener("popstate", () => this.onHashChanged());
     }
 
+    /**
+     * Updates the configation of this transmitter if the given object contains
+     * properties that are not already defined. Only if there is at least one
+     * such property, an update is fired.
+     */
+    public updateIfAbsent(conf: Record<string, any>) {
+        if (!conf) return;
+        const next: Record<string, any> = { ...this.config };
+        let needsUpdate = false;
+        for (const key of Object.keys(conf)) {
+            if (!next[key]) {
+                next[key] = conf[key];
+                needsUpdate = true;
+            }
+        }
+        if (needsUpdate) {
+            this.update(next as Config);
+        }
+    }
+
     private onHashChanged() {
         this.config = {
             ...this.config,
