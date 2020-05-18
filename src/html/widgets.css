@@ -107,6 +107,8 @@ label {
     border-radius: 5px;
     margin: 2px;
     word-wrap: unset;
+    font-size: 0.8em;
+    overflow: hidden;
 }
 
 .useeio-settings-widget {
@@ -149,6 +151,11 @@ label {
 .useeio-filter-widget .filter-value {
     padding-left: 10px;
     font-style: italic;
+}
+
+.useeio-impact-chart-indicator {
+    font-size: 0.8em;
+    overflow: hidden;
 }
 
 .matrix-title {
