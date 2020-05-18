@@ -146,6 +146,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
 
     join(widget: Widget) {
         this.widgets.push(widget);
+        widget.update(this.config);
         widget.onChanged((config) => {
             this.config = {
                 ...this.config,
