@@ -76,8 +76,7 @@ export class ImpactHeatmap extends Widget {
 
         const thead = table.append("thead");
         const firstHeader = thead.append("tr");
-        firstHeader.append("th")
-            
+        firstHeader.append("th");
 
         // create the group headers
         /*

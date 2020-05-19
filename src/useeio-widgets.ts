@@ -1,5 +1,5 @@
 import { FilterWidget } from "./widgets/filter";
-import { HashConfigTransmitter } from "./widget";
+import { UrlConfigTransmitter } from "./widget";
 import { ImpactHeatmap, HeatmapConfig } from "./widgets/impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SectorList, SectorListConfig } from "./widgets/sector-list";
@@ -15,8 +15,8 @@ export function filterWidget(conf: { selector: string }): FilterWidget {
     return new FilterWidget(conf.selector);
 }
 
-export function hashConfig() {
-    return new HashConfigTransmitter();
+export function urlConfig() {
+    return new UrlConfigTransmitter();
 }
 
 export function impactChart(config: ImpactChartConfig): ImpactChart {

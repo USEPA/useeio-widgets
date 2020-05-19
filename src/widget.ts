@@ -99,21 +99,41 @@ export interface ConfigTransmitter {
     update(config: Config): void;
 }
 
-export class HashConfigTransmitter implements ConfigTransmitter {
+export class UrlConfigTransmitter implements ConfigTransmitter {
 
     private widgets = new Array<Widget>();
     private config: Config = {};
 
     constructor() {
-        this.config = this.parseConfig();
+        this.config = parseUrlConfig({ withScripts: true });
         window.onhashchange = () => this.onHashChanged();
         window.addEventListener("popstate", () => this.onHashChanged());
+    }
+
+    /**
+     * Updates the configation of this transmitter if the given object contains
+     * properties that are not already defined. Only if there is at least one
+     * such property, an update is fired.
+     */
+    public updateIfAbsent(conf: Record<string, any>) {
+        if (!conf) return;
+        const next: Record<string, any> = { ...this.config };
+        let needsUpdate = false;
+        for (const key of Object.keys(conf)) {
+            if (!next[key]) {
+                next[key] = conf[key];
+                needsUpdate = true;
+            }
+        }
+        if (needsUpdate) {
+            this.update(next as Config);
+        }
     }
 
     private onHashChanged() {
         this.config = {
             ...this.config,
-            ...this.parseConfig(),
+            ...parseUrlConfig(),
         };
         for (const widget of this.widgets) {
             widget.update(this.config);
@@ -126,6 +146,7 @@ export class HashConfigTransmitter implements ConfigTransmitter {
 
     join(widget: Widget) {
         this.widgets.push(widget);
+        widget.update(this.config);
         widget.onChanged((config) => {
             this.config = {
                 ...this.config,
@@ -143,69 +164,6 @@ export class HashConfigTransmitter implements ConfigTransmitter {
         };
         this.config.source = this;
         this.updateHash();
-    }
-
-    private parseConfig(): Config {
-        const config: Config = {};
-        config.hash = window.location.hash;
-        if (!config.hash) {
-            return config;
-        }
-        const parts = strings.trimPrefix(decodeURIComponent(config.hash), "#")
-            .split("&");
-        for (const part of parts) {
-            const keyVal = part.split("=");
-            if (keyVal.length < 2) {
-                continue;
-            }
-            const key = keyVal[0].trim().toLowerCase();
-            const val = keyVal[1].trim();
-            if (key.length === 0 || val.length === 0) {
-                continue;
-            }
-
-            switch (key) {
-
-                case "sectors":
-                    config.sectors = val.split(",");
-                    break;
-
-                case "indicators":
-                    config.indicators = val.split(",");
-                    break;
-
-                case "type":
-                case "analysis":
-                    if (strings.eq(val, "consumption")) {
-                        config.analysis = "Consumption";
-                    } else if (strings.eq(val, "production")) {
-                        config.analysis = "Production";
-                    }
-                    break;
-
-                case "perspective":
-                    const p = getPerspective(val);
-                    if (p) {
-                        config.perspective = p;
-                    }
-                    break;
-
-                case "location":
-                    config.location = val;
-                    break;
-
-                case "year":
-                    try {
-                        config.year = parseInt(val, 10);
-                    } catch (e) {
-                        delete config.year;
-                    }
-
-                default:
-                    break;
-            }
-        }
-        return config;
     }
 
     private updateHash() {
@@ -228,6 +186,97 @@ export class HashConfigTransmitter implements ConfigTransmitter {
             }
         });
         window.location.hash = "#" + parts.join("&");
+    }
+}
+
+/**
+ * Parses the URL configuration from the browser URL (window.location)
+ * and optionally also from the URLs of included JavaScript files. Hash
+ * parameters have a higher priority than normal URL parameters; the
+ * browser URL has a higher priority that the URLs of included JavaScript
+ * files.
+ */
+function parseUrlConfig(what?: { withScripts?: boolean }): Config {
+    const config: Config = {};
+    const urls: string[] = [
+        window.location.href,
+    ];
+    if (what && what.withScripts) {
+        const scriptTags = document.getElementsByTagName("script");
+        for (let i = 0; i < scriptTags.length; i++) {
+            const url = scriptTags[i].src;
+            if (url) {
+                urls.push(url);
+            }
+        }
+    }
+    for (const url of urls) {
+        const hashParams = getParameters(getHashPart(url));
+        const otherParams = getParameters(getParameterPart(url));
+        updateConfig(config, hashParams);
+        updateConfig(config, otherParams);
+    }
+    return config;
+}
+
+/**
+ * Updates the given configuration with the given URL parameters if and only
+ * if the respective parameters are not already defined in that configuration.
+ */
+function updateConfig(config: Config, urlParams: [string, string][]) {
+    for (const [key, val] of urlParams) {
+        switch (key) {
+
+            case "sectors":
+                if (config.sectors)
+                    break;
+                config.sectors = val.split(",");
+                break;
+
+            case "indicators":
+                if (config.indicators)
+                    break;
+                config.indicators = val.split(",");
+                break;
+
+            case "type":
+            case "analysis":
+                if (config.analysis)
+                    break;
+                if (strings.eq(val, "consumption")) {
+                    config.analysis = "Consumption";
+                } else if (strings.eq(val, "production")) {
+                    config.analysis = "Production";
+                }
+                break;
+
+            case "perspective":
+                if (config.perspective)
+                    break;
+                const p = getPerspective(val);
+                if (p) {
+                    config.perspective = p;
+                }
+                break;
+
+            case "location":
+                if (config.location)
+                    break;
+                config.location = val;
+                break;
+
+            case "year":
+                if (config.year)
+                    break;
+                try {
+                    config.year = parseInt(val, 10);
+                } catch (e) {
+                    delete config.year;
+                }
+
+            default:
+                break;
+        }
     }
 }
 
@@ -256,4 +305,48 @@ function getPerspective(val: string): ResultPerspective | null {
         default:
             return null;
     }
+}
+
+function getParameters(urlPart: string): [string, string][] {
+    if (!urlPart)
+        return [];
+    const pairs = urlPart.split("&");
+    const params: [string, string][] = [];
+    for (const pair of pairs) {
+        const keyVal = pair.split("=");
+        if (keyVal.length < 2) {
+            continue;
+        }
+        const key = keyVal[0].trim().toLowerCase();
+        const val = keyVal[1].trim();
+        params.push([key, val]);
+    }
+    return params;
+}
+
+function getHashPart(url: string): string | null {
+    if (!url)
+        return null;
+    const parts = url.split("#");
+    return parts.length < 2
+        ? null
+        : parts[parts.length - 1];
+}
+
+function getParameterPart(url: string): string | null {
+    if (!url)
+        return null;
+    let part = url;
+
+    // remove the hash part
+    let parts = url.split("#");
+    if (parts.length > 1) {
+        part = parts[parts.length - 2];
+    }
+
+    // get the parameter part
+    parts = part.split("?");
+    return parts.length < 2
+        ? null
+        : parts[1];
 }

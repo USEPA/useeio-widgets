@@ -5,8 +5,8 @@ to simplify the use and display of results and data from USEEIO models
 in web pages. [View Widget Starter Samples](https://modelearth.github.io/eeio/charts/useeio)
 
 This repository includes the source code for these widgets
-. See the build instructions and details of their use on the [Wiki](https://github.com/USEPA/useeio-widgets/wiki/). 
- 
+. See the build instructions and details of their use on the [Wiki](https://github.com/USEPA/useeio-widgets/wiki/).
+
 ## List of Widgets
 
 |Name|Type|Description|Details on Use|
