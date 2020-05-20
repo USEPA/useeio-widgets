@@ -14,10 +14,9 @@ export interface Config {
     source?: any;
 
     /**
-     * The full location hash if this configuration was fetched from
-     * a location hash (window.location.hash).
+     * The ID of the input output model
      */
-    hash?: string;
+    model?: string;
 
     /**
      * An array of sector codes.
@@ -111,6 +110,13 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
     }
 
     /**
+     * Returns the current configuration of this transmitter.
+     */
+    public get(): Config {
+        return { ...this.config };
+    }
+
+    /**
      * Updates the configation of this transmitter if the given object contains
      * properties that are not already defined. Only if there is at least one
      * such property, an update is fired.
@@ -180,6 +186,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             ["perspective", conf.perspective],
             ["year", conf.year],
             ["location", conf.location],
+            ["model", conf.model],
         ].forEach(([key, val]) => {
             if (val) {
                 parts.push(`${key}=${val}`);
@@ -226,6 +233,12 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
 function updateConfig(config: Config, urlParams: [string, string][]) {
     for (const [key, val] of urlParams) {
         switch (key) {
+
+            case "model":
+                if (config.model)
+                    break;
+                config.model = val;
+                break;
 
             case "sectors":
                 if (config.sectors)

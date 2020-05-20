@@ -45,6 +45,7 @@
             Below, some model and API tests are executed:
         </p>
 
+        <div id="model-id"></div>
         <div id="tests"></div>
 
     </div>
@@ -52,16 +53,13 @@
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
-        /*
-        const model = useeio.model({
-            endpoint: 'http://localhost/api',
-            model: 'USEEIO',
-        });
-        */
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+        document.getElementById("model-id").textContent = "Run tests with model: " + modelID;
 
         const model = useeio.model({
             endpoint: './api',
-            model: 'GAUSEEIO',
+            model: modelID,
             asJsonFiles: true,
         });
 
