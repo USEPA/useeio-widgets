@@ -43,9 +43,12 @@
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+
         var model = useeio.model({
             endpoint: './api',
-            model: 'GAUSEEIO',
+            model: modelID,
             asJsonFiles: true,
         });
 
@@ -55,7 +58,6 @@
         });
 
         // link the settings with a hash config
-        var config = useeio.urlConfig();
         config.join(settings);
     </script>
 </body>

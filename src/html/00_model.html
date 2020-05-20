@@ -45,6 +45,7 @@
             Below, some model and API tests are executed:
         </p>
 
+        <div id="model-id"></div>
         <div id="tests"></div>
 
     </div>
@@ -52,16 +53,13 @@
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
-        /*
-        const model = useeio.model({
-            endpoint: 'http://localhost/api',
-            model: 'USEEIO',
-        });
-        */
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+        document.getElementById("model-id").textContent = "Run tests with model: " + modelID;
 
         const model = useeio.model({
             endpoint: './api',
-            model: 'GAUSEEIO',
+            model: modelID,
             asJsonFiles: true,
         });
 
@@ -72,16 +70,14 @@
             const span = document.createElement("span");
             span.textContent = "Test: " + header + " ... ";
             div.append(span);
-            fn().then((r, err) => {
-                if (!err) {
-                    span.textContent = span.textContent + "OK";
-                } else {
-                    span.textContent = span.textContent + "ERROR";
-                }
+            fn().then(r => {
+                span.textContent = span.textContent + "OK";
                 console.log(header, ": ", r);
+            }).catch(err => {
+                span.textContent = span.textContent + "ERROR";
+                span.setAttribute("style", "color: red");
             });
         };
-
 
         window.onload = () => {
             root = document.getElementById("tests");

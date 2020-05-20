@@ -40,9 +40,12 @@
 <script src="lib/useeio_widgets.js"></script>
 <script>
 
+    var config = useeio.urlConfig();
+    var modelID = config.get().model || 'GAUSEEIO';
+
     var model = useeio.model({
         endpoint: './api',
-        model: 'GAUSEEIO',
+        model: modelID,
         asJsonFiles: true,
     });
 
@@ -55,14 +58,11 @@
         selector: '#filter-widget',
     });
 
-    var config = useeio.urlConfig();
     config.join(settings);
     config.join(filter);
     config.update({
         perspective: 'direct',
         analysis: 'Consumption',
-        year: 2007,
-        location: 'US-GA'
     });
 </script>
 
