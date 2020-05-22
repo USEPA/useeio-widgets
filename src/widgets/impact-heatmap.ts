@@ -10,6 +10,7 @@ import {
     Model,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
+import { ones } from "../calc/cals";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -23,6 +24,7 @@ export interface HeatmapConfig {
     model: Model;
     selector: string;
     sectorCount: number;
+    skipNormalization?: boolean;
 }
 
 export class ImpactHeatmap extends Widget {
@@ -44,12 +46,7 @@ export class ImpactHeatmap extends Widget {
             : 2000;
 
         this.indicators = await this.model.indicators();
-        const demand = await this.model.findDemand({});
-        const result = await this.model.calculate({
-            perspective: "direct",
-            demand: await this.model.demand(demand),
-        });
-        this.result = await HeatmapResult.from(this.model, result);
+        this.result = await calculateResult(config);
         this.root = d3.select(config.selector)
             .append("div");
         this.render();
@@ -221,3 +218,22 @@ function groupCounts(indicators: Indicator[]): GroupCount[] {
         })
         .filter(g => g[1] > 0);
 }
+
+async function calculateResult(conf: HeatmapConfig): Promise<HeatmapResult> {
+    const model = conf.model;
+    if (conf.skipNormalization) {
+        const U = await model.matrix("U");
+        return HeatmapResult.from(conf.model, {
+            sectors: (await model.sectors()).map(s => s.id),
+            indicators: (await model.indicators()).map(i => i.code),
+            totals: ones(U.rows),
+            data: U.data,
+        })
+    }
+    const demand = await this.model.findDemand({});
+    const result = await this.model.calculate({
+        perspective: "direct",
+        demand: await this.model.demand(demand),
+    });
+    return HeatmapResult.from(this.model, result);
+} 

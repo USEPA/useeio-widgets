@@ -2,6 +2,7 @@ const fs = require('fs');
 
 let endpoint = null;
 let apikey = null;
+let args = {};
 
 // parse command line arguments
 // --endpoint <API endpoint>
@@ -23,6 +24,7 @@ for (const arg of process.argv) {
             apikey = arg;
             break;
         default:
+            args[flag.substring(2)] = arg;
             break;
     }
     flag = null;
@@ -91,7 +93,10 @@ async function download(modelID) {
     }
 
     // first create the model folders (blocking)
-    const dir = targetDir + '/' + modelID;
+    const mappedDir = args[modelID];
+    const dir = mappedDir
+        ? targetDir + '/' + mappedDir
+        : targetDir + '/' + modelID;
     [dir, dir + '/matrix', dir + '/demands'].forEach(folder => {
         if (!fs.existsSync(folder)) {
             fs.mkdirSync(folder);
