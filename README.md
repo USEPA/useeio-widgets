@@ -2,7 +2,7 @@
 
 A collection of Javascript widgets with HTML integration examples
 to simplify the use and display of results and data from USEEIO models
-in web pages. [View Widget Starter Samples](https://modelearth.github.io/eeio/charts/useeio)
+in web pages. [View Widget Starter Samples](https://modelearth.github.io/io/charts/)
 
 This repository includes the source code for these widgets
 . See the build instructions and details of their use on the [Wiki](https://github.com/USEPA/useeio-widgets/wiki/).
