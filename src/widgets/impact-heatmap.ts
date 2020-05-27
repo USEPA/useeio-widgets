@@ -132,6 +132,29 @@ export class ImpactHeatmap extends Widget {
         if (!indicators || indicators.length === 0) {
             return;
         }
+
+        // render a bar when a single indicator is selected
+        if (indicators.length === 1) {
+            const ind = indicators[0];
+            const color = colors.forIndicatorGroup(ind.group);
+            const r = this.result.getResult(ind, sector);
+            const share = this.result.getShare(ind, sector);
+            const div = tr.append("td").append("div");
+            div.append("span")
+                .text(`${r.toExponential(2)} ${ind.unit}`);
+            div.append("td")
+                .append("svg")
+                .attr("height", 15)
+                .attr("width", 210)
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 2.5)
+                .attr("width", 200 * (0.1 + 0.9 * share))
+                .attr("height", 10)
+                .attr("fill", color);
+            return;
+        }
+
         indicators.forEach(indicator => {
             const r = this.result.getResult(indicator, sector);
             const share = this.result.getShare(indicator, sector);
