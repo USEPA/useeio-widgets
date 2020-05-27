@@ -167,6 +167,9 @@ label {
 .indicator-row {
     height: 170px;
 }
+.indicator-row a {
+    cursor: pointer;
+}
 .indicator {
     font-size: 0.8em;
 }

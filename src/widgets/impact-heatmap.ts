@@ -24,7 +24,6 @@ type Elem = d3.Selection<HTMLElement, unknown, HTMLElement, any>;
 
 export class ImpactHeatmap extends Widget {
 
-    private indicators: Indicator[] = [];
     private result: null | HeatmapResult = null;
     private config: Config;
 
@@ -47,32 +46,22 @@ export class ImpactHeatmap extends Widget {
         const root = d3.select(this.selector)
             .append("div");
 
-        this.indicators = await this.model.indicators();
         this.result = await calculateResult(this.model, config);
 
-        const indicators = selectIndicators(
-            this.indicators, conf.DEFAULT_INDICATORS);
-
-        if (!indicators || indicators.length === 0 || !this.result) {
-            root.append("p")
-                .text("no data")
-                .style("text-align", "center");
-            return;
-        }
+        const indicators = await this.selectIndicators();
 
         const table = root
             .append("table")
             .style("width", "100%");
 
-        const thead = table.append("thead");
-        const firstHeader = thead.append("tr");
-        firstHeader.append("th");
+
+        const header = table.append("thead")
+            .append("tr")
+            .classed("indicator-row", true);
 
         // the search box
         const self = this;
-        const secondHeader = thead.append("tr").attr("class", "indicator-row");
-        secondHeader
-            .append("th")
+        header.append("th")
             .text("Goods & Services")
             .attr("class", "matrix-title")
             .append("input")
@@ -83,18 +72,17 @@ export class ImpactHeatmap extends Widget {
                 self.renderRows(indicators);
             });
 
-        if (config.show === "mosaic") {
-            this.renderMultiIndicatorHeader(
-                secondHeader, indicators);
-        }
+        this.renderIndicatorHeader(header, indicators);
 
         table.append("tbody")
             .classed("impact-heatmap-body", true);
         this.renderRows(indicators);
     }
 
-    private renderMultiIndicatorHeader(
-        tr: Elem, indicators: Indicator[]) {
+    private renderIndicatorHeader(tr: Elem, indicators: Indicator[]) {
+        if (!indicators || indicators.length === 0) {
+            return;
+        }
         tr.selectAll("th.indicator")
             .data(indicators)
             .enter()
@@ -135,13 +123,13 @@ export class ImpactHeatmap extends Widget {
                 .attr("href", `05_impact_chart_config.html#sectors=${sector.code}`)
                 .attr("title", `${sector.name} - ${sector.code}\n\n${sector.description}`)
                 .text(`${sector.code} - ${strings.cut(sector.name, 60)}`);
-            this.renderIndicatorResults(tr, sector, indicators);
+            this.renderIndicatorResult(tr, sector, indicators);
         }
     }
 
-    private renderIndicatorResults(
+    private renderIndicatorResult(
         tr: Elem, sector: Sector, indicators: Indicator[]) {
-        if (this.config.show !== "mosaic") {
+        if (!indicators || indicators.length === 0) {
             return;
         }
         indicators.forEach(indicator => {
@@ -157,19 +145,28 @@ export class ImpactHeatmap extends Widget {
                     indicator.group, alpha));
         });
     }
-}
 
-/**
- * Selects and sorts the given indicators for the columns in the heatmap.
- * The groups are considered in the order.
- */
-function selectIndicators(indicators: Indicator[], codes: string[]): Indicator[] {
-    if (!indicators || !codes) {
-        return [];
-    }
-    return indicators
-        .filter(i => codes.indexOf(i.code) >= 0)
-        .sort((i1, i2) => {
+    private async selectIndicators(): Promise<Indicator[]> {
+        if (this.config.show !== "mosaic") {
+            return [];
+        }
+        const all = await this.model.indicators();
+        if (!all || all.length === 0) {
+            return [];
+        }
+
+        // filter indicators by configuration codes
+        let codes = this.config.indicators;
+        if (!codes || codes.length === 0) {
+            codes = conf.DEFAULT_INDICATORS;
+        }
+        const indicators = all.filter(i => codes.indexOf(i.code) >= 0);
+        if (indicators.length <= 1) {
+            return indicators;
+        }
+
+        // sort indicators by groups and names
+        indicators.sort((i1, i2) => {
             if (i1.group === i2.group) {
                 return strings.compare(i1.code, i2.code);
             }
@@ -177,6 +174,8 @@ function selectIndicators(indicators: Indicator[], codes: string[]): Indicator[]
             const ix2 = INDICATOR_GROUPS.findIndex(g => g === i2.group);
             return ix1 - ix2;
         });
+        return indicators;
+    }
 }
 
 /**
