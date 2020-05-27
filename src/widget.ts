@@ -8,6 +8,8 @@ import * as strings from "./util/strings";
  */
 export interface Config {
 
+    [key: string]: any;
+
     /**
      * The possible sender of an configuration update.
      */
@@ -48,6 +50,18 @@ export interface Config {
      * by location in multi-regional models.
      */
     location?: string;
+
+    /**
+     * The number of items a widget should display.
+     * This is typically the number of sectors.
+     */
+    count?: number;
+
+    /**
+     * Can be used together with the `count` property
+     * to page through a number of items.
+     */
+    page?: number;
 }
 
 export abstract class Widget {
@@ -232,30 +246,25 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
  */
 function updateConfig(config: Config, urlParams: [string, string][]) {
     for (const [key, val] of urlParams) {
+        if (!val || config[key])
+            continue;
+
         switch (key) {
 
             case "model":
-                if (config.model)
-                    break;
                 config.model = val;
                 break;
 
             case "sectors":
-                if (config.sectors)
-                    break;
                 config.sectors = val.split(",");
                 break;
 
             case "indicators":
-                if (config.indicators)
-                    break;
                 config.indicators = val.split(",");
                 break;
 
             case "type":
             case "analysis":
-                if (config.analysis)
-                    break;
                 if (strings.eq(val, "consumption")) {
                     config.analysis = "Consumption";
                 } else if (strings.eq(val, "production")) {
@@ -264,8 +273,6 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
                 break;
 
             case "perspective":
-                if (config.perspective)
-                    break;
                 const p = getPerspective(val);
                 if (p) {
                     config.perspective = p;
@@ -273,19 +280,25 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
                 break;
 
             case "location":
-                if (config.location)
-                    break;
                 config.location = val;
                 break;
 
             case "year":
-                if (config.year)
-                    break;
                 try {
                     config.year = parseInt(val, 10);
-                } catch (e) {
-                    delete config.year;
-                }
+                } catch (_) { }
+                break;
+
+            case "count":
+                try {
+                    config.count = parseInt(val, 10);
+                } catch (_) { }
+                break;
+
+            case "page":
+                try {
+                    config.page = parseInt(val, 10);
+                } catch (_) { }
 
             default:
                 break;
