@@ -57,6 +57,8 @@ export interface Config {
      * to page through a number of items.
      */
     page?: number;
+
+    show?: string;
 }
 
 export interface WidgetArgs {
@@ -192,19 +194,18 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
         if (conf.indicators && conf.indicators.length > 0) {
             parts.push("indicators=" + conf.indicators.join(","));
         }
-        [
-            ["type", conf.analysis],
-            ["perspective", conf.perspective],
-            ["year", conf.year],
-            ["location", conf.location],
-            ["page", conf.page],
-            ["count", conf.count],
-            ["model", conf.model],
-        ].forEach(([key, val]) => {
+        for (const key in conf) {
+            if (!conf.hasOwnProperty(key)) {
+                continue;
+            }
+            if (key === "sectors" || key === "indicators") {
+                continue;
+            }
+            const val = conf[key];
             if (val) {
                 parts.push(`${key}=${val}`);
             }
-        });
+        }
         window.location.hash = "#" + parts.join("&");
     }
 }
@@ -224,7 +225,7 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
     if (what && what.withScripts) {
         const scriptTags = document.getElementsByTagName("script");
         for (let i = 0; i < scriptTags.length; i++) {
-            const url = scriptTags[i].src;
+            const url = scriptTags.item(i).src;
             if (url) {
                 urls.push(url);
             }
@@ -298,6 +299,11 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
                 try {
                     config.page = parseInt(val, 10);
                 } catch (_) { }
+                break;
+
+            case "show":
+                config.show = val;
+                break;
 
             default:
                 break;

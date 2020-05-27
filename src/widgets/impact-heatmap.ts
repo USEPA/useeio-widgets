@@ -8,6 +8,7 @@ import {
     Indicator,
     IndicatorGroup,
     Model,
+    Sector,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
 
@@ -19,10 +20,13 @@ const INDICATOR_GROUPS = [
     IndicatorGroup.ECONOMIC_SOCIAL,
 ];
 
+type Elem = d3.Selection<HTMLElement, unknown, HTMLElement, any>;
+
 export class ImpactHeatmap extends Widget {
 
     private indicators: Indicator[] = [];
     private result: null | HeatmapResult = null;
+    private config: Config;
 
     private searchTerm: null | string = null;
     private sortIndicator: null | Indicator = null;
@@ -33,6 +37,8 @@ export class ImpactHeatmap extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
+        // TODO: check if an update is required
+        this.config = config;
 
         d3.select(this.selector)
             .selectAll("*")
@@ -62,22 +68,6 @@ export class ImpactHeatmap extends Widget {
         const firstHeader = thead.append("tr");
         firstHeader.append("th");
 
-        // create the group headers
-        /*
-        const groups = groupCounts(indicators);
-        const total = groups.reduce((sum, g) => sum + g[1], 0);
-        firstHeader.selectAll("th.indicator-group")
-            .data(groups)
-            .enter()
-            .append("th")
-            .attr("class", "indicator-group")
-            .text(g => g[0])
-            .style("width", g => `${80 * g[1] / total}%`)
-            .style("border-left", "lightgray solid 1px")
-            .style("border-bottom", "lightgray solid 1px")
-            .attr("colspan", g => g[1]);
-        */
-
         // the search box
         const self = this;
         const secondHeader = thead.append("tr").attr("class", "indicator-row");
@@ -90,39 +80,42 @@ export class ImpactHeatmap extends Widget {
             .attr("placeholder", "search")
             .on("input", function () {
                 self.searchTerm = this.value;
-                self.renderRows(config, indicators);
+                self.renderRows(indicators);
             });
 
-        // the indicator row
-        secondHeader
-            .selectAll("th.indicator")
+        if (config.show === "mosaic") {
+            this.renderMultiIndicatorHeader(
+                secondHeader, indicators);
+        }
+
+        table.append("tbody")
+            .classed("impact-heatmap-body", true);
+        this.renderRows(indicators);
+    }
+
+    private renderMultiIndicatorHeader(
+        tr: Elem, indicators: Indicator[]) {
+        tr.selectAll("th.indicator")
             .data(indicators)
             .enter()
             .append("th")
-            /* .style("border-left", "lightgray solid 1px") */
-            .attr("class", "indicator")
+            .classed("indicator", true)
             .append("div")
             .append("a")
-            .attr("href", "#")
-            .attr("title", (i) => i.name)
-            // .text(indicator => indicator.code) //
-            .text(indicator => indicator.name)
-            .on("click", (indicator) => {
+            .attr("title", i => i.name)
+            .text(indicator => `${indicator.name} (${indicator.code})`)
+            .on("click", indicator => {
                 if (this.sortIndicator === indicator) {
                     this.sortIndicator = null;
                 } else {
                     this.sortIndicator = indicator;
                 }
-                this.renderRows(config, indicators);
+                this.renderRows(indicators);
             });
-
-        table.append("tbody")
-            .classed("impact-heatmap-body", true);
-        this.renderRows(config, indicators);
     }
 
-    private renderRows(config: Config, indicators: Indicator[]) {
-        const count = config.count || -1;
+    private renderRows(indicators: Indicator[]) {
+        const count = this.config.count || -1;
         const sectors = this.result.getRanking(
             indicators, count,
             this.searchTerm, this.sortIndicator);
@@ -142,21 +135,27 @@ export class ImpactHeatmap extends Widget {
                 .attr("href", `05_impact_chart_config.html#sectors=${sector.code}`)
                 .attr("title", `${sector.name} - ${sector.code}\n\n${sector.description}`)
                 .text(`${sector.code} - ${strings.cut(sector.name, 60)}`);
-
-            // the result cells
-            indicators.forEach(indicator => {
-                const r = this.result.getResult(indicator, sector);
-                const share = this.result.getShare(indicator, sector);
-                let alpha = 0.1 + 0.9 * share;
-                if (this.sortIndicator && this.sortIndicator !== indicator) {
-                    alpha *= 0.25;
-                }
-                tr.append("td")
-                    .attr("title", `${r.toExponential(2)} ${indicator.unit}`)
-                    .style("background-color", colors.forIndicatorGroup(
-                        indicator.group, alpha));
-            });
+            this.renderIndicatorResults(tr, sector, indicators);
         }
+    }
+
+    private renderIndicatorResults(
+        tr: Elem, sector: Sector, indicators: Indicator[]) {
+        if (this.config.show !== "mosaic") {
+            return;
+        }
+        indicators.forEach(indicator => {
+            const r = this.result.getResult(indicator, sector);
+            const share = this.result.getShare(indicator, sector);
+            let alpha = 0.1 + 0.9 * share;
+            if (this.sortIndicator && this.sortIndicator !== indicator) {
+                alpha *= 0.25;
+            }
+            tr.append("td")
+                .attr("title", `${r.toExponential(2)} ${indicator.unit}`)
+                .style("background-color", colors.forIndicatorGroup(
+                    indicator.group, alpha));
+        });
     }
 }
 
