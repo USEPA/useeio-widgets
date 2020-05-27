@@ -1,6 +1,6 @@
 import { FilterWidget } from "./widgets/filter";
 import { UrlConfigTransmitter, WidgetArgs } from "./widget";
-import { ImpactHeatmap, HeatmapConfig } from "./widgets/impact-heatmap";
+import { ImpactHeatmap } from "./widgets/impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SectorList, SectorListConfig } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
@@ -26,10 +26,8 @@ export function impactChart(config: ImpactChartConfig): ImpactChart {
     return chart;
 }
 
-export function impactHeatmap(config: HeatmapConfig): ImpactHeatmap {
-    const heatmap = new ImpactHeatmap();
-    heatmap.init(config);
-    return heatmap;
+export function impactHeatmap(args: WidgetArgs): ImpactHeatmap {
+    return new ImpactHeatmap(args.model, args.selector);
 }
 
 export function sectorList(config: SectorListConfig): SectorList {

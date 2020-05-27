@@ -3,14 +3,13 @@ import * as colors from "../util/colors";
 import * as strings from "../util/strings";
 import * as conf from "../config";
 
-import { Widget } from "../widget";
+import { Widget, Config } from "../widget";
 import {
     Indicator,
     IndicatorGroup,
     Model,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
-import { ones } from "../calc/cals";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -20,54 +19,42 @@ const INDICATOR_GROUPS = [
     IndicatorGroup.ECONOMIC_SOCIAL,
 ];
 
-export interface HeatmapConfig {
-    model: Model;
-    selector: string;
-    sectorCount: number;
-    skipNormalization?: boolean;
-}
-
 export class ImpactHeatmap extends Widget {
 
-    private model: Model;
     private indicators: Indicator[] = [];
     private result: null | HeatmapResult = null;
 
-    private sectorCount = 2000;
     private searchTerm: null | string = null;
     private sortIndicator: null | Indicator = null;
 
-    private root: d3.Selection<HTMLDivElement, unknown, HTMLElement, any>;
-
-    async init(config: HeatmapConfig) {
-        this.model = config.model;
-        this.sectorCount = config.sectorCount
-            ? config.sectorCount
-            : 2000;
-
-        this.indicators = await this.model.indicators();
-        this.result = await calculateResult(config);
-        this.root = d3.select(config.selector)
-            .append("div");
-        this.render();
+    constructor(private model: Model, private selector: string) {
+        super();
         this.ready();
     }
 
-    private render() {
-        this.root.selectAll("*")
+    protected async handleUpdate(config: Config) {
+
+        d3.select(this.selector)
+            .selectAll("*")
             .remove();
+
+        const root = d3.select(this.selector)
+            .append("div");
+
+        this.indicators = await this.model.indicators();
+        this.result = await calculateResult(this.model, config);
 
         const indicators = selectIndicators(
             this.indicators, conf.DEFAULT_INDICATORS);
 
         if (!indicators || indicators.length === 0 || !this.result) {
-            this.root.append("p")
+            root.append("p")
                 .text("no data")
                 .style("text-align", "center");
             return;
         }
 
-        const table = this.root
+        const table = root
             .append("table")
             .style("width", "100%");
 
@@ -93,19 +80,17 @@ export class ImpactHeatmap extends Widget {
 
         // the search box
         const self = this;
-        const secondHeader = thead.append("tr").attr("class","indicator-row");
+        const secondHeader = thead.append("tr").attr("class", "indicator-row");
         secondHeader
             .append("th")
             .text("Goods & Services")
             .attr("class", "matrix-title")
-            /* .style("width", "20%") */
-
             .append("input")
             .attr("type", "search")
             .attr("placeholder", "search")
             .on("input", function () {
                 self.searchTerm = this.value;
-                self.renderRows(indicators);
+                self.renderRows(config, indicators);
             });
 
         // the indicator row
@@ -128,17 +113,18 @@ export class ImpactHeatmap extends Widget {
                 } else {
                     this.sortIndicator = indicator;
                 }
-                this.renderRows(indicators);
+                this.renderRows(config, indicators);
             });
 
         table.append("tbody")
             .classed("impact-heatmap-body", true);
-        this.renderRows(indicators);
+        this.renderRows(config, indicators);
     }
 
-    private renderRows(indicators: Indicator[]) {
+    private renderRows(config: Config, indicators: Indicator[]) {
+        const count = config.count || -1;
         const sectors = this.result.getRanking(
-            indicators, this.sectorCount,
+            indicators, count,
             this.searchTerm, this.sortIndicator);
 
         const tbody = d3.select("tbody.impact-heatmap-body");
@@ -219,21 +205,11 @@ function groupCounts(indicators: Indicator[]): GroupCount[] {
         .filter(g => g[1] > 0);
 }
 
-async function calculateResult(conf: HeatmapConfig): Promise<HeatmapResult> {
-    const model = conf.model;
-    if (conf.skipNormalization) {
-        const U = await model.matrix("U");
-        return HeatmapResult.from(conf.model, {
-            sectors: (await model.sectors()).map(s => s.id),
-            indicators: (await model.indicators()).map(i => i.code),
-            totals: ones(U.rows),
-            data: U.data,
-        });
-    }
-    const demand = await this.model.findDemand({});
-    const result = await this.model.calculate({
-        perspective: "direct",
-        demand: await this.model.demand(demand),
+async function calculateResult(model: Model, config: Config): Promise<HeatmapResult> {
+    const demand = await model.findDemand(config);
+    const result = await model.calculate({
+        perspective: "final",
+        demand: await model.demand(demand),
     });
-    return HeatmapResult.from(this.model, result);
-} 
+    return HeatmapResult.from(model, result);
+}
