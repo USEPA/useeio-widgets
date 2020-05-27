@@ -1,4 +1,4 @@
-import { DemandType, ResultPerspective } from "./webapi";
+import { DemandType, ResultPerspective, Model } from "./webapi";
 import * as strings from "./util/strings";
 
 /**
@@ -62,6 +62,11 @@ export interface Config {
      * to page through a number of items.
      */
     page?: number;
+}
+
+export interface WidgetArgs {
+    model: Model;
+    selector: string;
 }
 
 export abstract class Widget {

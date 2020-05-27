@@ -1,11 +1,12 @@
 import { FilterWidget } from "./widgets/filter";
-import { UrlConfigTransmitter } from "./widget";
+import { UrlConfigTransmitter, WidgetArgs } from "./widget";
 import { ImpactHeatmap, HeatmapConfig } from "./widgets/impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SectorList, SectorListConfig } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
+import { Pager } from "./widgets/pager";
 
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
@@ -46,4 +47,8 @@ export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
 export function profileChart(config: ProfileChartConfig): ProfileChart {
     const widget = new ProfileChart(config);
     return widget;
+}
+
+export function pager(args: WidgetArgs): Pager {
+    return new Pager(args.model, args.selector);
 }
