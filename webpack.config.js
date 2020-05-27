@@ -9,7 +9,7 @@ const config = {
         // 'FilterWidget': './src/filter-widget.ts',
         // 'SectorList': './src/sector-list.ts',
         // 'ImpactHeatmap': './src/impact-heatmap.ts',
-        'useeio_widgets': './src/useeio-widgets.ts',
+        'useeio_widgets': './src/main.ts',
     },
     module: {
         rules: [

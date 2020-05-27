@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import * as colors from "../colors";
-import * as strings from "../strings";
+import * as colors from "../util/colors";
+import * as strings from "../util/strings";
 import * as conf from "../config";
 
 import { Widget } from "../widget";
@@ -228,7 +228,7 @@ async function calculateResult(conf: HeatmapConfig): Promise<HeatmapResult> {
             indicators: (await model.indicators()).map(i => i.code),
             totals: ones(U.rows),
             data: U.data,
-        })
+        });
     }
     const demand = await this.model.findDemand({});
     const result = await this.model.calculate({

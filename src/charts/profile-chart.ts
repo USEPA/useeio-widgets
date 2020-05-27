@@ -3,7 +3,6 @@ import { Model, Sector, Indicator } from "./../webapi";
 import { Widget, Config } from "../widget";
 import { SectorAnalysis } from "../calc/sector-analysis";
 import { max, zeros } from "../calc/cals";
-import { model } from "../useeio-widgets";
 
 export interface ProfileChartConfig {
     model: Model;

@@ -1,5 +1,5 @@
 import { DemandType, ResultPerspective } from "./webapi";
-import * as strings from "./strings";
+import * as strings from "./util/strings";
 
 /**
  * A common configuration object of our widgets. Often our widgets take
