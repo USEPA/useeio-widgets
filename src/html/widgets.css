@@ -192,6 +192,10 @@ label {
     padding: 2px;
 }
 
+.useeio-paginator .paginator-counter {
+    padding-right: 30px;
+}
+
 .useeio-paginator .paginator-previous {
     padding-right: 25px;
 }

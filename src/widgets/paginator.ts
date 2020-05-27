@@ -3,6 +3,8 @@ import * as d3 from "d3";
 import { Widget, Config } from "../widget";
 import { Model } from "../webapi";
 
+type Row = d3.Selection<HTMLTableRowElement, unknown, HTMLElement, any>;
+
 export class Paginator extends Widget {
 
     private _totalCount: number;
@@ -23,18 +25,24 @@ export class Paginator extends Widget {
             return;
         }
         let count = config.count || 20;
-        if (count <= 0) {
-            count = 20;
-        }
         if (count > total) {
             count = total;
         }
+
+        const row = d3.select(this.selector)
+            .append("table")
+            .classed("useeio-paginator", true)
+            .append("tbody")
+            .append("tr");
+
+        this.renderCountBox(count, row);
+
         const pageCount = Math.ceil(total / count);
         if (pageCount <= 1) {
             return;
         }
 
-        // calculate the start and end of
+        // calculate the page interval
         let page = config.page || 1;
         if (page <= 0) {
             page = 1;
@@ -51,12 +59,6 @@ export class Paginator extends Widget {
         const goTo = (nextPage: number) => {
             this.fireChange({ page: nextPage });
         };
-
-        const row = d3.select(this.selector)
-            .append("table")
-            .classed("useeio-paginator", true)
-            .append("tbody")
-            .append("tr");
 
         if (page > 1) {
             row.append("td")
@@ -87,6 +89,27 @@ export class Paginator extends Widget {
                 .text("Next")
                 .on("click", () => goTo(page + 1));
         }
+    }
+
+    private renderCountBox(count: number, row: Row) {
+        row.append("td")
+            .classed("paginator-counter-label", true)
+            .text("Display:");
+
+        const self = this;
+        row.append("td")
+            .classed("paginator-counter", true)
+            .append("select")
+            .on("change", function () {
+                self.fireChange({ count: parseInt(this.value, 10) });
+            })
+            .selectAll("option")
+            .data([-1, 10, 20, 30, 40, 50, 100])
+            .enter()
+            .append("option")
+            .attr("value", d => d)
+            .property("selected", d => d === count)
+            .text(d => d === -1 ? "" : d);
     }
 
     private async totalCount(): Promise<number> {

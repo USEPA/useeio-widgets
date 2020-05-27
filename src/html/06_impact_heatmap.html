@@ -12,6 +12,8 @@
         <div style="width: 80%; margin: auto;">
             <div class="impact-heatmap">
             </div>
+            <div id="paginator">
+            </div>
         </div>
     </div>
 </body>
@@ -31,9 +33,15 @@
     var heatmap = useeio.impactHeatmap({
         model: model,
         selector: '.impact-heatmap',
-        skipNormalization: true,
     });
+
+    var paginator = useeio.paginator({
+        model: model,
+        selector: '#paginator',
+    });
+
     config.join(heatmap);
+    config.join(paginator);
 
 </script>
 
