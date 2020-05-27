@@ -83,23 +83,47 @@ export class ImpactHeatmap extends Widget {
         if (!indicators || indicators.length === 0) {
             return;
         }
-        tr.selectAll("th.indicator")
-            .data(indicators)
-            .enter()
-            .append("th")
-            .classed("indicator", true)
-            .append("div")
-            .append("a")
-            .attr("title", i => i.name)
-            .text(indicator => `${indicator.name} (${indicator.code})`)
-            .on("click", indicator => {
-                if (this.sortIndicator === indicator) {
-                    this.sortIndicator = null;
-                } else {
-                    this.sortIndicator = indicator;
-                }
-                this.renderRows(indicators);
-            });
+
+        const header = (i: Indicator) => {
+            const th = tr.append("th")
+                .classed("indicator", true)
+                .append("div")
+                .append("a")
+                .attr("title", i.name)
+                .text(`${i.name} (${i.code})`);
+            if (indicators.length > 1) {
+                th.on("click", () => {
+                    this.sortIndicator = this.sortIndicator === i
+                        ? null
+                        : i;
+                    this.renderRows(indicators);
+                });
+            }
+        };
+
+        if (indicators.length === 1) {
+            // no group headers when there is just
+            // a single indicator
+            header(indicators[0]);
+            return;
+        }
+
+        const groupHeader = (group: IndicatorGroup) => {
+            tr.append("th")
+                .append("div")
+                .append("span")
+                .append("b")
+                .text(group);
+        };
+
+        let g: IndicatorGroup | null = null;
+        for (const indicator of indicators) {
+            if (indicator.group !== g) {
+                g = indicator.group;
+                groupHeader(g);
+            }
+            header(indicator);
+        }
     }
 
     private renderRows(indicators: Indicator[]) {
@@ -155,18 +179,24 @@ export class ImpactHeatmap extends Widget {
             return;
         }
 
-        indicators.forEach(indicator => {
-            const r = this.result.getResult(indicator, sector);
-            const share = this.result.getShare(indicator, sector);
+        let g: IndicatorGroup | null = null;
+        for (const ind of indicators) {
+            if (ind.group !== g) {
+                g = ind.group;
+                tr.append("td")
+                    .classed("noborder", true);
+            }
+            const r = this.result.getResult(ind, sector);
+            const share = this.result.getShare(ind, sector);
             let alpha = 0.1 + 0.9 * share;
-            if (this.sortIndicator && this.sortIndicator !== indicator) {
+            if (this.sortIndicator && this.sortIndicator !== ind) {
                 alpha *= 0.25;
             }
+            const color = colors.forIndicatorGroup(ind.group, alpha);
             tr.append("td")
-                .attr("title", `${r.toExponential(2)} ${indicator.unit}`)
-                .style("background-color", colors.forIndicatorGroup(
-                    indicator.group, alpha));
-        });
+                .attr("title", `${r.toExponential(2)} ${ind.unit}`)
+                .style("background-color", color);
+        }
     }
 
     private async selectIndicators(): Promise<Indicator[]> {
