@@ -110,6 +110,7 @@ export class ImpactHeatmap extends Widget {
 
         const groupHeader = (group: IndicatorGroup) => {
             tr.append("th")
+                .classed("indicator", true)
                 .append("div")
                 .append("span")
                 .append("b")
@@ -182,6 +183,7 @@ export class ImpactHeatmap extends Widget {
         let g: IndicatorGroup | null = null;
         for (const ind of indicators) {
             if (ind.group !== g) {
+                // add an empty cell for the group
                 g = ind.group;
                 tr.append("td")
                     .classed("noborder", true);
