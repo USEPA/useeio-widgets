@@ -48,17 +48,22 @@ export class Paginator extends Widget {
             end = pageCount;
         }
 
+        const goTo = (nextPage: number) => {
+            this.fireChange({ page: nextPage });
+        };
+
         const row = d3.select(this.selector)
             .append("table")
             .classed("useeio-paginator", true)
             .append("tbody")
             .append("tr");
 
-        if (start > 1) {
+        if (page > 1) {
             row.append("td")
                 .classed("paginator-previous", true)
                 .append("a")
-                .text("Previous");
+                .text("Previous")
+                .on("click", () => goTo(page - 1));
         }
         for (let i = start; i <= end; i++) {
             if (i === page) {
@@ -72,13 +77,15 @@ export class Paginator extends Widget {
             row.append("td")
                 .classed("paginator-number", true)
                 .append("a")
-                .text(i);
+                .text(i)
+                .on("click", () => goTo(i));
         }
-        if (end < pageCount) {
+        if (page < pageCount) {
             row.append("td")
                 .classed("paginator-next", true)
                 .append("a")
-                .text("Next");
+                .text("Next")
+                .on("click", () => goTo(page + 1));
         }
     }
 

@@ -11,11 +11,6 @@ export interface Config {
     [key: string]: any;
 
     /**
-     * The possible sender of an configuration update.
-     */
-    source?: any;
-
-    /**
      * The ID of the input output model
      */
     model?: string;
@@ -76,7 +71,7 @@ export abstract class Widget {
     private queue = new Array<() => void>();
 
     update(config: Config) {
-        if (!config || config.source === this) {
+        if (!config) {
             return;
         }
         if (!this.isReady) {
@@ -100,7 +95,6 @@ export abstract class Widget {
     }
 
     protected fireChange(config: Config) {
-        config.source = this;
         for (const fn of this.listeners) {
             fn(config);
         }
@@ -177,7 +171,6 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
                 ...this.config,
                 ...config,
             };
-            this.config.source = widget;
             this.updateHash();
         });
     }
@@ -187,7 +180,6 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             ...this.config,
             ...config,
         };
-        this.config.source = this;
         this.updateHash();
     }
 
@@ -205,6 +197,8 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             ["perspective", conf.perspective],
             ["year", conf.year],
             ["location", conf.location],
+            ["page", conf.page],
+            ["count", conf.count],
             ["model", conf.model],
         ].forEach(([key, val]) => {
             if (val) {
