@@ -6,7 +6,7 @@ import { SectorList, SectorListConfig } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
-import { Pager } from "./widgets/pager";
+import { Paginator } from "./widgets/paginator";
 
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
@@ -49,6 +49,6 @@ export function profileChart(config: ProfileChartConfig): ProfileChart {
     return widget;
 }
 
-export function pager(args: WidgetArgs): Pager {
-    return new Pager(args.model, args.selector);
+export function paginator(args: WidgetArgs): Paginator {
+    return new Paginator(args.model, args.selector);
 }

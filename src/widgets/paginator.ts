@@ -1,14 +1,15 @@
-import d3 from "d3";
+import * as d3 from "d3";
 
 import { Widget, Config } from "../widget";
 import { Model } from "../webapi";
 
-export class Pager extends Widget {
+export class Paginator extends Widget {
 
     private _totalCount: number;
 
     constructor(private model: Model, private selector: string) {
         super();
+        this.ready();
     }
 
     protected async handleUpdate(config: Config) {
@@ -47,18 +48,37 @@ export class Pager extends Widget {
             end = pageCount;
         }
 
-        const div = d3.select(this.selector)
-            .append("div")
-            .classed("useeio-pager", true);
+        const row = d3.select(this.selector)
+            .append("table")
+            .classed("useeio-paginator", true)
+            .append("tbody")
+            .append("tr");
 
         if (start > 1) {
-            div.append("a").text("<");
+            row.append("td")
+                .classed("paginator-previous", true)
+                .append("a")
+                .text("Previous");
         }
         for (let i = start; i <= end; i++) {
-            div.append("a").text(i);
+            if (i === page) {
+                row.append("td")
+                    .classed("paginator-number", true)
+                    .classed("paginator-selected", true)
+                    .append("span")
+                    .text(i);
+                continue;
+            }
+            row.append("td")
+                .classed("paginator-number", true)
+                .append("a")
+                .text(i);
         }
         if (end < pageCount) {
-            div.append("a").text(">");
+            row.append("td")
+                .classed("paginator-next", true)
+                .append("a")
+                .text("Next");
         }
     }
 

@@ -177,6 +177,38 @@ label {
     text-decoration: none;
     color: none;
 }
+
+/* paginator styles */
+
+.useeio-paginator {
+    margin: auto;
+}
+
+.useeio-paginator a {
+    cursor: pointer;
+}
+
+.useeio-paginator td {
+    padding: 2px;
+}
+
+.useeio-paginator .paginator-previous {
+    padding-right: 25px;
+}
+
+.useeio-paginator .paginator-next {
+    padding-left: 25px;
+}
+
+.useeio-paginator .paginator-number {
+    min-width: 25px;
+    text-align: center;
+}
+
+.useeio-paginator .paginator-selected {
+    font-weight: bold;
+}
+
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {

@@ -3,14 +3,25 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Pager</title>
+    <title>Paginator</title>
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
 
 <body>
     <div style="max-width: 750px; margin: auto;">
-        <h1 class="text-center">Pager</h1>
-        <div id="pager"></div>
+        <h1 class="text-center">Paginator</h1>
+        <pre>
+            <code>
+    var config = useeio.urlConfig();
+    // ...
+    var paginator = useeio.paginator({
+        model: model,
+        selector: '#paginator',
+    });
+    config.join(paginator);
+            </code>
+        </pre>
+        <div id="paginator"></div>
     </div>
 </body>
 
@@ -26,11 +37,11 @@
         model: modelID,
         asJsonFiles: true,
     });
-    var pager = useeio.pager({
+    var paginator = useeio.paginator({
         model: model,
-        selector: '#pager',
+        selector: '#paginator',
     });
-    config.join(pager);
+    config.join(paginator);
 </script>
 
 </html>
