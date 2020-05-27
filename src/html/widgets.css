@@ -163,7 +163,16 @@ label {
     font-size: 34px;
     font-weight: 300;
     text-align: left;
+    float: left;
 }
+
+.matrix-sub-title {
+    font-size: 0.8em;
+    clear: both;
+    float: left;
+    padding: 5px 0px 10px 5px;
+}
+
 .indicator-row {
     height: 170px;
 }

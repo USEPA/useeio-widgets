@@ -47,36 +47,48 @@ export class ImpactHeatmap extends Widget {
             .append("div");
 
         this.result = await calculateResult(this.model, config);
-
         const indicators = await this.selectIndicators();
 
         const table = root
             .append("table")
             .style("width", "100%");
 
-
-        const header = table.append("thead")
+        // table header (matrix title, search box, indicators)
+        const tr = table.append("thead")
             .append("tr")
             .classed("indicator-row", true);
+        this.renderMatrixTitle(tr, indicators);
+        this.renderIndicatorHeader(tr, indicators);
 
-        // the search box
+        // table body
+        table.append("tbody")
+            .classed("impact-heatmap-body", true);
+        this.renderRows(indicators);
+    }
+
+    private async renderMatrixTitle(tr: Elem, indicators: Indicator[]) {
         const self = this;
-        header.append("th")
-            .text("Goods & Services")
-            .attr("class", "matrix-title")
-            .append("input")
+        const div = tr.append("th")
+            .append("div");
+        div.append("span")
+            .classed("matrix-title", true)
+            .text("Goods & Services");
+
+        const total = this.result.sectors.length;
+        const count = this.config.count;
+        if (count >= 0 && count <= total) {
+            div.append("span")
+                .classed("matrix-sub-title", true)
+                .text(`${count} of ${total} industry sectors`);
+        }
+
+        div.append("input")
             .attr("type", "search")
             .attr("placeholder", "search")
             .on("input", function () {
                 self.searchTerm = this.value;
                 self.renderRows(indicators);
             });
-
-        this.renderIndicatorHeader(header, indicators);
-
-        table.append("tbody")
-            .classed("impact-heatmap-body", true);
-        this.renderRows(indicators);
     }
 
     private renderIndicatorHeader(tr: Elem, indicators: Indicator[]) {
@@ -231,31 +243,6 @@ export class ImpactHeatmap extends Widget {
         });
         return indicators;
     }
-}
-
-/**
- * The numbers of indicators in a group.
- */
-type GroupCount = [IndicatorGroup, number];
-
-/**
- * Calculates the number of indicators that are in the respective groups. It
- * only returns a group if it has at least one indicator.
- */
-function groupCounts(indicators: Indicator[]): GroupCount[] {
-    if (!indicators || indicators.length === 0) {
-        return [];
-    }
-    return INDICATOR_GROUPS
-        .map(group => {
-            const count = indicators.reduce((sum, indicator) => {
-                return indicator.group === group
-                    ? sum + 1
-                    : sum;
-            }, 0);
-            return [group, count] as GroupCount;
-        })
-        .filter(g => g[1] > 0);
 }
 
 async function calculateResult(model: Model, config: Config): Promise<HeatmapResult> {
