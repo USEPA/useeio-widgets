@@ -59,6 +59,8 @@ export interface Config {
     page?: number;
 
     show?: string;
+
+    showvalues?: boolean;
 }
 
 export interface WidgetArgs {
@@ -303,6 +305,10 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
 
             case "show":
                 config.show = val;
+                break;
+
+            case "showvalues":
+                config.showvalues = strings.eq(val, "true", "1", "yes");
                 break;
 
             default:

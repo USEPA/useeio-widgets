@@ -124,6 +124,7 @@ const Component = (props: {
                 indicators={props.indicators}
                 result={props.result}
                 sortIndicator={sortIndicator}
+                config={config}
                 onSelect={() => {
                     let codes = config.sectors;
                     if (selected) {
@@ -256,6 +257,7 @@ type RowProps = {
     result: HeatmapResult,
     sortIndicator: Indicator | null,
     onSelect: () => void,
+    config: Config,
 };
 
 const Row = (props: RowProps) => {
@@ -269,7 +271,7 @@ const Row = (props: RowProps) => {
                     padding: "5px 0px",
                     whiteSpace: "nowrap",
                 }}>
-                <div style={{cursor: "pointer"}}>
+                <div style={{ cursor: "pointer" }}>
                     <input type="checkbox" checked={props.selected}
                         onClick={() => props.onSelect()}>
                     </input>
@@ -327,10 +329,13 @@ const IndicatorResult = (props: RowProps) => {
             alpha *= 0.25;
         }
         const color = colors.forIndicatorGroup(ind.group, alpha);
+        const value = `${r.toExponential(2)} ${ind.unit}`;
         items.push(
             <td key={ind.id}
-                title={`${r.toExponential(2)} ${ind.unit}`}
-                style={{ backgroundColor: color }} />
+                title={value}
+                style={{ backgroundColor: color }}>
+                {props.config.showvalues ? value : ""}
+            </td>
         );
     }
     return <>{items}</>;
