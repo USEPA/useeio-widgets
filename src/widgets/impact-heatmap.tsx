@@ -52,6 +52,14 @@ export class ImpactHeatmap extends Widget {
         this.result = await calculateResult(this.model, config);
         const indicators = await this.selectIndicators();
 
+        ReactDOM.render(
+            <Component
+                config={config}
+                indicators={indicators}
+                result={this.result} />,
+            document.querySelector(this.selector));
+
+        /*
         const table = root
             .append("table")
             .style("width", "100%");
@@ -70,7 +78,7 @@ export class ImpactHeatmap extends Widget {
         this.renderRows(indicators);
 
         const header = <>
-            <MatrixTitle
+            <Header
                 displayCount={config.count}
                 sectorCount={this.result.sectors.length}
                 onSearch={(term) => {
@@ -89,7 +97,7 @@ export class ImpactHeatmap extends Widget {
         ReactDOM.render(
             header,
             document.querySelector("#matrix-header"));
-
+*/
     }
 
     private renderRows(indicators: Indicator[]) {
@@ -207,7 +215,56 @@ async function calculateResult(model: Model, config: Config): Promise<HeatmapRes
     return HeatmapResult.from(model, result);
 }
 
-const MatrixTitle = (props: {
+const Component = (props: {
+    result: HeatmapResult,
+    indicators: Indicator[],
+    config: Config,
+}) => {
+
+    const [sortIndicator, setSortIndicator] = React.useState<Indicator | null>(null);
+    const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
+
+    const count = props.config.count || -1;
+    const sectors = props.result.getRanking(
+        props.indicators, count,
+        searchTerm, sortIndicator);
+    const rows: JSX.Element[] = [];
+    for (const sector of sectors) {
+        rows.push(
+            <Row sector={sector}
+                indicators={props.indicators}
+                result={props.result}
+                sortIndicator={sortIndicator} />
+        );
+    }
+
+    return (
+        <table style={{ width: "100%" }}>
+            <thead>
+                <tr className="indicator-row">
+                    <Header
+                        displayCount={props.config.count}
+                        sectorCount={props.result.sectors.length}
+                        onSearch={term => setSearchTerm(term)} />
+                    <IndicatorHeader
+                        indicators={props.indicators}
+                        onClick={(i) => {
+                            if (sortIndicator === i) {
+                                setSortIndicator(null);
+                            } else {
+                                setSortIndicator(i);
+                            }
+                        }} />
+                </tr>
+            </thead>
+            <tbody>
+                {rows}
+            </tbody>
+        </table>
+    );
+};
+
+const Header = (props: {
     sectorCount: number,
     displayCount: number,
     onSearch: (term: string) => void,
@@ -287,6 +344,85 @@ const IndicatorHeader = (props: {
                     </a>
                 </div>
             </th>
+        );
+    }
+    return <>{items}</>;
+};
+
+type RowProps = {
+    sector: Sector,
+    indicators: Indicator[],
+    result: HeatmapResult,
+    sortIndicator: Indicator | null,
+};
+
+const Row = (props: RowProps) => {
+    const sectorLabel = `${props.sector.code} - ${props.sector.name}`;
+    const code = props.sector.code;
+    return (
+        <tr>
+            <td key={props.sector.code}
+                style={{
+                    borderTop: "lightgray solid 1px",
+                    padding: "5px 0px",
+                    whiteSpace: "nowrap",
+                }}>
+                <a title={sectorLabel}
+                    href={`05_impact_chart_config.html#sectors=${code}`}>
+                    {strings.cut(sectorLabel, 80)}
+                </a>
+            </td>
+            <IndicatorResult {...props} />
+        </tr>
+    );
+};
+
+const IndicatorResult = (props: RowProps) => {
+
+    if (!props.indicators || props.indicators.length === 0) {
+        return <></>;
+    }
+
+    // render a bar when a single indicator is selected
+    if (props.indicators.length === 1) {
+        const ind = props.indicators[0];
+        const color = colors.forIndicatorGroup(ind.group);
+        const r = props.result.getResult(ind, props.sector);
+        const share = props.result.getShare(ind, props.sector);
+        return (
+            <td key={ind.id}>
+                <div>
+                    <span>{`${r.toExponential(2)} ${ind.unit}`}</span>
+                    <svg height="15" width="210">
+                        <rect x="0" y="2.5" height="10" fill={color}
+                            width={200 * (0.1 + 0.9 * share)}></rect>
+                    </svg>
+                </div>
+            </td>
+        );
+    }
+
+    // render mosaic cells
+    const items: JSX.Element[] = [];
+    let g: IndicatorGroup | null = null;
+    for (const ind of props.indicators) {
+        if (ind.group !== g) {
+            // add an empty cell for the group
+            const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
+            g = ind.group;
+            items.push(<td key={gkey} className="noborder" />);
+        }
+        const r = props.result.getResult(ind, props.sector);
+        const share = props.result.getShare(ind, props.sector);
+        let alpha = 0.1 + 0.9 * share;
+        if (props.sortIndicator && props.sortIndicator !== ind) {
+            alpha *= 0.25;
+        }
+        const color = colors.forIndicatorGroup(ind.group, alpha);
+        items.push(
+            <td key={ind.id}
+                title={`${r.toExponential(2)} ${ind.unit}`}
+                style={{ backgroundColor: color }} />
         );
     }
     return <>{items}</>;
