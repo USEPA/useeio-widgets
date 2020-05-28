@@ -37,7 +37,8 @@ export class ImpactHeatmap extends Widget {
             <Component
                 config={config}
                 indicators={indicators}
-                result={result} />,
+                result={result}
+                widget={this} />,
             document.querySelector(this.selector));
     }
 
@@ -86,17 +87,19 @@ const Component = (props: {
     result: HeatmapResult,
     indicators: Indicator[],
     config: Config,
+    widget: Widget,
 }) => {
 
+    const config = props.config;
     const [sortIndicator, setSortIndicator] = React.useState<Indicator | null>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
     let sectors = props.result.getRanking(
         props.indicators, searchTerm, sortIndicator);
 
-    const count = props.config.count;
+    const count = config.count;
     if (count && count >= 0) {
-        const page = props.config.page;
+        const page = config.page;
         if (page <= 1) {
             sectors = sectors.slice(0, count);
         } else {
@@ -111,13 +114,27 @@ const Component = (props: {
 
     const rows: JSX.Element[] = [];
     for (const sector of sectors) {
+        const selected = config.sectors
+            && config.sectors.indexOf(sector.code) >= 0;
         rows.push(
             <Row
                 key={sector.code}
                 sector={sector}
+                selected={selected}
                 indicators={props.indicators}
                 result={props.result}
-                sortIndicator={sortIndicator} />
+                sortIndicator={sortIndicator}
+                onSelect={() => {
+                    let codes = config.sectors;
+                    if (selected) {
+                        const idx = codes.indexOf(sector.code);
+                        codes.splice(idx, 1);
+                    } else {
+                        codes = !codes ? [] : codes.slice(0);
+                        codes.push(sector.code);
+                    }
+                    props.widget.fireChange({ sectors: codes });
+                }} />
         );
     }
 
@@ -234,9 +251,11 @@ const IndicatorHeader = (props: {
 
 type RowProps = {
     sector: Sector,
+    selected: boolean,
     indicators: Indicator[],
     result: HeatmapResult,
     sortIndicator: Indicator | null,
+    onSelect: () => void,
 };
 
 const Row = (props: RowProps) => {
@@ -250,10 +269,16 @@ const Row = (props: RowProps) => {
                     padding: "5px 0px",
                     whiteSpace: "nowrap",
                 }}>
-                <a title={sectorLabel}
-                    href={`05_impact_chart_config.html#sectors=${code}`}>
-                    {strings.cut(sectorLabel, 80)}
-                </a>
+                <div style={{cursor: "pointer"}}>
+                    <input type="checkbox" checked={props.selected}
+                        onClick={() => props.onSelect()}>
+                    </input>
+
+                    <a title={sectorLabel}
+                        onClick={() => props.onSelect()}>
+                        {strings.cut(sectorLabel, 80)}
+                    </a>
+                </div>
             </td>
             <IndicatorResult {...props} />
         </tr>
@@ -275,8 +300,8 @@ const IndicatorResult = (props: RowProps) => {
         return (
             <td key={ind.id}>
                 <div>
-                    <span style={{float: "left"}}>{`${r.toExponential(2)} ${ind.unit}`}</span>
-                    <svg height="15" width="210" style={{float: "left", clear: "both"}}>
+                    <span style={{ float: "left" }}>{`${r.toExponential(2)} ${ind.unit}`}</span>
+                    <svg height="15" width="210" style={{ float: "left", clear: "both" }}>
                         <rect x="0" y="2.5" height="10" fill={color}
                             width={200 * (0.1 + 0.9 * share)}></rect>
                     </svg>
