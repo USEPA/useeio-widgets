@@ -7,6 +7,7 @@ import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
+import { CountCombo } from "./widgets/count-combo";
 
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
@@ -49,4 +50,8 @@ export function profileChart(config: ProfileChartConfig): ProfileChart {
 
 export function paginator(args: WidgetArgs): Paginator {
     return new Paginator(args.model, args.selector);
+}
+
+export function countCombo(args: WidgetArgs): CountCombo {
+    return new CountCombo(args.model, args.selector);
 }

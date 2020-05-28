@@ -96,7 +96,7 @@ export abstract class Widget {
         this.listeners.push(fn);
     }
 
-    protected fireChange(config: Config) {
+    fireChange(config: Config) {
         for (const fn of this.listeners) {
             fn(config);
         }

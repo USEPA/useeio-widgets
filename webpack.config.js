@@ -45,7 +45,15 @@ const config = {
             {
                 from: 'node_modules/apexcharts/dist/apexcharts.css',
                 to: buildDir + '/lib/apexcharts.css', type: 'file'
-            }
+            },
+            {
+                from: 'node_modules/react/umd/react.production.min.js',
+                to: buildDir + '/lib/react.production.min.js', toType: 'file'
+            },
+            {
+                from: 'node_modules/react-dom/umd/react-dom.production.min.js',
+                to: buildDir + '/lib/react-dom.production.min.js', toType: 'file'
+            },
         ]),
     ],
 
