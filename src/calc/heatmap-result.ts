@@ -59,7 +59,7 @@ export class HeatmapResult {
         return this.value(this.shares, indicator.index, sector.index);
     }
 
-    public getRanking(indicators: Indicator[], count: number,
+    public getRanking(indicators: Indicator[],
         nameFilter?: string, sortIndicator?: Indicator): Sector[] {
         let filter = null;
         if (nameFilter && nameFilter.trim().length > 0) {
@@ -79,9 +79,7 @@ export class HeatmapResult {
             ]);
         }
         ranks.sort((r1, r2) => r2[1] - r1[1]);
-        return count && count >= 0
-            ? ranks.slice(0, count).map(r => r[0])
-            : ranks.map(r => r[0]);
+        return ranks.map(r => r[0]);
     }
 
     private matchesFilter(sector: Sector, filter?: string): boolean {

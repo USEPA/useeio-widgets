@@ -91,10 +91,24 @@ const Component = (props: {
     const [sortIndicator, setSortIndicator] = React.useState<Indicator | null>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
-    const count = props.config.count || -1;
-    const sectors = props.result.getRanking(
-        props.indicators, count,
-        searchTerm, sortIndicator);
+    let sectors = props.result.getRanking(
+        props.indicators, searchTerm, sortIndicator);
+
+    const count = props.config.count;
+    if (count && count >= 0) {
+        const page = props.config.page;
+        if (page <= 1) {
+            sectors = sectors.slice(0, count);
+        } else {
+            const offset = (page - 1) * count;
+            if (offset < sectors.length) {
+                sectors = sectors.slice(offset, offset + count);
+            } else {
+                sectors = sectors.slice(0, count);
+            }
+        }
+    }
+
     const rows: JSX.Element[] = [];
     for (const sector of sectors) {
         rows.push(
