@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import * as d3 from "d3";
 import * as colors from "../util/colors";
 import * as strings from "../util/strings";
 import * as conf from "../config";
@@ -23,15 +22,7 @@ const INDICATOR_GROUPS = [
     IndicatorGroup.ECONOMIC_SOCIAL,
 ];
 
-type Elem = d3.Selection<HTMLElement, unknown, HTMLElement, any>;
-
 export class ImpactHeatmap extends Widget {
-
-    private result: null | HeatmapResult = null;
-    private config: Config;
-
-    private searchTerm: null | string = null;
-    private sortIndicator: null | Indicator = null;
 
     constructor(private model: Model, private selector: string) {
         super();
@@ -39,143 +30,19 @@ export class ImpactHeatmap extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        // TODO: check if an update is required
-        this.config = config;
-
-        d3.select(this.selector)
-            .selectAll("*")
-            .remove();
-
-        const root = d3.select(this.selector)
-            .append("div");
-
-        this.result = await calculateResult(this.model, config);
-        const indicators = await this.selectIndicators();
+        const result = await calculateResult(this.model, config);
+        const indicators = await this.selectIndicators(config);
 
         ReactDOM.render(
             <Component
                 config={config}
                 indicators={indicators}
-                result={this.result} />,
+                result={result} />,
             document.querySelector(this.selector));
-
-        /*
-        const table = root
-            .append("table")
-            .style("width", "100%");
-
-        // table header (matrix title, search box, indicators)
-        const tr = table.append("thead")
-            .append("tr")
-            .attr("id", "matrix-header")
-            .classed("indicator-row", true);
-        // this.renderMatrixTitle(tr, indicators);
-        // this.renderIndicatorHeader(tr, indicators);
-
-        // table body
-        table.append("tbody")
-            .classed("impact-heatmap-body", true);
-        this.renderRows(indicators);
-
-        const header = <>
-            <Header
-                displayCount={config.count}
-                sectorCount={this.result.sectors.length}
-                onSearch={(term) => {
-                    this.searchTerm = term;
-                    this.renderRows(indicators);
-                }} />
-            <IndicatorHeader
-                indicators={indicators}
-                onClick={(i) => {
-                    this.sortIndicator = this.sortIndicator === i
-                        ? null
-                        : i;
-                    this.renderRows(indicators);
-                }} />
-        </>;
-        ReactDOM.render(
-            header,
-            document.querySelector("#matrix-header"));
-*/
     }
 
-    private renderRows(indicators: Indicator[]) {
-        const count = this.config.count || -1;
-        const sectors = this.result.getRanking(
-            indicators, count,
-            this.searchTerm, this.sortIndicator);
-
-        const tbody = d3.select("tbody.impact-heatmap-body");
-        tbody.selectAll("*").remove();
-
-        for (const sector of sectors) {
-            const tr = tbody.append("tr");
-
-            // the sector name
-            tr.append("td")
-                .style("border-top", "lightgray solid 1px")
-                .style("padding", "5px 0px")
-                .style("white-space", "nowrap")
-                .append("a")
-                .attr("href", `05_impact_chart_config.html#sectors=${sector.code}`)
-                .attr("title", `${sector.name} - ${sector.code}\n\n${sector.description}`)
-                .text(`${sector.code} - ${strings.cut(sector.name, 60)}`);
-            this.renderIndicatorResult(tr, sector, indicators);
-        }
-    }
-
-    private renderIndicatorResult(
-        tr: Elem, sector: Sector, indicators: Indicator[]) {
-        if (!indicators || indicators.length === 0) {
-            return;
-        }
-
-        // render a bar when a single indicator is selected
-        if (indicators.length === 1) {
-            const ind = indicators[0];
-            const color = colors.forIndicatorGroup(ind.group);
-            const r = this.result.getResult(ind, sector);
-            const share = this.result.getShare(ind, sector);
-            const div = tr.append("td").append("div");
-            div.append("span")
-                .text(`${r.toExponential(2)} ${ind.unit}`);
-            div.append("td")
-                .append("svg")
-                .attr("height", 15)
-                .attr("width", 210)
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", 2.5)
-                .attr("width", 200 * (0.1 + 0.9 * share))
-                .attr("height", 10)
-                .attr("fill", color);
-            return;
-        }
-
-        let g: IndicatorGroup | null = null;
-        for (const ind of indicators) {
-            if (ind.group !== g) {
-                // add an empty cell for the group
-                g = ind.group;
-                tr.append("td")
-                    .classed("noborder", true);
-            }
-            const r = this.result.getResult(ind, sector);
-            const share = this.result.getShare(ind, sector);
-            let alpha = 0.1 + 0.9 * share;
-            if (this.sortIndicator && this.sortIndicator !== ind) {
-                alpha *= 0.25;
-            }
-            const color = colors.forIndicatorGroup(ind.group, alpha);
-            tr.append("td")
-                .attr("title", `${r.toExponential(2)} ${ind.unit}`)
-                .style("background-color", color);
-        }
-    }
-
-    private async selectIndicators(): Promise<Indicator[]> {
-        if (this.config.show !== "mosaic") {
+    private async selectIndicators(config: Config): Promise<Indicator[]> {
+        if (config.show !== "mosaic") {
             return [];
         }
         const all = await this.model.indicators();
@@ -184,7 +51,7 @@ export class ImpactHeatmap extends Widget {
         }
 
         // filter indicators by configuration codes
-        let codes = this.config.indicators;
+        let codes = config.indicators;
         if (!codes || codes.length === 0) {
             codes = conf.DEFAULT_INDICATORS;
         }
@@ -231,7 +98,9 @@ const Component = (props: {
     const rows: JSX.Element[] = [];
     for (const sector of sectors) {
         rows.push(
-            <Row sector={sector}
+            <Row
+                key={sector.code}
+                sector={sector}
                 indicators={props.indicators}
                 result={props.result}
                 sortIndicator={sortIndicator} />
@@ -257,7 +126,7 @@ const Component = (props: {
                         }} />
                 </tr>
             </thead>
-            <tbody>
+            <tbody className="impact-heatmap-body">
                 {rows}
             </tbody>
         </table>
@@ -392,8 +261,8 @@ const IndicatorResult = (props: RowProps) => {
         return (
             <td key={ind.id}>
                 <div>
-                    <span>{`${r.toExponential(2)} ${ind.unit}`}</span>
-                    <svg height="15" width="210">
+                    <span style={{float: "left"}}>{`${r.toExponential(2)} ${ind.unit}`}</span>
+                    <svg height="15" width="210" style={{float: "left", clear: "both"}}>
                         <rect x="0" y="2.5" height="10" fill={color}
                             width={200 * (0.1 + 0.9 * share)}></rect>
                     </svg>
