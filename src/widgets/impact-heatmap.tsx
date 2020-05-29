@@ -268,8 +268,9 @@ const Row = (props: RowProps) => {
 
     const config = props.widget.config;
     const sector = props.sector;
-    const selected = config.sectors
-        && config.sectors.indexOf(sector.code) >= 0;
+    const selected = config.sectors && config.sectors.indexOf(sector.code) >= 0
+        ? true
+        : false;
     const onSelect = () => {
         let codes = config.sectors;
         if (selected) {
@@ -293,9 +294,9 @@ const Row = (props: RowProps) => {
                     whiteSpace: "nowrap",
                 }}>
                 <div style={{ cursor: "pointer" }}>
-                    <input type="checkbox" readOnly
+                    <input type="checkbox"
                         checked={selected}
-                        onClick={onSelect}>
+                        onChange={onSelect}>
                     </input>
 
                     <a title={sectorLabel}
