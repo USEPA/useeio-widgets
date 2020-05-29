@@ -11,7 +11,6 @@ import {
     IndicatorGroup,
     Model,
     Sector,
-    DemandEntry,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
 
@@ -27,7 +26,7 @@ export class ImpactHeatmap extends Widget {
 
     config: Config;
     result: HeatmapResult;
-    demand: DemandEntry[];
+    demand: { [code: string]: number };
     indicators: Indicator[];
 
     constructor(private model: Model, private selector: string) {
@@ -39,10 +38,32 @@ export class ImpactHeatmap extends Widget {
         const needsCalc = this.needsCalculation(config);
         this.config = config;
         if (needsCalc) {
-            const demandID = await this.model.findDemand(config);
-            this.demand = await this.model.demand(demandID);
             this.result = await calculateResult(this.model, config);
         }
+
+        // load the demand vector of required
+        if (config.showvalues && (!this.demand || needsCalc)) {
+            const demandID = await this.model.findDemand(config);
+            const demand = await this.model.demand(demandID);
+            if (demand) {
+                const values: { [id: string]: number } = {};
+                demand.forEach(e => values[e.sector] = e.amount);
+                // this aggregates the demand values by sector
+                // code for multi-regional models
+                this.demand = {};
+                for (const sector of (await this.model.sectors())) {
+                    const val = values[sector.id];
+                    if (!val) {
+                        continue;
+                    }
+                    const sum = this.demand[sector.code];
+                    this.demand[sector.code] = sum
+                        ? sum + val
+                        : val;
+                }
+            }
+        }
+
         this.indicators = await this.syncIndicators(config);
 
         ReactDOM.render(
@@ -152,9 +173,12 @@ const Component = (props: { widget: ImpactHeatmap }) => {
             <thead>
                 <tr className="indicator-row">
                     <Header
-                        displayCount={config.count}
-                        sectorCount={sectors.length}
+                        widget={props.widget}
                         onSearch={term => setSearchTerm(term)} />
+                    {config.showvalues
+                        ? <th><div><span>US Demand $ (2007)</span></div></th>
+                        : <></>
+                    }
                     <IndicatorHeader
                         indicators={indicators}
                         onClick={(i) => {
@@ -174,13 +198,12 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 };
 
 const Header = (props: {
-    sectorCount: number,
-    displayCount: number,
+    widget: ImpactHeatmap,
     onSearch: (term: string) => void,
 }) => {
 
-    const count = props.displayCount || -1;
-    const total = props.sectorCount || 0;
+    const count = props.widget.config.count || -1;
+    const total = props.widget.result?.sectors?.length || 0;
     const subTitle = count >= 0 && count < total
         ? `${count} of ${total} industry sectors`
         : `${total} industry sectors`;
@@ -268,7 +291,7 @@ const Row = (props: RowProps) => {
 
     const config = props.widget.config;
     const sector = props.sector;
-    const selected = config.sectors && config.sectors.indexOf(sector.code) >= 0
+    const selected = config.sectors?.indexOf(sector.code) >= 0
         ? true
         : false;
     const onSelect = () => {
@@ -284,6 +307,9 @@ const Row = (props: RowProps) => {
     };
 
     const sectorLabel = `${sector.code} - ${sector.name}`;
+    const demand = config.showvalues
+        ? props.widget.demand[sector.code]
+        : null;
 
     return (
         <tr>
@@ -305,6 +331,10 @@ const Row = (props: RowProps) => {
                     </a>
                 </div>
             </td>
+            {demand
+                ? <td>{demand.toExponential(2)}</td>
+                : <></>
+            }
             <IndicatorResult {...props} />
         </tr>
     );
