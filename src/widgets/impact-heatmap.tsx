@@ -11,6 +11,7 @@ import {
     IndicatorGroup,
     Model,
     Sector,
+    DemandEntry,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
 
@@ -24,25 +25,53 @@ const INDICATOR_GROUPS = [
 
 export class ImpactHeatmap extends Widget {
 
+    config: Config;
+    result: HeatmapResult;
+    demand: DemandEntry[];
+    indicators: Indicator[];
+
     constructor(private model: Model, private selector: string) {
         super();
         this.ready();
     }
 
     protected async handleUpdate(config: Config) {
-        const result = await calculateResult(this.model, config);
-        const indicators = await this.selectIndicators(config);
+        const needsCalc = this.needsCalculation(config);
+        this.config = config;
+        if (needsCalc) {
+            const demandID = await this.model.findDemand(config);
+            this.demand = await this.model.demand(demandID);
+            this.result = await calculateResult(this.model, config);
+        }
+        this.indicators = await this.syncIndicators(config);
 
         ReactDOM.render(
-            <Component
-                config={config}
-                indicators={indicators}
-                result={result}
-                widget={this} />,
+            <Component widget={this} />,
             document.querySelector(this.selector));
     }
 
-    private async selectIndicators(config: Config): Promise<Indicator[]> {
+    private needsCalculation(newConfig: Config) {
+        if (!this.config || !this.result) {
+            return true;
+        }
+        // changes in these fields trigger a calculation
+        const fields = [
+            "show",
+            "perspective",
+            "analysis",
+            "year",
+            "location",
+            "show"
+        ];
+        for (const field of fields) {
+            if (this.config[field] !== newConfig[field]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private async syncIndicators(config: Config): Promise<Indicator[]> {
         if (config.show !== "mosaic") {
             return [];
         }
@@ -83,19 +112,15 @@ async function calculateResult(model: Model, config: Config): Promise<HeatmapRes
     return HeatmapResult.from(model, result);
 }
 
-const Component = (props: {
-    result: HeatmapResult,
-    indicators: Indicator[],
-    config: Config,
-    widget: Widget,
-}) => {
+const Component = (props: { widget: ImpactHeatmap }) => {
 
-    const config = props.config;
+    const config = props.widget.config;
     const [sortIndicator, setSortIndicator] = React.useState<Indicator | null>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
-    let sectors = props.result.getRanking(
-        props.indicators, searchTerm, sortIndicator);
+    const indicators = props.widget.indicators;
+    const result = props.widget.result;
+    let sectors = result.getRanking(indicators, searchTerm, sortIndicator);
 
     const count = config.count;
     if (count && count >= 0) {
@@ -114,28 +139,11 @@ const Component = (props: {
 
     const rows: JSX.Element[] = [];
     for (const sector of sectors) {
-        const selected = config.sectors
-            && config.sectors.indexOf(sector.code) >= 0;
         rows.push(
-            <Row
-                key={sector.code}
+            <Row key={sector.code}
                 sector={sector}
-                selected={selected}
-                indicators={props.indicators}
-                result={props.result}
                 sortIndicator={sortIndicator}
-                config={config}
-                onSelect={() => {
-                    let codes = config.sectors;
-                    if (selected) {
-                        const idx = codes.indexOf(sector.code);
-                        codes.splice(idx, 1);
-                    } else {
-                        codes = !codes ? [] : codes.slice(0);
-                        codes.push(sector.code);
-                    }
-                    props.widget.fireChange({ sectors: codes });
-                }} />
+                widget={props.widget} />
         );
     }
 
@@ -144,11 +152,11 @@ const Component = (props: {
             <thead>
                 <tr className="indicator-row">
                     <Header
-                        displayCount={props.config.count}
-                        sectorCount={props.result.sectors.length}
+                        displayCount={config.count}
+                        sectorCount={sectors.length}
                         onSearch={term => setSearchTerm(term)} />
                     <IndicatorHeader
-                        indicators={props.indicators}
+                        indicators={indicators}
                         onClick={(i) => {
                             if (sortIndicator === i) {
                                 setSortIndicator(null);
@@ -252,17 +260,30 @@ const IndicatorHeader = (props: {
 
 type RowProps = {
     sector: Sector,
-    selected: boolean,
-    indicators: Indicator[],
-    result: HeatmapResult,
     sortIndicator: Indicator | null,
-    onSelect: () => void,
-    config: Config,
+    widget: ImpactHeatmap,
 };
 
 const Row = (props: RowProps) => {
-    const sectorLabel = `${props.sector.code} - ${props.sector.name}`;
-    const code = props.sector.code;
+
+    const config = props.widget.config;
+    const sector = props.sector;
+    const selected = config.sectors
+        && config.sectors.indexOf(sector.code) >= 0;
+    const onSelect = () => {
+        let codes = config.sectors;
+        if (selected) {
+            const idx = codes.indexOf(sector.code);
+            codes.splice(idx, 1);
+        } else {
+            codes = !codes ? [] : codes.slice(0);
+            codes.push(sector.code);
+        }
+        props.widget.fireChange({ sectors: codes });
+    };
+
+    const sectorLabel = `${sector.code} - ${sector.name}`;
+
     return (
         <tr>
             <td key={props.sector.code}
@@ -272,12 +293,13 @@ const Row = (props: RowProps) => {
                     whiteSpace: "nowrap",
                 }}>
                 <div style={{ cursor: "pointer" }}>
-                    <input type="checkbox" checked={props.selected}
-                        onClick={() => props.onSelect()}>
+                    <input type="checkbox" readOnly
+                        checked={selected}
+                        onClick={onSelect}>
                     </input>
 
                     <a title={sectorLabel}
-                        onClick={() => props.onSelect()}>
+                        onClick={onSelect}>
                         {strings.cut(sectorLabel, 80)}
                     </a>
                 </div>
@@ -289,16 +311,19 @@ const Row = (props: RowProps) => {
 
 const IndicatorResult = (props: RowProps) => {
 
-    if (!props.indicators || props.indicators.length === 0) {
+    const config = props.widget.config;
+    const indicators = props.widget.indicators;
+    const result = props.widget.result;
+    if (!indicators || indicators.length === 0 || !result) {
         return <></>;
     }
 
     // render a bar when a single indicator is selected
-    if (props.indicators.length === 1) {
-        const ind = props.indicators[0];
+    if (indicators.length === 1) {
+        const ind = indicators[0];
         const color = colors.forIndicatorGroup(ind.group);
-        const r = props.result.getResult(ind, props.sector);
-        const share = props.result.getShare(ind, props.sector);
+        const r = result.getResult(ind, props.sector);
+        const share = result.getShare(ind, props.sector);
         return (
             <td key={ind.id}>
                 <div>
@@ -315,15 +340,15 @@ const IndicatorResult = (props: RowProps) => {
     // render mosaic cells
     const items: JSX.Element[] = [];
     let g: IndicatorGroup | null = null;
-    for (const ind of props.indicators) {
+    for (const ind of indicators) {
         if (ind.group !== g) {
             // add an empty cell for the group
             const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
             g = ind.group;
             items.push(<td key={gkey} className="noborder" />);
         }
-        const r = props.result.getResult(ind, props.sector);
-        const share = props.result.getShare(ind, props.sector);
+        const r = result.getResult(ind, props.sector);
+        const share = result.getShare(ind, props.sector);
         let alpha = 0.1 + 0.9 * share;
         if (props.sortIndicator && props.sortIndicator !== ind) {
             alpha *= 0.25;
@@ -334,7 +359,7 @@ const IndicatorResult = (props: RowProps) => {
             <td key={ind.id}
                 title={value}
                 style={{ backgroundColor: color }}>
-                {props.config.showvalues ? value : ""}
+                {config.showvalues ? value : ""}
             </td>
         );
     }

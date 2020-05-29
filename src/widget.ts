@@ -154,10 +154,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
     }
 
     private onHashChanged() {
-        this.config = {
-            ...this.config,
-            ...parseUrlConfig(),
-        };
+        this.config = parseUrlConfig();
         for (const widget of this.widgets) {
             widget.update(this.config);
         }
