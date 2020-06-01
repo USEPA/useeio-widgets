@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { Sector, Model } from "../webapi";
 import { BaseType } from "d3";
 import { Config, Widget } from "../widget";
-import * as colors from "../colors";
+import * as colors from "../util/colors";
 
 export interface SectorListConfig {
     model: Model;

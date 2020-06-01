@@ -1,4 +1,4 @@
-import { IndicatorGroup } from "./webapi";
+import { IndicatorGroup } from "../webapi";
 
 export type RGB = [number, number, number];
 

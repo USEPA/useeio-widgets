@@ -1,5 +1,5 @@
-import { DemandType, ResultPerspective } from "./webapi";
-import * as strings from "./strings";
+import { DemandType, ResultPerspective, Model } from "./webapi";
+import * as strings from "./util/strings";
 
 /**
  * A common configuration object of our widgets. Often our widgets take
@@ -8,10 +8,7 @@ import * as strings from "./strings";
  */
 export interface Config {
 
-    /**
-     * The possible sender of an configuration update.
-     */
-    source?: any;
+    [key: string]: any;
 
     /**
      * The ID of the input output model
@@ -48,6 +45,27 @@ export interface Config {
      * by location in multi-regional models.
      */
     location?: string;
+
+    /**
+     * The number of items a widget should display.
+     * This is typically the number of sectors.
+     */
+    count?: number;
+
+    /**
+     * Can be used together with the `count` property
+     * to page through a number of items.
+     */
+    page?: number;
+
+    show?: string;
+
+    showvalues?: boolean;
+}
+
+export interface WidgetArgs {
+    model: Model;
+    selector: string;
 }
 
 export abstract class Widget {
@@ -57,7 +75,7 @@ export abstract class Widget {
     private queue = new Array<() => void>();
 
     update(config: Config) {
-        if (!config || config.source === this) {
+        if (!config) {
             return;
         }
         if (!this.isReady) {
@@ -80,8 +98,7 @@ export abstract class Widget {
         this.listeners.push(fn);
     }
 
-    protected fireChange(config: Config) {
-        config.source = this;
+    fireChange(config: Config) {
         for (const fn of this.listeners) {
             fn(config);
         }
@@ -137,10 +154,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
     }
 
     private onHashChanged() {
-        this.config = {
-            ...this.config,
-            ...parseUrlConfig(),
-        };
+        this.config = parseUrlConfig();
         for (const widget of this.widgets) {
             widget.update(this.config);
         }
@@ -158,7 +172,6 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
                 ...this.config,
                 ...config,
             };
-            this.config.source = widget;
             this.updateHash();
         });
     }
@@ -168,7 +181,6 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             ...this.config,
             ...config,
         };
-        this.config.source = this;
         this.updateHash();
     }
 
@@ -181,17 +193,18 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
         if (conf.indicators && conf.indicators.length > 0) {
             parts.push("indicators=" + conf.indicators.join(","));
         }
-        [
-            ["type", conf.analysis],
-            ["perspective", conf.perspective],
-            ["year", conf.year],
-            ["location", conf.location],
-            ["model", conf.model],
-        ].forEach(([key, val]) => {
+        for (const key in conf) {
+            if (!conf.hasOwnProperty(key)) {
+                continue;
+            }
+            if (key === "sectors" || key === "indicators") {
+                continue;
+            }
+            const val = conf[key];
             if (val) {
                 parts.push(`${key}=${val}`);
             }
-        });
+        }
         window.location.hash = "#" + parts.join("&");
     }
 }
@@ -211,7 +224,7 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
     if (what && what.withScripts) {
         const scriptTags = document.getElementsByTagName("script");
         for (let i = 0; i < scriptTags.length; i++) {
-            const url = scriptTags[i].src;
+            const url = scriptTags.item(i).src;
             if (url) {
                 urls.push(url);
             }
@@ -232,30 +245,25 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
  */
 function updateConfig(config: Config, urlParams: [string, string][]) {
     for (const [key, val] of urlParams) {
+        if (!val || config[key])
+            continue;
+
         switch (key) {
 
             case "model":
-                if (config.model)
-                    break;
                 config.model = val;
                 break;
 
             case "sectors":
-                if (config.sectors)
-                    break;
                 config.sectors = val.split(",");
                 break;
 
             case "indicators":
-                if (config.indicators)
-                    break;
                 config.indicators = val.split(",");
                 break;
 
             case "type":
             case "analysis":
-                if (config.analysis)
-                    break;
                 if (strings.eq(val, "consumption")) {
                     config.analysis = "Consumption";
                 } else if (strings.eq(val, "production")) {
@@ -264,8 +272,6 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
                 break;
 
             case "perspective":
-                if (config.perspective)
-                    break;
                 const p = getPerspective(val);
                 if (p) {
                     config.perspective = p;
@@ -273,19 +279,34 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
                 break;
 
             case "location":
-                if (config.location)
-                    break;
                 config.location = val;
                 break;
 
             case "year":
-                if (config.year)
-                    break;
                 try {
                     config.year = parseInt(val, 10);
-                } catch (e) {
-                    delete config.year;
-                }
+                } catch (_) { }
+                break;
+
+            case "count":
+                try {
+                    config.count = parseInt(val, 10);
+                } catch (_) { }
+                break;
+
+            case "page":
+                try {
+                    config.page = parseInt(val, 10);
+                } catch (_) { }
+                break;
+
+            case "show":
+                config.show = val;
+                break;
+
+            case "showvalues":
+                config.showvalues = strings.eq(val, "true", "1", "yes");
+                break;
 
             default:
                 break;

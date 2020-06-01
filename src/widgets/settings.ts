@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import * as strings from "../strings";
+import * as strings from "../util/strings";
 import { Widget, Config } from "../widget";
 import {
     DemandType,

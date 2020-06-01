@@ -3,24 +3,23 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Impact heatmap</title>
+    <title>React ...</title>
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
 
 <body>
-    <div style="margin: 25px;">
-        <div style="width: 80%; margin: auto;">
-            <div class="impact-heatmap">
-            </div>
-            <div id="paginator">
-            </div>
-        </div>
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">React</h1>
+        <div id="count-combo"></div>
     </div>
 </body>
-<script src="lib/d3.min.js"></script>
-<script src="lib/useeio_widgets.js"></script>
-<script>
 
+<script src="lib/d3.min.js"></script>
+<script src="lib/react.production.min.js"></script>
+<script src="lib/react-dom.production.min.js"></script>
+<script src="lib/useeio_widgets.js"></script>
+
+<script>
     var config = useeio.urlConfig();
     var modelID = config.get().model || 'GAUSEEIO';
 
@@ -30,19 +29,12 @@
         asJsonFiles: true,
     });
 
-    var heatmap = useeio.impactHeatmap({
+    var countCombo = useeio.countCombo({
         model: model,
-        selector: '.impact-heatmap',
+        selector: '#count-combo',
     });
-
-    var paginator = useeio.paginator({
-        model: model,
-        selector: '#paginator',
-    });
-
-    config.join(heatmap);
-    config.join(paginator);
-
+    config.join(countCombo);
+    config.updateIfAbsent({count: 20});
 </script>
 
 </html>
