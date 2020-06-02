@@ -308,9 +308,19 @@ const Row = (props: RowProps) => {
     };
 
     const sectorLabel = `${sector.code} - ${sector.name}`;
-    const demand = config.showvalues
-        ? props.widget.demand[sector.code]
-        : null;
+
+    // display the demand value if showvalues=true
+    let demand;
+    if (config.showvalues) {
+        const demandVal = props.widget.demand[sector.code];
+        demand = <td style={{
+            borderTop: "lightgray solid 1px",
+            padding: "5px 0px",
+            whiteSpace: "nowrap",
+        }}>
+            {demandVal ? demandVal.toExponential(2) : "&nbsp;"}
+        </td>;
+    }
 
     return (
         <tr>
@@ -332,21 +342,7 @@ const Row = (props: RowProps) => {
                     </a>
                 </div>
             </td>
-            {demand
-                ? <td style={{
-                    borderTop: "lightgray solid 1px",
-                    padding: "5px 0px",
-                    whiteSpace: "nowrap",
-                }}>{demand.toExponential(2)}</td>
-                : 
-                
-                // Bug: Need to display <></> here when !config.showvalues
-                <td style={{
-                    borderTop: "lightgray solid 1px",
-                    padding: "5px 0px",
-                    whiteSpace: "nowrap",
-                }}>&nbsp;</td>
-            }
+            {demand ? demand : <></>}
             <IndicatorResult {...props} />
         </tr>
     );
