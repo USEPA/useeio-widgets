@@ -342,7 +342,7 @@ const Row = (props: RowProps) => {
                     </a>
                 </div>
             </td>
-            {demand ? demand : <></>}
+            {config.showvalues ? demand : <></>}
             <IndicatorResult {...props} />
         </tr>
     );
