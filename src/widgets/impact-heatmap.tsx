@@ -168,6 +168,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
         );
     }
 
+    // US Demand $ (2007)
     return (
         <table style={{ width: "100%" }}>
             <thead>
@@ -176,7 +177,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
                         widget={props.widget}
                         onSearch={term => setSearchTerm(term)} />
                     {config.showvalues
-                        ? <th><div><span>US Demand $ (2007)</span></div></th>
+                        ? <th><div><span>Demand</span></div></th>
                         : <></>
                     }
                     <IndicatorHeader
@@ -258,7 +259,7 @@ const IndicatorHeader = (props: {
             items.push(
                 <th key={gkey} className="indicator">
                     <div>
-                        <span>
+                        <span className="indicator-group">
                             <b>{g}</b>
                         </span>
                     </div>
@@ -332,8 +333,19 @@ const Row = (props: RowProps) => {
                 </div>
             </td>
             {demand
-                ? <td>{demand.toExponential(2)}</td>
-                : <></>
+                ? <td style={{
+                    borderTop: "lightgray solid 1px",
+                    padding: "5px 0px",
+                    whiteSpace: "nowrap",
+                }}>{demand.toExponential(2)}</td>
+                : 
+                
+                // Bug: Need to display <></> here when !config.showvalues
+                <td style={{
+                    borderTop: "lightgray solid 1px",
+                    padding: "5px 0px",
+                    whiteSpace: "nowrap",
+                }}>&nbsp;</td>
             }
             <IndicatorResult {...props} />
         </tr>
@@ -373,7 +385,7 @@ const IndicatorResult = (props: RowProps) => {
     let g: IndicatorGroup | null = null;
     for (const ind of indicators) {
         if (ind.group !== g) {
-            // add an empty cell for the group
+            // add an empty grey cell for the group
             const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
             g = ind.group;
             items.push(<td key={gkey} className="noborder" />);

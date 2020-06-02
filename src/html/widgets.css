@@ -30,6 +30,11 @@ th.indicator > div {
     padding-top: 5px;
     white-space: nowrap;
 }
+.indicator-group {
+    font-size: 1.1em;
+    min-width: 200px;
+    padding: 4px;
+}
 a {
     text-decoration: none;
     color: #555;
@@ -189,7 +194,15 @@ label {
     text-decoration: none;
     color: none;
 }
-
+.impact-heatmap-body td {
+    white-space: nowrap;
+    padding:4px;
+}
+.noborder {
+    background-color: #fafafa;
+    border-left:8px solid #fff;
+    min-width: 40px;
+}
 /* paginator styles */
 
 .useeio-paginator {
