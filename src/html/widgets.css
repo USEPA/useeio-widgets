@@ -30,10 +30,24 @@ th.indicator > div {
     padding-top: 5px;
     white-space: nowrap;
 }
+th.indicator {
+    padding-left: 4px;
+}
+.indicator-group-parent {
+    padding-left: 10px;
+    margin-bottom: -10px; /* slide settitle holder down */
+    min-width: 42px;
+}
 .indicator-group {
-    font-size: 1.1em;
-    min-width: 200px;
+    min-width: 160px; /* length of line above set-titles */
+    display: inline-block;
+    text-align: left;
     padding: 4px;
+    border-top: 1px solid #ccc;
+    padding-top: 4px;
+    padding-left: 20px; /* left of title under line */
+    margin-left: 0px; /* slide angled set-titles up and to the right */
+    margin-bottom: -4px;
 }
 a {
     text-decoration: none;
@@ -197,14 +211,17 @@ label {
 .impact-heatmap-body td {
     white-space: nowrap;
     padding:4px;
+    padding-left: 6px;
+}
+.indicator-value {
+    font-size: .9em;
 }
 .noborder {
     background-color: #fafafa;
     border-left:8px solid #fff;
-    min-width: 40px;
 }
-/* paginator styles */
 
+/* paginator styles */
 .useeio-paginator {
     margin: auto;
 }

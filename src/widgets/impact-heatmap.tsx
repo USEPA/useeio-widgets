@@ -170,7 +170,9 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 
     // US Demand $ (2007)
     return (
-        <table style={{ width: "100%" }}>
+        <table style={{
+            marginRight: "80px"
+        }}>
             <thead>
                 <tr className="indicator-row">
                     <Header
@@ -258,7 +260,7 @@ const IndicatorHeader = (props: {
             const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
             items.push(
                 <th key={gkey} className="indicator">
-                    <div>
+                    <div className="indicator-group-parent">
                         <span className="indicator-group">
                             <b>{g}</b>
                         </span>
@@ -318,7 +320,7 @@ const Row = (props: RowProps) => {
             padding: "5px 0px",
             whiteSpace: "nowrap",
         }}>
-            {demandVal ? demandVal.toExponential(2) : "&nbsp;"}
+            {demandVal ? demandVal.toExponential(2) : null}
         </td>;
     }
 
@@ -395,7 +397,7 @@ const IndicatorResult = (props: RowProps) => {
         const color = colors.forIndicatorGroup(ind.group, alpha);
         const value = `${r.toExponential(2)} ${ind.unit}`;
         items.push(
-            <td key={ind.id}
+            <td className="indicator-value" key={ind.id}
                 title={value}
                 style={{ backgroundColor: color }}>
                 {config.showvalues ? value : ""}
