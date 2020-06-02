@@ -6,7 +6,8 @@
     "server": "npx http-server ./build",
     "download": "node scripts/download",
     "build": "webpack --config webpack.config.js --mode=production",
-    "dev": "webpack --config webpack.config.js --mode=development --watch"
+    "dev": "webpack --config webpack.config.js --mode=development --watch",
+    "clean": "node scripts/clean"
   },
   "author": "",
   "license": "MIT",
