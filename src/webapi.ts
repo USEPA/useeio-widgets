@@ -1,3 +1,5 @@
+import { thresholdSturges } from "d3";
+
 /**
  * The configuration of the web api.
  */
@@ -281,6 +283,19 @@ export class Matrix {
     }
 }
 
+/**
+ * This type describes a sector aggregation. In case of multi-regional models
+ * we have multiple sectors with the same codes and names but different
+ * locations. Often we want to aggregate these multi-regional sectors. This
+ * type contains the aggregated sectors and an index that maps the sector
+ * codes to its new position in the aggregated version which can be then used
+ * to aggregate corresponding matrix results.
+ */
+type SectorAggregation = {
+    index: { [code: string]: number };
+    sectors: Sector[];
+};
+
 export class Model {
 
     private _api: WebApi;
@@ -291,6 +306,8 @@ export class Model {
     private _matrices: { [index: string]: Matrix };
     private _demands: { [index: string]: DemandEntry[] };
     private _totalResults: { [demandID: string]: number[] };
+    private _isMultiRegional: boolean;
+    private _sectorAggregation: SectorAggregation;
 
     constructor(private _conf: WebApiConfig) {
         this._api = new WebApi(_conf);
@@ -307,6 +324,9 @@ export class Model {
     }
 
     async isMultiRegional(): Promise<boolean> {
+        if (typeof this._isMultiRegional === "boolean") {
+            return this._isMultiRegional;
+        }
         const sectors = await this.sectors();
         let loc;
         for (const sector of sectors) {
@@ -318,9 +338,11 @@ export class Model {
                 continue;
             }
             if (loc !== sector.location) {
+                this._isMultiRegional = true;
                 return true;
             }
         }
+        this._isMultiRegional = false;
         return false;
     }
 
@@ -479,5 +501,50 @@ export class Model {
             return [];
         this._totalResults[demand] = result.totals;
         return result.totals;
+    }
+
+    async singleRegionSectors(): Promise<SectorAggregation> {
+        if (this._sectorAggregation) {
+            return this._sectorAggregation;
+        }
+        const sectors = await this.sectors();
+        const multiRegional = await this.isMultiRegional();
+
+        // no aggregation in case of single-region models
+        if (!multiRegional) {
+            const index = sectors.reduce((idx, sector) => {
+                idx[sector.code] = sector.index;
+                return idx;
+            }, {} as { [code: string]: number });
+            this._sectorAggregation = {
+                index, sectors
+            };
+            return this._sectorAggregation;
+        }
+
+        // aggregate the sectors
+        const aggSectors: Sector[] = [];
+        const aggIndex: { [code: string]: number } = {};
+        let i = 0;
+        for (const s of sectors) {
+            if (aggIndex[s.code] === undefined) {
+                aggIndex[s.code] = i;
+                const agg: Sector = {
+                    code: s.code,
+                    id: s.code,
+                    index: i,
+                    name: s.name,
+                    description: s.description,
+                    location: null,
+                };
+                aggSectors[i] = agg;
+                i++;
+            }
+        }
+        this._sectorAggregation = {
+            index: aggIndex,
+            sectors: aggSectors,
+        };
+        return this._sectorAggregation;
     }
 }

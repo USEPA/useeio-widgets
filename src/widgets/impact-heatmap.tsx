@@ -13,7 +13,7 @@ import {
     Sector,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
-import { MatrixSelector } from "./matrix-selector";
+import { MatrixCombo } from "./matrix-selector";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -25,10 +25,20 @@ const INDICATOR_GROUPS = [
 
 export class ImpactHeatmap extends Widget {
 
+    /**
+     * The current configuration of the heatmap.
+     */
     config: Config;
+
     result: HeatmapResult;
     demand: { [code: string]: number };
     indicators: Indicator[];
+
+    /**
+     * The industry sectors of the model. This array is only initialized and
+     * thus should be only used when this heatmap has no results.
+     */
+    sectors: Sector[];
 
     constructor(private model: Model, private selector: string) {
         super();
@@ -36,13 +46,20 @@ export class ImpactHeatmap extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        const needsCalc = this.needsCalculation(config);
         this.config = config;
+
+        // run a new calculation if necessary
+        const needsCalc = this.needsCalculation(config);
         if (needsCalc) {
             this.result = await calculateResult(this.model, config);
         }
+        if (!this.result) {
+            // initialize the sector array
+            const { sectors } = await this.model.singleRegionSectors();
+            this.sectors = sectors;
+        }
 
-        // load the demand vector of required
+        // load the demand vector if required
         if (config.showvalues && (!this.demand || needsCalc)) {
             const demandID = await this.model.findDemand(config);
             const demand = await this.model.demand(demandID);
@@ -73,6 +90,9 @@ export class ImpactHeatmap extends Widget {
     }
 
     private needsCalculation(newConfig: Config) {
+        if (!newConfig || newConfig.show !== "mosaic")
+            return false;
+
         if (!this.config || !this.result) {
             return true;
         }
@@ -142,7 +162,21 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 
     const indicators = props.widget.indicators;
     const result = props.widget.result;
-    let sectors = result.getRanking(indicators, searchTerm, sortIndicator);
+    let sectors;
+    if (result) {
+        sectors = result.getRanking(indicators, searchTerm, sortIndicator);
+    } else {
+        sectors = props.widget.sectors;
+        if (searchTerm && searchTerm.trim().length > 0) {
+            sectors = sectors
+                .map(s => [s, strings.search(s.name, searchTerm)] as [Sector, number])
+                .filter(([, i]) => i >= 0)
+                .sort(([, i], [, j]) => i - j)
+                .map(([s,]) => s);
+        } else {
+            sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
+        }
+    }
 
     const count = config.count;
     if (count && count >= 0) {
@@ -171,6 +205,12 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 
     return (
         <>
+            {
+                // display the matrix selector if we display a result
+                props.widget.result
+                    ? <MatrixCombo config={config} widget={props.widget} />
+                    : <></>
+            }
             <table style={{
                 marginRight: "80px"
             }}>

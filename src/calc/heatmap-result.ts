@@ -125,39 +125,21 @@ export class HeatmapResult {
  */
 async function aggregateByRegions(result: Result, model: Model): Promise<[Sector[], Result]> {
     const isMultiRegional = await model.isMultiRegional();
+    const sectors = await model.sectors();
     if (!isMultiRegional) {
-        return [await model.sectors(), result];
+        return [sectors, result];
     }
 
     // generate the aggregated sectors and map their
     // codes to their index: code => index
-    const sectors = await model.sectors();
-    const aggSectors: Sector[] = [];
-    const aggSectorIds: string[] = [];
-    const sectorIdx: { [code: string]: number } = {};
-    let idx = 0;
-    for (const s of sectors) {
-        if (sectorIdx[s.code] === undefined) {
-            sectorIdx[s.code] = idx;
-            const agg: Sector = {
-                code: s.code,
-                id: `${s.code}/${s.name}`.toLocaleLowerCase(),
-                index: idx,
-                name: s.name,
-                description: s.description,
-                location: null,
-            };
-            aggSectors[idx] = agg;
-            aggSectorIds[idx] = agg.id;
-            idx++;
-        }
-    }
+    const {sectors: aggSectors, index} =  await model.singleRegionSectors();
+    const aggSectorIds = aggSectors.map(s => s.id);
 
     // aggregate the result matrix
     const data: number[][] = result.data.map(row => {
         const aggRow = new Array(aggSectors.length).fill(0);
         sectors.forEach((sector) => {
-            const j = sectorIdx[sector.code];
+            const j = index[sector.code];
             aggRow[j] += row[sector.index];
         });
         return aggRow;

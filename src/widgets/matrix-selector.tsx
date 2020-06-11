@@ -64,7 +64,7 @@ export const MatrixCombo = (props: {
     };
 
     return (
-        <div>
+        <div className="useeio-matrix-selector">
             <div>
                 <select
                     value={matrix}

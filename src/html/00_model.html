@@ -102,6 +102,7 @@
                 return model.findDemand({ type: "Production" })
                     .then(demandID => model.getTotalResults(demandID));
             });
+            test("singleRegionSectors", () => model.singleRegionSectors())
         }
     </script>
 

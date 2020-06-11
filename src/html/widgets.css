@@ -256,6 +256,11 @@ label {
     font-weight: bold;
 }
 
+.useeio-matrix-selector {
+    max-width: 800px;
+    margin: auto;
+}
+
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {
