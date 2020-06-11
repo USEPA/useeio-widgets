@@ -61,7 +61,7 @@ function update(config: Config, matrix: Matrix): Config {
 
     // clear the analysis type for 1 USD based matrices
     if (matrix === "D" || matrix === "U") {
-        delete conf.analysis;
+        conf.analysis = null;
         conf.perspective = matrix === "D"
             ? "direct"
             : "final";
@@ -108,7 +108,6 @@ const Component = (props: {
     return (
         <div>
             <div>
-                <label>Matrix</label>
                 <select value={props.selected}
                     onChange={e => props.onChange(e.target.value as Matrix)}>
                     {options}

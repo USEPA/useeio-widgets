@@ -8,6 +8,7 @@ import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
+import { MatrixSelector } from "./widgets/matrix-selector";
 
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
@@ -54,4 +55,8 @@ export function paginator(args: WidgetArgs): Paginator {
 
 export function countCombo(args: WidgetArgs): CountCombo {
     return new CountCombo(args.model, args.selector);
+}
+
+export function matrixSelector(args: {selector: string}): MatrixSelector {
+    return new MatrixSelector(args.selector);
 }
