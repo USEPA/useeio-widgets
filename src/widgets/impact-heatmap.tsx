@@ -13,6 +13,7 @@ import {
     Sector,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
+import { MatrixSelector } from "./matrix-selector";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -168,35 +169,36 @@ const Component = (props: { widget: ImpactHeatmap }) => {
         );
     }
 
-    // US Demand $ (2007)
     return (
-        <table style={{
-            marginRight: "80px"
-        }}>
-            <thead>
-                <tr className="indicator-row">
-                    <Header
-                        widget={props.widget}
-                        onSearch={term => setSearchTerm(term)} />
-                    {config.showvalues
-                        ? <th><div><span>Demand</span></div></th>
-                        : <></>
-                    }
-                    <IndicatorHeader
-                        indicators={indicators}
-                        onClick={(i) => {
-                            if (sortIndicator === i) {
-                                setSortIndicator(null);
-                            } else {
-                                setSortIndicator(i);
-                            }
-                        }} />
-                </tr>
-            </thead>
-            <tbody className="impact-heatmap-body">
-                {rows}
-            </tbody>
-        </table>
+        <>
+            <table style={{
+                marginRight: "80px"
+            }}>
+                <thead>
+                    <tr className="indicator-row">
+                        <Header
+                            widget={props.widget}
+                            onSearch={term => setSearchTerm(term)} />
+                        {config.showvalues
+                            ? <th><div><span>Demand</span></div></th>
+                            : <></>
+                        }
+                        <IndicatorHeader
+                            indicators={indicators}
+                            onClick={(i) => {
+                                if (sortIndicator === i) {
+                                    setSortIndicator(null);
+                                } else {
+                                    setSortIndicator(i);
+                                }
+                            }} />
+                    </tr>
+                </thead>
+                <tbody className="impact-heatmap-body">
+                    {rows}
+                </tbody>
+            </table>
+        </>
     );
 };
 

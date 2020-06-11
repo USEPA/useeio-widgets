@@ -108,7 +108,8 @@ const Component = (props: {
     });
 
     const content = showRepl
-        ? <Repl matrix={props.selected} />
+        ? <Repl matrix={props.selected}
+            onCloseRepl={() => setShowRepl(false)} />
         : <Code matrix={props.selected}
             onShowRepl={() => setShowRepl(true)} />;
 
@@ -176,15 +177,16 @@ U = D @ L
 #
 # see also https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md
 
-U = get_matrix('U')
+L = get_matrix('L')
+D = get_matrix('D')
 
 # we generate a random demand vector for this example, but typically you
-# would load a demand vector from the USEEIO API
-n = U.shape[1]
+# would load a demand vector from the USEEIO API 
+n = D.shape[1]
 d = rand.random(n) * 1e6
 
-# for the final result, we just scale the columns of U with d
-RU = U @ numpy.diag(d)
+t = L @ d
+RD = D @ numpy.diag(t)
     `,
 
     "RU": `
@@ -207,20 +209,27 @@ RU = U @ numpy.diag(d)
     `,
 };
 
-const Repl = (props: { matrix: Matrix }) => {
+const Repl = (props: { matrix: Matrix, onCloseRepl: () => void }) => {
     const url = `https://repl.it/@msrocka/useeioexamplesmatrix${props.matrix}?lite=true`;
     const atts = {
-        frameborder: "no",
         allowtransparency: "true",
-        allowfullscreen: "true",
     };
     return (
-        <div style={{margin: 10}}>
-            <iframe
-                height="500px" width="100%" src={url}
-                scrolling="no" {...atts}
-                sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals">
-            </iframe>
-        </div>
+        <>
+            <div style={{ float: "right", fontSize: "0.9em", padding: 5 }}>
+                <a onClick={() => props.onCloseRepl()}>
+                    Close REPL
+                </a>
+            </div>
+            <div style={{ clear: "both" }}>
+                <iframe
+                    height="800px" width="100%" src={url}
+                    frameBorder="no"
+                    allowFullScreen={true}
+                    scrolling="no" {...atts}
+                    sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals">
+                </iframe>
+            </div>
+        </>
     );
 };
