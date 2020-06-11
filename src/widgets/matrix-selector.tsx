@@ -23,15 +23,59 @@ export class MatrixSelector extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        const matrix = matrixOf(config);
         ReactDOM.render(
-            <Component
-                selected={matrix}
-                onChange={(m) => this.fireChange(update(config, m))} />,
+            <MatrixCombo
+                config={config}
+                widget={this} />,
             document.querySelector(this.selector)
         );
     }
 }
+
+/**
+ * The React component of the matrix selector. This can be used as a component
+ * in other widgets.
+ */
+export const MatrixCombo = (props: {
+    config: Config,
+    widget: Widget,
+}) => {
+
+    const matrix = matrixOf(props.config);
+    const [showRepl, setShowRepl] = React.useState(false);
+
+    const options = ["D", "U", "RD", "RU"].map((m: Matrix) => {
+        return (
+            <option value={m} key={m}>
+                {labelOf(m)}
+            </option>
+        );
+    });
+
+    const content = showRepl
+        ? <Repl matrix={matrix}
+            onCloseRepl={() => setShowRepl(false)} />
+        : <Code matrix={matrix}
+            onShowRepl={() => setShowRepl(true)} />;
+
+    const onChange = (m: Matrix) => {
+        const config = update(props.config, m);
+        props.widget.fireChange(config);
+    };
+
+    return (
+        <div>
+            <div>
+                <select
+                    value={matrix}
+                    onChange={e => onChange(e.target.value as Matrix)}>
+                    {options}
+                </select>
+            </div>
+            {content}
+        </div>
+    );
+};
 
 /**
  * Determine the matrix type from the given configuration.
@@ -91,40 +135,6 @@ function labelOf(matrix: Matrix): string {
             return "Upstream result";
     }
 }
-
-const Component = (props: {
-    selected: Matrix,
-    onChange: (matrix: Matrix) => void
-}) => {
-
-    const [showRepl, setShowRepl] = React.useState(false);
-
-    const options = ["D", "U", "RD", "RU"].map((m: Matrix) => {
-        return (
-            <option value={m} key={m}>
-                {labelOf(m)}
-            </option>
-        );
-    });
-
-    const content = showRepl
-        ? <Repl matrix={props.selected}
-            onCloseRepl={() => setShowRepl(false)} />
-        : <Code matrix={props.selected}
-            onShowRepl={() => setShowRepl(true)} />;
-
-    return (
-        <div>
-            <div>
-                <select value={props.selected}
-                    onChange={e => props.onChange(e.target.value as Matrix)}>
-                    {options}
-                </select>
-            </div>
-            {content}
-        </div>
-    );
-};
 
 const Code = (props: { matrix: Matrix, onShowRepl: () => void }) => {
     return (
