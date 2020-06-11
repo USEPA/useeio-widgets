@@ -406,3 +406,22 @@ const IndicatorResult = (props: RowProps) => {
     }
     return <>{items}</>;
 };
+
+const DownloadSection = (props: {
+    onClick: (format: "CSV" | "JSON") => void,
+}) => {
+    return (
+        <div className="download-section">
+            <span>Download: </span>
+            <a className="download-link"
+                onClick={() => props.onClick("JSON")}>
+                JSON
+            </a>
+            <span> | </span>
+            <a className="download-link"
+                onClick={() => props.onClick("CSV")}>
+                CSV
+            </a>
+        </div>
+    );
+};
