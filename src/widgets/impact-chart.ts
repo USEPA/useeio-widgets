@@ -4,7 +4,7 @@ import { Indicator, Sector, Matrix, Model, DemandInfo } from "../webapi";
 import * as colors from "../util/colors";
 import * as conf from "../config";
 import { SectorAnalysis } from "../calc/sector-analysis";
-import { zeros } from "../calc/cals";
+import { zeros } from "../calc/calc";
 
 export interface ImpactChartConfig {
     model: Model;

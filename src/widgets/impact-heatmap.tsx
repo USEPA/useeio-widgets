@@ -350,6 +350,12 @@ const Row = (props: RowProps) => {
     );
 };
 
+/**
+ * Appends possible indicator result columns to a row in the heatmap. If no
+ * indicators are in the selection, nothing is appended. For a single indicator
+ * a result bar is rendered and when there are multiple indicators in the
+ * selection mosaic cells are appended.
+ */
 const IndicatorResult = (props: RowProps) => {
 
     const config = props.widget.config;
@@ -368,10 +374,14 @@ const IndicatorResult = (props: RowProps) => {
         return (
             <td key={ind.id}>
                 <div>
-                    <span style={{ float: "left" }}>{`${r.toExponential(2)} ${ind.unit}`}</span>
-                    <svg height="15" width="210" style={{ float: "left", clear: "both" }}>
-                        <rect x="0" y="2.5" height="10" fill={color}
-                            width={200 * (0.1 + 0.9 * share)}></rect>
+                    <span style={{ float: "left" }}>
+                        {`${r.toExponential(2)} ${ind.unit}`}
+                    </span>
+                    <svg height="15" width="210"
+                        style={{ float: "left", clear: "both" }}>
+                        <rect x="0" y="2.5"
+                            height="10" fill={color}
+                            width={200 * (0.1 + 0.9 * share)} />
                     </svg>
                 </div>
             </td>
@@ -405,4 +415,23 @@ const IndicatorResult = (props: RowProps) => {
         );
     }
     return <>{items}</>;
+};
+
+const DownloadSection = (props: {
+    onClick: (format: "CSV" | "JSON") => void,
+}) => {
+    return (
+        <div className="download-section">
+            <span>Download: </span>
+            <a className="download-link"
+                onClick={() => props.onClick("JSON")}>
+                JSON
+            </a>
+            <span> | </span>
+            <a className="download-link"
+                onClick={() => props.onClick("CSV")}>
+                CSV
+            </a>
+        </div>
+    );
 };
