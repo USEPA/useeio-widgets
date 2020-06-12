@@ -164,10 +164,17 @@ const Component = (props: { widget: ImpactHeatmap }) => {
     const result = props.widget.result;
     let sectors;
     if (result) {
-        sectors = result.getRanking(indicators, searchTerm, sortIndicator);
+        const rankIndicators = sortIndicator
+            ? [sortIndicator]
+            : indicators;
+        sectors = result.getRanking(rankIndicators);
+        if (searchTerm) {
+            sectors = sectors
+                .filter(s => strings.search(s.name, searchTerm) >= 0);
+        }
     } else {
         sectors = props.widget.sectors;
-        if (searchTerm && searchTerm.trim().length > 0) {
+        if (searchTerm) {
             sectors = sectors
                 .map(s => [s, strings.search(s.name, searchTerm)] as [Sector, number])
                 .filter(([, i]) => i >= 0)
@@ -244,7 +251,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 
 const Header = (props: {
     widget: ImpactHeatmap,
-    onSearch: (term: string) => void,
+    onSearch: (term: string | null) => void,
 }) => {
 
     const count = props.widget.config.count || -1;
@@ -252,6 +259,18 @@ const Header = (props: {
     const subTitle = count >= 0 && count < total
         ? `${count} of ${total} industry sectors`
         : `${total} industry sectors`;
+
+    const onSearch = (value: String) => {
+        if (!value) {
+            props.onSearch(null);
+            return;
+        }
+        const term = value.trim().toLowerCase();
+        props.onSearch(
+            term.length === 0
+                ? null
+                : term);
+    }
 
     return (
         <th>
@@ -263,7 +282,7 @@ const Header = (props: {
                     {subTitle}
                 </span>
                 <input type="search" placeholder="Search"
-                    onChange={e => props.onSearch(e.target.value)}>
+                    onChange={e => onSearch(e.target.value)}>
                 </input>
             </div>
         </th>

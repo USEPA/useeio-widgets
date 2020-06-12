@@ -59,44 +59,28 @@ export class HeatmapResult {
         return this.value(this.shares, indicator.index, sector.index);
     }
 
-    public getRanking(indicators: Indicator[],
-        nameFilter?: string, sortIndicator?: Indicator): Sector[] {
-        let filter = null;
-        if (nameFilter && nameFilter.trim().length > 0) {
-            filter = nameFilter.trim().toLocaleLowerCase();
-        }
-        const rankIndicators = sortIndicator
-            ? [sortIndicator]
-            : indicators;
+    public getRanking(indicators: Indicator[]): Sector[] {
         const ranks: [Sector, number][] = [];
         for (const sector of this.sectors) {
-            if (!this.matchesFilter(sector, filter)) {
-                continue;
-            }
             ranks.push([
                 sector,
-                this.getRankingValue(sector, rankIndicators),
+                this.rank(sector, indicators),
             ]);
         }
         ranks.sort((r1, r2) => r2[1] - r1[1]);
         return ranks.map(r => r[0]);
     }
 
-    private matchesFilter(sector: Sector, filter?: string): boolean {
-        if (!filter) {
-            return true;
+    private rank(sector: Sector, indicators: Indicator[]): number {
+        if (!sector || !indicators) {
+            return 0;
         }
-        if (!sector || !sector.name) {
-            return false;
-        }
-        const name = sector.name.toLocaleLowerCase();
-        return name.indexOf(filter) >= 0;
-    }
-
-    private getRankingValue(sector: Sector, indicators: Indicator[]): number {
-        const column = sector.index;
-        return indicators.reduce((sum, indicator) =>
-            sum + this.value(this.normalized, indicator.index, column), 0);
+        const j = sector.index;
+        const sum = indicators.reduce((sum, indicator) => {
+            const n = this.value(this.normalized, indicator.index, j)
+            return sum + Math.pow(n, 2);
+        }, 0);
+        return Math.sqrt(sum);
     }
 
     private value(data: number[][], row: number, column: number): number {
@@ -132,7 +116,7 @@ async function aggregateByRegions(result: Result, model: Model): Promise<[Sector
 
     // generate the aggregated sectors and map their
     // codes to their index: code => index
-    const {sectors: aggSectors, index} =  await model.singleRegionSectors();
+    const { sectors: aggSectors, index } = await model.singleRegionSectors();
     const aggSectorIds = aggSectors.map(s => s.id);
 
     // aggregate the result matrix
