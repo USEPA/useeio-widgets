@@ -213,6 +213,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
                     <tr className="indicator-row">
                         <Header
                             widget={props.widget}
+                            count={ranking.length}
                             onSearch={term => setSearchTerm(term)} />
 
                         { // optional demand column
@@ -244,13 +245,14 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 
 const Header = (props: {
     widget: ImpactHeatmap,
+    count: number,
     onSearch: (term: string | null) => void,
 }) => {
 
-    const count = props.widget.config.count || -1;
-    const total = props.widget.result?.sectors?.length || 0;
-    const subTitle = count >= 0 && count < total
-        ? `${count} of ${total} industry sectors`
+    const total = props.widget.result?.sectors?.length 
+        || props.widget.sectors?.length;
+    const subTitle = props.count < total
+        ? `${props.count} of ${total} industry sectors`
         : `${total} industry sectors`;
 
     const onSearch = (value: String) => {
@@ -259,10 +261,7 @@ const Header = (props: {
             return;
         }
         const term = value.trim().toLowerCase();
-        props.onSearch(
-            term.length === 0
-                ? null
-                : term);
+        props.onSearch(term.length === 0 ? null : term);
     }
 
     return (
