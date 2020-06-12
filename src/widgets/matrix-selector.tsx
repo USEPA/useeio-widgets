@@ -52,7 +52,7 @@ export const MatrixCombo = (props: {
         );
     });
 
-    const content = showRepl
+    const code = showRepl
         ? <Repl matrix={matrix}
             onCloseRepl={() => setShowRepl(false)} />
         : <Code matrix={matrix}
@@ -72,7 +72,7 @@ export const MatrixCombo = (props: {
                     {options}
                 </select>
             </div>
-            {content}
+            {props.config.showcode ? code : <></>}
         </div>
     );
 };
