@@ -11,8 +11,11 @@ import {
     IndicatorGroup,
     Model,
     Sector,
+    Result,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
+import { MatrixCombo } from "./matrix-selector";
+import { ones } from "../calc/calc";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -24,10 +27,20 @@ const INDICATOR_GROUPS = [
 
 export class ImpactHeatmap extends Widget {
 
+    /**
+     * The current configuration of the heatmap.
+     */
     config: Config;
+
     result: HeatmapResult;
     demand: { [code: string]: number };
     indicators: Indicator[];
+
+    /**
+     * The industry sectors of the model. This array is only initialized and
+     * thus should be only used when this heatmap has no results.
+     */
+    sectors: Sector[];
 
     constructor(private model: Model, private selector: string) {
         super();
@@ -35,13 +48,20 @@ export class ImpactHeatmap extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        const needsCalc = this.needsCalculation(config);
+
+        // run a new calculation if necessary
+        const needsCalc = this.needsCalculation(this.config, config);
         this.config = config;
         if (needsCalc) {
-            this.result = await calculateResult(this.model, config);
+            this.result = await calculate(this.model, config);
+        }
+        if (!this.result) {
+            // initialize the sector array
+            const { sectors } = await this.model.singleRegionSectors();
+            this.sectors = sectors;
         }
 
-        // load the demand vector of required
+        // load the demand vector if required
         if (config.showvalues && (!this.demand || needsCalc)) {
             const demandID = await this.model.findDemand(config);
             const demand = await this.model.demand(demandID);
@@ -71,8 +91,11 @@ export class ImpactHeatmap extends Widget {
             document.querySelector(this.selector));
     }
 
-    private needsCalculation(newConfig: Config) {
-        if (!this.config || !this.result) {
+    private needsCalculation(oldConfig: Config, newConfig: Config) {
+        if (!newConfig || newConfig.show !== "mosaic")
+            return false;
+
+        if (!oldConfig || !this.result) {
             return true;
         }
         // changes in these fields trigger a calculation
@@ -85,7 +108,7 @@ export class ImpactHeatmap extends Widget {
             "show"
         ];
         for (const field of fields) {
-            if (this.config[field] !== newConfig[field]) {
+            if (oldConfig[field] !== newConfig[field]) {
                 return true;
             }
         }
@@ -124,10 +147,28 @@ export class ImpactHeatmap extends Widget {
     }
 }
 
-async function calculateResult(model: Model, config: Config): Promise<HeatmapResult> {
+async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
+
+    // for plain matrices => wrap the matrix into a result
+    if (!config.analysis) {
+        const M = config.perspective === "direct"
+            ? await model.matrix("D")
+            : await model.matrix("U");
+        const indicators = await model.indicators();
+        const sectors = await model.sectors();
+        const result: Result = {
+            data: M.data,
+            totals: ones(indicators.length),
+            indicators: indicators.map(i => i.code),
+            sectors: sectors.map(s => s.id),
+        }
+        return HeatmapResult.from(model, result);
+    }
+
+    // run a calculation
     const demand = await model.findDemand(config);
     const result = await model.calculate({
-        perspective: "final",
+        perspective: config.perspective,
         demand: await model.demand(demand),
     });
     return HeatmapResult.from(model, result);
@@ -136,80 +177,113 @@ async function calculateResult(model: Model, config: Config): Promise<HeatmapRes
 const Component = (props: { widget: ImpactHeatmap }) => {
 
     const config = props.widget.config;
-    const [sortIndicator, setSortIndicator] = React.useState<Indicator | null>(null);
+    const [sorter, setSorter] = React.useState<Indicator | null>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
     const indicators = props.widget.indicators;
     const result = props.widget.result;
-    let sectors = result.getRanking(indicators, searchTerm, sortIndicator);
 
+    // create the sector ranking
+    let ranking: [Sector, number][] = result
+        ? result.getRanking(sorter ? [sorter] : indicators)
+        : props.widget.sectors.map(s => [s, 0])
+    if (searchTerm) {
+        ranking = ranking.filter(
+            ([s,]) => strings.search(s.name, searchTerm) >= 0);
+    }
+    ranking.sort(([s1, rank1], [s2, rank2]) =>
+        rank1 === rank2
+            ? strings.compare(s1.name, s2.name)
+            : rank2 - rank1);
+
+    // select the page
     const count = config.count;
     if (count && count >= 0) {
         const page = config.page;
         if (page <= 1) {
-            sectors = sectors.slice(0, count);
+            ranking = ranking.slice(0, count);
         } else {
             const offset = (page - 1) * count;
-            if (offset < sectors.length) {
-                sectors = sectors.slice(offset, offset + count);
-            } else {
-                sectors = sectors.slice(0, count);
-            }
+            ranking = offset < ranking.length
+                ? ranking.slice(offset, offset + count)
+                : ranking.slice(0, count);
         }
     }
 
-    const rows: JSX.Element[] = [];
-    for (const sector of sectors) {
-        rows.push(
-            <Row key={sector.code}
-                sector={sector}
-                sortIndicator={sortIndicator}
-                widget={props.widget} />
-        );
-    }
+    const rows: JSX.Element[] = ranking.map(([sector, rank]) =>
+        <Row key={sector.code}
+            sector={sector}
+            sortIndicator={sorter}
+            widget={props.widget}
+            rank={rank} />
+    );
 
-    // US Demand $ (2007)
     return (
-        <table style={{
-            marginRight: "80px"
-        }}>
-            <thead>
-                <tr className="indicator-row">
-                    <Header
-                        widget={props.widget}
-                        onSearch={term => setSearchTerm(term)} />
-                    {config.showvalues
-                        ? <th><div><span>Demand</span></div></th>
-                        : <></>
-                    }
-                    <IndicatorHeader
-                        indicators={indicators}
-                        onClick={(i) => {
-                            if (sortIndicator === i) {
-                                setSortIndicator(null);
-                            } else {
-                                setSortIndicator(i);
-                            }
-                        }} />
-                </tr>
-            </thead>
-            <tbody className="impact-heatmap-body">
-                {rows}
-            </tbody>
-        </table>
+        <>
+            {
+                // display the matrix selector if we display a result
+                props.widget.result
+                    ? <MatrixCombo config={config} widget={props.widget} />
+                    : <></>
+            }
+            <DownloadSection widget={props.widget} />
+            <table style={{
+                marginRight: "80px"
+            }}>
+                <thead>
+                    <tr className="indicator-row">
+                        <Header
+                            widget={props.widget}
+                            count={ranking.length}
+                            onSearch={term => setSearchTerm(term)} />
+
+                        { // optional demand column
+                            config.showvalues
+                                ? <th><div><span>Demand</span></div></th>
+                                : <></>
+                        }
+
+                        <IndicatorHeader
+                            indicators={indicators}
+                            onClick={(i) => setSorter(
+                                sorter === i ? null : i
+                            )} />
+
+                        { // optional column with ranking values
+                            config.showvalues && result
+                                ? <th><div><span>Ranking</span></div></th>
+                                : <></>
+                        }
+                    </tr>
+                </thead>
+                <tbody className="impact-heatmap-body">
+                    {rows}
+                </tbody>
+            </table>
+        </>
     );
 };
 
 const Header = (props: {
     widget: ImpactHeatmap,
-    onSearch: (term: string) => void,
+    count: number,
+    onSearch: (term: string | null) => void,
 }) => {
 
-    const count = props.widget.config.count || -1;
-    const total = props.widget.result?.sectors?.length || 0;
-    const subTitle = count >= 0 && count < total
-        ? `${count} of ${total} industry sectors`
+    const total = props.widget.result?.sectors?.length
+        || props.widget.sectors?.length;
+    const subTitle = props.count < total
+        ? `${props.count} of ${total} industry sectors`
         : `${total} industry sectors`;
+
+    const onSearch = (value: String) => {
+        if (!value) {
+            props.onSearch(null);
+            return;
+        }
+        const term = value.trim().toLowerCase();
+        props.onSearch(term.length === 0 ? null : term);
+    }
 
     return (
         <th>
@@ -221,7 +295,7 @@ const Header = (props: {
                     {subTitle}
                 </span>
                 <input type="search" placeholder="Search"
-                    onChange={e => props.onSearch(e.target.value)}>
+                    onChange={e => onSearch(e.target.value)}>
                 </input>
             </div>
         </th>
@@ -288,6 +362,7 @@ type RowProps = {
     sector: Sector,
     sortIndicator: Indicator | null,
     widget: ImpactHeatmap,
+    rank?: number,
 };
 
 const Row = (props: RowProps) => {
@@ -311,9 +386,13 @@ const Row = (props: RowProps) => {
 
     const sectorLabel = `${sector.code} - ${sector.name}`;
 
-    // display the demand value if showvalues=true
+    // display the demand value and possible ranking
+    // if showvalues=true
     let demand;
+    let rank;
     if (config.showvalues) {
+
+        // demand value
         const demandVal = props.widget.demand[sector.code];
         demand = <td style={{
             borderTop: "lightgray solid 1px",
@@ -322,6 +401,17 @@ const Row = (props: RowProps) => {
         }}>
             {demandVal ? demandVal.toExponential(2) : null}
         </td>;
+
+        // ranking value
+        if (config.show === "mosaic") {
+            rank = <td style={{
+                borderTop: "lightgray solid 1px",
+                padding: "5px 0px",
+                whiteSpace: "nowrap",
+            }}>
+                {props.rank ? props.rank.toExponential(4) : null}
+            </td>;
+        }
     }
 
     return (
@@ -346,6 +436,7 @@ const Row = (props: RowProps) => {
             </td>
             {config.showvalues ? demand : <></>}
             <IndicatorResult {...props} />
+            {rank ? rank : <></>}
         </tr>
     );
 };
@@ -418,18 +509,97 @@ const IndicatorResult = (props: RowProps) => {
 };
 
 const DownloadSection = (props: {
-    onClick: (format: "CSV" | "JSON") => void,
+    widget: ImpactHeatmap,
 }) => {
+
+    const onDownload = (format: "CSV" | "JSON") => {
+
+        let text: string;
+        const w = props.widget;
+        const ranking: [Sector, number][] = w.result
+            ? w.result.getRanking(w.indicators)
+            : w.sectors.map(s => [s, 0]);
+
+        if (format === "JSON") {
+
+            // create JSON download
+            type JsonType = {
+                sectors: Sector[],
+                indicators?: Indicator[],
+                result?: number[][],
+                demand?: { [code: string]: number },
+            };
+            const json: JsonType = {
+                sectors: ranking.map(([s,]) => s),
+                indicators: w.indicators,
+                result: w.result?.result?.data,
+                demand: w.demand,
+            };
+            text = JSON.stringify(json, null, "  ");
+
+        } else {
+
+            // create CSV download
+            text = "sector code,sector name";
+            if (w.demand) {
+                text += ",demand";
+            }
+            if (w.result && w.indicators) {
+                for (const i of w.indicators) {
+                    text += `,"${i.code} - ${i.name} [${i.unit}]"`;
+                }
+                text += ",ranking"
+            }
+            text += "\n";
+
+            for (const [sector, rank] of ranking) {
+                text += `"${sector.code}","${sector.name}"`;
+                if (w.demand) {
+                    text += `,${w.demand[sector.code]}`;
+                }
+                if (w.result && w.indicators) {
+                    for (const i of w.indicators) {
+                        text += `,${w.result.getResult(i, sector)}`;
+                    }
+                    text += `,${rank}`
+                }
+                text += "\n";
+            }
+        }
+
+        // download file
+        // see https://stackoverflow.com/a/33542499
+        const blob = new Blob([text], {
+            type: format === "JSON"
+                ? "application/json"
+                : "text/csv",
+        });
+        const file = format === "JSON"
+            ? "heatmap.json"
+            : "heatmap.csv";
+        if (window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob, file);
+        } else {
+            const elem = window.document.createElement("a");
+            const url = window.URL.createObjectURL(blob);
+            elem.href = url;
+            elem.download = file;
+            document.body.appendChild(elem);
+            elem.click();
+            document.body.removeChild(elem);
+        }
+    };
+
     return (
         <div className="download-section">
             <span>Download: </span>
             <a className="download-link"
-                onClick={() => props.onClick("JSON")}>
+                onClick={() => onDownload("JSON")}>
                 JSON
             </a>
             <span> | </span>
             <a className="download-link"
-                onClick={() => props.onClick("CSV")}>
+                onClick={() => onDownload("CSV")}>
                 CSV
             </a>
         </div>

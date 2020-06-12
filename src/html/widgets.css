@@ -256,6 +256,15 @@ label {
     font-weight: bold;
 }
 
+.useeio-matrix-selector {
+    max-width: 800px;
+    /* margin: auto; */
+}
+
+.download-section {
+    margin: 15px 0px;
+}
+
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {

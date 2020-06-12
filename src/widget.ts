@@ -58,9 +58,24 @@ export interface Config {
      */
     page?: number;
 
+    /**
+     * `show=mosaic` is currently used in the heatmap
+     * widget to switch between a plain sector list or
+     * the real heatmap.
+     */
     show?: string;
 
+    /**
+     * Indicates if result values should be shown in
+     * a widget.
+     */
     showvalues?: boolean;
+
+    /**
+     * Indicates whether code examples should be
+     * displayed.
+     */
+    showcode?: boolean;
 }
 
 export interface WidgetArgs {
@@ -307,7 +322,11 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             case "showvalues":
                 config.showvalues = strings.eq(val, "true", "1", "yes");
                 break;
-
+            
+            case "showcode":
+                config.showcode = strings.eq(val, "true", "1", "yes");
+                break;
+            
             default:
                 break;
         }

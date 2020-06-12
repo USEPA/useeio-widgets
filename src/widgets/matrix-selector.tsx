@@ -23,15 +23,59 @@ export class MatrixSelector extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        const matrix = matrixOf(config);
         ReactDOM.render(
-            <Component
-                selected={matrix}
-                onChange={(m) => this.fireChange(update(config, m))} />,
+            <MatrixCombo
+                config={config}
+                widget={this} />,
             document.querySelector(this.selector)
         );
     }
 }
+
+/**
+ * The React component of the matrix selector. This can be used as a component
+ * in other widgets.
+ */
+export const MatrixCombo = (props: {
+    config: Config,
+    widget: Widget,
+}) => {
+
+    const matrix = matrixOf(props.config);
+    const [showRepl, setShowRepl] = React.useState(false);
+
+    const options = ["D", "U", "RD", "RU"].map((m: Matrix) => {
+        return (
+            <option value={m} key={m}>
+                {labelOf(m)}
+            </option>
+        );
+    });
+
+    const code = showRepl
+        ? <Repl matrix={matrix}
+            onCloseRepl={() => setShowRepl(false)} />
+        : <Code matrix={matrix}
+            onShowRepl={() => setShowRepl(true)} />;
+
+    const onChange = (m: Matrix) => {
+        const config = update(props.config, m);
+        props.widget.fireChange(config);
+    };
+
+    return (
+        <div className="useeio-matrix-selector">
+            <div>
+                <select
+                    value={matrix}
+                    onChange={e => onChange(e.target.value as Matrix)}>
+                    {options}
+                </select>
+            </div>
+            {props.config.showcode ? code : <></>}
+        </div>
+    );
+};
 
 /**
  * Determine the matrix type from the given configuration.
@@ -92,39 +136,6 @@ function labelOf(matrix: Matrix): string {
     }
 }
 
-const Component = (props: {
-    selected: Matrix,
-    onChange: (matrix: Matrix) => void
-}) => {
-
-    const [showRepl, setShowRepl] = React.useState(false);
-
-    const options = ["D", "U", "RD", "RU"].map((m: Matrix) => {
-        return (
-            <option value={m} key={m}>
-                {labelOf(m)}
-            </option>
-        );
-    });
-
-    const content = showRepl
-        ? <Repl matrix={props.selected} />
-        : <Code matrix={props.selected}
-            onShowRepl={() => setShowRepl(true)} />;
-
-    return (
-        <div>
-            <div>
-                <select value={props.selected}
-                    onChange={e => props.onChange(e.target.value as Matrix)}>
-                    {options}
-                </select>
-            </div>
-            {content}
-        </div>
-    );
-};
-
 const Code = (props: { matrix: Matrix, onShowRepl: () => void }) => {
     return (
         <>
@@ -176,15 +187,16 @@ U = D @ L
 #
 # see also https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md
 
-U = get_matrix('U')
+L = get_matrix('L')
+D = get_matrix('D')
 
 # we generate a random demand vector for this example, but typically you
-# would load a demand vector from the USEEIO API
-n = U.shape[1]
+# would load a demand vector from the USEEIO API 
+n = D.shape[1]
 d = rand.random(n) * 1e6
 
-# for the final result, we just scale the columns of U with d
-RU = U @ numpy.diag(d)
+t = L @ d
+RD = D @ numpy.diag(t)
     `,
 
     "RU": `
@@ -207,20 +219,27 @@ RU = U @ numpy.diag(d)
     `,
 };
 
-const Repl = (props: { matrix: Matrix }) => {
+const Repl = (props: { matrix: Matrix, onCloseRepl: () => void }) => {
     const url = `https://repl.it/@msrocka/useeioexamplesmatrix${props.matrix}?lite=true`;
     const atts = {
-        frameborder: "no",
         allowtransparency: "true",
-        allowfullscreen: "true",
     };
     return (
-        <div style={{margin: 10}}>
-            <iframe
-                height="500px" width="100%" src={url}
-                scrolling="no" {...atts}
-                sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals">
-            </iframe>
-        </div>
+        <>
+            <div style={{ float: "right", fontSize: "0.9em", padding: 5 }}>
+                <a onClick={() => props.onCloseRepl()}>
+                    Close REPL
+                </a>
+            </div>
+            <div style={{ clear: "both" }}>
+                <iframe
+                    height="800px" width="100%" src={url}
+                    frameBorder="no"
+                    allowFullScreen={true}
+                    scrolling="no" {...atts}
+                    sandbox="allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-modals">
+                </iframe>
+            </div>
+        </>
     );
 };
