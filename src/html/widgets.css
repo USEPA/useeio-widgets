@@ -258,7 +258,11 @@ label {
 
 .useeio-matrix-selector {
     max-width: 800px;
-    margin: auto;
+    /* margin: auto; */
+}
+
+.download-section {
+    margin: 15px 0px;
 }
 
 /* A primitive grid system; does not work in IE or Edge; just for testing */

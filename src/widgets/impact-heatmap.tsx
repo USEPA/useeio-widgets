@@ -226,6 +226,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
                     ? <MatrixCombo config={config} widget={props.widget} />
                     : <></>
             }
+            <DownloadSection onClick={(format) => console.log(format) }/>
             <table style={{
                 marginRight: "80px"
             }}>
