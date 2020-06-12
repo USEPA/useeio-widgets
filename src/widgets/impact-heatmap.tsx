@@ -11,9 +11,11 @@ import {
     IndicatorGroup,
     Model,
     Sector,
+    Result,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
 import { MatrixCombo } from "./matrix-selector";
+import { ones } from "../calc/calc";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -46,12 +48,12 @@ export class ImpactHeatmap extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        this.config = config;
-
+        
         // run a new calculation if necessary
-        const needsCalc = this.needsCalculation(config);
+        const needsCalc = this.needsCalculation(this.config, config);
+        this.config = config;
         if (needsCalc) {
-            this.result = await calculateResult(this.model, config);
+            this.result = await calculate(this.model, config);
         }
         if (!this.result) {
             // initialize the sector array
@@ -89,11 +91,11 @@ export class ImpactHeatmap extends Widget {
             document.querySelector(this.selector));
     }
 
-    private needsCalculation(newConfig: Config) {
+    private needsCalculation(oldConfig: Config, newConfig: Config) {
         if (!newConfig || newConfig.show !== "mosaic")
             return false;
 
-        if (!this.config || !this.result) {
+        if (!oldConfig || !this.result) {
             return true;
         }
         // changes in these fields trigger a calculation
@@ -106,7 +108,7 @@ export class ImpactHeatmap extends Widget {
             "show"
         ];
         for (const field of fields) {
-            if (this.config[field] !== newConfig[field]) {
+            if (oldConfig[field] !== newConfig[field]) {
                 return true;
             }
         }
@@ -145,10 +147,28 @@ export class ImpactHeatmap extends Widget {
     }
 }
 
-async function calculateResult(model: Model, config: Config): Promise<HeatmapResult> {
+async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
+
+    // for plain matrices => wrap the matrix into a result
+    if (!config.analysis) {
+        const M = config.perspective === "direct"
+            ? await model.matrix("D")
+            : await model.matrix("U");
+        const indicators = await model.indicators();
+        const sectors = await model.sectors();
+        const result: Result = {
+            data: M.data,
+            totals: ones(indicators.length),
+            indicators: indicators.map(i => i.code),
+            sectors: sectors.map(s => s.id),
+        }
+        return HeatmapResult.from(model, result);
+    }
+    
+    // run a calculation
     const demand = await model.findDemand(config);
     const result = await model.calculate({
-        perspective: "final",
+        perspective: config.perspective,
         demand: await model.demand(demand),
     });
     return HeatmapResult.from(model, result);
