@@ -59,7 +59,7 @@ export class HeatmapResult {
         return this.value(this.shares, indicator.index, sector.index);
     }
 
-    public getRanking(indicators: Indicator[]): Sector[] {
+    public getRanking(indicators: Indicator[]): [Sector, number][] {
         const ranks: [Sector, number][] = [];
         for (const sector of this.sectors) {
             ranks.push([
@@ -68,7 +68,7 @@ export class HeatmapResult {
             ]);
         }
         ranks.sort((r1, r2) => r2[1] - r1[1]);
-        return ranks.map(r => r[0]);
+        return ranks;
     }
 
     private rank(sector: Sector, indicators: Indicator[]): number {

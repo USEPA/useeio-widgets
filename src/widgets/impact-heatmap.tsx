@@ -157,58 +157,46 @@ async function calculateResult(model: Model, config: Config): Promise<HeatmapRes
 const Component = (props: { widget: ImpactHeatmap }) => {
 
     const config = props.widget.config;
-    const [sortIndicator, setSortIndicator] = React.useState<Indicator | null>(null);
+    const [sorter, setSorter] = React.useState<Indicator | null>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
     const indicators = props.widget.indicators;
     const result = props.widget.result;
-    let sectors;
-    if (result) {
-        const rankIndicators = sortIndicator
-            ? [sortIndicator]
-            : indicators;
-        sectors = result.getRanking(rankIndicators);
-        if (searchTerm) {
-            sectors = sectors
-                .filter(s => strings.search(s.name, searchTerm) >= 0);
-        }
-    } else {
-        sectors = props.widget.sectors;
-        if (searchTerm) {
-            sectors = sectors
-                .map(s => [s, strings.search(s.name, searchTerm)] as [Sector, number])
-                .filter(([, i]) => i >= 0)
-                .sort(([, i], [, j]) => i - j)
-                .map(([s,]) => s);
-        } else {
-            sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
-        }
-    }
 
+    // create the sector ranking
+    let ranking: [Sector, number][] = result
+        ? result.getRanking(sorter ? [sorter] : indicators)
+        : props.widget.sectors.map(s => [s, 0])
+    if (searchTerm) {
+        ranking = ranking.filter(
+            ([s,]) => strings.search(s.name, searchTerm) >= 0);
+    }
+    ranking.sort(([s1, rank1], [s2, rank2]) =>
+        rank1 === rank2
+            ? strings.compare(s1.name, s2.name)
+            : rank2 - rank1);
+
+    // select the page
     const count = config.count;
     if (count && count >= 0) {
         const page = config.page;
         if (page <= 1) {
-            sectors = sectors.slice(0, count);
+            ranking = ranking.slice(0, count);
         } else {
             const offset = (page - 1) * count;
-            if (offset < sectors.length) {
-                sectors = sectors.slice(offset, offset + count);
-            } else {
-                sectors = sectors.slice(0, count);
-            }
+            ranking = offset < ranking.length
+                ? ranking.slice(offset, offset + count)
+                : ranking.slice(0, count);
         }
     }
 
-    const rows: JSX.Element[] = [];
-    for (const sector of sectors) {
-        rows.push(
-            <Row key={sector.code}
-                sector={sector}
-                sortIndicator={sortIndicator}
-                widget={props.widget} />
-        );
-    }
+    const rows: JSX.Element[] = ranking.map(([sector, rank]) =>
+        <Row key={sector.code}
+            sector={sector}
+            sortIndicator={sorter}
+            widget={props.widget}
+            rank={rank} />
+    );
 
     return (
         <>
@@ -226,19 +214,24 @@ const Component = (props: { widget: ImpactHeatmap }) => {
                         <Header
                             widget={props.widget}
                             onSearch={term => setSearchTerm(term)} />
-                        {config.showvalues
-                            ? <th><div><span>Demand</span></div></th>
-                            : <></>
+
+                        { // optional demand column
+                            config.showvalues
+                                ? <th><div><span>Demand</span></div></th>
+                                : <></>
                         }
+
                         <IndicatorHeader
                             indicators={indicators}
-                            onClick={(i) => {
-                                if (sortIndicator === i) {
-                                    setSortIndicator(null);
-                                } else {
-                                    setSortIndicator(i);
-                                }
-                            }} />
+                            onClick={(i) => setSorter(
+                                sorter === i ? null : i
+                            )} />
+                        
+                        { // optional column with ranking values
+                            config.showvalues && result
+                                ? <th><div><span>Ranking</span></div></th>
+                                : <></>
+                        }
                     </tr>
                 </thead>
                 <tbody className="impact-heatmap-body">
@@ -349,6 +342,7 @@ type RowProps = {
     sector: Sector,
     sortIndicator: Indicator | null,
     widget: ImpactHeatmap,
+    rank?: number,
 };
 
 const Row = (props: RowProps) => {
@@ -372,9 +366,13 @@ const Row = (props: RowProps) => {
 
     const sectorLabel = `${sector.code} - ${sector.name}`;
 
-    // display the demand value if showvalues=true
+    // display the demand value and possible ranking
+    // if showvalues=true
     let demand;
+    let rank;
     if (config.showvalues) {
+
+        // demand value
         const demandVal = props.widget.demand[sector.code];
         demand = <td style={{
             borderTop: "lightgray solid 1px",
@@ -383,6 +381,17 @@ const Row = (props: RowProps) => {
         }}>
             {demandVal ? demandVal.toExponential(2) : null}
         </td>;
+
+        // ranking value
+        if (config.show === "mosaic") {
+            rank = <td style={{
+                borderTop: "lightgray solid 1px",
+                padding: "5px 0px",
+                whiteSpace: "nowrap",
+            }}>
+                {props.rank ? props.rank.toExponential(4) : null}
+            </td>;
+        }
     }
 
     return (
@@ -407,6 +416,7 @@ const Row = (props: RowProps) => {
             </td>
             {config.showvalues ? demand : <></>}
             <IndicatorResult {...props} />
+            {rank ? rank : <></>}
         </tr>
     );
 };
