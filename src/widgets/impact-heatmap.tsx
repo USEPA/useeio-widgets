@@ -294,7 +294,7 @@ const Header = (props: {
                 <span className="matrix-sub-title">
                     {subTitle}
                 </span>
-                <input type="search" placeholder="Search"
+                <input className="matrix-search" type="search" placeholder="Search"
                     onChange={e => onSearch(e.target.value)}>
                 </input>
             </div>

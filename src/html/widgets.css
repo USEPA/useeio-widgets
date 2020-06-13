@@ -19,9 +19,10 @@ pre, code {
     border-radius: 5px;
 }
 
-th {
+.io th {
     font-weight: normal;
     vertical-align: bottom;
+    font-size: 0.8em;
 }
 th.indicator > div {
     transform: translate(0px, 0px) rotate(315deg);
@@ -59,8 +60,7 @@ a:hover {
     text-decoration: underline;
 }
 
-input[type="text"], input[type="search"], select {
-    width: 98.5%;
+.io input[type="text"], .io input[type="search"], .io select {
     height: 30px;
     font-size: 18px;
     border: 1px solid lightgray;
@@ -69,7 +69,7 @@ input[type="text"], input[type="search"], select {
     padding: 0 5px 0 10px;
 }
 
-label {
+.io label {
     line-height: 25px;
 }
 
@@ -187,12 +187,13 @@ label {
 }
 
 .matrix-sub-title {
-    font-size: 0.8em;
     clear: both;
     float: left;
     padding: 5px 0px 10px 5px;
 }
-
+.matrix-search {
+    min-width: 98%;
+}
 .indicator-row {
     height: 170px;
 }
@@ -223,10 +224,6 @@ label {
 }
 
 /* paginator styles */
-.useeio-paginator {
-    margin: auto;
-}
-
 .useeio-paginator a {
     cursor: pointer;
 }
