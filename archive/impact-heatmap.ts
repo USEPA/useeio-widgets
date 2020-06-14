@@ -70,16 +70,17 @@ export class ImpactHeatmap extends Widget {
         const self = this;
         const div = tr.append("th")
             .append("div");
-        div.append("span")
-            .classed("matrix-title", true)
-            .text("Goods & Services");
-
+        //if (1==2) {
+        //div.append("span")
+        //    .classed("matrix-title", true)
+        //    .text("Goods & ServicesX");
+        //}
         const total = this.result.sectors.length;
         const count = this.config.count;
         if (count >= 0 && count <= total) {
             div.append("span")
                 .classed("matrix-sub-title", true)
-                .text(`${count} of ${total} industry sectors`);
+                .text(`${count} of ${total} -- 1 | 2 | 3 | 4 | Next`); // Replace dashes with &nbsp;
         }
 
         div.append("input")
@@ -214,7 +215,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private async selectIndicators(): Promise<Indicator[]> {
-        if (this.config.show !== "mosaic") {
+        if (this.config.view !== "mosaic") {
             return [];
         }
         const all = await this.model.indicators();

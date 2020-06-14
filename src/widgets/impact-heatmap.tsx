@@ -92,7 +92,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private needsCalculation(oldConfig: Config, newConfig: Config) {
-        if (!newConfig || newConfig.show !== "mosaic")
+        if (!newConfig || newConfig.view !== "mosaic")
             return false;
 
         if (!oldConfig || !this.result) {
@@ -100,12 +100,12 @@ export class ImpactHeatmap extends Widget {
         }
         // changes in these fields trigger a calculation
         const fields = [
-            "show",
+            "view",
             "perspective",
             "analysis",
             "year",
             "location",
-            "show"
+            "view"
         ];
         for (const field of fields) {
             if (oldConfig[field] !== newConfig[field]) {
@@ -116,7 +116,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private async syncIndicators(config: Config): Promise<Indicator[]> {
-        if (config.show !== "mosaic") {
+        if (config.view !== "mosaic") {
             return [];
         }
         const all = await this.model.indicators();
@@ -272,8 +272,9 @@ const Header = (props: {
 
     const total = props.widget.result?.sectors?.length
         || props.widget.sectors?.length;
+    // // Replace dashes with &nbsp;
     const subTitle = props.count < total
-        ? `${props.count} of ${total} industry sectors`
+        ? `${props.count} of ${total} -- 1 | 2 | 3 | 4 | Next`
         : `${total} industry sectors`;
 
     const onSearch = (value: String) => {
@@ -288,11 +289,9 @@ const Header = (props: {
     return (
         <th>
             <div>
-                <span className="matrix-title">
-                    Goods & Services
-                </span>
                 <span className="matrix-sub-title">
                     {subTitle}
+                    <div className="arrowdown"></div>
                 </span>
                 <input className="matrix-search" type="search" placeholder="Search"
                     onChange={e => onSearch(e.target.value)}>
@@ -403,7 +402,7 @@ const Row = (props: RowProps) => {
         </td>;
 
         // ranking value
-        if (config.show === "mosaic") {
+        if (config.view === "mosaic") {
             rank = <td style={{
                 borderTop: "lightgray solid 1px",
                 padding: "5px 0px",

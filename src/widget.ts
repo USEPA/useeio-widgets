@@ -59,11 +59,11 @@ export interface Config {
     page?: number;
 
     /**
-     * `show=mosaic` is currently used in the heatmap
+     * `view=mosaic` is currently used in the heatmap
      * widget to switch between a plain sector list or
      * the real heatmap.
      */
-    show?: string;
+    view?: string;
 
     /**
      * Indicates if result values should be shown in
@@ -315,8 +315,8 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
                 } catch (_) { }
                 break;
 
-            case "show":
-                config.show = val;
+            case "view":
+                config.view = val;
                 break;
 
             case "showvalues":

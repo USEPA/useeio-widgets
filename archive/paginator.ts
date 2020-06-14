@@ -94,7 +94,7 @@ export class Paginator extends Widget {
     private renderCountBox(count: number, row: Row) {
         row.append("td")
             .classed("paginator-counter-label", true)
-            .text("Display:");
+            .text("Display:XX");
 
         const self = this;
         row.append("td")
