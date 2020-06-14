@@ -162,9 +162,6 @@ const CountCombo = (props: { count: number, widget: Widget }) => {
     });
     return (
         <>
-            <td className="paginator-counter-label">
-                Display:
-            </td>
             <td className="paginator-counter">
                 <select value={props.count} onChange={(e) => {
                     const count = parseInt(e.target.value, 10);

@@ -9,11 +9,12 @@
 </head>
 
 <body>
-    <div style="margin: 25px;">
+    <div class="io">
         <div style="margin: 0 auto;">
-            <div class="impact-heatmap">
-            </div>
+            <div class="matrix-title">Goods & Services</div><br><br>
             <div id="paginator">
+            </div>
+            <div class="impact-heatmap">
             </div>
         </div>
     </div>
@@ -26,7 +27,7 @@
     var modelID = config.get().model || 'GAUSEEIO';
 
     var model = useeio.model({
-        endpoint: './api',
+        endpoint: '/io/charts/useeio/api',
         model: modelID,
         asJsonFiles: true,
     });
@@ -41,8 +42,8 @@
         selector: '#paginator',
     });
 
-    config.join(heatmap);
     config.join(paginator);
+    config.join(heatmap);
 
 </script>
 
