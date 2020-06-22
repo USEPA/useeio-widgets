@@ -2,7 +2,7 @@ import { FilterWidget } from "./widgets/filter";
 import { UrlConfigTransmitter, WidgetArgs } from "./widget";
 import { ImpactHeatmap } from "./widgets/impact-heatmap";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
-import { SectorList, SectorListConfig } from "./widgets/sector-list";
+import { SectorList } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
@@ -32,10 +32,8 @@ export function impactHeatmap(args: WidgetArgs): ImpactHeatmap {
     return new ImpactHeatmap(args.model, args.selector);
 }
 
-export function sectorList(config: SectorListConfig): SectorList {
-    const s = new SectorList(config);
-    s.init();
-    return s;
+export function sectorList(args: WidgetArgs): SectorList {
+    return new SectorList(args.model, args.selector);
 }
 
 export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
