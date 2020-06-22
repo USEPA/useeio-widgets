@@ -156,13 +156,12 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
             : await model.matrix("U");
         const indicators = await model.indicators();
         const sectors = await model.sectors();
-        const result: Result = {
+        return HeatmapResult.from(model, {
             data: M.data,
             totals: ones(indicators.length),
             indicators: indicators.map(i => i.code),
             sectors: sectors.map(s => s.id),
-        }
-        return HeatmapResult.from(model, result);
+        });
     }
 
     // run a calculation
@@ -186,7 +185,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
     // create the sector ranking
     let ranking: [Sector, number][] = result
         ? result.getRanking(sorter ? [sorter] : indicators)
-        : props.widget.sectors.map(s => [s, 0])
+        : props.widget.sectors.map(s => [s, 0]);
     if (searchTerm) {
         ranking = ranking.filter(
             ([s,]) => strings.search(s.name, searchTerm) >= 0);
@@ -277,14 +276,14 @@ const Header = (props: {
         ? `${props.count} of ${total} -- 1 | 2 | 3 | 4 | Next`
         : `${total} industry sectors`;
 
-    const onSearch = (value: String) => {
+    const onSearch = (value: string) => {
         if (!value) {
             props.onSearch(null);
             return;
         }
         const term = value.trim().toLowerCase();
         props.onSearch(term.length === 0 ? null : term);
-    }
+    };
 
     return (
         <th>
@@ -547,7 +546,7 @@ const DownloadSection = (props: {
                 for (const i of w.indicators) {
                     text += `,"${i.code} - ${i.name} [${i.unit}]"`;
                 }
-                text += ",ranking"
+                text += ",ranking";
             }
             text += "\n";
 
@@ -560,7 +559,7 @@ const DownloadSection = (props: {
                     for (const i of w.indicators) {
                         text += `,${w.result.getResult(i, sector)}`;
                     }
-                    text += `,${rank}`
+                    text += `,${rank}`;
                 }
                 text += "\n";
             }
