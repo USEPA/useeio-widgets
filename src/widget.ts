@@ -347,72 +347,91 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
  * if the respective parameters are not already defined in that configuration.
  */
 function updateConfig(config: Config, urlParams: [string, string][]) {
+
+    // create scoped configurations lazily
+    const _conf = (scope?: string) => {
+        if (!scope) {
+            return config;
+        }
+        if (!config.scopes) {
+            config.scopes = {};
+        }
+        let c = config.scopes[scope];
+        if (!c) {
+            c = {};
+            config.scopes = { scope: c };
+        }
+        return c;
+    };
+
+    // update if a value is not set yet
+    const _update = (key: string, value: any, scope?: string) => {
+        const c = _conf(scope);
+        if (c[key]) {
+            return;
+        }
+        c[key] = value;
+    };
+
     for (const [key, val] of urlParams) {
-        if (!val || config[key])
+        if (!key || !val) {
             continue;
+        }
+        let scope: string | undefined;
+        let _key = key;
+        const dashIdx = key.indexOf("-");
+        if (dashIdx > 0) {
+            scope = key.substring(0, dashIdx);
+            _key = key.substring(dashIdx + 1);
+        }
 
-        switch (key) {
+        switch (_key) {
 
+            // simple string values
             case "model":
-                config.model = val;
+            case "location":
+            case "view":
+                _update(_key, val, scope);
                 break;
 
+            // integers
+            case "year":
+            case "count":
+            case "page":
+                try {
+                    const _int = parseInt(val, 10);
+                    _update(_key, _int, scope);
+                } catch (_) { }
+                break;
+
+            // booleans
+            case "showvalues":
+            case "showcode":
+                const _bool = strings.eq(val, "true", "1", "yes");
+                _update(_key, _bool, scope);
+                break;
+
+            // lists
             case "sectors":
-                config.sectors = val.split(",");
-                break;
-
             case "indicators":
-                config.indicators = val.split(",");
+            case "naics":
+                _update(_key, val.split(","), scope);
                 break;
 
             case "type":
             case "analysis":
                 if (strings.eq(val, "consumption")) {
-                    config.analysis = "Consumption";
+                    _update("analysis", "Consumption", scope);
                 } else if (strings.eq(val, "production")) {
-                    config.analysis = "Production";
+                    _update("analysis", "Production", scope);
                 }
                 break;
 
             case "perspective":
                 const p = getPerspective(val);
                 if (p) {
-                    config.perspective = p;
+                    _update("perspective", p, scope);
                 }
-                break;
-
-            case "location":
-                config.location = val;
-                break;
-
-            case "year":
-                try {
-                    config.year = parseInt(val, 10);
-                } catch (_) { }
-                break;
-
-            case "count":
-                try {
-                    config.count = parseInt(val, 10);
-                } catch (_) { }
-                break;
-
-            case "page":
-                try {
-                    config.page = parseInt(val, 10);
-                } catch (_) { }
-                break;
-
-            case "view":
-                config.view = val;
-                break;
-
-            case "showvalues":
-                config.showvalues = strings.eq(val, "true", "1", "yes");
-                break;
-
-            case "showcode":
-                config.showcode = strings.eq(val, "true", "1", "yes");
                 break;
 
             default:
