@@ -93,6 +93,7 @@ export interface Config {
 export interface WidgetArgs {
     model: Model;
     selector: string;
+    scope?: string;
 }
 
 export abstract class Widget {
