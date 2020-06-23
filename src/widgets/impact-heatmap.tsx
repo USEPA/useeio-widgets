@@ -92,7 +92,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private needsCalculation(oldConfig: Config, newConfig: Config) {
-        if (!newConfig || newConfig.show !== "mosaic")
+        if (!newConfig || newConfig.view !== "mosaic")
             return false;
 
         if (!oldConfig || !this.result) {
@@ -100,12 +100,12 @@ export class ImpactHeatmap extends Widget {
         }
         // changes in these fields trigger a calculation
         const fields = [
-            "show",
+            "view",
             "perspective",
             "analysis",
             "year",
             "location",
-            "show"
+            "view"
         ];
         for (const field of fields) {
             if (oldConfig[field] !== newConfig[field]) {
@@ -116,7 +116,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private async syncIndicators(config: Config): Promise<Indicator[]> {
-        if (config.show !== "mosaic") {
+        if (config.view !== "mosaic") {
             return [];
         }
         const all = await this.model.indicators();
@@ -156,13 +156,12 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
             : await model.matrix("U");
         const indicators = await model.indicators();
         const sectors = await model.sectors();
-        const result: Result = {
+        return HeatmapResult.from(model, {
             data: M.data,
             totals: ones(indicators.length),
             indicators: indicators.map(i => i.code),
             sectors: sectors.map(s => s.id),
-        }
-        return HeatmapResult.from(model, result);
+        });
     }
 
     // run a calculation
@@ -186,7 +185,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
     // create the sector ranking
     let ranking: [Sector, number][] = result
         ? result.getRanking(sorter ? [sorter] : indicators)
-        : props.widget.sectors.map(s => [s, 0])
+        : props.widget.sectors.map(s => [s, 0]);
     if (searchTerm) {
         ranking = ranking.filter(
             ([s,]) => strings.search(s.name, searchTerm) >= 0);
@@ -272,29 +271,28 @@ const Header = (props: {
 
     const total = props.widget.result?.sectors?.length
         || props.widget.sectors?.length;
+    // // Replace dashes with &nbsp;
     const subTitle = props.count < total
-        ? `${props.count} of ${total} industry sectors`
+        ? `${props.count} of ${total} -- 1 | 2 | 3 | 4 | Next`
         : `${total} industry sectors`;
 
-    const onSearch = (value: String) => {
+    const onSearch = (value: string) => {
         if (!value) {
             props.onSearch(null);
             return;
         }
         const term = value.trim().toLowerCase();
         props.onSearch(term.length === 0 ? null : term);
-    }
+    };
 
     return (
         <th>
             <div>
-                <span className="matrix-title">
-                    Goods & Services
-                </span>
                 <span className="matrix-sub-title">
                     {subTitle}
+                    <div className="arrowdown"></div>
                 </span>
-                <input type="search" placeholder="Search"
+                <input className="matrix-search" type="search" placeholder="Search"
                     onChange={e => onSearch(e.target.value)}>
                 </input>
             </div>
@@ -403,7 +401,7 @@ const Row = (props: RowProps) => {
         </td>;
 
         // ranking value
-        if (config.show === "mosaic") {
+        if (config.view === "mosaic") {
             rank = <td style={{
                 borderTop: "lightgray solid 1px",
                 padding: "5px 0px",
@@ -548,7 +546,7 @@ const DownloadSection = (props: {
                 for (const i of w.indicators) {
                     text += `,"${i.code} - ${i.name} [${i.unit}]"`;
                 }
-                text += ",ranking"
+                text += ",ranking";
             }
             text += "\n";
 
@@ -561,7 +559,7 @@ const DownloadSection = (props: {
                     for (const i of w.indicators) {
                         text += `,${w.result.getResult(i, sector)}`;
                     }
-                    text += `,${rank}`
+                    text += `,${rank}`;
                 }
                 text += "\n";
             }
