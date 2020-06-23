@@ -250,7 +250,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
                         continue;
                     }
                     if (!nextScope) {
-                        next.scopes[scope] = {...confScope};
+                        next.scopes[scope] = { ...confScope };
                         continue;
                     }
                     for (const key of Object.keys(confScope)) {
@@ -264,33 +264,51 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
     }
 
     private updateHash() {
-        const parts = new Array<string>();
-        
-        
-        if (conf.sectors && conf.sectors.length > 0) {
-            parts.push("sectors=" + conf.sectors.join(","));
-        }
-        if (conf.indicators && conf.indicators.length > 0) {
-            parts.push("indicators=" + conf.indicators.join(","));
-        }
-        
-        for (const key in conf) {
-            if (!conf.hasOwnProperty(key)) {
-                continue;
-            }
-            if (key === "sectors" 
-                || key === "indicators"
-                || key === "naics"
-                || key === "scopes") {
-                continue;
-            }
-            const val = conf[key];
-            if (val) {
-                parts.push(`${key}=${val}`);
-            }
-        }
 
-        window.location.hash = "#" + parts.join("&");
+        const str = (conf: Config, scope?: string) => {
+            const parts = new Array<string>();
+            const urlParam = (key: string, val: any) => scope
+                ? parts.push(`${scope}-${key}=${val}`)
+                : parts.push(`${key}=${val}`);
+
+            // add lists
+            const lists = [
+                "sectors",
+                "indicators",
+                "naics"
+            ];
+            for (const list of lists) {
+                const val = conf[list] as string[];
+                if (val && val.length > 0) {
+                    urlParam(list, val.join(","));
+                }
+            }
+
+            // add simple types
+            for (const key of Object.keys(conf)) {
+                if (lists.indexOf(key) >= 0
+                    || key === "scopes") {
+                    continue;
+                }
+                const val = conf[key];
+                if (val) {
+                    urlParam(key, val);
+                }
+            }
+
+            // add scopes
+            if (conf.scopes) {
+                for (const _scope of Object.keys(conf.scopes)) {
+                    const scopeConf = conf.scopes[_scope];
+                    if (scopeConf) {
+                        parts.push(str(scopeConf, _scope));
+                    }
+                }
+            }
+            return parts.join("&");
+        };
+
+        window.location.hash = "#" + str(this.config);
     }
 }
 
