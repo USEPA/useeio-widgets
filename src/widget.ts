@@ -97,6 +97,8 @@ export interface WidgetArgs {
 
 export abstract class Widget {
 
+    public scope: string;
+
     private isReady = false;
     private listeners = new Array<(config: Config) => void>();
     private queue = new Array<() => void>();
@@ -106,9 +108,9 @@ export abstract class Widget {
             return;
         }
         if (!this.isReady) {
-            this.queue.push(() => this.handleUpdate(config));
+            this.queue.push(() => this.handleUpdate(this.flatten(config)));
         } else {
-            this.handleUpdate(config);
+            this.handleUpdate(this.flatten(config));
         }
     }
 
@@ -126,12 +128,42 @@ export abstract class Widget {
     }
 
     fireChange(config: Config) {
+        let _conf: Config =  config;
+        if (this.scope) {
+            _conf = {scopes: {}};
+            _conf.scopes[this.scope] = config;
+        }
         for (const fn of this.listeners) {
-            fn(config);
+            fn(_conf);
         }
     }
 
     protected async handleUpdate(_: Config) {
+    }
+
+    /**
+     * If this widget is associated with a scope, this function creates a new
+     * flat configuration object that combines the global configuration with
+     * the respective configuration of the widgets scope. Global configuration
+     * options are replaced by local, scoped configurations if available.
+     */
+    private flatten(config: Config): Config {
+        if (!config) {
+            return {};
+        }
+        const _conf: Config = { ...config };
+        delete _conf.scopes;
+        if (!this.scope || !config.scopes) {
+            return _conf;
+        }
+        const scopeConf = config.scopes[this.scope];
+        if (!scopeConf) {
+            return _conf;
+        }
+        for (const key of Object.keys(scopeConf)) {
+            _conf[key] = scopeConf[key];
+        }
+        return _conf;
     }
 }
 
@@ -359,7 +391,7 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
         let c = config.scopes[scope];
         if (!c) {
             c = {};
-            config.scopes = { scope: c };
+            config.scopes[scope] = c;
         }
         return c;
     };
