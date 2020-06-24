@@ -221,16 +221,11 @@ const Component = (props: { widget: ImpactHeatmap }) => {
         <>
             {
                 // display the matrix selector if we display a result
-                config.selectmatrix && props.widget.result
+                props.widget.result
                     ? <MatrixCombo config={config} widget={props.widget} />
                     : <></>
             }
-            {
-                // display download links if this is configured
-                config.showdownload
-                    ? <DownloadSection widget={props.widget} />
-                    : <></>
-            }
+            <DownloadSection widget={props.widget} />
             <table style={{
                 marginRight: "80px"
             }}>
