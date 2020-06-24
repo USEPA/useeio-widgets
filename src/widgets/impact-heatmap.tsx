@@ -390,24 +390,24 @@ const Row = (props: RowProps) => {
     let rank;
     if (config.showvalues) {
 
-        // demand value
+        // demand value ///change toExponential() to toString() to show the value in the fashion of general notation
         const demandVal = props.widget.demand[sector.code];
         demand = <td style={{
             borderTop: "lightgray solid 1px",
             padding: "5px 0px",
             whiteSpace: "nowrap",
         }}>
-            {demandVal ? demandVal.toExponential(2) : null}
-        </td>;
+            {demandVal ? demandVal.toString() : null}
 
-        // ranking value
+        // ranking value /// change toExponential() to toString() to show the value in the fashion of general notation
         if (config.view === "mosaic") {
             rank = <td style={{
                 borderTop: "lightgray solid 1px",
                 padding: "5px 0px",
                 whiteSpace: "nowrap",
             }}>
-                {props.rank ? props.rank.toExponential(4) : null}
+                {props.rank ? props.rank.toString() : null}
+                
             </td>;
         }
     }
@@ -454,7 +454,7 @@ const IndicatorResult = (props: RowProps) => {
         return <></>;
     }
 
-    // render a bar when a single indicator is selected
+    // render a bar when a single indicator is selected  /** change toExponential() to toString() to show the value in the fashion of general notation  */</td>
     if (indicators.length === 1) {
         const ind = indicators[0];
         const color = colors.forIndicatorGroup(ind.group);
@@ -464,7 +464,7 @@ const IndicatorResult = (props: RowProps) => {
             <td key={ind.id}>
                 <div>
                     <span style={{ float: "left" }}>
-                        {`${r.toExponential(2)} ${ind.unit}`}
+                        {`${r.toString()} ${ind.unit}`}
                     </span>
                     <svg height="15" width="210"
                         style={{ float: "left", clear: "both" }}>
@@ -494,7 +494,7 @@ const IndicatorResult = (props: RowProps) => {
             alpha *= 0.25;
         }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${r.toExponential(2)} ${ind.unit}`;
+        const value = `${r.toString()} ${ind.unit}`; /** change toExponential() to toString() to show the value in the fashion of general notation  */
         items.push(
             <td className="indicator-value" key={ind.id}
                 title={value}
