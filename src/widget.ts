@@ -1,5 +1,6 @@
 import { DemandType, ResultPerspective, Model } from "./webapi";
 import * as strings from "./util/strings";
+import * as naics from "./naics";
 
 /**
  * A common configuration object of our widgets. Often our widgets take
@@ -77,6 +78,16 @@ export interface Config {
     showvalues?: boolean;
 
     /**
+     * Indicates whether the matrix selector should be shown or not.
+     */
+    selectmatrix?: boolean;
+
+    /**
+     * Indicates whether download links should be shown or not.
+     */
+    showdownload?: boolean;
+
+    /**
      * Indicates whether code examples should be displayed.
      */
     showcode?: boolean;
@@ -129,9 +140,9 @@ export abstract class Widget {
     }
 
     fireChange(config: Config) {
-        let _conf: Config =  config;
+        let _conf: Config = config;
         if (this.scope) {
-            _conf = {scopes: {}};
+            _conf = { scopes: {} };
             _conf.scopes[this.scope] = config;
         }
         for (const fn of this.listeners) {
@@ -372,6 +383,32 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
         updateConfig(config, hashParams);
         updateConfig(config, otherParams);
     }
+
+    // add mapped NAICS sectors if necessary
+    const syncNaics = (conf: Config) => {
+        if (!conf || !conf.naics || conf.naics.length === 0) {
+            return;
+        }
+        if (!conf.sectors) {
+            conf.sectors = [];
+        }
+        for (const naicsCode of conf.naics) {
+            const beaCode = naics.toBEA(naicsCode);
+            if (!beaCode || conf.sectors.indexOf(beaCode) >= 0) {
+                continue;
+            }
+            conf.sectors.push(beaCode);
+        }
+
+        // also do this for the scoped configs
+        if(conf.scopes) {
+            for (const scope of Object.keys(conf.scopes)) {
+                syncNaics(conf.scopes[scope]);
+            }
+        }
+    };
+    syncNaics(config);
+
     return config;
 }
 
@@ -440,6 +477,8 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             // booleans
             case "showvalues":
             case "showcode":
+            case "selectmatrix":
+            case "showdownload":
                 const _bool = strings.eq(val, "true", "1", "yes");
                 _update(_key, _bool, scope);
                 break;
