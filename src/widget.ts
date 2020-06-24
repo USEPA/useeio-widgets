@@ -21,6 +21,13 @@ export interface Config {
     sectors?: string[];
 
     /**
+     * A possible additional array of NAICS sector codes.
+     * We translate them to BEA codes when parsing the
+     * confiration.
+     */
+    naics?: string[];
+
+    /**
      * An array of indicator codes.
      */
     indicators?: string[];
@@ -59,31 +66,39 @@ export interface Config {
     page?: number;
 
     /**
-     * `view=mosaic` is currently used in the heatmap
-     * widget to switch between a plain sector list or
-     * the real heatmap.
+     * `view=mosaic` is currently used in the heatmap widget
+     * to switch between a plain sector list or the real heatmap.
      */
     view?: string;
 
     /**
-     * Indicates if result values should be shown in
-     * a widget.
+     * Indicates if result values should be shown in a widget.
      */
     showvalues?: boolean;
 
     /**
-     * Indicates whether code examples should be
-     * displayed.
+     * Indicates whether code examples should be displayed.
      */
     showcode?: boolean;
+
+    /**
+     * Optional scoped configurations. Widgets can be combined
+     * in scopes. Each scope has then its own configuration
+     * state. A scope has a unique name which is added as a
+     * prefix to the configuration options in the URL parameters.
+     */
+    scopes?: { [scope: string]: Config };
 }
 
 export interface WidgetArgs {
     model: Model;
     selector: string;
+    scope?: string;
 }
 
 export abstract class Widget {
+
+    public scope: string;
 
     private isReady = false;
     private listeners = new Array<(config: Config) => void>();
@@ -94,9 +109,9 @@ export abstract class Widget {
             return;
         }
         if (!this.isReady) {
-            this.queue.push(() => this.handleUpdate(config));
+            this.queue.push(() => this.handleUpdate(this.flatten(config)));
         } else {
-            this.handleUpdate(config);
+            this.handleUpdate(this.flatten(config));
         }
     }
 
@@ -114,12 +129,42 @@ export abstract class Widget {
     }
 
     fireChange(config: Config) {
+        let _conf: Config =  config;
+        if (this.scope) {
+            _conf = {scopes: {}};
+            _conf.scopes[this.scope] = config;
+        }
         for (const fn of this.listeners) {
-            fn(config);
+            fn(_conf);
         }
     }
 
     protected async handleUpdate(_: Config) {
+    }
+
+    /**
+     * If this widget is associated with a scope, this function creates a new
+     * flat configuration object that combines the global configuration with
+     * the respective configuration of the widgets scope. Global configuration
+     * options are replaced by local, scoped configurations if available.
+     */
+    private flatten(config: Config): Config {
+        if (!config) {
+            return {};
+        }
+        const _conf: Config = { ...config };
+        delete _conf.scopes;
+        if (!this.scope || !config.scopes) {
+            return _conf;
+        }
+        const scopeConf = config.scopes[this.scope];
+        if (!scopeConf) {
+            return _conf;
+        }
+        for (const key of Object.keys(scopeConf)) {
+            _conf[key] = scopeConf[key];
+        }
+        return _conf;
     }
 }
 
@@ -153,18 +198,48 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
      * properties that are not already defined. Only if there is at least one
      * such property, an update is fired.
      */
-    public updateIfAbsent(conf: Record<string, any>) {
+    public updateIfAbsent(conf: Config) {
         if (!conf) return;
-        const next: Record<string, any> = { ...this.config };
-        let needsUpdate = false;
-        for (const key of Object.keys(conf)) {
-            if (!next[key]) {
-                next[key] = conf[key];
-                needsUpdate = true;
+        const next: Config = { ...this.config };
+
+        // set the values of c2 in c1 if they are missing in c1
+        const sync = (c1: Config, c2: Config) => {
+            let needsUpdate = false;
+            for (const key of Object.keys(c2)) {
+                if (key === "scopes") continue;
+                if (!c1[key]) {
+                    c1[key] = c2[key];
+                    needsUpdate = true;
+                }
             }
-        }
-        if (needsUpdate) {
-            this.update(next as Config);
+            if (!c2.scopes) {
+                return needsUpdate;
+            }
+            if (!c1.scopes) {
+                c1.scopes = { ...c2.scopes };
+                return true;
+            }
+            // sync scope configs recursively
+            for (const scope of Object.keys(c2.scopes)) {
+                const cc1 = c1.scopes[scope];
+                const cc2 = c2.scopes[scope];
+                if (!cc2) {
+                    continue;
+                }
+                if (!cc1) {
+                    c1.scopes[scope] = { ...cc2 };
+                    needsUpdate = true;
+                    continue;
+                }
+                if (sync(cc1, cc2)) {
+                    needsUpdate = true;
+                }
+            }
+            return needsUpdate;
+        };
+
+        if (sync(next, conf)) {
+            this.update(next);
         }
     }
 
@@ -183,44 +258,90 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
         this.widgets.push(widget);
         widget.update(this.config);
         widget.onChanged((config) => {
-            this.config = {
-                ...this.config,
-                ...config,
-            };
-            this.updateHash();
+            this.update(config);
         });
     }
 
     update(config: Config) {
-        this.config = {
-            ...this.config,
-            ...config,
-        };
+        const next: Config = { ...this.config };
+        for (const key of Object.keys(config)) {
+            if (key === "scopes") {
+                continue;
+            }
+            next[key] = config[key];
+        }
+
+        // update scopes
+        if (config.scopes) {
+            if (!next.scopes) {
+                next.scopes = { ...config.scopes };
+            } else {
+                for (const scope of Object.keys(config.scopes)) {
+                    const confScope = config.scopes[scope];
+                    const nextScope = next.scopes[scope];
+                    if (!confScope) {
+                        continue;
+                    }
+                    if (!nextScope) {
+                        next.scopes[scope] = { ...confScope };
+                        continue;
+                    }
+                    for (const key of Object.keys(confScope)) {
+                        nextScope[key] = confScope[key];
+                    }
+                }
+            }
+        }
+        this.config = next;
         this.updateHash();
     }
 
     private updateHash() {
-        const parts = new Array<string>();
-        const conf = this.config;
-        if (conf.sectors && conf.sectors.length > 0) {
-            parts.push("sectors=" + conf.sectors.join(","));
-        }
-        if (conf.indicators && conf.indicators.length > 0) {
-            parts.push("indicators=" + conf.indicators.join(","));
-        }
-        for (const key in conf) {
-            if (!conf.hasOwnProperty(key)) {
-                continue;
+
+        const str = (conf: Config, scope?: string) => {
+            const parts = new Array<string>();
+            const urlParam = (key: string, val: any) => scope
+                ? parts.push(`${scope}-${key}=${val}`)
+                : parts.push(`${key}=${val}`);
+
+            // add lists
+            const lists = [
+                "sectors",
+                "indicators",
+                "naics"
+            ];
+            for (const list of lists) {
+                const val = conf[list] as string[];
+                if (val && val.length > 0) {
+                    urlParam(list, val.join(","));
+                }
             }
-            if (key === "sectors" || key === "indicators") {
-                continue;
+
+            // add simple types
+            for (const key of Object.keys(conf)) {
+                if (lists.indexOf(key) >= 0
+                    || key === "scopes") {
+                    continue;
+                }
+                const val = conf[key];
+                if (val) {
+                    urlParam(key, val);
+                }
             }
-            const val = conf[key];
-            if (val) {
-                parts.push(`${key}=${val}`);
+
+            // add scopes
+            if (conf.scopes) {
+                for (const _scope of Object.keys(conf.scopes)) {
+                    const scopeConf = conf.scopes[_scope];
+                    if (scopeConf) {
+                        parts.push(str(scopeConf, _scope));
+                    }
+                }
             }
-        }
-        window.location.hash = "#" + parts.join("&");
+            return parts.join("&");
+        };
+
+        window.location.hash = "#" + str(this.config);
     }
 }
 
@@ -259,74 +380,93 @@ function parseUrlConfig(what?: { withScripts?: boolean }): Config {
  * if the respective parameters are not already defined in that configuration.
  */
 function updateConfig(config: Config, urlParams: [string, string][]) {
+
+    // create scoped configurations lazily
+    const _conf = (scope?: string) => {
+        if (!scope) {
+            return config;
+        }
+        if (!config.scopes) {
+            config.scopes = {};
+        }
+        let c = config.scopes[scope];
+        if (!c) {
+            c = {};
+            config.scopes[scope] = c;
+        }
+        return c;
+    };
+
+    // update if a value is not set yet
+    const _update = (key: string, value: any, scope?: string) => {
+        const c = _conf(scope);
+        if (c[key]) {
+            return;
+        }
+        c[key] = value;
+    };
+
     for (const [key, val] of urlParams) {
-        if (!val || config[key])
+        if (!key || !val) {
             continue;
+        }
+        let scope: string | undefined;
+        let _key = key;
+        const dashIdx = key.indexOf("-");
+        if (dashIdx > 0) {
+            scope = key.substring(0, dashIdx);
+            _key = key.substring(dashIdx + 1);
+        }
 
-        switch (key) {
+        switch (_key) {
 
+            // simple string values
             case "model":
-                config.model = val;
+            case "location":
+            case "view":
+                _update(_key, val, scope);
                 break;
 
+            // integers
+            case "year":
+            case "count":
+            case "page":
+                try {
+                    const _int = parseInt(val, 10);
+                    _update(_key, _int, scope);
+                } catch (_) { }
+                break;
+
+            // booleans
+            case "showvalues":
+            case "showcode":
+                const _bool = strings.eq(val, "true", "1", "yes");
+                _update(_key, _bool, scope);
+                break;
+
+            // lists
             case "sectors":
-                config.sectors = val.split(",");
-                break;
-
             case "indicators":
-                config.indicators = val.split(",");
+            case "naics":
+                _update(_key, val.split(","), scope);
                 break;
 
             case "type":
             case "analysis":
                 if (strings.eq(val, "consumption")) {
-                    config.analysis = "Consumption";
+                    _update("analysis", "Consumption", scope);
                 } else if (strings.eq(val, "production")) {
-                    config.analysis = "Production";
+                    _update("analysis", "Production", scope);
                 }
                 break;
 
             case "perspective":
                 const p = getPerspective(val);
                 if (p) {
-                    config.perspective = p;
+                    _update("perspective", p, scope);
                 }
                 break;
 
-            case "location":
-                config.location = val;
-                break;
-
-            case "year":
-                try {
-                    config.year = parseInt(val, 10);
-                } catch (_) { }
-                break;
-
-            case "count":
-                try {
-                    config.count = parseInt(val, 10);
-                } catch (_) { }
-                break;
-
-            case "page":
-                try {
-                    config.page = parseInt(val, 10);
-                } catch (_) { }
-                break;
-
-            case "view":
-                config.view = val;
-                break;
-
-            case "showvalues":
-                config.showvalues = strings.eq(val, "true", "1", "yes");
-                break;
-            
-            case "showcode":
-                config.showcode = strings.eq(val, "true", "1", "yes");
-                break;
-            
             default:
                 break;
         }

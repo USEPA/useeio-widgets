@@ -29,11 +29,15 @@ export function impactChart(config: ImpactChartConfig): ImpactChart {
 }
 
 export function impactHeatmap(args: WidgetArgs): ImpactHeatmap {
-    return new ImpactHeatmap(args.model, args.selector);
+    const widget = new ImpactHeatmap(args.model, args.selector);
+    widget.scope = args.scope;
+    return widget;
 }
 
 export function sectorList(args: WidgetArgs): SectorList {
-    return new SectorList(args.model, args.selector);
+    const widget = new SectorList(args.model, args.selector);
+    widget.scope = args.scope;
+    return widget;
 }
 
 export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
@@ -48,13 +52,19 @@ export function profileChart(config: ProfileChartConfig): ProfileChart {
 }
 
 export function paginator(args: WidgetArgs): Paginator {
-    return new Paginator(args.model, args.selector);
+    const widget = new Paginator(args.model, args.selector);
+    widget.scope = args.scope;
+    return widget;
 }
 
 export function countCombo(args: WidgetArgs): CountCombo {
-    return new CountCombo(args.model, args.selector);
+    const widget = new CountCombo(args.model, args.selector);
+    widget.scope = args.scope;
+    return widget;
 }
 
-export function matrixSelector(args: {selector: string}): MatrixSelector {
-    return new MatrixSelector(args.selector);
+export function matrixSelector(args: Partial<WidgetArgs>): MatrixSelector {
+    const widget = new MatrixSelector(args.selector);
+    widget.scope = args.scope;
+    return widget;
 }
