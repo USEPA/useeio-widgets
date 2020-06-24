@@ -77,6 +77,16 @@ export interface Config {
     showvalues?: boolean;
 
     /**
+     * Indicates whether the matrix selector should be shown or not.
+     */
+    selectmatrix?: boolean;
+
+    /**
+     * Indicates whether download links should be shown or not.
+     */
+    showdownload?: boolean;
+
+    /**
      * Indicates whether code examples should be displayed.
      */
     showcode?: boolean;
@@ -440,6 +450,8 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             // booleans
             case "showvalues":
             case "showcode":
+            case "selectmatrix":
+            case "showdownload":
                 const _bool = strings.eq(val, "true", "1", "yes");
                 _update(_key, _bool, scope);
                 break;
