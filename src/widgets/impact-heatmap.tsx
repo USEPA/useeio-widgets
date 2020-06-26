@@ -460,7 +460,7 @@ const IndicatorResult = (props: RowProps) => {
     }
 
     // render a bar when a single indicator is selected
-    if (indicators.length === 1) {
+    if (indicators.length == 1) {
         const ind = indicators[0];
         const color = colors.forIndicatorGroup(ind.group);
         const r = result.getResult(ind, props.sector);
@@ -469,7 +469,7 @@ const IndicatorResult = (props: RowProps) => {
             <td key={ind.id}>
                 <div>
                     <span style={{ float: "left" }}>
-                        {`${r.toFixed(3).toString()} ${ind.unit}`}
+                        {`${config.showscientific ? r.toExponential(2) :r.toFixed(3).toString()} ${ind.unit}`}
                     </span>
                     <svg height="15" width="210"
                         style={{ float: "left", clear: "both" }}>
@@ -499,7 +499,7 @@ const IndicatorResult = (props: RowProps) => {
             alpha *= 0.25;
         }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${r.toFixed(3).toString()} ${ind.unit}`;
+        const value = `${config.showscientific ? r.toExponential(2) :r.toFixed(3).toString()} ${ind.unit}`;
         items.push(
             <td className="indicator-value" key={ind.id}
                 title={value}
