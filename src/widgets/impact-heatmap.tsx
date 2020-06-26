@@ -460,7 +460,7 @@ const IndicatorResult = (props: RowProps) => {
     }
 
     // render a bar when a single indicator is selected
-    if (indicators.length == 1) {
+    if (indicators.length === 1) {
         const ind = indicators[0];
         const color = colors.forIndicatorGroup(ind.group);
         const r = result.getResult(ind, props.sector);
