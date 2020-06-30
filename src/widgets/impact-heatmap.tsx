@@ -402,7 +402,7 @@ const Row = (props: RowProps) => {
             padding: "5px 0px",
             whiteSpace: "nowrap",
         }}>
-            {demandVal ? demandVal.toExponential(2) : null}
+            {demandVal ? demandVal.toFixed(3).toString() : null}
         </td>;
 
         // ranking value
@@ -412,7 +412,7 @@ const Row = (props: RowProps) => {
                 padding: "5px 0px",
                 whiteSpace: "nowrap",
             }}>
-                {props.rank ? props.rank.toExponential(4) : null}
+                {props.rank ? props.rank.toFixed(3).toString() : null}
             </td>;
         }
     }
@@ -469,7 +469,7 @@ const IndicatorResult = (props: RowProps) => {
             <td key={ind.id}>
                 <div>
                     <span style={{ float: "left" }}>
-                        {`${r.toExponential(2)} ${ind.unit}`}
+                        {`${config.showscientific ? r.toExponential(2) :r.toFixed(3).toString()} ${ind.unit}`}
                     </span>
                     <svg height="15" width="210"
                         style={{ float: "left", clear: "both" }}>
@@ -499,7 +499,7 @@ const IndicatorResult = (props: RowProps) => {
             alpha *= 0.25;
         }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${r.toExponential(2)} ${ind.unit}`;
+        const value = `${config.showscientific ? r.toExponential(2) :r.toFixed(3).toString()} ${ind.unit}`;
         items.push(
             <td className="indicator-value" key={ind.id}
                 title={value}

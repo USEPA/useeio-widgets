@@ -78,6 +78,11 @@ export interface Config {
     showvalues?: boolean;
 
     /**
+     * Indicates if result values should be shown in scientific notation or not.
+     */
+    showscientific?: boolean;
+
+    /**
      * Indicates whether the matrix selector should be shown or not.
      */
     selectmatrix?: boolean;
@@ -479,6 +484,7 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             case "showcode":
             case "selectmatrix":
             case "showdownload":
+            case "showscientific":
                 const _bool = strings.eq(val, "true", "1", "yes");
                 _update(_key, _bool, scope);
                 break;
