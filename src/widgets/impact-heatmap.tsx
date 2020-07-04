@@ -11,7 +11,6 @@ import {
     IndicatorGroup,
     Model,
     Sector,
-    Result,
 } from "../webapi";
 import { HeatmapResult } from "../calc/heatmap-result";
 import { MatrixCombo } from "./matrix-selector";
@@ -276,10 +275,6 @@ const Header = (props: {
 
     const total = props.widget.result?.sectors?.length
         || props.widget.sectors?.length;
-    // // Replace dashes with &nbsp;
-    const subTitle = props.count < total
-        ? `${props.count} of ${total} -- 1 | 2 | 3 | 4 | Next`
-        : `${total} industry sectors`;
 
     const onSearch = (value: string) => {
         if (!value) {
@@ -293,10 +288,7 @@ const Header = (props: {
     return (
         <th>
             <div>
-                <span className="matrix-sub-title">
-                    {subTitle}
-                    <div className="arrowdown"></div>
-                </span>
+                <Paginator total={total} config={props.widget.config} />
                 <input className="matrix-search" type="search" placeholder="Search"
                     onChange={e => onSearch(e.target.value)}>
                 </input>
@@ -606,5 +598,93 @@ const DownloadSection = (props: {
                 CSV
             </a>
         </div>
+    );
+};
+
+const Paginator = (props: {
+    total: number,
+    config: Config,
+}) => {
+
+    // calculate the page count
+    const total = props.total;
+    let count = props.config.count || -1;
+    if (count > total) {
+        count = total;
+    }
+    const pageCount = count > 0
+        ? Math.ceil(total / count)
+        : 0;
+
+    // select the page
+    let page = props.config.page || 1;
+    if (page <= 0) {
+        page = 1;
+    }
+    if (page > pageCount) {
+        page = pageCount;
+    }
+
+    // add page links
+    const links: JSX.Element[] = [];
+    if (page > 1) {
+        links.push(
+            <a key="paginator-prev">
+                Previous
+            </a>
+        );
+    }
+    const start = page > 3 ? page - 2 : 1;
+    let end = start + 4;
+    if (end > pageCount) {
+        end = pageCount;
+    }
+    for (let i = start; i <= end; i++) {
+        if (links.length > 0) {
+            links.push(
+                <span key={`paginator-sep-${i}`}
+                    style={{ margin: "0 3px" }}>
+                    |
+                </span>
+            );
+        }
+        if (i === page) {
+            links.push(
+                <span key={`paginator-${i}`}>
+                    {i}
+                </span>);
+        } else {
+            links.push(
+                <a key={`paginator-${i}`}>
+                    {i}
+                </a>
+            );
+        }
+    }
+    if (page < pageCount) {
+        links.push(
+            <span key={`paginator-sep-next`}
+                style={{ margin: "0 3px" }}>
+                |
+            </span>
+        );
+        links.push(
+            <a key={`paginator-next`}>
+                Next
+            </a>
+        );
+    }
+
+
+    // // Replace dashes with &nbsp;
+    const subTitle = count < total
+        ? `${count} of ${total} -- 1 | 2 | 3 | 4 | Next`
+        : `${total} industry sectors`;
+
+    return (
+        <span className="matrix-sub-title">
+            {links}
+            <div className="arrowdown"></div>
+        </span>
     );
 };
