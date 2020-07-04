@@ -24,32 +24,41 @@ pre, code {
     vertical-align: bottom;
     font-size: 0.8em;
 }
-th.indicator > div {
+
+th.indicator>div {
     transform: translate(0px, 0px) rotate(315deg);
     width: 22px;
     padding: 4px;
     padding-top: 5px;
     white-space: nowrap;
 }
+
 th.indicator {
     padding-left: 4px;
 }
+
 .indicator-group-parent {
     padding-left: 10px;
-    margin-bottom: -10px; /* slide settitle holder down */
+    margin-bottom: -10px;
+    /* slide settitle holder down */
     min-width: 42px;
 }
+
 .indicator-group {
-    min-width: 160px; /* length of line above set-titles */
+    min-width: 160px;
+    /* length of line above set-titles */
     display: inline-block;
     text-align: left;
     padding: 4px;
     border-top: 1px solid #ccc;
     padding-top: 4px;
-    padding-left: 20px; /* left of title under line */
-    margin-left: 0px; /* slide angled set-titles up and to the right */
+    padding-left: 20px;
+    /* left of title under line */
+    margin-left: 0px;
+    /* slide angled set-titles up and to the right */
     margin-bottom: -4px;
 }
+
 a {
     text-decoration: none;
     color: #555;
@@ -191,9 +200,11 @@ a:hover {
     float: left;
     padding: 5px 0px 10px 5px;
 }
+
 .matrix-search {
     min-width: 98%;
 }
+
 .arrowdown {
     width: 0;
     height: 0;
@@ -204,43 +215,67 @@ a:hover {
     float: right;
     pointer-events: auto;
 }
+
+.arrowright {
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid #000;
+    margin: 4px;
+    pointer-events: auto;
+    /* prevent click-through */
+    float: right;
+    /* needed for size */
+}
+
 .arrownext {
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
     border-left: 6px solid #ccc;
-    margin:4px;
-    pointer-events: auto; /* prevent click-through */
-    float:left; /* needed for size */
-  }
+    margin: 4px;
+    pointer-events: auto;
+    /* prevent click-through */
+    float: left;
+    /* needed for size */
+}
+
 .indicator-row {
     height: 170px;
 }
+
 .indicator-row a {
     cursor: pointer;
 }
+
 .indicator {
     font-size: 0.8em;
 }
+
 .impact-heatmap-body a {
     text-decoration: none;
     color: none;
 }
+
 .impact-heatmap-body td {
     white-space: nowrap;
-    padding:4px;
+    padding: 4px;
     padding-left: 6px;
 }
+
 .indicator-value {
     font-size: .9em;
 }
+
 .noborder {
     background-color: #fafafa;
-    border-left:8px solid #fff;
+    border-left: 8px solid #fff;
 }
 
 /* paginator styles */
+
 .useeio-paginator a {
     cursor: pointer;
 }

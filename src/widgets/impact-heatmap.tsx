@@ -606,6 +606,8 @@ const Paginator = (props: {
     config: Config,
 }) => {
 
+    const [showCounter, setShowCounter] = React.useState<boolean>(false);
+
     // calculate the page count
     const total = props.total;
     let count = props.config.count || -1;
@@ -675,16 +677,50 @@ const Paginator = (props: {
         );
     }
 
-
     // // Replace dashes with &nbsp;
     const subTitle = count < total
         ? `${count} of ${total} -- 1 | 2 | 3 | 4 | Next`
         : `${total} industry sectors`;
 
+
+    // counter combo
+    const counter: JSX.Element[] = [];
+    if (!showCounter) {
+        counter.push(
+            <span className="arrowdown"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowCounter(true)} />
+        );
+    } else {
+        const options = [-1, 10, 20, 30, 40, 50, 100].map(i => {
+            const text = i === -1 ? "All" : i;
+            return (
+                <option value={i} key={`count-prop-${i}`}>
+                    {text}
+                </option>
+            );
+        });
+        counter.push(
+            <select value={count}
+                style={{ float: "right" }}
+                onChange={(e) => {
+                    // const count = parseInt(e.target.value, 10);
+                    // props.widget.fireChange({ count });
+                }}>
+                {options}
+            </select>
+        );
+        counter.push(
+            <span className="arrowright"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowCounter(false)} />
+        );
+    }
+
     return (
         <span className="matrix-sub-title">
             {links}
-            <div className="arrowdown"></div>
+            {counter}
         </span>
     );
 };
