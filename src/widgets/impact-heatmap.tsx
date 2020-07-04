@@ -288,7 +288,7 @@ const Header = (props: {
     return (
         <th>
             <div>
-                <Paginator total={total} config={props.widget.config} />
+                <Paginator total={total} widget={props.widget} />
                 <input className="matrix-search" type="search" placeholder="Search"
                     onChange={e => onSearch(e.target.value)}>
                 </input>
@@ -603,14 +603,15 @@ const DownloadSection = (props: {
 
 const Paginator = (props: {
     total: number,
-    config: Config,
+    widget: ImpactHeatmap,
 }) => {
 
     const [showCounter, setShowCounter] = React.useState<boolean>(false);
 
     // calculate the page count
     const total = props.total;
-    let count = props.config.count || -1;
+    const config = props.widget.config;
+    let count = config.count || -1;
     if (count > total) {
         count = total;
     }
@@ -619,7 +620,7 @@ const Paginator = (props: {
         : 0;
 
     // select the page
-    let page = props.config.page || 1;
+    let page = config.page || 1;
     if (page <= 0) {
         page = 1;
     }
@@ -627,11 +628,15 @@ const Paginator = (props: {
         page = pageCount;
     }
 
-    // add page links
+    // page links
     const links: JSX.Element[] = [];
+    const goTo = (nextPage: number) => {
+        props.widget.fireChange({ page: nextPage });
+    };
     if (page > 1) {
         links.push(
-            <a key="paginator-prev">
+            <a key="paginator-prev"
+                onClick={() => goTo(page - 1)}>
                 Previous
             </a>
         );
@@ -657,7 +662,8 @@ const Paginator = (props: {
                 </span>);
         } else {
             links.push(
-                <a key={`paginator-${i}`}>
+                <a key={`paginator-${i}`}
+                    onClick={() => goTo(i)}>
                     {i}
                 </a>
             );
@@ -671,15 +677,16 @@ const Paginator = (props: {
             </span>
         );
         links.push(
-            <a key={`paginator-next`}>
+            <a key={`paginator-next`}
+                onClick={() => goTo(page + 1)}>
                 Next
             </a>
         );
     }
 
-    // // Replace dashes with &nbsp;
-    const subTitle = count < total
-        ? `${count} of ${total} -- 1 | 2 | 3 | 4 | Next`
+    // title
+    const title = count < total
+        ? `${count} of ${total} -- `
         : `${total} industry sectors`;
 
 
@@ -704,8 +711,8 @@ const Paginator = (props: {
             <select value={count}
                 style={{ float: "right" }}
                 onChange={(e) => {
-                    // const count = parseInt(e.target.value, 10);
-                    // props.widget.fireChange({ count });
+                    const c = parseInt(e.target.value, 10);
+                    props.widget.fireChange({ count: c });
                 }}>
                 {options}
             </select>
@@ -719,6 +726,7 @@ const Paginator = (props: {
 
     return (
         <span className="matrix-sub-title">
+            {title}
             {links}
             {counter}
         </span>
