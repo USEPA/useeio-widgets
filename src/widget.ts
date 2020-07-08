@@ -1,6 +1,5 @@
 import { DemandType, ResultPerspective, Model } from "./webapi";
 import * as strings from "./util/strings";
-import * as naics from "./naics";
 
 /**
  * A common configuration object of our widgets. Often our widgets take
@@ -328,7 +327,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             ];
             for (const list of lists) {
                 const val = conf[list] as string[];
-                if (val && val.length > 0) {
+                if (val) {
                     urlParam(list, val.join(","));
                 }
             }
@@ -423,7 +422,7 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
     };
 
     for (const [key, val] of urlParams) {
-        if (!key || !val) {
+        if (!key) {
             continue;
         }
         let scope: string | undefined;
@@ -467,7 +466,10 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             case "sectors":
             case "indicators":
             case "naics":
-                _update(_key, val.split(","), scope);
+                const _list = strings.isNullOrEmpty(val)
+                    ? []
+                    : val.split(",");
+                _update(_key, _list, scope);
                 break;
 
             case "type":

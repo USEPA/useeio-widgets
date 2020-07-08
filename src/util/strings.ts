@@ -72,3 +72,10 @@ export function eq(s: string, ...others: string[]): boolean {
         : other.trim().toLowerCase() === first);
     return idx >= 0;
 }
+
+export function isNullOrEmpty(s: string): boolean {
+    if (!s) {
+        return true;
+    }
+    return s.trim().length === 0;
+}
