@@ -15,6 +15,7 @@ import {
 import { HeatmapResult } from "../calc/heatmap-result";
 import { MatrixCombo } from "./matrix-selector";
 import { ones } from "../calc/calc";
+import * as naics from "../naics";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -364,22 +365,53 @@ const Row = (props: RowProps) => {
 
     const config = props.widget.config;
     const sector = props.sector;
-    const selected = config.sectors?.indexOf(sector.code) >= 0
-        ? true
-        : false;
+
+    // determine if the sector is selected
+    let selected = false;
+    if (config.sectors) {
+        // the code of the sector is in the sector list of
+        // the widget configuration
+        selected = config.sectors.indexOf(sector.code) >= 0;
+    } else if (config.naics) {
+        // there is no sector list in the configuration but
+        // maybe a matching NAICS code
+        for (const code of config.naics) {
+            if (naics.toBEA(code) === sector.code) {
+                selected = true;
+                break;
+            }
+        }
+    }
+
+    // the selection handler of the sector
     const onSelect = () => {
-        let codes = config.sectors;
-        if (selected) {
-            const idx = codes.indexOf(sector.code);
-            codes.splice(idx, 1);
-        } else {
-            codes = !codes ? [] : codes.slice(0);
-            codes.push(sector.code);
+        let codes = config.sectors
+            ? config.sectors.slice(0)
+            : null;
+        if (codes) {
+            // there is a sector configuration
+            if (selected) {
+                const idx = codes.indexOf(sector.code);
+                codes.splice(idx, 1);
+            } else {
+                codes.push(sector.code);
+            }
+        } else if (config.naics) {
+            // create a sector configuration from NAICS codes
+            codes = selected ? [] : [sector.code];
+            for (const naicsCode of config.naics) {
+                const code = naics.toBEA(naicsCode);
+                if (!code) {
+                    continue;
+                }
+                if (selected && code === sector.code) {
+                    continue;
+                }
+                codes.push(code);
+            }
         }
         props.widget.fireChange({ sectors: codes });
     };
-
-    const sectorLabel = `${sector.code} - ${sector.name}`;
 
     // display the demand value and possible ranking
     // if showvalues=true
@@ -409,6 +441,7 @@ const Row = (props: RowProps) => {
         }
     }
 
+    const sectorLabel = `${sector.code} - ${sector.name}`;
     return (
         <tr>
             <td key={props.sector.code}
