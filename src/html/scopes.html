@@ -14,13 +14,9 @@
             <div class="col-1 span-2">
                 <div id="impact-heatmap-1" class="impact-heatmap">
                 </div>
-                <div id="paginator-1">
-                </div>
             </div>
             <div class="col-3 span-2">
                 <div id="impact-heatmap-2" class="impact-heatmap">
-                </div>
-                <div id="paginator-2">
                 </div>
             </div>
         </div>
@@ -44,27 +40,15 @@
         selector: '#impact-heatmap-1',
         scope: 'input'
     });
-    var paginator1 = useeio.paginator({
-        model: model,
-        selector: '#paginator-1',
-        scope: 'input'
-    });
 
     var heatmap2 = useeio.impactHeatmap({
         model: model,
         selector: '#impact-heatmap-2',
         scope: 'output'
     });
-    var paginator2 = useeio.paginator({
-        model: model,
-        selector: '#paginator-2',
-        scope: 'output'
-    });
 
     config.join(heatmap1);
-    config.join(paginator1);
     config.join(heatmap2);
-    config.join(paginator2);
 
 </script>
 

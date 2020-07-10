@@ -24,7 +24,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "http-server": "^0.12.3",
     "ts-loader": "^6.2.2",
-    "typescript": "^3.8.3",
+    "typescript": "^3.9.6",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }

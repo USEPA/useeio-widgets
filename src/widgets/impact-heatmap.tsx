@@ -388,7 +388,9 @@ const Row = (props: RowProps) => {
         let codes = config.sectors
             ? config.sectors.slice(0)
             : null;
-        if (codes) {
+        if (!codes && !config.naics) {
+            codes = [sector.code];
+        } else if (codes) {
             // there is a sector configuration
             if (selected) {
                 const idx = codes.indexOf(sector.code);
@@ -718,7 +720,7 @@ const Paginator = (props: {
     }
 
     // title
-    const title = count < total
+    const title = count > 0 && count < total
         ? `${count} of ${total} -- `
         : `${total} industry sectors`;
 
@@ -727,7 +729,9 @@ const Paginator = (props: {
     const counter: JSX.Element[] = [];
     if (!showCounter) {
         counter.push(
-            <span className="arrowdown"
+            <span
+                key="paginator-arrowdown"
+                className="arrowdown"
                 style={{ cursor: "pointer" }}
                 onClick={() => setShowCounter(true)} />
         );
@@ -741,7 +745,9 @@ const Paginator = (props: {
             );
         });
         counter.push(
-            <select value={count}
+            <select
+                key="paginator-counter"
+                value={count}
                 style={{ float: "right" }}
                 onChange={(e) => {
                     const c = parseInt(e.target.value, 10);
@@ -751,7 +757,9 @@ const Paginator = (props: {
             </select>
         );
         counter.push(
-            <span className="arrowright"
+            <span
+                key="paginator-arrowright"
+                className="arrowright"
                 style={{ cursor: "pointer" }}
                 onClick={() => setShowCounter(false)} />
         );

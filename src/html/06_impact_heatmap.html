@@ -12,8 +12,6 @@
     <div class="io">
         <div style="margin: 0 auto;">
             <div class="matrix-title">Goods & Services</div><br><br>
-            <div id="paginator">
-            </div>
             <div class="impact-heatmap">
             </div>
         </div>
@@ -36,13 +34,6 @@
         model: model,
         selector: '.impact-heatmap',
     });
-
-    var paginator = useeio.paginator({
-        model: model,
-        selector: '#paginator',
-    });
-
-    config.join(paginator);
     config.join(heatmap);
 
 </script>
