@@ -194,6 +194,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
 
     private widgets = new Array<Widget>();
     private config: Config = {};
+    private defaultConfig: Config;
 
     constructor() {
         this.config = parseUrlConfig({ withScripts: true });
@@ -205,7 +206,19 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
      * Returns the current configuration of this transmitter.
      */
     public get(): Config {
-        return { ...this.config };
+        return !this.defaultConfig
+            ? { ...this.config }
+            : { ...this.defaultConfig, ...this.config };
+    }
+
+    /**
+     * Set the default configuration options of this transmitter. The default
+     * values are not serialized in the hash part of the URL but are passed
+     * to the joined widgets. The default configuration should be set before
+     * widgets join this transmitter.
+     */
+    withDefaults(config: Config) {
+        this.defaultConfig = config;
     }
 
     /**
@@ -213,9 +226,9 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
      * properties that are not already defined. Only if there is at least one
      * such property, an update is fired.
      */
-    public updateIfAbsent(conf: Config) {
+    updateIfAbsent(conf: Config) {
         if (!conf) return;
-        const next: Config = { ...this.config };
+        const next: Config = this.get();
 
         // set the values of c2 in c1 if they are missing in c1
         const sync = (c1: Config, c2: Config) => {
@@ -260,8 +273,9 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
 
     private onHashChanged() {
         this.config = parseUrlConfig();
+        const config = this.get(); // add possible defaults
         for (const widget of this.widgets) {
-            widget.update(this.config);
+            widget.update(config);
         }
     }
 
@@ -269,16 +283,20 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
         window.location.hash = "";
     }
 
+    /**
+     * Let the given widget join this configuration transmitter. The widget
+     * will be initialized with the current configuration of this transmitter.
+     */
     join(widget: Widget) {
         this.widgets.push(widget);
-        widget.update(this.config);
+        widget.update(this.get());
         widget.onChanged((config) => {
             this.update(config);
         });
     }
 
     update(config: Config) {
-        const next: Config = { ...this.config };
+        const next: Config = this.get();
         for (const key of Object.keys(config)) {
             if (key === "scopes") {
                 continue;
@@ -315,9 +333,26 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
 
         const str = (conf: Config, scope?: string) => {
             const parts = new Array<string>();
-            const urlParam = (key: string, val: any) => scope
-                ? parts.push(`${scope}-${key}=${val}`)
-                : parts.push(`${key}=${val}`);
+            const urlParam = (key: string, val: any) => {
+
+                // only add it to the URL if it is not
+                // defined as default value
+                let defaultVal = this.defaultConfig
+                    ? this.defaultConfig[key]
+                    : null;
+                if (defaultVal) {
+                    if (Array.isArray(defaultVal)) {
+                        defaultVal = defaultVal.join(",");
+                    }
+                    if (defaultVal === val) {
+                        return;
+                    }
+                }
+
+                scope
+                    ? parts.push(`${scope}-${key}=${val}`)
+                    : parts.push(`${key}=${val}`);
+            };
 
             // add lists
             const lists = [

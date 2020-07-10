@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Scopes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="margin: 25px;">
+        <div class="grid-4" style="margin: 0 auto;">
+            <div class="col-1 span-2">
+                <div id="impact-heatmap-1" class="impact-heatmap">
+                </div>
+            </div>
+            <div class="col-3 span-2">
+                <div id="impact-heatmap-2" class="impact-heatmap">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="lib/d3.min.js"></script>
+<script src="lib/useeio_widgets.js"></script>
+<script>
+
+    var config = useeio.urlConfig();
+    var modelID = config.get().model || 'GAUSEEIO';
+
+    var model = useeio.model({
+        endpoint: './api',
+        model: modelID,
+        asJsonFiles: true,
+    });
+
+    var heatmap1 = useeio.impactHeatmap({
+        model: model,
+        selector: '#impact-heatmap-1',
+        scope: 'input'
+    });
+
+    var heatmap2 = useeio.impactHeatmap({
+        model: model,
+        selector: '#impact-heatmap-2',
+        scope: 'output'
+    });
+
+    config.withDefaults({
+        page: 2,
+        count: 10,
+        sectors: ['336412', '722A00'],
+    });
+    config.join(heatmap1);
+    config.join(heatmap2);
+
+</script>
+
+</html>
