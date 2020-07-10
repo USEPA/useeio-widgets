@@ -92,7 +92,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private needsCalculation(oldConfig: Config, newConfig: Config) {
-        if (!newConfig || newConfig.view !== "mosaic")
+        if (!newConfig || !strings.isMember("mosaic", newConfig.view))
             return false;
 
         if (!oldConfig || !this.result) {
@@ -116,7 +116,7 @@ export class ImpactHeatmap extends Widget {
     }
 
     private async syncIndicators(config: Config): Promise<Indicator[]> {
-        if (config.view !== "mosaic") {
+        if (!strings.isMember("mosaic", config.view)) {
             return [];
         }
         const all = await this.model.indicators();
@@ -254,7 +254,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
                             )} />
 
                         { // optional column with ranking values
-                            config.showvalues && result
+                            strings.isMember("ranking", config.view)
                                 ? <th><div><span>Ranking</span></div></th>
                                 : <></>
                         }
@@ -415,10 +415,8 @@ const Row = (props: RowProps) => {
         props.widget.fireChange({ sectors: codes });
     };
 
-    // display the demand value and possible ranking
-    // if showvalues=true
+    // display the demand value if showvalues=true
     let demand;
-    let rank;
     if (config.showvalues) {
 
         // demand value
@@ -430,17 +428,18 @@ const Row = (props: RowProps) => {
         }}>
             {demandVal ? demandVal.toFixed(3) : null}
         </td>;
+    }
 
-        // ranking value
-        if (config.view === "mosaic") {
-            rank = <td style={{
-                borderTop: "lightgray solid 1px",
-                padding: "5px 0px",
-                whiteSpace: "nowrap",
-            }}>
-                {props.rank ? props.rank.toFixed(3) : null}
-            </td>;
-        }
+    // display the ranking value if view=ranking
+    let rank;
+    if (strings.isMember("ranking", config.view)) {
+        rank = <td style={{
+            borderTop: "lightgray solid 1px",
+            padding: "5px 0px",
+            whiteSpace: "nowrap",
+        }}>
+            {props.rank ? props.rank.toFixed(3) : null}
+        </td>;
     }
 
     const sectorLabel = `${sector.code} - ${sector.name}`;

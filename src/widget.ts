@@ -69,7 +69,7 @@ export interface Config {
      * `view=mosaic` is currently used in the heatmap widget
      * to switch between a plain sector list or the real heatmap.
      */
-    view?: string;
+    view?: string[];
 
     /**
      * Indicates if result values should be shown in a widget.
@@ -358,7 +358,8 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             const lists = [
                 "sectors",
                 "indicators",
-                "naics"
+                "naics",
+                "view"
             ];
             for (const list of lists) {
                 const val = conf[list] as string[];
@@ -473,7 +474,6 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             // simple string values
             case "model":
             case "location":
-            case "view":
                 _update(_key, val, scope);
                 break;
 
@@ -501,6 +501,7 @@ function updateConfig(config: Config, urlParams: [string, string][]) {
             case "sectors":
             case "indicators":
             case "naics":
+            case "view":
                 const _list = strings.isNullOrEmpty(val)
                     ? []
                     : val.split(",");
