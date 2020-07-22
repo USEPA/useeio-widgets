@@ -42,16 +42,46 @@ export class IndustryList extends Widget {
      */
     sectors: Sector[];
 
+    private _naicsAttr: string;
+
     constructor(private model: Model, private selector: string) {
         super();
         this.ready();
+        const parent = document.querySelector(selector);
+        if (parent) {
+            this._naicsAttr = parent.getAttribute("data-naics");
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.attributeName === "data-naics") {
+                        const naicsAttr = parent.getAttribute("data-naics");
+                        const config: Config = this.config
+                            ? { ... this.config }
+                            : {};
+                        config.naics = naicsAttr
+                            ? naicsAttr.split(",").map(code => code.trim())
+                            : undefined;
+                        this.handleUpdate(config);
+                    }
+                });
+            });
+            observer.observe(parent, {
+                attributeFilter: ["data-naics"],
+            });
+        }
     }
 
     protected async handleUpdate(config: Config) {
 
         // run a new calculation if necessary
         const needsCalc = this.needsCalculation(this.config, config);
-        this.config = config;
+
+        this.config = { ...config };
+        if (!this.config.naics && this._naicsAttr) {
+            this.config.naics = this._naicsAttr
+                .split(",")
+                .map(code => code.trim());
+        }
+
         if (needsCalc) {
             this.result = await calculate(this.model, config);
         }
