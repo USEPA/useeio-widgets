@@ -66,7 +66,7 @@ export interface Config {
     page?: number;
 
     /**
-     * `view=mosaic` is currently used in the heatmap widget
+     * `view=mosaic` is currently used in the industry list widget
      * to switch between a plain sector list or the real heatmap.
      */
     view?: string[];
