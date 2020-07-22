@@ -8,7 +8,6 @@ const config = {
         // 'ImpactChart': './src/impact-chart.ts',
         // 'FilterWidget': './src/filter-widget.ts',
         // 'SectorList': './src/sector-list.ts',
-        // 'ImpactHeatmap': './src/impact-heatmap.ts',
         'useeio_widgets': './src/main.ts',
     },
     module: {

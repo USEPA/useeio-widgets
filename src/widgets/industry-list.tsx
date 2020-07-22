@@ -25,7 +25,7 @@ const INDICATOR_GROUPS = [
     IndicatorGroup.ECONOMIC_SOCIAL,
 ];
 
-export class ImpactHeatmap extends Widget {
+export class IndustryList extends Widget {
 
     /**
      * The current configuration of the heatmap.
@@ -173,7 +173,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     return HeatmapResult.from(model, result);
 }
 
-const Component = (props: { widget: ImpactHeatmap }) => {
+const Component = (props: { widget: IndustryList }) => {
 
     const config = props.widget.config;
     const [sorter, setSorter] = React.useState<Indicator | null>(null);
@@ -260,7 +260,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
                         }
                     </tr>
                 </thead>
-                <tbody className="impact-heatmap-body">
+                <tbody className="industry-list-body">
                     {rows}
                 </tbody>
             </table>
@@ -269,7 +269,7 @@ const Component = (props: { widget: ImpactHeatmap }) => {
 };
 
 const Header = (props: {
-    widget: ImpactHeatmap,
+    widget: IndustryList,
     count: number,
     onSearch: (term: string | null) => void,
 }) => {
@@ -357,7 +357,7 @@ const IndicatorHeader = (props: {
 type RowProps = {
     sector: Sector,
     sortIndicator: Indicator | null,
-    widget: ImpactHeatmap,
+    widget: IndustryList,
     rank?: number,
 };
 
@@ -538,7 +538,7 @@ const IndicatorResult = (props: RowProps) => {
 };
 
 const DownloadSection = (props: {
-    widget: ImpactHeatmap,
+    widget: IndustryList,
 }) => {
 
     const onDownload = (format: "CSV" | "JSON") => {
@@ -637,7 +637,7 @@ const DownloadSection = (props: {
 
 const Paginator = (props: {
     total: number,
-    widget: ImpactHeatmap,
+    widget: IndustryList,
 }) => {
 
     const [showCounter, setShowCounter] = React.useState<boolean>(false);

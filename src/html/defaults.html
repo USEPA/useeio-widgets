@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Scopes</title>
+    <title>Defaults</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
@@ -12,11 +12,11 @@
     <div style="margin: 25px;">
         <div class="grid-4" style="margin: 0 auto;">
             <div class="col-1 span-2">
-                <div id="impact-heatmap-1" class="impact-heatmap">
+                <div id="industry-list-1" class="industry-list">
                 </div>
             </div>
             <div class="col-3 span-2">
-                <div id="impact-heatmap-2" class="impact-heatmap">
+                <div id="industry-list-2" class="industry-list">
                 </div>
             </div>
         </div>
@@ -35,15 +35,15 @@
         asJsonFiles: true,
     });
 
-    var heatmap1 = useeio.impactHeatmap({
+    var industryList1 = useeio.industryList({
         model: model,
-        selector: '#impact-heatmap-1',
+        selector: '#industry-list-1',
         scope: 'input'
     });
 
-    var heatmap2 = useeio.impactHeatmap({
+    var industryList2 = useeio.industryList({
         model: model,
-        selector: '#impact-heatmap-2',
+        selector: '#industry-list-2',
         scope: 'output'
     });
 
@@ -52,8 +52,8 @@
         count: 10,
         sectors: ['336412', '722A00'],
     });
-    config.join(heatmap1);
-    config.join(heatmap2);
+    config.join(industryList1);
+    config.join(industryList2);
 
 </script>
 

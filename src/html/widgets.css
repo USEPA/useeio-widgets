@@ -254,12 +254,12 @@ a:hover {
     font-size: 0.8em;
 }
 
-.impact-heatmap-body a {
+.industry-list-body a {
     text-decoration: none;
     color: none;
 }
 
-.impact-heatmap-body td {
+.industry-list-body td {
     white-space: nowrap;
     padding: 4px;
     padding-left: 6px;

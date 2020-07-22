@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Impact heatmap</title>
+    <title>Industry list</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="widgets.css">
 </head>
@@ -12,7 +12,7 @@
     <div class="io">
         <div style="margin: 0 auto;">
             <div class="matrix-title">Goods & Services</div><br><br>
-            <div class="impact-heatmap">
+            <div class="industry-list">
             </div>
         </div>
     </div>
@@ -30,11 +30,11 @@
         asJsonFiles: true,
     });
 
-    var heatmap = useeio.impactHeatmap({
+    var industryList = useeio.industryList({
         model: model,
-        selector: '.impact-heatmap',
+        selector: '.industry-list',
     });
-    config.join(heatmap);
+    config.join(industryList);
 
 </script>
 
