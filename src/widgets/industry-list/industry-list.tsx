@@ -87,8 +87,16 @@ export class IndustryList extends Widget {
             this.sectors = sectors;
         }
 
+        // load the matrix A for the display of sector inputs or outputs
+        // if this is required
+        if (!this.matrixA &&
+            (strings.isMember("inputs", config.view)
+                || strings.isMember("outputs", config.view))) {
+            this.matrixA = await this.model.matrix("A");
+        }
+
         // load the demand vector if required
-        if (config.showvalues && (!this.demand || needsCalc)) {
+        if (this.matrixA || (config.showvalues && (!this.demand || needsCalc))) {
             const demandID = await this.model.findDemand(config);
             const demand = await this.model.demand(demandID);
             if (demand) {
@@ -108,14 +116,6 @@ export class IndustryList extends Widget {
                         : val;
                 }
             }
-        }
-
-        // load the matrix A for the display of sector inputs or outputs
-        // if this is required
-        if (!this.matrixA &&
-            (strings.isMember("inputs", config.view)
-                || strings.isMember("outputs", config.view))) {
-            this.matrixA = await this.model.matrix("A");
         }
 
         this.indicators = await selectIndicators(config, this.model);

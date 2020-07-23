@@ -46,9 +46,12 @@ export const InputOutputCells = (props: {
         : w.matrixA.getRow(props.sector.index);
 
     const items = w.sectors.map(sector => {
-        const value = data[sector.index];
+        const demand = w.demand[sector.code] || 0;
+        const v = data[sector.index] * demand;
         return <td key={sector.code}>
-            {value.toExponential(3)}
+            {w.config.showscientific
+                ? v.toExponential(2)
+                : v.toFixed(2)}
         </td>;
     });
     return <>{items}</>;
