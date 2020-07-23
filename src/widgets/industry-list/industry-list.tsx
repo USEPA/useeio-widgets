@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Widget, Config } from "../../widget";
-import { Indicator, Model, Sector } from "../../webapi";
+import { Indicator, Model, Sector, Matrix } from "../../webapi";
 import { HeatmapResult } from "../../calc/heatmap-result";
 import { MatrixCombo } from "../matrix-selector";
 import { ones } from "../../calc/calc";
@@ -12,6 +12,7 @@ import * as strings from "../../util/strings";
 import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
 import { DownloadSection } from "./download";
 import { Paginator } from "./paginator";
+import { SectorHeader, InputOutputCells } from "./iotable";
 
 export class IndustryList extends Widget {
 
@@ -31,6 +32,13 @@ export class IndustryList extends Widget {
     sectors: Sector[];
 
     private _naicsAttr: string;
+
+    /**
+     * The direct requirements matrix A of the underlying input-output model.
+     * This matrix is only loaded if sector inputs or outputs should be
+     * displayed in this widget.
+     */
+    matrixA: Matrix;
 
     constructor(private model: Model, private selector: string) {
         super();
@@ -100,6 +108,14 @@ export class IndustryList extends Widget {
                         : val;
                 }
             }
+        }
+
+        // load the matrix A for the display of sector inputs or outputs
+        // if this is required
+        if (!this.matrixA &&
+            (strings.isMember("inputs", config.view)
+                || strings.isMember("outputs", config.view))) {
+            this.matrixA = await this.model.matrix("A");
         }
 
         this.indicators = await selectIndicators(config, this.model);
@@ -239,6 +255,13 @@ const Component = (props: { widget: IndustryList }) => {
                             onClick={(i) => setSorter(
                                 sorter === i ? null : i
                             )} />
+
+                        {
+                            // SectorHeader displays the corresponding sector
+                            // names in the table header if sector inputs or
+                            // outputs should be displayed
+                        }
+                        <SectorHeader widget={props.widget} />
 
                         { // optional column with ranking values
                             strings.isMember("ranking", config.view)
@@ -396,6 +419,7 @@ const Row = (props: RowProps) => {
             </td>
             {config.showvalues ? demand : <></>}
             <ImpactResult {...props} />
+            <InputOutputCells sector={props.sector} widget={props.widget} />
             {rank ? rank : <></>}
         </tr>
     );

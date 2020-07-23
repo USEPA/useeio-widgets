@@ -314,6 +314,16 @@ a:hover {
     margin: 15px 0px;
 }
 
+th.io-sector-column-header>div {
+    transform: translate(0px, 0px) rotate(315deg);
+    width: 22px;
+    padding: 4px;
+    padding-top: 5px;
+    white-space: nowrap;
+    font-weight: normal;
+    font-size: 0.8em;
+}
+
 /* A primitive grid system; does not work in IE or Edge; just for testing */
 
 .grid-4 {
