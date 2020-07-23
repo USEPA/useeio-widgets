@@ -1,6 +1,6 @@
 import { FilterWidget } from "./widgets/filter";
 import { UrlConfigTransmitter, WidgetArgs } from "./widget";
-import { IndustryList } from "./widgets/industry-list";
+import { IndustryList } from "./widgets/industry-list/industry-list";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SectorList } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Scopes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="margin: 25px;">
+        <div class="grid-12" style="margin: 0 auto;">
+            <div class="col-1 span-4">
+                <div id="industry-list-1" class="industry-list">
+                </div>
+            </div>
+            <div class="col-5 span-8">
+                <div id="industry-list-2" class="industry-list">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="lib/d3.min.js"></script>
+<script src="lib/useeio_widgets.js"></script>
+<script>
+
+    var config = useeio.urlConfig();
+    var modelID = config.get().model || 'GAUSEEIO';
+
+    var model = useeio.model({
+        endpoint: './api',
+        model: modelID,
+        asJsonFiles: true,
+    });
+
+    var left = useeio.industryList({
+        model: model,
+        selector: '#industry-list-1',
+        scope: 'left'
+    });
+
+    var right = useeio.industryList({
+        model: model,
+        selector: '#industry-list-2',
+        scope: 'right'
+    });
+    
+    config.withDefaults({
+        count: 10,
+    });
+    config.join(left);
+    config.join(right);
+
+
+</script>
+
+</html>
