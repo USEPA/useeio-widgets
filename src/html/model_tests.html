@@ -74,7 +74,7 @@
                 span.textContent = span.textContent + "OK";
                 console.log(header, ": ", r);
             }).catch(err => {
-                span.textContent = span.textContent + "ERROR";
+                span.textContent = span.textContent + "ERROR: " + err;
                 span.setAttribute("style", "color: red");
             });
         };
