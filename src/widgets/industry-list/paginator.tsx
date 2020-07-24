@@ -1,16 +1,17 @@
 import * as React from "react";
-import { IndustryList } from "./industry-list";
+import { Config } from "../../widget";
 
 export const Paginator = (props: {
     total: number,
-    widget: IndustryList,
+    config: Config,
+    onChange: (config: Config) => void,
 }) => {
 
     const [showCounter, setShowCounter] = React.useState<boolean>(false);
 
     // calculate the page count
     const total = props.total;
-    const config = props.widget.config;
+    const config = props.config;
     let count = config.count || -1;
     if (count > total) {
         count = total;
@@ -31,7 +32,7 @@ export const Paginator = (props: {
     // page links
     const links: JSX.Element[] = [];
     const goTo = (nextPage: number) => {
-        props.widget.fireChange({ page: nextPage });
+        props.onChange({ page: nextPage });
     };
     if (page > 1) {
         links.push(
@@ -116,7 +117,7 @@ export const Paginator = (props: {
                 style={{ float: "right" }}
                 onChange={(e) => {
                     const c = parseInt(e.target.value, 10);
-                    props.widget.fireChange({ count: c });
+                    props.onChange({ count: c });
                 }}>
                 {options}
             </select>

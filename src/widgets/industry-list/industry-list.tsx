@@ -240,8 +240,11 @@ const Component = (props: { widget: IndustryList }) => {
                 <thead>
                     <tr className="indicator-row">
                         <Header
-                            widget={props.widget}
-                            count={ranking.length}
+                            config={config}
+                            sectorCount={
+                                props.widget.result?.sectors?.length
+                                || props.widget.sectors?.length}
+                            onConfigChange={conf => props.widget.fireChange(conf)}
                             onSearch={term => setSearchTerm(term)} />
 
                         { // optional demand column
@@ -279,13 +282,11 @@ const Component = (props: { widget: IndustryList }) => {
 };
 
 const Header = (props: {
-    widget: IndustryList,
-    count: number,
+    sectorCount: number,
+    config: Config,
     onSearch: (term: string | null) => void,
+    onConfigChange: (config: Config) => void
 }) => {
-
-    const total = props.widget.result?.sectors?.length
-        || props.widget.sectors?.length;
 
     const onSearch = (value: string) => {
         if (!value) {
@@ -299,7 +300,10 @@ const Header = (props: {
     return (
         <th>
             <div>
-                <Paginator total={total} widget={props.widget} />
+                <Paginator
+                    total={props.sectorCount}
+                    config={props.config}
+                    onChange={config => props.onConfigChange(config)} />
                 <input className="matrix-search" type="search" placeholder="Search"
                     onChange={e => onSearch(e.target.value)}>
                 </input>
