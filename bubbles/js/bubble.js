@@ -3,6 +3,7 @@
 document.addEventListener('hashChangeEvent', function (elem) {
   console.log("bubble chart detects hash changed")
   params = loadParams(location.search,location.hash);
+  params = mix(params,param); // Gives priority to params, param includes include path value and page settings.
   if(params.x){dropdown.val(params.x)}
   if(params.y){dropdown2.val(params.y)}
   if(params.z){dropdown3.val(params.z)}
@@ -11,8 +12,9 @@ document.addEventListener('hashChangeEvent', function (elem) {
   
 }, false);
 
-params = loadParams(location.search,location.hash);
-console.log("initial params.naics: "+params.naics)
+//params = loadParams(location.search,location.hash);
+//params = mix(params,param); // Gives priority to params, param includes include path value and page settings.
+//console.log("initial params.naics: " + params.naics)
 
 //getting the listof indicators and populating the x and y dropdown options
 let dropdown = $('#graph-picklist-x');
@@ -293,7 +295,8 @@ $( document ).ready(function() {
     allData = data;
 
     let params = loadParams(location.search,location.hash);
-    console.log("lllllll"+params.naics)
+    params = mix(params,param); // Gives priority to params, param includes include path value and page settings.
+    console.log("lllllll " + params.naics)
     if (params.x && params.y && params.z) {
       $("#graph-picklist-x").val(params.x);
       $("#graph-picklist-y").val(params.y);
@@ -328,6 +331,7 @@ var ordinal = d3.scaleOrdinal() // Becomes scaleOrdinal in v4
 function midFunc(x,y,z,params){
   console.log("ggg")
   if(params.naics){
+    console.log("params.naics " + params.naics)
     naicsList=params.naics.split(",")
     useeioList=[]
     useeiodetail=[]
