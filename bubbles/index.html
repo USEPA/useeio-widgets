@@ -9,7 +9,10 @@
 <script src="js/d3.v5.min.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Use local, but fallback to GitHub if necessary -->
 <script src="../../localsite/js/localsite.js"></script><!-- for UpdateHash -->
+<script>typeof param == "undefined" && document.write(unescape('%3Cscript src="//modelearth.github.io/localsite/js/localsite.js"%3E%3C/script%3E'));console.log("ALERT! localsite folder missing. Please clone into adjacent folder from https://github.com/modelearth/localsite/.")</script>
 
 <link rel="stylesheet" type="text/css" href="../../localsite/css/bootstrap.darkly.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/bubble.css"/>
