@@ -335,7 +335,8 @@ function midFunc(x,y,z,params){
     naicsList=params.naics.split(",")
     useeioList=[]
     useeiodetail=[]
-    d3.csv("/useeio-widgets/bubble/data/Crosswalk_MasterCrosswalk.csv").then( function(consdata) {
+    // TO DO: Add a path root here
+    d3.csv("/input-output/bubbles/data/Crosswalk_MasterCrosswalk.csv").then( function(consdata) {
       var filteredData = consdata.filter(function(d) {
         for(i=0;i<naicsList.length;i++){
             if(d["2012_NAICS_Code"]==naicsList[i]) {
