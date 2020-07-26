@@ -4,6 +4,7 @@ import * as ReactDOM from "react-dom";
 import { Widget, Config } from "../../widget";
 import { Model, Matrix, Sector } from "../../webapi";
 import { ListHeader } from "./list-header";
+import * as strings from "../../util/strings";
 
 export class IOList extends Widget {
 
@@ -26,7 +27,9 @@ export class IOList extends Widget {
             await this.initFields();
         }
         ReactDOM.render(
-            <Component widget={this} />,
+            <Component
+                widget={this}
+                ranking={this.rankIt(config)} />,
             document.querySelector(this.selector));
     }
 
@@ -77,12 +80,65 @@ export class IOList extends Widget {
         }, this.sectorIndex);
     }
 
+    private rankIt(config: Config): [Sector, number][] {
+
+        const indices: number[] = [];
+        if (config.sectors) {
+            for (const code of config.sectors) {
+                const idx = this.sectorIndex[code];
+                if (idx !== undefined) {
+                    indices.push(idx);
+                }
+            }
+        }
+
+        const ranking: [Sector, number][] = this.sectors.map(
+            sector => [sector, 0]);
+        if (indices.length > 0) {
+            for (const i of indices) {
+                const data = this.direction === "inputs"
+                    ? this.A.getCol(i)
+                    : this.A.getRow(i);
+                data.forEach((value, j) => {
+                    ranking[j][1] += value;
+                });
+            }
+        }
+
+        ranking.sort((elem1, elem2) => elem1[1] !== elem2[1]
+            ? elem2[1] - elem1[1]
+            : strings.compare(elem1[0].name, elem2[0].name)
+        );
+
+        return ranking;
+    }
 }
 
-const Component = (props: { widget: IOList }) => {
+const Component = (props: {
+    widget: IOList,
+    ranking: [Sector, number][],
+}) => {
 
+    const ranking = props.ranking;
     const [config, setConfig] = React.useState<Config>({
         ...props.widget.config
+    });
+
+    const rows = ranking.map(elem => {
+        const sector = elem[0];
+        const label = `${sector.code} - ${sector.name}`;
+        return (
+            <tr key={sector.code}>
+                <td title={label}
+                    style={{
+                        borderTop: "lightgray solid 1px",
+                        padding: "5px 0px",
+                        whiteSpace: "nowrap",
+                    }}>
+                    {strings.cut(label, 50)}
+                </td>
+            </tr>
+        );
     });
 
     return (
@@ -92,13 +148,16 @@ const Component = (props: { widget: IOList }) => {
                     <tr className="indicator-row">
                         <ListHeader
                             config={config}
-                            sectorCount={0}
+                            sectorCount={ranking.length}
                             onConfigChange={newConfig => setConfig(
                                 { ...config, ...newConfig })}
                             onSearch={_term => { }}
                         />
                     </tr>
                 </thead>
+                <tbody className="industry-list-body">
+                    {rows}
+                </tbody>
             </table>
         </>
     );
