@@ -43,17 +43,24 @@ h4{
 }
 
 #graph-wrapper-x {
-  margin-top: 18px;
-  text-align: center;
+  margin-top: 10px;
+  margin-left: 80px;
+  margin-bottom: 10px;
+  text-alignX: center;
+  float:left;
 }
 #graph-wrapper-y {
   text-align: center;
-  transform:rotate(-90deg) translateX(-374px) translateY(30px);
+  transform:rotate(-90deg) translateX(-374px) translateY(35px);
   transform-origin: bottom left;
   position: absolute;
 }
 #graph-wrapper-z {
-  text-align: center;
+  margin-top: 10px;
+  margin-left: 80px;
+  margin-bottom: -15px;
+  text-alignX: center;
+  float:left;
 }
 
 #equation{
@@ -77,4 +84,7 @@ div.tooltip {
   border: 0px;
   border-radius: 8px;
   pointer-events: none;
+}
+text {
+  font-size:18px;
 }
