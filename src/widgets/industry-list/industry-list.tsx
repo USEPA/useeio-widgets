@@ -11,7 +11,7 @@ import * as strings from "../../util/strings";
 
 import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
 import { DownloadSection } from "./download";
-import { Paginator } from "./paginator";
+import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
 
 export class IndustryList extends Widget {
@@ -239,7 +239,7 @@ const Component = (props: { widget: IndustryList }) => {
             }}>
                 <thead>
                     <tr className="indicator-row">
-                        <Header
+                        <ListHeader
                             config={config}
                             sectorCount={
                                 props.widget.result?.sectors?.length
@@ -278,37 +278,6 @@ const Component = (props: { widget: IndustryList }) => {
                 </tbody>
             </table>
         </>
-    );
-};
-
-const Header = (props: {
-    sectorCount: number,
-    config: Config,
-    onSearch: (term: string | null) => void,
-    onConfigChange: (config: Config) => void
-}) => {
-
-    const onSearch = (value: string) => {
-        if (!value) {
-            props.onSearch(null);
-            return;
-        }
-        const term = value.trim().toLowerCase();
-        props.onSearch(term.length === 0 ? null : term);
-    };
-
-    return (
-        <th>
-            <div>
-                <Paginator
-                    total={props.sectorCount}
-                    config={props.config}
-                    onChange={config => props.onConfigChange(config)} />
-                <input className="matrix-search" type="search" placeholder="Search"
-                    onChange={e => onSearch(e.target.value)}>
-                </input>
-            </div>
-        </th>
     );
 };
 

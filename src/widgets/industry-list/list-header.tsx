@@ -1,7 +1,42 @@
 import * as React from "react";
 import { Config } from "../../widget";
 
-export const Paginator = (props: {
+/**
+ * The ListHeader is the top left header cell of an industry list. It contains
+ * a paginator and a search field.
+ */
+export const ListHeader = (props: {
+    sectorCount: number,
+    config: Config,
+    onSearch: (term: string | null) => void,
+    onConfigChange: (config: Config) => void
+}) => {
+
+    const onSearch = (value: string) => {
+        if (!value) {
+            props.onSearch(null);
+            return;
+        }
+        const term = value.trim().toLowerCase();
+        props.onSearch(term.length === 0 ? null : term);
+    };
+
+    return (
+        <th>
+            <div>
+                <Paginator
+                    total={props.sectorCount}
+                    config={props.config}
+                    onChange={config => props.onConfigChange(config)} />
+                <input className="matrix-search" type="search" placeholder="Search"
+                    onChange={e => onSearch(e.target.value)}>
+                </input>
+            </div>
+        </th>
+    );
+};
+
+const Paginator = (props: {
     total: number,
     config: Config,
     onChange: (config: Config) => void,
