@@ -9,6 +9,7 @@ import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
+import { IOList } from "./widgets/industry-list/io-list";
 
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
@@ -30,6 +31,18 @@ export function impactChart(config: ImpactChartConfig): ImpactChart {
 
 export function industryList(args: WidgetArgs): IndustryList {
     const widget = new IndustryList(args.model, args.selector);
+    widget.scope = args.scope;
+    return widget;
+}
+
+export function inputList(args: WidgetArgs): IOList {
+    const widget = new IOList(args.model, "inputs", args.selector);
+    widget.scope = args.scope;
+    return widget;
+}
+
+export function outputList(args: WidgetArgs): IOList {
+    const widget = new IOList(args.model, "outputs", args.selector);
     widget.scope = args.scope;
     return widget;
 }
