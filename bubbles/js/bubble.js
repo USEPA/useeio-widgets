@@ -207,7 +207,8 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
-  document.getElementById("title1").innerHTML = "Statewide Resource Usage " + x+ ", " + y + " and " + z;
+  document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
+  document.getElementById("impactText").innerHTML = z + "<br>" + y + "<br>" + x;
 }
 
 
@@ -242,7 +243,7 @@ function randomFloatBetween(minValue,maxValue,precision){
     return parseFloat(Math.min(minValue + (Math.random() * (maxValue - minValue)),maxValue).toFixed(precision));
 }
 
-//"draw" the line with many points respecting the calculated equation
+//"draw" the line with many points respecting the calculated bubble-graph-equation
 function calculateLineData(leastSquares,xRange,iterations){
   var returnData = [];
   for(var i=0; i<iterations; i++){

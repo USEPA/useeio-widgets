@@ -9,7 +9,7 @@ body {
 .bubble-graph select {
   max-width:250px;
 }
-#title1 {
+#bubble-graph-title {
   font-size: 16px;
   text-align: left;
   border-bottomX: 2px solid black;
@@ -61,7 +61,7 @@ h4{
   floatX:left;
 }
 
-#equation{
+#bubble-graph-equation{
   position: absolute;
   top:20px;
   left:60%;
