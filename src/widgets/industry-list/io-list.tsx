@@ -105,6 +105,15 @@ export class IOList extends Widget {
             }
         }
 
+        // normalize the ranking value to a range [0..1]
+        const max = ranking.reduce(
+            (m, elem) => Math.max(Math.abs(m), elem[1]), 0);
+        if (max > 0) {
+            for (const elem of ranking) {
+                elem[1] /= max;
+            }
+        }
+
         ranking.sort((elem1, elem2) => elem1[1] !== elem2[1]
             ? elem2[1] - elem1[1]
             : strings.compare(elem1[0].name, elem2[0].name)
@@ -137,6 +146,14 @@ const Component = (props: {
                     }}>
                     {strings.cut(label, 50)}
                 </td>
+                <td>
+                <svg height="15" width="50"
+                        style={{ float: "left", clear: "both" }}>
+                        <rect x="0" y="2.5"
+                            height="10" fill="#90a4ae"
+                            width={50 * (0.05 + 0.95 * elem[1])} />
+                    </svg>
+                </td>
             </tr>
         );
     });
@@ -153,6 +170,7 @@ const Component = (props: {
                                 { ...config, ...newConfig })}
                             onSearch={_term => { }}
                         />
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody className="industry-list-body">
