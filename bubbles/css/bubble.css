@@ -46,8 +46,8 @@ h4{
   margin-top: 10px;
   margin-left: 80px;
   margin-bottom: 10px;
-  text-alignX: center;
-  float:left;
+  text-align: center;
+  floatX:left;
 }
 #graph-wrapper-y {
   text-align: center;
@@ -59,8 +59,8 @@ h4{
   margin-top: 10px;
   margin-left: 80px;
   margin-bottom: -15px;
-  text-alignX: center;
-  float:left;
+  text-align: center;
+  floatX:left;
 }
 
 #equation{
@@ -87,4 +87,8 @@ div.tooltip {
 }
 text {
   font-size:18px;
+}
+.text-space-horz {
+  display: inline-block;
+  width:120px;
 }
