@@ -5,10 +5,10 @@ import { Widget, Config } from "../../widget";
 import { Model, Matrix, Sector } from "../../webapi";
 import { ListHeader } from "./list-header";
 import * as strings from "../../util/strings";
+import * as paging from "../../util/paging";
 
 export class IOList extends Widget {
 
-    config: Config;
     A: Matrix;
     sectors: Sector[];
     sectorIndex: { [code: string]: number };
@@ -22,13 +22,12 @@ export class IOList extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        this.config = config;
         if (!this.A) {
             await this.initFields();
         }
         ReactDOM.render(
             <Component
-                widget={this}
+                config={config}
                 ranking={this.rankIt(config)} />,
             document.querySelector(this.selector));
     }
@@ -124,14 +123,21 @@ export class IOList extends Widget {
 }
 
 const Component = (props: {
-    widget: IOList,
+    config: Config,
     ranking: [Sector, number][],
 }) => {
 
-    const ranking = props.ranking;
     const [config, setConfig] = React.useState<Config>({
-        ...props.widget.config
+        ...props.config
     });
+
+    const count = config.count ?
+        config.count
+        : -1;
+    const page = config.page ?
+        config.page
+        : 1;
+    const ranking = paging.select(props.ranking, { page, count });
 
     const rows = ranking.map(elem => {
         const sector = elem[0];
@@ -147,7 +153,7 @@ const Component = (props: {
                     {strings.cut(label, 50)}
                 </td>
                 <td>
-                <svg height="15" width="50"
+                    <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
                         <rect x="0" y="2.5"
                             height="10" fill="#90a4ae"
@@ -165,7 +171,7 @@ const Component = (props: {
                     <tr className="indicator-row">
                         <ListHeader
                             config={config}
-                            sectorCount={ranking.length}
+                            sectorCount={props.ranking.length}
                             onConfigChange={newConfig => setConfig(
                                 { ...config, ...newConfig })}
                             onSearch={_term => { }}
