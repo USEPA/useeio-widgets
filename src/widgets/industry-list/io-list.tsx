@@ -128,7 +128,8 @@ const Component = (props: {
 }) => {
 
     const [config, setConfig] = React.useState<Config>({
-        ...props.config
+        page: 1,
+        count: props.config.count,
     });
 
     const count = config.count ?
