@@ -63,11 +63,12 @@
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #862b23;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #862b23;
+  /* #2196F3 */
 }
 
 input:checked + .slider:before {
@@ -97,16 +98,6 @@ input:checked + .slider:before {
         <text id="equation"></text>
       </div>
 
-      <div style="clear:both; float:right">
-        <div style="font-size:16px; float:left; padding:6px 8px 0 0">
-        Selected Region Only
-        </div>
-        <label class="switch">
-          <input type="checkbox" checked>
-          <span class="slider round"></span>
-        </label>
-      </div>
-
       <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
 
         <div id="graph-wrapper-z">
@@ -119,7 +110,7 @@ input:checked + .slider:before {
 
           
           <div id="graph-wrapper-y">
-            <text>Y-Axis</text>
+            <text class="text-space-vert">Y-Axis</text>
             <select id="graph-picklist-y" class="graph-picklist">
             </select>
           </div> 
@@ -134,6 +125,21 @@ input:checked + .slider:before {
 
       </div>
 
+
+      <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
+      <div>
+        
+        <label style="float:left; margin-right:6px" class="switch">
+          <input type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+        <div class="switch-text">
+          Top industries within region
+        </div>
+
+      </div>
+
+
   </div>
 
     <script>
@@ -142,7 +148,7 @@ input:checked + .slider:before {
     <script type="text/javascript" src="js/bubble.js"></script>
 
 
-    <a href="https://bootswatch.com/darkly/" target="darkly">Darkly Theme</a>
+
 </div>
 <br><br>
 

@@ -44,7 +44,6 @@ h4{
 
 #graph-wrapper-x {
   margin-top: 10px;
-  margin-left: 80px;
   margin-bottom: 10px;
   text-align: center;
   floatX:left;
@@ -57,7 +56,6 @@ h4{
 }
 #graph-wrapper-z {
   margin-top: 10px;
-  margin-left: 80px;
   margin-bottom: -15px;
   text-align: center;
   floatX:left;
@@ -88,7 +86,25 @@ div.tooltip {
 text {
   font-size:18px;
 }
+.text-space-vert {
+  width:80px;
+  display: inline-block;
+}
 .text-space-horz {
+  margin-left: 30px;
   display: inline-block;
   width:120px;
+}
+.right-then-left {
+  clear:both;
+  float:right;
+}
+.switch-text {
+  font-size:14px;
+  float:left;
+  padding:6px 8px 0 0;
+  color: #aaa;
+}
+@media (max-width: 800px) {
+
 }
