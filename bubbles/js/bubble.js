@@ -207,7 +207,7 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
-  document.getElementById("title1").innerHTML = x+ ", "+y+" and "+z;
+  document.getElementById("title1").innerHTML = "Statewide Resource Usage " + x+ ", " + y + " and " + z;
 }
 
 
