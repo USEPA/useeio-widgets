@@ -289,7 +289,7 @@ export class Matrix {
  * locations. Often we want to aggregate these multi-regional sectors. This
  * type contains the aggregated sectors and an index that maps the sector
  * codes to its new position in the aggregated version which can be then used
- * to aggregate corresponding matrix results.
+ * to aggregate corresponding matrices and results.
  */
 type SectorAggregation = {
     index: { [code: string]: number };

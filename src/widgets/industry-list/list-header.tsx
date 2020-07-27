@@ -1,16 +1,52 @@
 import * as React from "react";
-import { IndustryList } from "./industry-list";
+import { Config } from "../../widget";
 
-export const Paginator = (props: {
+/**
+ * The ListHeader is the top left header cell of an industry list. It contains
+ * a paginator and a search field.
+ */
+export const ListHeader = (props: {
+    sectorCount: number,
+    config: Config,
+    onSearch: (term: string | null) => void,
+    onConfigChange: (config: Config) => void
+}) => {
+
+    const onSearch = (value: string) => {
+        if (!value) {
+            props.onSearch(null);
+            return;
+        }
+        const term = value.trim().toLowerCase();
+        props.onSearch(term.length === 0 ? null : term);
+    };
+
+    return (
+        <th>
+            <div>
+                <Paginator
+                    total={props.sectorCount}
+                    config={props.config}
+                    onChange={config => props.onConfigChange(config)} />
+                <input className="matrix-search" type="search" placeholder="Search"
+                    onChange={e => onSearch(e.target.value)}>
+                </input>
+            </div>
+        </th>
+    );
+};
+
+const Paginator = (props: {
     total: number,
-    widget: IndustryList,
+    config: Config,
+    onChange: (config: Config) => void,
 }) => {
 
     const [showCounter, setShowCounter] = React.useState<boolean>(false);
 
     // calculate the page count
     const total = props.total;
-    const config = props.widget.config;
+    const config = props.config;
     let count = config.count || -1;
     if (count > total) {
         count = total;
@@ -31,7 +67,7 @@ export const Paginator = (props: {
     // page links
     const links: JSX.Element[] = [];
     const goTo = (nextPage: number) => {
-        props.widget.fireChange({ page: nextPage });
+        props.onChange({ page: nextPage });
     };
     if (page > 1) {
         links.push(
@@ -116,7 +152,7 @@ export const Paginator = (props: {
                 style={{ float: "right" }}
                 onChange={(e) => {
                     const c = parseInt(e.target.value, 10);
-                    props.widget.fireChange({ count: c });
+                    props.onChange({ count: c, page: 1 });
                 }}>
                 {options}
             </select>
