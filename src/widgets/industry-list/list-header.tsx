@@ -152,7 +152,7 @@ const Paginator = (props: {
                 style={{ float: "right" }}
                 onChange={(e) => {
                     const c = parseInt(e.target.value, 10);
-                    props.onChange({ count: c });
+                    props.onChange({ count: c, page: 1 });
                 }}>
                 {options}
             </select>

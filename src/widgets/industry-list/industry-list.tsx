@@ -8,6 +8,7 @@ import { MatrixCombo } from "../matrix-selector";
 import { ones } from "../../calc/calc";
 import * as naics from "../../naics";
 import * as strings from "../../util/strings";
+import * as paging from "../../util/paging";
 
 import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
 import { DownloadSection } from "./download";
@@ -26,8 +27,7 @@ export class IndustryList extends Widget {
     indicators: Indicator[];
 
     /**
-     * The industry sectors of the model. This array is only initialized and
-     * thus should be only used when this heatmap has no results.
+     * Contains the (sorted) sectors that should be displayed in this list.
      */
     sectors: Sector[];
 
@@ -49,12 +49,12 @@ export class IndustryList extends Widget {
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(mutation => {
                     if (mutation.attributeName === "data-naics") {
-                        const naicsAttr = parent.getAttribute("data-naics");
+                        this._naicsAttr = parent.getAttribute("data-naics");
                         const config: Config = this.config
                             ? { ... this.config }
                             : {};
-                        config.naics = naicsAttr
-                            ? naicsAttr.split(",").map(code => code.trim())
+                        config.naics = this._naicsAttr
+                            ? this._naicsAttr.split(",").map(code => code.trim())
                             : undefined;
                         this.handleUpdate(config);
                     }
@@ -70,22 +70,44 @@ export class IndustryList extends Widget {
 
         // run a new calculation if necessary
         const needsCalc = this.needsCalculation(this.config, config);
-
-        this.config = { ...config };
-        if (!this.config.naics && this._naicsAttr) {
-            this.config.naics = this._naicsAttr
-                .split(",")
-                .map(code => code.trim());
-        }
-
         if (needsCalc) {
             this.result = await calculate(this.model, config);
         }
-        if (!this.result) {
-            // initialize the sector array
+        this.config = config;
+
+        // select and sort the sectors that should be displayed
+        // if a list of NAICS codes is given we filter the sectors
+        // with matching codes; the sectors should be in the order
+        // of the corresponding NAICS codes then.
+        if (this.result) {
+            this.sectors = this.result.sectors;
+        } else {
             const { sectors } = await this.model.singleRegionSectors();
             this.sectors = sectors;
         }
+        const _naics = config.naics
+            ? config.naics
+            : this._naicsAttr
+                ? this._naicsAttr.split(",").map(code => code.trim())
+                : null;
+        if (!_naics) {
+            this.sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
+        } else {
+            const dups: { [code: string]: boolean } = {};
+            const codes = _naics.map(ncode => naics.toBEA(ncode))
+                .filter(code => !code || dups[code]
+                    ? false
+                    : dups[code] = true
+                );
+            const sectorIdx: { [code: string]: Sector } = {};
+            this.sectors.reduce((idx, sector) => {
+                idx[sector.code] = sector;
+                return idx;
+            }, sectorIdx);
+            this.sectors = codes.map(code => sectorIdx[code])
+                .filter(sector => sector);
+        }
+
 
         // load the matrix A for the display of sector inputs or outputs
         // if this is required
@@ -199,18 +221,9 @@ const Component = (props: { widget: IndustryList }) => {
             : rank2 - rank1);
 
     // select the page
-    const count = config.count;
-    if (count && count >= 0) {
-        const page = config.page;
-        if (page <= 1) {
-            ranking = ranking.slice(0, count);
-        } else {
-            const offset = (page - 1) * count;
-            ranking = offset < ranking.length
-                ? ranking.slice(offset, offset + count)
-                : ranking.slice(0, count);
-        }
-    }
+    const count = config.count ? config.count : -1;
+    const page = config.page ? config.page : 1;
+    ranking = paging.select(ranking, { count, page });
 
     const rows: JSX.Element[] = ranking.map(([sector, rank]) =>
         <Row key={sector.code}
@@ -299,15 +312,6 @@ const Row = (props: RowProps) => {
         // the code of the sector is in the sector list of
         // the widget configuration
         selected = config.sectors.indexOf(sector.code) >= 0;
-    } else if (config.naics) {
-        // there is no sector list in the configuration but
-        // maybe a matching NAICS code
-        for (const code of config.naics) {
-            if (naics.toBEA(code) === sector.code) {
-                selected = true;
-                break;
-            }
-        }
     }
 
     // the selection handler of the sector
@@ -315,28 +319,15 @@ const Row = (props: RowProps) => {
         let codes = config.sectors
             ? config.sectors.slice(0)
             : null;
-        if (!codes && !config.naics) {
+        if (!codes) {
             codes = [sector.code];
-        } else if (codes) {
+        } else {
             // there is a sector configuration
             if (selected) {
                 const idx = codes.indexOf(sector.code);
                 codes.splice(idx, 1);
             } else {
                 codes.push(sector.code);
-            }
-        } else if (config.naics) {
-            // create a sector configuration from NAICS codes
-            codes = selected ? [] : [sector.code];
-            for (const naicsCode of config.naics) {
-                const code = naics.toBEA(naicsCode);
-                if (!code) {
-                    continue;
-                }
-                if (selected && code === sector.code) {
-                    continue;
-                }
-                codes.push(code);
             }
         }
         props.widget.fireChange({ sectors: codes });
