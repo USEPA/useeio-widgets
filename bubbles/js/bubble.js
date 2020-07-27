@@ -7,7 +7,12 @@ document.addEventListener('hashChangeEvent', function (elem) {
   if(params.x){dropdown.val(params.x)}
   if(params.y){dropdown2.val(params.y)}
   if(params.z){dropdown3.val(params.z)}
-  midFunc(params.x,params.y,params.z,params);
+  if(document.getElementById("mySelect").checked){
+      midFunc(params.x,params.y,params.z,params,"region");
+  }else{
+      midFunc(params.x,params.y,params.z,params,"all");
+  }
+
   console.log("params.naics: "+params.naics)
   
 }, false);
@@ -48,6 +53,8 @@ $.getJSON(url, function (data) {
     dropdown3.append($('<option></option>').attr('value', entry.code).text(entry.name));
   })
 });
+
+
 
 
 
@@ -326,10 +333,32 @@ $( document ).ready(function() {
       $("#graph-picklist-y").val('WATR');
       $("#graph-picklist-z").val('LAND');
     }
+    document.getElementById("mySelect").onchange = function() {myFunction()};
+function myFunction() {
+  if(document.getElementById("mySelect").checked){
+    midFunc(d3.select("#graph-picklist-x").node().value,
+        d3.select("#graph-picklist-y").node().value,
+        d3.select("#graph-picklist-z").node().value,
+        params,"region")
+  }else{
+    midFunc(d3.select("#graph-picklist-x").node().value,
+        d3.select("#graph-picklist-y").node().value,
+        d3.select("#graph-picklist-z").node().value,
+        params,"all")
+  }
+  }
+    if(document.getElementById("mySelect").checked){
+    midFunc(d3.select("#graph-picklist-x").node().value,
+        d3.select("#graph-picklist-y").node().value,
+        d3.select("#graph-picklist-z").node().value,
+        params,"region");
+    }else{
       midFunc(d3.select("#graph-picklist-x").node().value,
         d3.select("#graph-picklist-y").node().value,
         d3.select("#graph-picklist-z").node().value,
-        params);
+        params,"all");
+    }
+      
 
 
       d3.selectAll(".graph-picklist").on("change",function(){
@@ -348,7 +377,7 @@ var ordinal = d3.scaleOrdinal() // Becomes scaleOrdinal in v4
   .domain(ordinalDomain)
   .range(["blue","#7479BC","#BDE7AE","#ECF809","orange","magenta"]); // Not in use here, from wind/js/regression.js
 
-function midFunc(x,y,z,params){
+function midFunc(x,y,z,params,boundry){
   console.log("ggg")
   if(params.naics){
     console.log("params.naics " + params.naics)
@@ -367,14 +396,14 @@ function midFunc(x,y,z,params){
         })
       console.log("ddddddd"+useeioList)
       console.log("ddddddd"+useeiodetail)
-      updateChart(x,y,z,useeioList)
+      updateChart(x,y,z,useeioList,boundry)
     })
   
-  }else{updateChart(x,y,z,[])}
+  }else{updateChart(x,y,z,[],boundry)}
 
 }
 
-function updateChart(x,y,z,useeioList){
+function updateChart(x,y,z,useeioList,boundry){
 console.log("hhh")
   console.log("updateChart - x:"+ x + " y:" + y + " z:" + z);
   if (!(x && y && z)) { // Same as above
@@ -424,13 +453,18 @@ console.log("hhh")
       return zScale(d.z)+2
     })
     .style('fill', function (d) { 
+      if(boundry=="region"){
         if(useeioList.length>0){
             if (useeioList.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-          }else{return "#303030";}
+        }else{return "#303030";}
+      }else{
+              return "url(#gradient)";
+
+      }
           })
     .attr("stroke-width", 1)
     .style("stroke","black")
@@ -443,13 +477,18 @@ console.log("hhh")
     selectedCircles.enter()
       .append("circle")
       .style('fill', function (d) { 
-          if(useeioList.length>0){
+      if(boundry=="region"){
+        if(useeioList.length>0){
             if (useeioList.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-            }else{return "#303030";}
+        }else{return "#303030";}
+      }else{
+              return "url(#gradient)";
+
+      }
           })
         .attr("stroke-width", 1)
         .attr("stroke-opacity", 0.7)
