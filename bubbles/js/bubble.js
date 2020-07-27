@@ -1,5 +1,5 @@
 // `hashChangeEvent` event reside in multiple widgets. 
-// Called by goHash within localsite.js
+// Called by goHash +-++localsite.js
 document.addEventListener('hashChangeEvent', function (elem) {
   console.log("bubble chart detects hash changed")
   params = loadParams(location.search,location.hash);
@@ -48,6 +48,8 @@ $.getJSON(url, function (data) {
     dropdown3.append($('<option></option>').attr('value', entry.code).text(entry.name));
   })
 });
+
+
 
 
 var parentId = "#graph-wrapper";
@@ -178,6 +180,23 @@ svg.append("path")
     .style("stroke","steelblue")
     .style("fill","none");
 
+var gradient = svg.append("svg:defs")
+  .append("svg:radialGradient")
+    .attr("id", "gradient")
+    .attr("cx", "50%")    //The x-center of the gradient
+    .attr("cy", "50%")    //The y-center of the gradient
+    .attr("r", "50%")  //The radius of the gradient
+    .attr("spreadMethod", "pad");
+
+gradient.append("svg:stop")
+    .attr("offset", "0%")
+    .attr("stop-color", "#F6BDC0")
+    .attr("stop-opacity", 1);
+
+gradient.append("svg:stop")
+    .attr("offset", "100%")
+    .attr("stop-color", "red")
+    .attr("stop-opacity", 1);
 
 
 // For rollover popup
@@ -407,7 +426,7 @@ console.log("hhh")
     .style('fill', function (d) { 
         if(useeioList.length>0){
             if (useeioList.includes( d.industry_code) ) {
-              return "red";
+              return "url(#gradient)";
             } else {
               return "#303030";
             }
@@ -426,7 +445,7 @@ console.log("hhh")
       .style('fill', function (d) { 
           if(useeioList.length>0){
             if (useeioList.includes( d.industry_code) ) {
-              return "red";
+              return "url(#gradient)";
             } else {
               return "#303030";
             }
