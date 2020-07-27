@@ -108,7 +108,6 @@ export class IndustryList extends Widget {
                 .filter(sector => sector);
         }
 
-
         // load the matrix A for the display of sector inputs or outputs
         // if this is required
         if (!this.matrixA &&
@@ -207,18 +206,34 @@ const Component = (props: { widget: IndustryList }) => {
     const indicators = props.widget.indicators;
     const result = props.widget.result;
 
-    // create the sector ranking
-    let ranking: [Sector, number][] = result
-        ? result.getRanking(sorter ? [sorter] : indicators)
-        : props.widget.sectors.map(s => [s, 0]);
+    let sectors = props.widget.sectors;
     if (searchTerm) {
-        ranking = ranking.filter(
-            ([s,]) => strings.search(s.name, searchTerm) >= 0);
+        sectors = sectors.filter(
+            s => strings.search(s.name, searchTerm) >= 0);
     }
-    ranking.sort(([s1, rank1], [s2, rank2]) =>
-        rank1 === rank2
-            ? strings.compare(s1.name, s2.name)
-            : rank2 - rank1);
+
+    // create the sector ranking, if there is a result
+    let ranking: [Sector, number][];
+    if (!result) {
+        ranking = sectors.map(s => [s, 0]);
+    } else {
+        const ranks: { [code: string]: number } = {};
+        result.getRanking(sorter ? [sorter] : indicators)
+            .reduce((r, rank) => {
+                const sector = rank[0];
+                const value = rank[1];
+                r[sector.code] = value;
+                return r;
+            }, ranks);
+        ranking = sectors.map(sector => {
+            const value = ranks[sector.code];
+            return [
+                sector,
+                value ? value : 0,
+            ];
+        });
+        ranking.sort(([_s1, rank1], [_s2, rank2]) => rank2 - rank1);
+    }
 
     // select the page
     const count = config.count ? config.count : -1;
@@ -254,9 +269,7 @@ const Component = (props: { widget: IndustryList }) => {
                     <tr className="indicator-row">
                         <ListHeader
                             config={config}
-                            sectorCount={
-                                props.widget.result?.sectors?.length
-                                || props.widget.sectors?.length}
+                            sectorCount={sectors.length}
                             onConfigChange={conf => props.widget.fireChange(conf)}
                             onSearch={term => setSearchTerm(term)} />
 
