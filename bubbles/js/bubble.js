@@ -1,6 +1,6 @@
 // `hashChangeEvent` event reside in multiple widgets. 
 // Called by goHash +-++localsite.js
-let dataObject={};
+let dataObject1={};
 document.addEventListener('hashChangeEvent', function (elem) {
 
 
@@ -354,19 +354,19 @@ let geo_list={}
 counter=0
 function readyfunc(){
   
-  dataObject.stateshown=13;
+  dataObject1.stateshown=13;
   let params = loadParams(location.search,location.hash);
   if(params["geo"]){
       geo=params["geo"]
       if (geo.includes(",")){
           geos=geo.split(",")
-          dataObject.stateshown=(geos[0].split("US")[1]).slice(0,2)
+          dataObject1.stateshown=(geos[0].split("US")[1]).slice(0,2)
       }else{
-          dataObject.stateshown=(geo.split("US")[1]).slice(0,2)
+          dataObject1.stateshown=(geo.split("US")[1]).slice(0,2)
       }
 
   }
-  if(dataObject.stateshown=='13'){
+  if(dataObject1.stateshown=='13'){
     model='_GA'
   }else{
     model=''
