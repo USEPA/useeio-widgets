@@ -305,7 +305,11 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
-  document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
+  if(dataObject1.stateshown==13){
+    document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
+  }else{
+    document.getElementById("bubble-graph-title").innerHTML = "US Industries"
+  }
   document.getElementById("impactText").innerHTML = z + "<br>" + y + "<br>" + x;
 }
 
