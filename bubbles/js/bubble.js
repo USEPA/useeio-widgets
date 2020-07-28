@@ -20,45 +20,54 @@ document.addEventListener('hashChangeEvent', function (elem) {
       if(geo_list[1]){
         lastgeo=geo_list[1]
         currgeo=geo_list[0]
-        if (lastgeo.includes(",")){
-            lastgeo=lastgeo.split(",")
-            lastgeo=(lastgeo[0].split("US")[1]).slice(0,2)
-        }else{
-            lastgeo=(lastgeo.split("US")[1]).slice(0,2)
+        if(typeof lastgeo!='undefined'){
+          if (lastgeo.includes(",")){
+              lastgeo=lastgeo.split(",")
+              lastgeo=(lastgeo[0].split("US")[1]).slice(0,2)
+          }else{
+              lastgeo=(lastgeo.split("US")[1]).slice(0,2)
+          }
         }
-        if (currgeo.includes(",")){
-            currgeo=currgeo.split(",")
-            currgeo=(currgeo[0].split("US")[1]).slice(0,2)
-        }else{
-            currgeo=(currgeo.split("US")[1]).slice(0,2)
+        if(typeof currgeo!='undefined'){
+          if (currgeo.includes(",")){
+              currgeo=currgeo.split(",")
+              currgeo=(currgeo[0].split("US")[1]).slice(0,2)
+          }else{
+              currgeo=(currgeo.split("US")[1]).slice(0,2)
+          }
         }
       }else{
         lastgeo=[]
         currgeo=geo_list[0]
-
-        if (currgeo.includes(",")){
-            currgeo=currgeo.split(",")
-            currgeo=(currgeo[0].split("US")[1]).slice(0,2)
-        }else{
-            currgeo=(currgeo.split("US")[1]).slice(0,2)
+        if(typeof currgeo!='undefined'){
+          if (currgeo.includes(",")){
+              currgeo=currgeo.split(",")
+              currgeo=(currgeo[0].split("US")[1]).slice(0,2)
+          }else{
+              currgeo=(currgeo.split("US")[1]).slice(0,2)
+          }
         }
       }
     }else{
     geo_list[1]=params.geo
     lastgeo=geo_list[0]
     currgeo=geo_list[1]
-    if (lastgeo.includes(",")){
-            lastgeo=lastgeo.split(",")
-            lastgeo=(lastgeo[0].split("US")[1]).slice(0,2)
-        }else{
-            lastgeo=(lastgeo.split("US")[1]).slice(0,2)
-        }
-        if (currgeo.includes(",")){
-            currgeo=currgeo.split(",")
-            currgeo=(currgeo[0].split("US")[1]).slice(0,2)
-        }else{
-            currgeo=(currgeo.split("US")[1]).slice(0,2)
-        }
+    if(typeof lastgeo!='undefined'){
+      if (lastgeo.includes(",")){
+          lastgeo=lastgeo.split(",")
+          lastgeo=(lastgeo[0].split("US")[1]).slice(0,2)
+      }else{
+          lastgeo=(lastgeo.split("US")[1]).slice(0,2)
+      }
+    }
+    if(typeof currgeo!='undefined'){
+      if (currgeo.includes(",")){
+          currgeo=currgeo.split(",")
+          currgeo=(currgeo[0].split("US")[1]).slice(0,2)
+      }else{
+          currgeo=(currgeo.split("US")[1]).slice(0,2)
+      }
+    }
     }
 
     
