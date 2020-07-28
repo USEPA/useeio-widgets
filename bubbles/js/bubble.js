@@ -1,12 +1,74 @@
 // `hashChangeEvent` event reside in multiple widgets. 
 // Called by goHash +-++localsite.js
+let dataObject={};
 document.addEventListener('hashChangeEvent', function (elem) {
+
+
+  
   console.log("bubble chart detects hash changed")
   params = loadParams(location.search,location.hash);
   params = mix(params,param); // Gives priority to params, param includes include path value and page settings.
   if(params.x){dropdown.val(params.x)}
   if(params.y){dropdown2.val(params.y)}
   if(params.z){dropdown3.val(params.z)}
+  //readyfunc();
+    if(counter==2){
+        counter=0
+    }
+    if(counter==0){  
+      geo_list[0]=params.geo
+      if(geo_list[1]){
+        lastgeo=geo_list[1]
+        currgeo=geo_list[0]
+        if (lastgeo.includes(",")){
+            lastgeo=lastgeo.split(",")
+            lastgeo=(lastgeo[0].split("US")[1]).slice(0,2)
+        }else{
+            lastgeo=(lastgeo.split("US")[1]).slice(0,2)
+        }
+        if (currgeo.includes(",")){
+            currgeo=currgeo.split(",")
+            currgeo=(currgeo[0].split("US")[1]).slice(0,2)
+        }else{
+            currgeo=(currgeo.split("US")[1]).slice(0,2)
+        }
+      }else{
+        lastgeo=[]
+        currgeo=geo_list[0]
+
+        if (currgeo.includes(",")){
+            currgeo=currgeo.split(",")
+            currgeo=(currgeo[0].split("US")[1]).slice(0,2)
+        }else{
+            currgeo=(currgeo.split("US")[1]).slice(0,2)
+        }
+      }
+    }else{
+    geo_list[1]=params.geo
+    lastgeo=geo_list[0]
+    currgeo=geo_list[1]
+    if (lastgeo.includes(",")){
+            lastgeo=lastgeo.split(",")
+            lastgeo=(lastgeo[0].split("US")[1]).slice(0,2)
+        }else{
+            lastgeo=(lastgeo.split("US")[1]).slice(0,2)
+        }
+        if (currgeo.includes(",")){
+            currgeo=currgeo.split(",")
+            currgeo=(currgeo[0].split("US")[1]).slice(0,2)
+        }else{
+            currgeo=(currgeo.split("US")[1]).slice(0,2)
+        }
+    }
+
+    
+    if(lastgeo!=currgeo){
+      readyfunc();
+    }
+    counter=counter+1
+
+
+
   if(document.getElementById("mySelect").checked){
       midFunc(params.x,params.y,params.z,params,"region");
   }else{
@@ -206,6 +268,7 @@ gradient.append("svg:stop")
     .attr("stop-opacity", 1);
 
 
+
 // For rollover popup
 var div = d3.select(parentId).append("div")
   .attr("class", "tooltip")
@@ -286,9 +349,31 @@ function calculateLineData(leastSquares,xRange,iterations){
 
 
 var allData
-$( document ).ready(function() {
+$( document ).ready(readyfunc());
+let geo_list={}
+counter=0
+function readyfunc(){
+  
+  dataObject.stateshown=13;
+  let params = loadParams(location.search,location.hash);
+  if(params["geo"]){
+      geo=params["geo"]
+      if (geo.includes(",")){
+          geos=geo.split(",")
+          dataObject.stateshown=(geos[0].split("US")[1]).slice(0,2)
+      }else{
+          dataObject.stateshown=(geo.split("US")[1]).slice(0,2)
+      }
 
-  d3.csv("data/indicators_sectors.csv").then(function(data){
+  }
+  if(dataObject.stateshown=='13'){
+    model='_GA'
+  }else{
+    model=''
+  }
+  console.log("bbbbb"+model)
+  d3.csv("data/indicators_sectors"+model+".csv").then(function(data){
+
 
     data.forEach(function(d) {
 
@@ -368,7 +453,7 @@ function myFunction() {
         //  d3.select("#graph-picklist-z").node().value);
       }) 
   });
-});
+};
 
 
 
