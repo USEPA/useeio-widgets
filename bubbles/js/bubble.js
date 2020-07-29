@@ -152,7 +152,7 @@ var zScale = d3.scalePow()
 
 
 var myTickFormat = function (d) {//Logic to reduce big numbers
-
+  var f = d3.format(".1f");
   var limits = [1000000000, 1000000, 1000];
   var shorteners = ['B','M','K'];
   if(d>=1000){
@@ -161,53 +161,15 @@ var myTickFormat = function (d) {//Logic to reduce big numbers
         d=(d/limits[i]).toFixed(2) + shorteners[i];
       }
     }
-  }else if(d>=0.00000001 && d<1000){
-    d=parseFloat(d3.format(",.8f")(d).toString())
+  }else if(d>=0.000001 && d<1000){
+    d=parseFloat((d).toFixed(7).toString())
   }else{
-    if(d>=0.000000001 && d<0.00000001){
-      d=(d*1000000000).toFixed(1)+"*10^-9"
-    }else if(d>=0.0000000001 && d<0.000000001){
-      d=(d*10000000000).toFixed(1)+"*10^-10"
-    }else if(d>=0.00000000001 && d<0.0000000001){
-      d=(d*100000000000).toFixed(1)+"*10^-11"
-    }else if(d>=0.000000000001 && d<0.00000000001){
-      d=(d*1000000000000).toFixed(1)+"*10^-12"
-    }else if(d>=0.0000000000001 && d<0.000000000001){
-      d=(d*10000000000000).toFixed(1)+"*10^-13"
-    }else if(d>=Math.pow(10,-14) && d<Math.pow(10,-13)){
-      d=(d*Math.pow(10,14)).toFixed(1)+"*10^-14"
-    }else if(d>=Math.pow(10,-15) && d<Math.pow(10,-14)){
-      d=(d*Math.pow(10,15)).toFixed(1)+"*10^-15"
+    for(j=-6;j>=-24;j--){
+      if(d>=Math.pow(10,j-1) && d<Math.pow(10,j)){
+        d=(d*Math.pow(10,1-j)).toFixed(1)+"*10^-"+(1-j)
+      }
     }
-    else if(d>=Math.pow(10,-16) && d<Math.pow(10,-15)){
-      d=(d*Math.pow(10,16)).toFixed(1)+"*10^-16"
-    }
-    else if(d>=Math.pow(10,-17) && d<Math.pow(10,-16)){
-      d=(d*Math.pow(10,14)).toFixed(1)+"*10^-17"
-    }
-    else if(d>=Math.pow(10,-18) && d<Math.pow(10,-17)){
-      d=(d*Math.pow(10,14)).toFixed(1)+"*10^-18"
-    }
-    else if(d>=Math.pow(10,-19) && d<Math.pow(10,-18)){
-      d=(d*Math.pow(10,19)).toFixed(1)+"*10^-19"
-    }
-    else if(d>=Math.pow(10,-20) && d<Math.pow(10,-19)){
-      d=(d*Math.pow(10,20)).toFixed(1)+"*10^-20"
-    }
-    else if(d>=Math.pow(10,-21) && d<Math.pow(10,-20)){
-      d=(d*Math.pow(10,21)).toFixed(1)+"*10^-21"
-    }
-    else if(d>=Math.pow(10,-22) && d<Math.pow(10,-21)){
-      d=(d*Math.pow(10,22)).toFixed(1)+"*10^-22"
-    }
-    else if(d>=Math.pow(10,-23) && d<Math.pow(10,-22)){
-      d=(d*Math.pow(10,23)).toFixed(1)+"*10^-23"
-    }
-    else if(d>=Math.pow(10,-24) && d<Math.pow(10,-23)){
-      d=(d*Math.pow(10,24)).toFixed(1)+"*10^-24"
-    }else if(d>=Math.pow(10,-25) && d<Math.pow(10,-24)){
-      d=(d*Math.pow(10,25)).toFixed(1)+"*10^-25"
-    }
+    
   }
   return d;
 };
@@ -216,17 +178,17 @@ var xAxis = d3.axisBottom()
     .scale(xScale)
     .tickSize(-height)
     .tickPadding(8)
-.tickFormat(d3.round)
-    .tickFormat(myTickFormat)
-    .ticks(5)
+
+    
+    .ticks(8,myTickFormat)
 
 var yAxis = d3.axisLeft()
     .scale(yScale)
     .tickSize(-width)
     .tickPadding(8)
-    .tickFormat(d3.round)
-     .tickFormat(myTickFormat)
-     .ticks(5)
+
+
+     .ticks(5,myTickFormat)
 
 var svg = d3.select(parentId).append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -240,7 +202,7 @@ svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + (height) + ")")
 
-    .call(xAxis.ticks(5))
+    .call(xAxis.ticks(8,myTickFormat))
     .selectAll("text")
     .attr("y", 0)
     .attr("x", 9)
@@ -250,7 +212,7 @@ svg.append("g")
 svg.append("g")
     .attr("class", "y axis")
     .attr("transform", "translate("  +0+ ",0)")
-    .call(yAxis.ticks(5));
+    .call(yAxis.ticks(5,myTickFormat));
 
 svg.append("path")
     .attr("class","trendline")
@@ -662,12 +624,12 @@ console.log("hhh")
   selectedCircles.exit().remove();
                   
   //Update Axes
-  d3.select(parentId).select(".x.axis").transition().duration(animDuration).call(xAxis.ticks(5))
+  d3.select(parentId).select(".x.axis").transition().duration(animDuration).call(xAxis.ticks(8,myTickFormat))
     .selectAll("text").attr("y", 0)
     .attr("x", 9)
     .attr("dy", ".35em")
     .attr("transform", "rotate(90)").style("text-anchor", "start");
-  d3.select(parentId).select(".y.axis").transition().duration(animDuration).call(yAxis.ticks(5));
+  d3.select(parentId).select(".y.axis").transition().duration(animDuration).call(yAxis.ticks(5,myTickFormat));
 
 
 }
