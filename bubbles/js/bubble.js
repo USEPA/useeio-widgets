@@ -305,12 +305,29 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
-  if(dataObject1.stateshown==13){
-    document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
-  }else{
-    document.getElementById("bubble-graph-title").innerHTML = "US Industries"
-  }
-  document.getElementById("impactText").innerHTML = z + "<br>" + y + "<br>" + x;
+d3.json("data/indicators.json").then(function(consdata){
+    var filteredData = consdata.filter(function(d) {
+      if(d["id"]==x) {
+        unitx=d["unit"]
+      }
+      if(d["id"]==y) {
+        unity=d["unit"]
+      }
+      if(d["id"]==z) {
+        unitz=d["unit"]
+      }
+    })
+    if(dataObject1.stateshown==13){
+      document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
+    }else{
+      document.getElementById("bubble-graph-title").innerHTML = "US Industries"
+    }
+    document.getElementById("impactText").innerHTML = z + "<br>" + y + "<br>" + x;
+    document.getElementById("unit-x").innerHTML = unitx;
+    document.getElementById("unit-y").innerHTML = unity;
+    document.getElementById("unit-z").innerHTML = unitz;
+
+  })
 }
 
 
