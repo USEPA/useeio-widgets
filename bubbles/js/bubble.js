@@ -3,7 +3,6 @@
 let dataObject1={};
 document.addEventListener('hashChangeEvent', function (elem) {
 
-
   
   console.log("bubble chart detects hash changed")
   params = loadParams(location.search,location.hash);
@@ -587,9 +586,21 @@ console.log("hhh")
 
 
 
-
                      
 
+      .on("click", function(d) {
+        d3.select(this)
+        .transition()
+        .style("fill-opacity",1)
+        .attr('stroke-width', 8)
+        .attr("stroke-opacity", 1)
+        d3.select(this)
+        .classed("selected",function() {
+          return true;
+        });
+        document.getElementById("impactText").innerHTML = z +":"+d.z+ "<br>" + y +":"+d.y+ "<br>" + x+":"+d.x;
+        create_bar(d,x,y,z);
+      })
 
 
       .on("mouseout", function(d) {
@@ -604,7 +615,7 @@ console.log("hhh")
                         
       })
 
-
+      
 
 
       .attr("class","circles")
@@ -635,3 +646,61 @@ console.log("hhh")
 }
 
 
+function create_bar(d,x,y,z){
+
+  d3.select("#selected_bar").remove();
+
+  var svg3 = d3.select("#barchart")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", 380)
+      .attr("class", "bar-chart")
+      .attr('id', 'selected_bar');
+
+  var death_scale = d3.scaleLinear().range([300,0]).domain([0,1]);
+  var other_scale = d3.scaleBand().range([0, 300]).domain([x,y,z]);
+
+  var chart_2 = svg3.append('g').attr('class', 'y axis')
+      .attr('transform', 'translate(450, 60)').call(d3.axisLeft(death_scale));
+
+  chart_2.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', 'translate(0,300)').call(d3.axisBottom(other_scale));
+
+  chart_2.append("text")
+      .attr('class', 'label')
+      .attr("transform", "translate(150, 350)")
+      .text("Attr").attr("fill", "black").style("font-size", "25px");
+
+  /*chart_2.append("text")
+      .attr('class', 'label')
+      .attr("transform", "translate(-50, 170) rotate(-90)")
+      .text("y axis")
+      .attr("fill", "black")
+      .style("font-size", "25px");*/
+
+  chart_2.append("text")
+      .attr('class', 'title')
+      .attr('transform', 'translate(260,-30)')
+      .text( d.industry_detail)
+      .attr("fill", "black").style("font-size", "30px");
+
+  var injuries = {
+      x: d.x,
+      y: d.y,
+      z: d.z
+  };
+
+
+  svg3.append("rect").attr("y", 360 - d.x*3600000/300).attr("x", 480)
+      .attr("width", 50).attr("height", d.x*3600000/300).attr("fill", "red");
+
+  svg3.append("rect").attr("y", 360 - d.y*3600000/300).attr("x", 575)
+      .attr("width", 50).attr("height", d.y*3600000/300).attr("fill", "green");
+
+  svg3.append("rect").attr("y", 360 - d.z*360000/300).attr("x", 675)
+      .attr("width", 50).attr("height", d.z*3600000/300).attr("fill", "blue");
+
+
+
+    }
