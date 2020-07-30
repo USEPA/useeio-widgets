@@ -569,13 +569,15 @@ console.log("hhh")
         .attr("stroke-width", 1)
         .attr("stroke-opacity", 0.7)
         .style("fill-opacity" , 0.5)
+        //.classed("norm", true)
       .on("mouseover", function(d) {
+        if(d3.select(this).attr("class")!='circles selected'){
         d3.select(this)
         .transition()
         .style("fill-opacity",1)
         .attr('stroke-width', 4)
         .attr("stroke-opacity", 1)
-        
+        }
         div.transition()
           .duration(200)
           .style("opacity", .9);               
@@ -588,27 +590,48 @@ console.log("hhh")
 
                      
 
-      .on("click", function(d) {
+      .on("click", function(d,i) {
+        d3.selectAll(".circles").classed("selected", false);
+        d3.selectAll(".circles").style('fill', function (d) { 
+      if(boundry=="region"){
+        if(useeioList.length>0){
+            if (useeioList.includes( d.industry_code) ) {
+              return "url(#gradient)";
+            } else {
+              return "#303030";
+            }
+        }else{return "#303030";}
+      }else{
+              return "url(#gradient)";
+
+      }
+          })
+        .attr("stroke-width", 1)
+        .attr("stroke-opacity", 0.7)
+        .style("fill-opacity" , 0.5)
         d3.select(this)
         .transition()
         .style("fill-opacity",1)
         .attr('stroke-width', 8)
         .attr("stroke-opacity", 1)
-        d3.select(this)
-        .classed("selected",function() {
-          return true;
-        });
+        d3.select(this).classed("selected", true)
+        
+        console.log(d3.select(this).attr("class"))
         document.getElementById("impactText").innerHTML = z +":"+d.z+ "<br>" + y +":"+d.y+ "<br>" + x+":"+d.x;
         create_bar(d,x,y,z);
       })
 
 
       .on("mouseout", function(d) {
+        if(d3.select(this).attr("class")!='circles selected'){
         d3.select(this)
         .transition()
+
         .attr("stroke-width", 1)
         .attr("stroke-opacity", 0.7)
         .style("fill-opacity" , 0.5)
+
+       } 
         div.transition()
           .duration(500)
           .style("opacity", 0);
@@ -627,6 +650,7 @@ console.log("hhh")
       .style("stroke","black")
       .attr("stroke-opacity", 0.7)
     .style("fill-opacity" , 0.5)
+    //.classed("norm", true)
       .transition().duration(animDuration)
       .attr("transform",function(d){return "translate("+xScale(d.x)+","+yScale(d.y)+")";});
 
@@ -692,15 +716,15 @@ function create_bar(d,x,y,z){
   };
 
 
-  svg3.append("rect").attr("y", 360 - d.x*3600000/300).attr("x", 480)
-      .attr("width", 50).attr("height", d.x*3600000/300).attr("fill", "red");
+  svg3.append("rect").attr("y", 360 - d.x*360/300).attr("x", 480)
+      .attr("width", 50).attr("height", d.x*360/300).attr("fill", "red");
 
-  svg3.append("rect").attr("y", 360 - d.y*3600000/300).attr("x", 575)
-      .attr("width", 50).attr("height", d.y*3600000/300).attr("fill", "green");
+  svg3.append("rect").attr("y", 360 - d.y*360/300).attr("x", 575)
+      .attr("width", 50).attr("height", d.y*360/300).attr("fill", "green");
 
-  svg3.append("rect").attr("y", 360 - d.z*360000/300).attr("x", 675)
-      .attr("width", 50).attr("height", d.z*3600000/300).attr("fill", "blue");
+  svg3.append("rect").attr("y", 360 - d.z*360/300).attr("x", 675)
+      .attr("width", 50).attr("height", d.z*360/300).attr("fill", "blue");
 
 
 
-    }
+}
