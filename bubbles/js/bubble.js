@@ -717,14 +717,14 @@ function create_bar(d,x,y,z){
   };
 
 
-  svg3.append("rect").attr("y", 360 - d.x*360/300).attr("x", 480)
-      .attr("width", 50).attr("height", d.x*360/300).attr("fill", "red");
+  svg3.append("rect").attr("y", 360 - d.x*360000/300).attr("x", 480)
+      .attr("width", 50).attr("height", d.x*360000/300).attr("fill", "red");
 
-  svg3.append("rect").attr("y", 360 - d.y*360/300).attr("x", 575)
-      .attr("width", 50).attr("height", d.y*360/300).attr("fill", "green");
+  svg3.append("rect").attr("y", 360 - d.y*360000/300).attr("x", 575)
+      .attr("width", 50).attr("height", d.y*360000/300).attr("fill", "green");
 
-  svg3.append("rect").attr("y", 360 - d.z*360/300).attr("x", 675)
-      .attr("width", 50).attr("height", d.z*360/300).attr("fill", "blue");
+  svg3.append("rect").attr("y", 360 - d.z*360000/300).attr("x", 675)
+      .attr("width", 50).attr("height", d.z*360000/300).attr("fill", "blue");
 
 
 
