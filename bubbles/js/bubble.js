@@ -306,6 +306,7 @@ d3.json("data/indicators.json").then(function(consdata){
       document.getElementById("bubble-graph-title").innerHTML = "US Industries"
     }
     document.getElementById("impactText").innerHTML = z + "<br>" + y + "<br>" + x;
+    document.getElementById("impactText2").innerHTML = z + "<br>" + y + "<br>" + x;
     document.getElementById("unit-x").innerHTML = unitx;
     document.getElementById("unit-y").innerHTML = unity;
     document.getElementById("unit-z").innerHTML = unitz;
@@ -641,6 +642,7 @@ console.log("hhh")
         
         console.log(d3.select(this).attr("class"))
         document.getElementById("impactText").innerHTML = z +":"+d.z+ "<br>" + y +":"+d.y+ "<br>" + x+":"+d.x;
+        document.getElementById("impactText2").innerHTML = z +":"+d.z+ "<br>" + y +":"+d.y+ "<br>" + x+":"+d.x;
         create_bar(d,x,y,z);
       })
 
