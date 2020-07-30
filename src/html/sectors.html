@@ -25,25 +25,24 @@
         </pre>
         <div class="useeio-sector-list"></div>
     </div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+    <script>
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+        var sectorList = useeio.sectorList({
+            model: model,
+            selector: '.useeio-sector-list',
+        });
+        config.join(sectorList);
+    </script>
 </body>
-
-<script src="lib/d3.min.js"></script>
-<script src="lib/useeio_widgets.js"></script>
-
-<script>
-    var config = useeio.urlConfig();
-    var modelID = config.get().model || 'GAUSEEIO';
-
-    var model = useeio.model({
-        endpoint: './api',
-        model: modelID,
-        asJsonFiles: true,
-    });
-    var sectorList = useeio.sectorList({
-        model: model,
-        selector: '.useeio-sector-list',
-    });
-    config.join(sectorList);
-</script>
 
 </html>
