@@ -1,6 +1,27 @@
 // `hashChangeEvent` event reside in multiple widgets. 
 // Called by goHash +-++localsite.js
 let dataObject1={};
+var element = document.querySelector('#industry-list');
+
+par={}
+var observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.type == "attributes") {
+
+      par.naics=document.getElementById('industry-list').getAttribute('data-naics').slice(0,10)
+      if(document.getElementById("mySelect").checked){
+          midFunc(params.x,params.y,params.z,par,"region");
+      }else{
+          midFunc(params.x,params.y,params.z,par,"all");
+      }
+    }
+  });
+});
+
+observer.observe(element, {
+  attributes: true //configure it to listen to attribute changes
+});
+
 document.addEventListener('hashChangeEvent', function (elem) {
 
   
@@ -10,6 +31,7 @@ document.addEventListener('hashChangeEvent', function (elem) {
   if(params.x){dropdown.val(params.x)}
   if(params.y){dropdown2.val(params.y)}
   if(params.z){dropdown3.val(params.z)}
+  
   //readyfunc();
     if(counter==2){
         counter=0
