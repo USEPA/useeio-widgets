@@ -300,17 +300,18 @@ d3.json("data/indicators.json").then(function(consdata){
         unitz=d["unit"]
       }
     })
-    if(dataObject1.stateshown==13){
-      document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
-    }else{
-      document.getElementById("bubble-graph-title").innerHTML = "US Industries"
-    }
-    document.getElementById("impactText").innerHTML = z + "<br>" + y + "<br>" + x;
-    document.getElementById("impactText2").innerHTML = z + "<br>" + y + "<br>" + x;
-    document.getElementById("unit-x").innerHTML = unitx;
-    document.getElementById("unit-y").innerHTML = unity;
-    document.getElementById("unit-z").innerHTML = unitz;
-
+    $(document).ready(function () { 
+      if(dataObject1.stateshown==13){
+        document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
+      }else{
+        document.getElementById("bubble-graph-title").innerHTML = "US Industries"
+      }
+      $("#impactText").html(z + "<br>" + y + "<br>" + x);
+      $("#impactText2").html(z + "<br>" + y + "<br>" + x); // Using jquery avoid error if element is not in page.
+      document.getElementById("unit-x").innerHTML = unitx;
+      document.getElementById("unit-y").innerHTML = unity;
+      document.getElementById("unit-z").innerHTML = unitz;
+    });
   })
 }
 
