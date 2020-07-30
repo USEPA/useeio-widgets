@@ -61,7 +61,9 @@ h4{
   margin-top: 10px;
   margin-bottom: -15px;
   text-align: center;
-  floatX:left;
+  z-index: 2;
+  position: absolute; /* would be better to have click pass through chart */
+  left: 30%;
 }
 
 #bubble-graph-equation{
