@@ -179,7 +179,7 @@ input:checked + .slider:before {
         <p>
             The impact chart widget shows the environmental profile of one or more sectors.
         </p>
-        <div class="impact-chart"></div>
+        <div id="impact-chart" class="impact-chart"></div>
     </div>
 
 <div id="sector-list" class="sector-list">
@@ -195,25 +195,52 @@ input:checked + .slider:before {
         model: modelID,
         asJsonFiles: true,
     });
-
+     var svg3 = d3.select("#impact-chart")
+      .append("div")
+      .attr('id', 'imp');
     var impactChart = useeio.impactChart({
         model: model,
-        selector: '.impact-chart',
+        selector: '#impt',
         columns: 3,
         width: 800,
         height: 300,
     });
     selected_sector=""
 
-    var element = document.querySelector('#sector-list');
+    impactChart.update({
+        sectors: [selected_sector],
+    });
+
+        var element = document.querySelector('#sector-list');
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (mutation.type == "attributes") {
 
+          
           selected_sector=document.getElementById('sector-list').getAttribute('sector')
-          console.log(selected_sector)
+          selected_model=document.getElementById('sector-list').getAttribute('area')
+          d3.select("#imp").remove();
+          var svg3 = d3.select("#impact-chart")
+        .append("div")
+        .attr('id', 'imp');
+          console.log(selected_model)
+          var config = useeio.urlConfig();
+          var modelID = config.get().model || selected_model;
+          var model = useeio.model({
+              endpoint: './api',
+              model: modelID,
+              asJsonFiles: true,
+          });
+          var impactChart = useeio.impactChart({
+              model: model,
+              selector: '#imp',
+              columns: 3,
+              width: 800,
+              height: 300,
+          });
           impactChart.update({
               sectors: [selected_sector],
+              
           });
         }
       });
@@ -221,10 +248,6 @@ input:checked + .slider:before {
 
     observer.observe(element, {
       attributes: true //configure it to listen to attribute changes
-    });
-    
-    impactChart.update({
-        sectors: [selected_sector],
     });
 
 </script>

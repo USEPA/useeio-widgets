@@ -11,8 +11,10 @@ var observer = new MutationObserver(function(mutations) {
       par.naics=document.getElementById('industry-list').getAttribute('data-naics').slice(0,10)
       if(document.getElementById("mySelect").checked){
           midFunc(params.x,params.y,params.z,par,"region");
+          document.querySelector('#sector-list').setAttribute('area', 'GAUSEEIO');
       }else{
           midFunc(params.x,params.y,params.z,par,"all");
+          document.querySelector('#sector-list').setAttribute('area', 'USEEIO');
       }
     }
   });
@@ -101,8 +103,10 @@ document.addEventListener('hashChangeEvent', function (elem) {
 
   if(document.getElementById("mySelect").checked){
       midFunc(params.x,params.y,params.z,params,"region");
+      document.querySelector('#sector-list').setAttribute('area', 'GAUSEEIO');
   }else{
       midFunc(params.x,params.y,params.z,params,"all");
+      document.querySelector('#sector-list').setAttribute('area', 'USEEIO');
   }
 
   console.log("params.naics: "+params.naics)
@@ -440,11 +444,13 @@ function myFunction() {
         d3.select("#graph-picklist-y").node().value,
         d3.select("#graph-picklist-z").node().value,
         params,"region")
+    document.querySelector('#sector-list').setAttribute('area', 'GAUSEEIO');
   }else{
     midFunc(d3.select("#graph-picklist-x").node().value,
         d3.select("#graph-picklist-y").node().value,
         d3.select("#graph-picklist-z").node().value,
         params,"all")
+    document.querySelector('#sector-list').setAttribute('area', 'USEEIO');
   }
   }
     if(document.getElementById("mySelect").checked){
@@ -452,11 +458,13 @@ function myFunction() {
         d3.select("#graph-picklist-y").node().value,
         d3.select("#graph-picklist-z").node().value,
         params,"region");
+    document.querySelector('#sector-list').setAttribute('area', 'GAUSEEIO');
     }else{
       midFunc(d3.select("#graph-picklist-x").node().value,
         d3.select("#graph-picklist-y").node().value,
         d3.select("#graph-picklist-z").node().value,
         params,"all");
+      document.querySelector('#sector-list').setAttribute('area', 'USEEIO');
     }
       
 
