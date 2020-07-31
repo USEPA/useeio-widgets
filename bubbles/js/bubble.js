@@ -3,6 +3,42 @@
 let dataObject1={};
 var element = document.querySelector('#industry-list');
 
+
+//dropdown population code
+/*
+drop_down_list();
+$("#state").change(drop_down_list);
+$(window).load(drop_down_list);
+// Drop down code from: https://www.bitrepository.com/dynamic-dependant-dropdown-list-us-states-counties.html
+function drop_down_list(){
+    var state = $('#state').val();
+
+    if(state == 'AK' || state == 'DC') // Alaska and District Columbia have no counties
+    {
+    $('#county_drop_down').hide();
+    $('#no_county_drop_down').show();
+    }
+    else
+    {
+        $('#loading_county_drop_down').show(); // Show the Loading...
+        
+        $('#county_drop_down').hide(); // Hide the drop down
+        $('#no_county_drop_down').hide(); // Hide the "no counties" message (if it's the case)
+
+        $.getScript("js/states/"+ state.toLowerCase() +".js", function(){
+
+            populate(document.form.county);
+
+            $('#loading_county_drop_down').hide(); // Hide the Loading...
+            $('#county_drop_down').show(); // Show the drop down
+        });
+    }
+}*/
+
+d3.selectAll("#county").on("change",function(){
+  console.log("county changed")
+    updateHash({"naics":d3.select("#county").node().value});
+})
 par={}
 var observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
