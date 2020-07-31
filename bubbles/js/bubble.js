@@ -718,24 +718,47 @@ console.log("hhh")
 
       .on("click", function(d,i) {
           console.log('boundry'+boundry1)
-        d3.selectAll(".circles").classed("selected", false);
+        //d3.selectAll(".circles").classed("selected", false);
         d3.selectAll(".circles").style('fill', function (d) { 
       if(boundry1=="region"){
         if(useeioList.length>0){
+          if(d3.select(this).attr("class")!='circles selected'){
             if (useeioList.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-        }else{return "#303030";}
+          }else{return "yellow"}
+        }else{
+          if(d3.select(this).attr("class")!='circles selected'){
+              return "#303030";
+            }else{return "yellow"}
+        }
       }else{
+        if(d3.select(this).attr("class")!='circles selected'){
               return "url(#gradient)";
-
+                }else{return "yellow"}
       }
           })
-        .attr("stroke-width", 1)
-        .attr("stroke-opacity", 0.7)
-        .style("fill-opacity" , 0.5)
+                    .attr("stroke-width", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 1
+      }else{return 6}
+    })
+    .attr("stroke-opacity", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.7
+      }else{
+          return 1
+      }
+    })
+    .style("fill-opacity" , function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.5
+      }else{
+          return 1
+      }
+    })
         d3.select(this)
         .transition()
         .style("fill","yellow")
@@ -745,8 +768,8 @@ console.log("hhh")
         d3.select(this).classed("selected", true)
         
         console.log(d3.select(this).attr("class"))
-        document.getElementById("impactText").innerHTML = z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
-        document.getElementById("impactText2").innerHTML = z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        document.getElementById("impactText").innerHTML = d.industry_detail+"<br>"+ z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        document.getElementById("impactText2").innerHTML = d.industry_detail+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
         create_bar(d,x,y,z,x1,y1,z1);
         //updateHash({"sectors":d.industry_code});
         document.querySelector('#sector-list').setAttribute('sector', d.industry_code);
