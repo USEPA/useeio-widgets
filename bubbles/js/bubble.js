@@ -512,6 +512,11 @@ function midFunc(x,y,z,params,boundry){
 }
 
 function updateChart(x,y,z,useeioList,boundry){
+  if(typeof countload=='undefined'){
+    countload=0
+    countload+=1
+    updateChart(x,y,z,useeioList,boundry)
+  }
 console.log("hhh")
   console.log("updateChart - x:"+ x + " y:" + y + " z:" + z);
   if (!(x && y && z)) { // Same as above
@@ -553,10 +558,12 @@ console.log("hhh")
   var selectedCircles = d3.select("#graph-plane")
     .selectAll(".circles")
     .data(records.pairs)
+    .attr('pointer-events', 'fill')
 
   //give a transition on the existing elements
   selectedCircles
     .transition().duration(animDuration)
+
     .attr("transform",function(d){return "translate("+xScale(d.x)+","+yScale(d.y)+")";})
     .attr("r",function(d){
       return zScale(d.z)+2
