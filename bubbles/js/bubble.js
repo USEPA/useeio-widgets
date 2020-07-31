@@ -645,6 +645,9 @@ console.log("hhh")
         document.getElementById("impactText").innerHTML = z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
         document.getElementById("impactText2").innerHTML = z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
         create_bar(d,x,y,z,x1,y1,z1);
+        //updateHash({"sectors":d.industry_code});
+        document.querySelector('#sector-list').setAttribute('sector', d.industry_code);
+
       })
 
 

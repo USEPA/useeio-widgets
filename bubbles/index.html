@@ -182,7 +182,7 @@ input:checked + .slider:before {
         <div class="impact-chart"></div>
     </div>
 
-
+<div id="sector-list" class="sector-list">
 <script src="lib/d3.min.js"></script>
 <script src="lib/useeio_widgets.js"></script>
 <script>
@@ -203,8 +203,28 @@ input:checked + .slider:before {
         width: 800,
         height: 300,
     });
+    selected_sector=""
+
+    var element = document.querySelector('#sector-list');
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type == "attributes") {
+
+          selected_sector=document.getElementById('sector-list').getAttribute('sector')
+          console.log(selected_sector)
+          impactChart.update({
+              sectors: [selected_sector],
+          });
+        }
+      });
+    });
+
+    observer.observe(element, {
+      attributes: true //configure it to listen to attribute changes
+    });
+    
     impactChart.update({
-        sectors: [],
+        sectors: [selected_sector],
     });
 
 </script>
