@@ -1,0 +1,2206 @@
+[
+  {
+    "sector": "1111b0/fresh wheat, corn, rice, and other grains/rous",
+    "amount": 40697567.1925102
+  },
+  {
+    "sector": "1111b0/fresh wheat, corn, rice, and other grains/us-ga",
+    "amount": 12955637.903855
+  },
+  {
+    "sector": "111200/fresh vegetables, melons, and potatoes/rous",
+    "amount": 367835524.725117
+  },
+  {
+    "sector": "111200/fresh vegetables, melons, and potatoes/us-ga",
+    "amount": 161708369.418237
+  },
+  {
+    "sector": "111300/fresh fruits and tree nuts/rous",
+    "amount": 371896903.185109
+  },
+  {
+    "sector": "111300/fresh fruits and tree nuts/us-ga",
+    "amount": 163493838.314549
+  },
+  {
+    "sector": "111400/greenhouse crops, mushrooms, nurseries, and flowers/rous",
+    "amount": 288526449.13202
+  },
+  {
+    "sector": "111400/greenhouse crops, mushrooms, nurseries, and flowers/us-ga",
+    "amount": 126842402.342839
+  },
+  {
+    "sector": "111900/tobacco, cotton, sugarcane, peanuts, sugar beets, herbs and spices, and other crops/rous",
+    "amount": 8551044.70601962
+  },
+  {
+    "sector": "111900/tobacco, cotton, sugarcane, peanuts, sugar beets, herbs and spices, and other crops/us-ga",
+    "amount": 3759222.26997032
+  },
+  {
+    "sector": "112120/dairies/rous",
+    "amount": 3904669.22375399
+  },
+  {
+    "sector": "112120/dairies/us-ga",
+    "amount": 1637250.50702836
+  },
+  {
+    "sector": "1121a0/cattle ranches and feedlots/rous",
+    "amount": 1264353.45366228
+  },
+  {
+    "sector": "1121a0/cattle ranches and feedlots/us-ga",
+    "amount": 2970189.69495376
+  },
+  {
+    "sector": "112300/poultry farms/rous",
+    "amount": 96870143.0750628
+  },
+  {
+    "sector": "112300/poultry farms/us-ga",
+    "amount": 62420906.8423099
+  },
+  {
+    "sector": "112a00/animal farms and aquaculture ponds (except cattle and poultry)/rous",
+    "amount": 40037749.0838443
+  },
+  {
+    "sector": "112a00/animal farms and aquaculture ponds (except cattle and poultry)/us-ga",
+    "amount": 94055747.9346619
+  },
+  {
+    "sector": "114000/wild-caught fish and game/rous",
+    "amount": 57133057.8193044
+  },
+  {
+    "sector": "114000/wild-caught fish and game/us-ga",
+    "amount": 134215649.179871
+  },
+  {
+    "sector": "115000/agriculture and forestry support/us-ga",
+    "amount": 5934110.10143159
+  },
+  {
+    "sector": "212100/coal/rous",
+    "amount": 805368.396624723
+  },
+  {
+    "sector": "2122a0/iron, gold, silver, and other metal ores/rous",
+    "amount": 3896.33252196894
+  },
+  {
+    "sector": "2122a0/iron, gold, silver, and other metal ores/us-ga",
+    "amount": 8159.10351362005
+  },
+  {
+    "sector": "2123a0/sand, gravel, clay, phosphate, other nonmetallic minerals/rous",
+    "amount": 1394376.8917277
+  },
+  {
+    "sector": "2123a0/sand, gravel, clay, phosphate, other nonmetallic minerals/us-ga",
+    "amount": 2993610.34583352
+  },
+  {
+    "sector": "213111/well drilling/rous",
+    "amount": 4100466.88838938
+  },
+  {
+    "sector": "213111/well drilling/us-ga",
+    "amount": 281.220783455482
+  },
+  {
+    "sector": "21311a/other support activities for mining/us-ga",
+    "amount": 122451444.16076
+  },
+  {
+    "sector": "221100/electricity/us-ga",
+    "amount": 4290676992.02778
+  },
+  {
+    "sector": "221200/natural gas/us-ga",
+    "amount": 1487592019.55737
+  },
+  {
+    "sector": "221300/drinking water and wastewater treatment/us-ga",
+    "amount": 1121863604.20333
+  },
+  {
+    "sector": "233210/health care structures/us-ga",
+    "amount": 1263848665.37246
+  },
+  {
+    "sector": "233230/manufacturing structures/us-ga",
+    "amount": 1291053198.63553
+  },
+  {
+    "sector": "233240/power and communication structures/us-ga",
+    "amount": 3014049502.07854
+  },
+  {
+    "sector": "233262/educational and vocational structures/us-ga",
+    "amount": 3478799874.81873
+  },
+  {
+    "sector": "233293/highways and streets/us-ga",
+    "amount": 3025469209.87094
+  },
+  {
+    "sector": "2332a0/commercial structures, including farm structures/us-ga",
+    "amount": 4789340277.03888
+  },
+  {
+    "sector": "2332b0/other nonresidential structures/us-ga",
+    "amount": 4981476998.61015
+  },
+  {
+    "sector": "233411/single-family residential structures/us-ga",
+    "amount": 8458267007.84016
+  },
+  {
+    "sector": "233412/multifamily residential structures/us-ga",
+    "amount": 1653538425.01581
+  },
+  {
+    "sector": "2334a0/other residential structures/us-ga",
+    "amount": 5281820668.9696
+  },
+  {
+    "sector": "311111/dog and cat food/rous",
+    "amount": 293108727.786574
+  },
+  {
+    "sector": "311111/dog and cat food/us-ga",
+    "amount": 228626586.57931
+  },
+  {
+    "sector": "311119/other animal food/rous",
+    "amount": 50785654.2944016
+  },
+  {
+    "sector": "311119/other animal food/us-ga",
+    "amount": 39613118.5727788
+  },
+  {
+    "sector": "311210/flours and malts/us-ga",
+    "amount": 34925824.0820995
+  },
+  {
+    "sector": "311210/flours and malts/rous",
+    "amount": 83294394.976332
+  },
+  {
+    "sector": "311221/corn products/us-ga",
+    "amount": 6060206.21344482
+  },
+  {
+    "sector": "311221/corn products/rous",
+    "amount": 14452950.5959291
+  },
+  {
+    "sector": "311225/refined vegetable, olive, and seed oils/us-ga",
+    "amount": 52651220.9814657
+  },
+  {
+    "sector": "311225/refined vegetable, olive, and seed oils/rous",
+    "amount": 105556237.208215
+  },
+  {
+    "sector": "31122a/vegetable oils and by-products/rous",
+    "amount": 23140374.4697525
+  },
+  {
+    "sector": "31122a/vegetable oils and by-products/us-ga",
+    "amount": 11542368.3339291
+  },
+  {
+    "sector": "311230/breakfast cereals/rous",
+    "amount": 195174679.254332
+  },
+  {
+    "sector": "311230/breakfast cereals/us-ga",
+    "amount": 81837877.7450022
+  },
+  {
+    "sector": "311300/sugar, candy, and chocolate/rous",
+    "amount": 494854775.942225
+  },
+  {
+    "sector": "311300/sugar, candy, and chocolate/us-ga",
+    "amount": 246832483.337517
+  },
+  {
+    "sector": "311410/frozen food/us-ga",
+    "amount": 241294571.727498
+  },
+  {
+    "sector": "311410/frozen food/rous",
+    "amount": 483752258.267447
+  },
+  {
+    "sector": "311420/fruit and vegetable preservation/rous",
+    "amount": 588332108.663063
+  },
+  {
+    "sector": "311420/fruit and vegetable preservation/us-ga",
+    "amount": 293458773.095597
+  },
+  {
+    "sector": "311513/cheese/rous",
+    "amount": 256766470.497428
+  },
+  {
+    "sector": "311513/cheese/us-ga",
+    "amount": 128074555.671438
+  },
+  {
+    "sector": "311514/dry, condensed, and evaporated dairy/rous",
+    "amount": 144035068.718041
+  },
+  {
+    "sector": "311514/dry, condensed, and evaporated dairy/us-ga",
+    "amount": 71844378.2454567
+  },
+  {
+    "sector": "31151a/fluid milk and butter/us-ga",
+    "amount": 217530029.513963
+  },
+  {
+    "sector": "31151a/fluid milk and butter/rous",
+    "amount": 436108621.362624
+  },
+  {
+    "sector": "311520/ice cream and frozen desserts/rous",
+    "amount": 65208924.9941027
+  },
+  {
+    "sector": "311520/ice cream and frozen desserts/us-ga",
+    "amount": 32526069.6159139
+  },
+  {
+    "sector": "311615/packaged poultry/rous",
+    "amount": 671827871.28681
+  },
+  {
+    "sector": "311615/packaged poultry/us-ga",
+    "amount": 354693920.338797
+  },
+  {
+    "sector": "31161a/packaged meat (except poultry)/rous",
+    "amount": 1439035107.73319
+  },
+  {
+    "sector": "31161a/packaged meat (except poultry)/us-ga",
+    "amount": 759743716.629979
+  },
+  {
+    "sector": "311700/seafood/us-ga",
+    "amount": 55438033.794488
+  },
+  {
+    "sector": "311700/seafood/rous",
+    "amount": 105005510.658039
+  },
+  {
+    "sector": "311810/bread and other baked goods/us-ga",
+    "amount": 408272129.402596
+  },
+  {
+    "sector": "311810/bread and other baked goods/rous",
+    "amount": 973685829.841805
+  },
+  {
+    "sector": "3118a0/cookies, crackers, pastas, and tortillas/rous",
+    "amount": 459638117.415693
+  },
+  {
+    "sector": "3118a0/cookies, crackers, pastas, and tortillas/us-ga",
+    "amount": 192728934.940333
+  },
+  {
+    "sector": "311910/snack foods/rous",
+    "amount": 522627405.400568
+  },
+  {
+    "sector": "311910/snack foods/us-ga",
+    "amount": 260685410.360325
+  },
+  {
+    "sector": "311920/coffee and tea/rous",
+    "amount": 106202462.807402
+  },
+  {
+    "sector": "311920/coffee and tea/us-ga",
+    "amount": 52973556.9014129
+  },
+  {
+    "sector": "311930/flavored drink concentrates/us-ga",
+    "amount": 2508117.9947831
+  },
+  {
+    "sector": "311930/flavored drink concentrates/rous",
+    "amount": 5028325.89764089
+  },
+  {
+    "sector": "311940/seasonings and dressings/rous",
+    "amount": 212672909.995534
+  },
+  {
+    "sector": "311940/seasonings and dressings/us-ga",
+    "amount": 106080783.827664
+  },
+  {
+    "sector": "311990/all other foods/rous",
+    "amount": 335704464.350206
+  },
+  {
+    "sector": "311990/all other foods/us-ga",
+    "amount": 167448654.901386
+  },
+  {
+    "sector": "312110/soft drinks, bottled water, and ice/rous",
+    "amount": 870943602.140477
+  },
+  {
+    "sector": "312110/soft drinks, bottled water, and ice/us-ga",
+    "amount": 434424769.881085
+  },
+  {
+    "sector": "312120/breweries and beer/us-ga",
+    "amount": 674189992.303142
+  },
+  {
+    "sector": "312120/breweries and beer/rous",
+    "amount": 186990665.786396
+  },
+  {
+    "sector": "312130/wineries and wine/rous",
+    "amount": 94647747.4517113
+  },
+  {
+    "sector": "312130/wineries and wine/us-ga",
+    "amount": 341249996.932313
+  },
+  {
+    "sector": "312140/distilleries and spirits/rous",
+    "amount": 64959962.5463096
+  },
+  {
+    "sector": "312140/distilleries and spirits/us-ga",
+    "amount": 234211458.97805
+  },
+  {
+    "sector": "312200/tobacco products/rous",
+    "amount": 1843537081.51848
+  },
+  {
+    "sector": "312200/tobacco products/us-ga",
+    "amount": 283676566.950136
+  },
+  {
+    "sector": "313100/fiber, yarn, and thread/us-ga",
+    "amount": 1738751.0798911
+  },
+  {
+    "sector": "313100/fiber, yarn, and thread/rous",
+    "amount": 2149440.17078787
+  },
+  {
+    "sector": "313200/fabric/us-ga",
+    "amount": 23795406.7499995
+  },
+  {
+    "sector": "313200/fabric/rous",
+    "amount": 29415828.2575384
+  },
+  {
+    "sector": "313300/finished and coated fabric/us-ga",
+    "amount": 6141381.48686633
+  },
+  {
+    "sector": "313300/finished and coated fabric/rous",
+    "amount": 7591961.96894972
+  },
+  {
+    "sector": "314110/carpets and rugs/rous",
+    "amount": 1805160041.90791
+  },
+  {
+    "sector": "314110/carpets and rugs/us-ga",
+    "amount": 1460251843.66641
+  },
+  {
+    "sector": "314120/curtains and linens/rous",
+    "amount": 241126606.705285
+  },
+  {
+    "sector": "314120/curtains and linens/us-ga",
+    "amount": 195055044.330735
+  },
+  {
+    "sector": "314900/other textiles/us-ga",
+    "amount": 63929773.9092927
+  },
+  {
+    "sector": "314900/other textiles/rous",
+    "amount": 79029842.5917452
+  },
+  {
+    "sector": "315000/clothing/us-ga",
+    "amount": 1492392481.23976
+  },
+  {
+    "sector": "315000/clothing/rous",
+    "amount": 1844892225.72299
+  },
+  {
+    "sector": "316000/leather/rous",
+    "amount": 640573033.74102
+  },
+  {
+    "sector": "316000/leather/us-ga",
+    "amount": 518180068.14214
+  },
+  {
+    "sector": "3219a0/veneer, plywood, and engineered wood/rous",
+    "amount": 139483990.517048
+  },
+  {
+    "sector": "3219a0/veneer, plywood, and engineered wood/us-ga",
+    "amount": 184171928.453958
+  },
+  {
+    "sector": "322120/paper/us-ga",
+    "amount": 226414694.16829
+  },
+  {
+    "sector": "322120/paper/rous",
+    "amount": 229013903.947185
+  },
+  {
+    "sector": "322210/cardboard containers/us-ga",
+    "amount": 7518150.34496672
+  },
+  {
+    "sector": "322210/cardboard containers/rous",
+    "amount": 12840136.5976675
+  },
+  {
+    "sector": "322220/paper bags and coated paper/rous",
+    "amount": 27196757.7391194
+  },
+  {
+    "sector": "322220/paper bags and coated paper/us-ga",
+    "amount": 15924231.9599217
+  },
+  {
+    "sector": "322230/stationery/rous",
+    "amount": 17239031.9849371
+  },
+  {
+    "sector": "322230/stationery/us-ga",
+    "amount": 10093789.367318
+  },
+  {
+    "sector": "322291/sanitary paper (tissues, napkins, diapers, etc.)/rous",
+    "amount": 124019673.766232
+  },
+  {
+    "sector": "322291/sanitary paper (tissues, napkins, diapers, etc.)/us-ga",
+    "amount": 72615937.2227892
+  },
+  {
+    "sector": "322299/all other converted paper products/us-ga",
+    "amount": 10259180.132449
+  },
+  {
+    "sector": "322299/all other converted paper products/rous",
+    "amount": 17521500.4005488
+  },
+  {
+    "sector": "323110/books, newspapers, magazines, and other print media/us-ga",
+    "amount": 80114912.5839367
+  },
+  {
+    "sector": "324110/gasoline, fuels, and by-products of petroleum refining/rous",
+    "amount": 783688235.893462
+  },
+  {
+    "sector": "324110/gasoline, fuels, and by-products of petroleum refining/us-ga",
+    "amount": 8842369119.85974
+  },
+  {
+    "sector": "324190/other petroleum and coal products/rous",
+    "amount": 102025566.6168
+  },
+  {
+    "sector": "324190/other petroleum and coal products/us-ga",
+    "amount": 156688719.688032
+  },
+  {
+    "sector": "325120/compressed gases/us-ga",
+    "amount": 834367.386758988
+  },
+  {
+    "sector": "325120/compressed gases/rous",
+    "amount": 1739961.56920875
+  },
+  {
+    "sector": "325180/other basic inorganic chemicals/rous",
+    "amount": 132084596.941442
+  },
+  {
+    "sector": "325180/other basic inorganic chemicals/us-ga",
+    "amount": 63338801.230686
+  },
+  {
+    "sector": "325190/other basic organic chemicals/rous",
+    "amount": 31972120.9842213
+  },
+  {
+    "sector": "325190/other basic organic chemicals/us-ga",
+    "amount": 15331657.6106207
+  },
+  {
+    "sector": "325310/fertilizers/rous",
+    "amount": 4598377.67664844
+  },
+  {
+    "sector": "325310/fertilizers/us-ga",
+    "amount": 5431812.0459925
+  },
+  {
+    "sector": "325320/pesticides/rous",
+    "amount": 73981083.3524709
+  },
+  {
+    "sector": "325320/pesticides/us-ga",
+    "amount": 37962209.4242744
+  },
+  {
+    "sector": "325412/pharmaceutical products (pills, powders, solutions, etc.)/us-ga",
+    "amount": 1948254688.53266
+  },
+  {
+    "sector": "325412/pharmaceutical products (pills, powders, solutions, etc.)/rous",
+    "amount": 4937311944.43968
+  },
+  {
+    "sector": "325510/paints and coatings/rous",
+    "amount": 8848564.33933998
+  },
+  {
+    "sector": "325510/paints and coatings/us-ga",
+    "amount": 4540499.23753883
+  },
+  {
+    "sector": "325520/adhesives/us-ga",
+    "amount": 12206799.1759487
+  },
+  {
+    "sector": "325520/adhesives/rous",
+    "amount": 23788716.2259128
+  },
+  {
+    "sector": "325610/soap and cleaning compounds/us-ga",
+    "amount": 302749567.648278
+  },
+  {
+    "sector": "325610/soap and cleaning compounds/rous",
+    "amount": 590000986.212089
+  },
+  {
+    "sector": "325620/toiletries/us-ga",
+    "amount": 368802672.251917
+  },
+  {
+    "sector": "325620/toiletries/rous",
+    "amount": 718725850.003779
+  },
+  {
+    "sector": "3259a0/chemicals (except basic chemicals, agrichemicals, polymers, paints, pharmaceuticals,soaps, cleaning compounds)/rous",
+    "amount": 51555525.1874671
+  },
+  {
+    "sector": "3259a0/chemicals (except basic chemicals, agrichemicals, polymers, paints, pharmaceuticals,soaps, cleaning compounds)/us-ga",
+    "amount": 26454893.0004242
+  },
+  {
+    "sector": "326110/plastic bags, films, and sheets/us-ga",
+    "amount": 30022622.7920786
+  },
+  {
+    "sector": "326110/plastic bags, films, and sheets/rous",
+    "amount": 77485247.8206052
+  },
+  {
+    "sector": "326140/polystyrene foam products/rous",
+    "amount": 16386992.0989272
+  },
+  {
+    "sector": "326140/polystyrene foam products/us-ga",
+    "amount": 6349343.85990352
+  },
+  {
+    "sector": "326150/urethane and other foam products/us-ga",
+    "amount": 6577283.25737552
+  },
+  {
+    "sector": "326150/urethane and other foam products/rous",
+    "amount": 16975279.8319315
+  },
+  {
+    "sector": "326190/other plastic products/rous",
+    "amount": 267492685.964044
+  },
+  {
+    "sector": "326190/other plastic products/us-ga",
+    "amount": 103643367.430811
+  },
+  {
+    "sector": "326210/rubber tires/rous",
+    "amount": 315393570.629472
+  },
+  {
+    "sector": "326210/rubber tires/us-ga",
+    "amount": 122203160.838796
+  },
+  {
+    "sector": "326220/rubber and plastic belts and hoses/us-ga",
+    "amount": 5748070.0303834
+  },
+  {
+    "sector": "326220/rubber and plastic belts and hoses/rous",
+    "amount": 14835167.2630003
+  },
+  {
+    "sector": "326290/other rubber products/us-ga",
+    "amount": 14639544.9051021
+  },
+  {
+    "sector": "326290/other rubber products/rous",
+    "amount": 37783133.4993162
+  },
+  {
+    "sector": "327100/clay and ceramic products/us-ga",
+    "amount": 34282437.1336806
+  },
+  {
+    "sector": "327100/clay and ceramic products/rous",
+    "amount": 42145435.324837
+  },
+  {
+    "sector": "327200/glass and glass products/rous",
+    "amount": 54278922.9695367
+  },
+  {
+    "sector": "327200/glass and glass products/us-ga",
+    "amount": 44152201.7757028
+  },
+  {
+    "sector": "327390/other concrete products/rous",
+    "amount": 522808.417426103
+  },
+  {
+    "sector": "327390/other concrete products/us-ga",
+    "amount": 425268.989754794
+  },
+  {
+    "sector": "327400/lime and gypsum products/rous",
+    "amount": 403032.046902394
+  },
+  {
+    "sector": "327400/lime and gypsum products/us-ga",
+    "amount": 327839.081606245
+  },
+  {
+    "sector": "327910/abrasive products/rous",
+    "amount": 3248278.09473661
+  },
+  {
+    "sector": "327910/abrasive products/us-ga",
+    "amount": 2642252.68329105
+  },
+  {
+    "sector": "327991/cut stone and stone products/rous",
+    "amount": 64468067.0002324
+  },
+  {
+    "sector": "327991/cut stone and stone products/us-ga",
+    "amount": 52440375.5004737
+  },
+  {
+    "sector": "327992/ground or treated minerals and earth/rous",
+    "amount": 3451353.71754652
+  },
+  {
+    "sector": "327992/ground or treated minerals and earth/us-ga",
+    "amount": 2807440.85180099
+  },
+  {
+    "sector": "331110/primary iron, steel, and ferroalloy products/rous",
+    "amount": 795678.893523205
+  },
+  {
+    "sector": "331110/primary iron, steel, and ferroalloy products/us-ga",
+    "amount": 428816.138464727
+  },
+  {
+    "sector": "331200/secondary steel products/us-ga",
+    "amount": 5559402.30045561
+  },
+  {
+    "sector": "331200/secondary steel products/rous",
+    "amount": 10315607.7262254
+  },
+  {
+    "sector": "331490/other secondary nonferrous metal products/rous",
+    "amount": 557715.928062917
+  },
+  {
+    "sector": "331490/other secondary nonferrous metal products/us-ga",
+    "amount": 300570.484625073
+  },
+  {
+    "sector": "331520/nonferrous metal casts/rous",
+    "amount": 4055964.54235763
+  },
+  {
+    "sector": "331520/nonferrous metal casts/us-ga",
+    "amount": 2185885.62165113
+  },
+  {
+    "sector": "33211b/lids, jars, bottle caps, other metal closures and crowns/rous",
+    "amount": 12482847.4669945
+  },
+  {
+    "sector": "33211b/lids, jars, bottle caps, other metal closures and crowns/us-ga",
+    "amount": 5829181.75683142
+  },
+  {
+    "sector": "332200/cutlery and handtools/rous",
+    "amount": 129645995.028272
+  },
+  {
+    "sector": "332200/cutlery and handtools/us-ga",
+    "amount": 60541480.7048845
+  },
+  {
+    "sector": "332310/metal structural products/us-ga",
+    "amount": 2248976.58164136
+  },
+  {
+    "sector": "332310/metal structural products/rous",
+    "amount": 4816050.14161229
+  },
+  {
+    "sector": "332320/metal windows, doors, and architectural products/us-ga",
+    "amount": 5370459.80489266
+  },
+  {
+    "sector": "332320/metal windows, doors, and architectural products/rous",
+    "amount": 11500521.5772411
+  },
+  {
+    "sector": "332410/power boilers and heat exchangers/us-ga",
+    "amount": 13331517.3936654
+  },
+  {
+    "sector": "332410/power boilers and heat exchangers/rous",
+    "amount": 28548654.8662994
+  },
+  {
+    "sector": "332420/heavy gauge metal tanks/rous",
+    "amount": 66550869.5909978
+  },
+  {
+    "sector": "332420/heavy gauge metal tanks/us-ga",
+    "amount": 31077613.9776477
+  },
+  {
+    "sector": "332430/light gauge metal cans, boxes, and containers/rous",
+    "amount": 8347433.66642459
+  },
+  {
+    "sector": "332430/light gauge metal cans, boxes, and containers/us-ga",
+    "amount": 3898045.55197359
+  },
+  {
+    "sector": "332500/metal hinges, keys, lock, and other hardware/us-ga",
+    "amount": 6382845.43057725
+  },
+  {
+    "sector": "332500/metal hinges, keys, lock, and other hardware/rous",
+    "amount": 13668485.4305535
+  },
+  {
+    "sector": "332600/springs and wires/us-ga",
+    "amount": 1058178.0682785
+  },
+  {
+    "sector": "332600/springs and wires/rous",
+    "amount": 2266025.65681868
+  },
+  {
+    "sector": "332710/machine shops/rous",
+    "amount": 13745328.873852
+  },
+  {
+    "sector": "332710/machine shops/us-ga",
+    "amount": 6418729.42251034
+  },
+  {
+    "sector": "332720/screws, nuts, and bolts/rous",
+    "amount": 5399764.09998592
+  },
+  {
+    "sector": "332720/screws, nuts, and bolts/us-ga",
+    "amount": 2521556.59724726
+  },
+  {
+    "sector": "33291a/valve and fittings (except for plumbing)/rous",
+    "amount": 14179291.8290235
+  },
+  {
+    "sector": "33291a/valve and fittings (except for plumbing)/us-ga",
+    "amount": 6621379.4146788
+  },
+  {
+    "sector": "332996/fabricated pipe and pipe fittings/us-ga",
+    "amount": 2868875.33086473
+  },
+  {
+    "sector": "332996/fabricated pipe and pipe fittings/rous",
+    "amount": 6143526.59617084
+  },
+  {
+    "sector": "33299a/ammunition, arms, ordnance, and related accessories/us-ga",
+    "amount": 57023970.7972801
+  },
+  {
+    "sector": "33299a/ammunition, arms, ordnance, and related accessories/rous",
+    "amount": 122113455.904954
+  },
+  {
+    "sector": "33299b/metal pipe fittings, ball and roller bearings, industrial patterns, metal bath fixtures, other misc. fabricated metals/us-ga",
+    "amount": 42365463.3222583
+  },
+  {
+    "sector": "33299b/metal pipe fittings, ball and roller bearings, industrial patterns, metal bath fixtures, other misc. fabricated metals/rous",
+    "amount": 90723130.3776951
+  },
+  {
+    "sector": "333111/farm machinery and equipment/rous",
+    "amount": 683472881.687391
+  },
+  {
+    "sector": "333111/farm machinery and equipment/us-ga",
+    "amount": 220279646.203975
+  },
+  {
+    "sector": "333112/lawn and garden equipment/rous",
+    "amount": 779499943.37041
+  },
+  {
+    "sector": "333112/lawn and garden equipment/us-ga",
+    "amount": 251228653.458395
+  },
+  {
+    "sector": "333120/construction machinery/rous",
+    "amount": 512402346.47042
+  },
+  {
+    "sector": "333120/construction machinery/us-ga",
+    "amount": 165144529.678964
+  },
+  {
+    "sector": "333130/mining and oil/gas field machinery/us-ga",
+    "amount": 5719981.0290794
+  },
+  {
+    "sector": "333130/mining and oil/gas field machinery/rous",
+    "amount": 17747676.5761736
+  },
+  {
+    "sector": "333220/plastics and rubber industry machinery/rous",
+    "amount": 57360738.3795154
+  },
+  {
+    "sector": "333220/plastics and rubber industry machinery/us-ga",
+    "amount": 18487058.5136363
+  },
+  {
+    "sector": "333295/semiconductor machinery/rous",
+    "amount": 863838.728797983
+  },
+  {
+    "sector": "333295/semiconductor machinery/us-ga",
+    "amount": 278410.591927398
+  },
+  {
+    "sector": "33329a/machinery for the paper, textile, food or other industries (except semiconductor machinery)/rous",
+    "amount": 331760971.448489
+  },
+  {
+    "sector": "33329a/machinery for the paper, textile, food or other industries (except semiconductor machinery)/us-ga",
+    "amount": 106924782.786606
+  },
+  {
+    "sector": "333313/office machinery/us-ga",
+    "amount": 19390160.3049309
+  },
+  {
+    "sector": "333313/office machinery/rous",
+    "amount": 60162838.3210669
+  },
+  {
+    "sector": "333314/optical instruments and lenses/rous",
+    "amount": 34316454.6323095
+  },
+  {
+    "sector": "333314/optical instruments and lenses/us-ga",
+    "amount": 11060009.3843041
+  },
+  {
+    "sector": "333315/photography and photocopying equipment/rous",
+    "amount": 38118253.9963632
+  },
+  {
+    "sector": "333315/photography and photocopying equipment/us-ga",
+    "amount": 12285308.9408639
+  },
+  {
+    "sector": "33331a/vending, commercial laundry, and other commercial and service industry machinery/rous",
+    "amount": 167865101.820834
+  },
+  {
+    "sector": "33331a/vending, commercial laundry, and other commercial and service industry machinery/us-ga",
+    "amount": 54102022.5232582
+  },
+  {
+    "sector": "333414/heating equipment other than warm air furnaces/us-ga",
+    "amount": 16386683.4294535
+  },
+  {
+    "sector": "333414/heating equipment other than warm air furnaces/rous",
+    "amount": 50843797.590163
+  },
+  {
+    "sector": "333415/air conditioning, refrigeration, and warm air heating equipment/us-ga",
+    "amount": 150914208.142039
+  },
+  {
+    "sector": "333415/air conditioning, refrigeration, and warm air heating equipment/rous",
+    "amount": 468249202.79243
+  },
+  {
+    "sector": "33341a/air purification and ventilation equipment/rous",
+    "amount": 35818248.7682114
+  },
+  {
+    "sector": "33341a/air purification and ventilation equipment/us-ga",
+    "amount": 11544029.5843608
+  },
+  {
+    "sector": "333511/industrial molds/rous",
+    "amount": 28468014.2573746
+  },
+  {
+    "sector": "333511/industrial molds/us-ga",
+    "amount": 9175088.40037987
+  },
+  {
+    "sector": "333514/special tools, dies, jigs, and fixtures/rous",
+    "amount": 58622274.2666779
+  },
+  {
+    "sector": "333514/special tools, dies, jigs, and fixtures/us-ga",
+    "amount": 18893644.767961
+  },
+  {
+    "sector": "33351a/metal cutting and forming machine tools/us-ga",
+    "amount": 14955903.2867089
+  },
+  {
+    "sector": "33351a/metal cutting and forming machine tools/rous",
+    "amount": 46404443.1419664
+  },
+  {
+    "sector": "33351b/cutting and machine tool accessory, rolling mill, and other metalworking machines/rous",
+    "amount": 9834506.5697549
+  },
+  {
+    "sector": "33351b/cutting and machine tool accessory, rolling mill, and other metalworking machines/us-ga",
+    "amount": 3169608.75232958
+  },
+  {
+    "sector": "333611/turbines and turbine generator sets/rous",
+    "amount": 42032051.6962123
+  },
+  {
+    "sector": "333611/turbines and turbine generator sets/us-ga",
+    "amount": 13546704.9607151
+  },
+  {
+    "sector": "333618/other engine equipment/rous",
+    "amount": 73840936.7394205
+  },
+  {
+    "sector": "333618/other engine equipment/us-ga",
+    "amount": 23798538.1075723
+  },
+  {
+    "sector": "333912/air and gas compressors/rous",
+    "amount": 32869918.9369762
+  },
+  {
+    "sector": "333912/air and gas compressors/us-ga",
+    "amount": 10593798.6834453
+  },
+  {
+    "sector": "33391a/pumps and pumping equipment/rous",
+    "amount": 209879369.087057
+  },
+  {
+    "sector": "33391a/pumps and pumping equipment/us-ga",
+    "amount": 67642995.6575164
+  },
+  {
+    "sector": "333920/material handling equipment/us-ga",
+    "amount": 68275552.75126
+  },
+  {
+    "sector": "333920/material handling equipment/rous",
+    "amount": 211842036.211065
+  },
+  {
+    "sector": "333991/power tools/us-ga",
+    "amount": 36855658.8621175
+  },
+  {
+    "sector": "333991/power tools/rous",
+    "amount": 114353930.574473
+  },
+  {
+    "sector": "333993/packaging machinery/us-ga",
+    "amount": 95579187.3279427
+  },
+  {
+    "sector": "333993/packaging machinery/rous",
+    "amount": 296558414.352443
+  },
+  {
+    "sector": "333994/industrial process furnaces and ovens/rous",
+    "amount": 10366013.7033714
+  },
+  {
+    "sector": "333994/industrial process furnaces and ovens/us-ga",
+    "amount": 3340910.65249988
+  },
+  {
+    "sector": "33399a/welding and soldering equipment, scales and balances, and other general purpose machinery/rous",
+    "amount": 107964916.458597
+  },
+  {
+    "sector": "33399a/welding and soldering equipment, scales and balances, and other general purpose machinery/us-ga",
+    "amount": 34796513.8590811
+  },
+  {
+    "sector": "33399b/hydraulic pumps, motors, cylinders and actuators/us-ga",
+    "amount": 1321188.42021274
+  },
+  {
+    "sector": "33399b/hydraulic pumps, motors, cylinders and actuators/rous",
+    "amount": 4099318.62691779
+  },
+  {
+    "sector": "334111/computers/us-ga",
+    "amount": 179331707.208004
+  },
+  {
+    "sector": "334111/computers/rous",
+    "amount": 623747293.698269
+  },
+  {
+    "sector": "334112/computer storage device readers/rous",
+    "amount": 53681564.606743
+  },
+  {
+    "sector": "334112/computer storage device readers/us-ga",
+    "amount": 15433825.0823431
+  },
+  {
+    "sector": "33411a/computer terminals and other computer peripheral equipment/rous",
+    "amount": 502349149.18002
+  },
+  {
+    "sector": "33411a/computer terminals and other computer peripheral equipment/us-ga",
+    "amount": 144428892.032227
+  },
+  {
+    "sector": "334210/telephones/us-ga",
+    "amount": 55899987.1333089
+  },
+  {
+    "sector": "334210/telephones/rous",
+    "amount": 194430010.370265
+  },
+  {
+    "sector": "334220/wireless communications/us-ga",
+    "amount": 245888129.687559
+  },
+  {
+    "sector": "334220/wireless communications/rous",
+    "amount": 855242264.92335
+  },
+  {
+    "sector": "334290/communications equipment/rous",
+    "amount": 24885198.3163484
+  },
+  {
+    "sector": "334290/communications equipment/us-ga",
+    "amount": 7154668.47450451
+  },
+  {
+    "sector": "334300/audio and video equipment/rous",
+    "amount": 665996240.033672
+  },
+  {
+    "sector": "334300/audio and video equipment/us-ga",
+    "amount": 191478574.618273
+  },
+  {
+    "sector": "334418/printed circuit and electronic assembly/us-ga",
+    "amount": 879426.472065207
+  },
+  {
+    "sector": "334418/printed circuit and electronic assembly/rous",
+    "amount": 3058800.31198859
+  },
+  {
+    "sector": "33441a/electronic capacitors, resistors, coils, transformers, connectors and other components (except  semiconductors and printed circuit assemblies)/us-ga",
+    "amount": 2837040.38694349
+  },
+  {
+    "sector": "33441a/electronic capacitors, resistors, coils, transformers, connectors and other components (except  semiconductors and printed circuit assemblies)/rous",
+    "amount": 9867726.63361848
+  },
+  {
+    "sector": "334510/electromedical appartuses/rous",
+    "amount": 124425203.841343
+  },
+  {
+    "sector": "334510/electromedical appartuses/us-ga",
+    "amount": 26335627.2710919
+  },
+  {
+    "sector": "334511/navigation instruments/rous",
+    "amount": 553606900.220177
+  },
+  {
+    "sector": "334511/navigation instruments/us-ga",
+    "amount": 117175496.031285
+  },
+  {
+    "sector": "334513/industrial process variable instruments/us-ga",
+    "amount": 21712757.5895911
+  },
+  {
+    "sector": "334513/industrial process variable instruments/rous",
+    "amount": 102584011.431847
+  },
+  {
+    "sector": "334514/fluid meters and counting devices/rous",
+    "amount": 36153666.4776327
+  },
+  {
+    "sector": "334514/fluid meters and counting devices/us-ga",
+    "amount": 7652223.62868203
+  },
+  {
+    "sector": "334515/signal testing instruments/rous",
+    "amount": 102635944.856136
+  },
+  {
+    "sector": "334515/signal testing instruments/us-ga",
+    "amount": 21723749.7299515
+  },
+  {
+    "sector": "334516/analytical laboratory instruments/rous",
+    "amount": 48377006.0050983
+  },
+  {
+    "sector": "334516/analytical laboratory instruments/us-ga",
+    "amount": 10239394.9080139
+  },
+  {
+    "sector": "334517/irradiation apparatuses/us-ga",
+    "amount": 27646806.8822716
+  },
+  {
+    "sector": "334517/irradiation apparatuses/rous",
+    "amount": 130619998.015573
+  },
+  {
+    "sector": "33451a/watches, clocks, and other measuring and controlling devices/rous",
+    "amount": 178195739.799288
+  },
+  {
+    "sector": "33451a/watches, clocks, and other measuring and controlling devices/us-ga",
+    "amount": 37716607.5663779
+  },
+  {
+    "sector": "334610/external hard drives, cds, other storage media/rous",
+    "amount": 24468559.6257637
+  },
+  {
+    "sector": "334610/external hard drives, cds, other storage media/us-ga",
+    "amount": 5178973.7631154
+  },
+  {
+    "sector": "335110/light bulbs/rous",
+    "amount": 28569925.8785481
+  },
+  {
+    "sector": "335110/light bulbs/us-ga",
+    "amount": 12882406.474014
+  },
+  {
+    "sector": "335120/light fixtures/us-ga",
+    "amount": 29179338.7686133
+  },
+  {
+    "sector": "335120/light fixtures/rous",
+    "amount": 64712408.1580524
+  },
+  {
+    "sector": "335210/small electrical appliances/us-ga",
+    "amount": 74556696.3440598
+  },
+  {
+    "sector": "335210/small electrical appliances/rous",
+    "amount": 259321334.167366
+  },
+  {
+    "sector": "335221/home cooking appliances/rous",
+    "amount": 214875253.923193
+  },
+  {
+    "sector": "335221/home cooking appliances/us-ga",
+    "amount": 61778137.5760803
+  },
+  {
+    "sector": "335222/home refrigerators and freezers/rous",
+    "amount": 199020762.801791
+  },
+  {
+    "sector": "335222/home refrigerators and freezers/us-ga",
+    "amount": 64143325.0562755
+  },
+  {
+    "sector": "335224/home laundry machines/rous",
+    "amount": 130113074.944126
+  },
+  {
+    "sector": "335224/home laundry machines/us-ga",
+    "amount": 41934746.620002
+  },
+  {
+    "sector": "335228/major home appliances (except ovens, stoves, refrigerators and laundry machines)/us-ga",
+    "amount": 18776020.0715832
+  },
+  {
+    "sector": "335228/major home appliances (except ovens, stoves, refrigerators and laundry machines)/rous",
+    "amount": 58257314.1281615
+  },
+  {
+    "sector": "335311/specialty transformers/rous",
+    "amount": 291554723.446734
+  },
+  {
+    "sector": "335311/specialty transformers/us-ga",
+    "amount": 83824021.0875408
+  },
+  {
+    "sector": "335312/motors and generators/rous",
+    "amount": 188596298.827518
+  },
+  {
+    "sector": "335312/motors and generators/us-ga",
+    "amount": 54222754.2845426
+  },
+  {
+    "sector": "335313/switchgear and switchboards/rous",
+    "amount": 117786859.669042
+  },
+  {
+    "sector": "335313/switchgear and switchboards/us-ga",
+    "amount": 33864545.5371497
+  },
+  {
+    "sector": "335314/relay and industrial controls/us-ga",
+    "amount": 6899365.29346472
+  },
+  {
+    "sector": "335314/relay and industrial controls/rous",
+    "amount": 32596714.8676024
+  },
+  {
+    "sector": "335911/storage batteries/rous",
+    "amount": 77400568.4808944
+  },
+  {
+    "sector": "335911/storage batteries/us-ga",
+    "amount": 22253204.5025005
+  },
+  {
+    "sector": "335912/primary batteries/rous",
+    "amount": 64506177.5787214
+  },
+  {
+    "sector": "335912/primary batteries/us-ga",
+    "amount": 18545976.9806243
+  },
+  {
+    "sector": "335920/communication and energy wire and cable/rous",
+    "amount": 17539649.6931365
+  },
+  {
+    "sector": "335920/communication and energy wire and cable/us-ga",
+    "amount": 5042771.89669389
+  },
+  {
+    "sector": "335930/wiring devices/us-ga",
+    "amount": 279596.452856402
+  },
+  {
+    "sector": "335930/wiring devices/rous",
+    "amount": 972485.755653547
+  },
+  {
+    "sector": "335999/other miscellaneous electrical equipment and components/us-ga",
+    "amount": 19096297.4233193
+  },
+  {
+    "sector": "335999/other miscellaneous electrical equipment and components/rous",
+    "amount": 66420289.0994449
+  },
+  {
+    "sector": "336111/automobiles/rous",
+    "amount": 4367427587.6957
+  },
+  {
+    "sector": "336111/automobiles/us-ga",
+    "amount": 1389820465.74237
+  },
+  {
+    "sector": "336112/pickup trucks, vans, and suvs/rous",
+    "amount": 3484573383.13857
+  },
+  {
+    "sector": "336112/pickup trucks, vans, and suvs/us-ga",
+    "amount": 1108875031.13069
+  },
+  {
+    "sector": "336120/heavy duty trucks/us-ga",
+    "amount": 75355692.8769635
+  },
+  {
+    "sector": "336120/heavy duty trucks/rous",
+    "amount": 236800752.379899
+  },
+  {
+    "sector": "336211/vehicle bodies/us-ga",
+    "amount": 28060269.4737973
+  },
+  {
+    "sector": "336211/vehicle bodies/rous",
+    "amount": 88177716.5028129
+  },
+  {
+    "sector": "336212/truck trailers/rous",
+    "amount": 24882739.5101779
+  },
+  {
+    "sector": "336212/truck trailers/us-ga",
+    "amount": 7918285.97511507
+  },
+  {
+    "sector": "336213/motor homes/rous",
+    "amount": 98001407.6829813
+  },
+  {
+    "sector": "336213/motor homes/us-ga",
+    "amount": 31186404.2012043
+  },
+  {
+    "sector": "336214/travel trailer and campers/us-ga",
+    "amount": 49959956.6712406
+  },
+  {
+    "sector": "336214/travel trailer and campers/rous",
+    "amount": 156996172.113143
+  },
+  {
+    "sector": "336310/vehicle engines and engine parts/us-ga",
+    "amount": 12729525.4424224
+  },
+  {
+    "sector": "336310/vehicle engines and engine parts/rous",
+    "amount": 39496547.1689068
+  },
+  {
+    "sector": "336320/vehicle electrical and electronic equipment/rous",
+    "amount": 78176001.148736
+  },
+  {
+    "sector": "336320/vehicle electrical and electronic equipment/us-ga",
+    "amount": 22476146.8151226
+  },
+  {
+    "sector": "336350/transmission and power train parts/rous",
+    "amount": 47851636.0984764
+  },
+  {
+    "sector": "336350/transmission and power train parts/us-ga",
+    "amount": 15422325.8193218
+  },
+  {
+    "sector": "336360/vehicle seating and interior trim (upholstery)/us-ga",
+    "amount": 2816785.36296628
+  },
+  {
+    "sector": "336360/vehicle seating and interior trim (upholstery)/rous",
+    "amount": 8851579.3270214
+  },
+  {
+    "sector": "336390/other vehicle parts/us-ga",
+    "amount": 38189547.2365749
+  },
+  {
+    "sector": "336390/other vehicle parts/rous",
+    "amount": 120008365.306043
+  },
+  {
+    "sector": "3363a0/motor vehicle steering, suspension components (except spring), and brake systems/rous",
+    "amount": 29347689.7984382
+  },
+  {
+    "sector": "3363a0/motor vehicle steering, suspension components (except spring), and brake systems/us-ga",
+    "amount": 9339140.50894386
+  },
+  {
+    "sector": "336411/aircraft/rous",
+    "amount": 715461065.471989
+  },
+  {
+    "sector": "336411/aircraft/us-ga",
+    "amount": 690169801.76886
+  },
+  {
+    "sector": "336412/aircraft engines and parts/rous",
+    "amount": 15074576.5453478
+  },
+  {
+    "sector": "336412/aircraft engines and parts/us-ga",
+    "amount": 4858455.21754402
+  },
+  {
+    "sector": "336414/guided missiles and space vehicles/rous",
+    "amount": 122469962.549133
+  },
+  {
+    "sector": "336414/guided missiles and space vehicles/us-ga",
+    "amount": 59112496.103767
+  },
+  {
+    "sector": "33641a/propulsion units and parts for space vehicles and guided missiles/rous",
+    "amount": 25125019.0361226
+  },
+  {
+    "sector": "33641a/propulsion units and parts for space vehicles and guided missiles/us-ga",
+    "amount": 24236859.6202506
+  },
+  {
+    "sector": "336500/railroad rolling stock/rous",
+    "amount": 148683490.958943
+  },
+  {
+    "sector": "336500/railroad rolling stock/us-ga",
+    "amount": 143427588.772758
+  },
+  {
+    "sector": "336611/ships and ship repair/rous",
+    "amount": 135933000.033378
+  },
+  {
+    "sector": "336611/ships and ship repair/us-ga",
+    "amount": 131127822.623013
+  },
+  {
+    "sector": "336612/boats/rous",
+    "amount": 137453625.096822
+  },
+  {
+    "sector": "336612/boats/us-ga",
+    "amount": 132594694.196115
+  },
+  {
+    "sector": "336991/motorcycle, bicycle, and parts/rous",
+    "amount": 178049448.511667
+  },
+  {
+    "sector": "336991/motorcycle, bicycle, and parts/us-ga",
+    "amount": 56659615.4113267
+  },
+  {
+    "sector": "336992/military armored vehicles and tanks/rous",
+    "amount": 140865796.128971
+  },
+  {
+    "sector": "336992/military armored vehicles and tanks/us-ga",
+    "amount": 44826883.205734
+  },
+  {
+    "sector": "336999/other transportation equipment/rous",
+    "amount": 84058397.6934463
+  },
+  {
+    "sector": "336999/other transportation equipment/us-ga",
+    "amount": 81086966.8146395
+  },
+  {
+    "sector": "337110/wood kitchen cabinets and countertops/us-ga",
+    "amount": 14152437.120594
+  },
+  {
+    "sector": "337110/wood kitchen cabinets and countertops/rous",
+    "amount": 31386533.2810135
+  },
+  {
+    "sector": "337121/home furniture - upholstered/rous",
+    "amount": 306910058.499943
+  },
+  {
+    "sector": "337121/home furniture - upholstered/us-ga",
+    "amount": 138388182.782384
+  },
+  {
+    "sector": "337122/home furniture - wood, nonupholstered/rous",
+    "amount": 423706588.188993
+  },
+  {
+    "sector": "337122/home furniture - wood, nonupholstered/us-ga",
+    "amount": 191052665.588702
+  },
+  {
+    "sector": "337127/institutional furniture/rous",
+    "amount": 99870406.2210891
+  },
+  {
+    "sector": "337127/institutional furniture/us-ga",
+    "amount": 45032359.3114741
+  },
+  {
+    "sector": "33712a/home furniture - cabinets and non-wood, nonupholstered/rous",
+    "amount": 144148689.957326
+  },
+  {
+    "sector": "33712a/home furniture - cabinets and non-wood, nonupholstered/us-ga",
+    "amount": 64997789.0954631
+  },
+  {
+    "sector": "337215/shelving and lockers/rous",
+    "amount": 276380516.384081
+  },
+  {
+    "sector": "337215/shelving and lockers/us-ga",
+    "amount": 124622169.784171
+  },
+  {
+    "sector": "33721a/office furniture and custom architectural woodwork and millwork/rous",
+    "amount": 170741685.329667
+  },
+  {
+    "sector": "33721a/office furniture and custom architectural woodwork and millwork/us-ga",
+    "amount": 76988781.9039291
+  },
+  {
+    "sector": "337900/mattresses, blinds and shades/rous",
+    "amount": 271617415.260284
+  },
+  {
+    "sector": "337900/mattresses, blinds and shades/us-ga",
+    "amount": 122474449.660065
+  },
+  {
+    "sector": "339112/surgical and medical instruments/rous",
+    "amount": 89122736.0939597
+  },
+  {
+    "sector": "339112/surgical and medical instruments/us-ga",
+    "amount": 18863566.9196351
+  },
+  {
+    "sector": "339113/surgical appliance and supplies/rous",
+    "amount": 314987257.436684
+  },
+  {
+    "sector": "339113/surgical appliance and supplies/us-ga",
+    "amount": 66669667.8076058
+  },
+  {
+    "sector": "339114/dental equipment and supplies/rous",
+    "amount": 78937504.7107055
+  },
+  {
+    "sector": "339114/dental equipment and supplies/us-ga",
+    "amount": 16707778.1477618
+  },
+  {
+    "sector": "339115/ophthalmic goods/rous",
+    "amount": 228276583.515177
+  },
+  {
+    "sector": "339115/ophthalmic goods/us-ga",
+    "amount": 48316633.8697725
+  },
+  {
+    "sector": "339910/jewelry and silverware/us-ga",
+    "amount": 162788010.209266
+  },
+  {
+    "sector": "339910/jewelry and silverware/rous",
+    "amount": 854141428.415488
+  },
+  {
+    "sector": "339920/sporting and athletic goods/us-ga",
+    "amount": 72277447.2159242
+  },
+  {
+    "sector": "339920/sporting and athletic goods/rous",
+    "amount": 379236541.609381
+  },
+  {
+    "sector": "339930/dolls, toys, and games/us-ga",
+    "amount": 110992184.663391
+  },
+  {
+    "sector": "339930/dolls, toys, and games/rous",
+    "amount": 582371042.126962
+  },
+  {
+    "sector": "339940/office supplies (not paper)/rous",
+    "amount": 44885579.4554635
+  },
+  {
+    "sector": "339940/office supplies (not paper)/us-ga",
+    "amount": 49271814.5793388
+  },
+  {
+    "sector": "339950/signs/rous",
+    "amount": 123809314.082732
+  },
+  {
+    "sector": "339950/signs/us-ga",
+    "amount": 55826602.9832509
+  },
+  {
+    "sector": "339990/gaskets, seals, musical instruments, fasteners, brooms, brushes, mop and other misc. goods/us-ga",
+    "amount": 111681457.023429
+  },
+  {
+    "sector": "339990/gaskets, seals, musical instruments, fasteners, brooms, brushes, mop and other misc. goods/rous",
+    "amount": 585987623.455115
+  },
+  {
+    "sector": "420000/wholesale trade/us-ga",
+    "amount": 19267398431.5409
+  },
+  {
+    "sector": "441000/vehicles and parts sales/us-ga",
+    "amount": 2957641224.24167
+  },
+  {
+    "sector": "445000/food and beverage stores/us-ga",
+    "amount": 5851395852.29751
+  },
+  {
+    "sector": "452000/general merchandise stores/us-ga",
+    "amount": 6564427752.31992
+  },
+  {
+    "sector": "481000/air transport/us-ga",
+    "amount": 2334115244.17102
+  },
+  {
+    "sector": "482000/rail transport/us-ga",
+    "amount": 176917411.934342
+  },
+  {
+    "sector": "483000/water transport (boats, ships, ferries)/us-ga",
+    "amount": 318555815.437738
+  },
+  {
+    "sector": "484000/truck transport/us-ga",
+    "amount": 2867979316.62356
+  },
+  {
+    "sector": "485000/passenger ground transport/us-ga",
+    "amount": 758862200.054284
+  },
+  {
+    "sector": "486000/pipeline transport/us-ga",
+    "amount": 46249433.6425536
+  },
+  {
+    "sector": "48a000/scenic and sightseeing transportation and support activities for transportation/us-ga",
+    "amount": 236569663.034994
+  },
+  {
+    "sector": "491000/postal service/us-ga",
+    "amount": 363674734.238867
+  },
+  {
+    "sector": "492000/couriers and messengers/us-ga",
+    "amount": 75688304.6579542
+  },
+  {
+    "sector": "493000/warehousing/us-ga",
+    "amount": 5308377.38127361
+  },
+  {
+    "sector": "4a0000/other retail/us-ga",
+    "amount": 20295753583.9992
+  },
+  {
+    "sector": "511110/newspapers/us-ga",
+    "amount": 338153459.107166
+  },
+  {
+    "sector": "511120/magazines and journals/rous",
+    "amount": 310791857.492721
+  },
+  {
+    "sector": "511120/magazines and journals/us-ga",
+    "amount": 136775726.064808
+  },
+  {
+    "sector": "511130/books/us-ga",
+    "amount": 239493445.695028
+  },
+  {
+    "sector": "511130/books/rous",
+    "amount": 544194609.572913
+  },
+  {
+    "sector": "5111a0/directory, mailing list, and other publishers/rous",
+    "amount": 176106747.521596
+  },
+  {
+    "sector": "5111a0/directory, mailing list, and other publishers/us-ga",
+    "amount": 77502443.1190005
+  },
+  {
+    "sector": "511200/software/rous",
+    "amount": 1891390391.10323
+  },
+  {
+    "sector": "511200/software/us-ga",
+    "amount": 33971467.0606401
+  },
+  {
+    "sector": "512100/movies and film/rous",
+    "amount": 1220108109.13735
+  },
+  {
+    "sector": "512100/movies and film/us-ga",
+    "amount": 18612635.8569702
+  },
+  {
+    "sector": "512200/sound recording/us-ga",
+    "amount": 3989288.32344776
+  },
+  {
+    "sector": "512200/sound recording/rous",
+    "amount": 281951785.937537
+  },
+  {
+    "sector": "515100/radio and television/us-ga",
+    "amount": 23856342.3698602
+  },
+  {
+    "sector": "515100/radio and television/rous",
+    "amount": 520398739.522649
+  },
+  {
+    "sector": "515200/cable and subscription programming/rous",
+    "amount": 994602151.863542
+  },
+  {
+    "sector": "515200/cable and subscription programming/us-ga",
+    "amount": 84700058.2388951
+  },
+  {
+    "sector": "517110/telecommunications/rous",
+    "amount": 5436443703.77916
+  },
+  {
+    "sector": "517110/telecommunications/us-ga",
+    "amount": 296710571.487615
+  },
+  {
+    "sector": "517210/wireless telecommunications/rous",
+    "amount": 2009622850.74375
+  },
+  {
+    "sector": "517210/wireless telecommunications/us-ga",
+    "amount": 139831485.730008
+  },
+  {
+    "sector": "517a00/satellite, telecommunications resellers, and all other telecommunications/us-ga",
+    "amount": 16458084.0919726
+  },
+  {
+    "sector": "517a00/satellite, telecommunications resellers, and all other telecommunications/rous",
+    "amount": 331713817.675075
+  },
+  {
+    "sector": "519130/internet publishing and broadcasting/rous",
+    "amount": 88561624.6729179
+  },
+  {
+    "sector": "519130/internet publishing and broadcasting/us-ga",
+    "amount": 2055537.59297171
+  },
+  {
+    "sector": "5191a0/news syndicates, libraries, archives, internet publishing and all other information services/rous",
+    "amount": 110261926.000675
+  },
+  {
+    "sector": "5191a0/news syndicates, libraries, archives, internet publishing and all other information services/us-ga",
+    "amount": 2244954.27257385
+  },
+  {
+    "sector": "522a00/nondepository credit intermediation and related activities/us-ga",
+    "amount": 42122652.9010812
+  },
+  {
+    "sector": "522a00/nondepository credit intermediation and related activities/rous",
+    "amount": 1058626647.81918
+  },
+  {
+    "sector": "523900/investment advice, portfolio management, and other financial advising services/rous",
+    "amount": 3617758693.17307
+  },
+  {
+    "sector": "523900/investment advice, portfolio management, and other financial advising services/us-ga",
+    "amount": 41743059.2233357
+  },
+  {
+    "sector": "523a00/securities and commodities brokerage and exchanges/rous",
+    "amount": 1220072197.10304
+  },
+  {
+    "sector": "523a00/securities and commodities brokerage and exchanges/us-ga",
+    "amount": 14930890.9431116
+  },
+  {
+    "sector": "524100/insurance carriers/rous",
+    "amount": 8820032304.00003
+  },
+  {
+    "sector": "524100/insurance carriers/us-ga",
+    "amount": 272693664.023212
+  },
+  {
+    "sector": "525000/funds, trusts, and financial vehicles/us-ga",
+    "amount": 13581442.2495495
+  },
+  {
+    "sector": "525000/funds, trusts, and financial vehicles/rous",
+    "amount": 3804182214.75174
+  },
+  {
+    "sector": "52a000/monetary authorities and depository credit intermediation/us-ga",
+    "amount": 53804938.3450483
+  },
+  {
+    "sector": "52a000/monetary authorities and depository credit intermediation/rous",
+    "amount": 4929203778.24088
+  },
+  {
+    "sector": "5310hs/housing/us-ga",
+    "amount": 43289465055.7711
+  },
+  {
+    "sector": "531ore/other real estate/us-ga",
+    "amount": 3131692792.09227
+  },
+  {
+    "sector": "532100/vehicle rental and leasing/us-ga",
+    "amount": 1155096938.98604
+  },
+  {
+    "sector": "532400/commercial equipment rental/us-ga",
+    "amount": 10578927.7528744
+  },
+  {
+    "sector": "532a00/consumer goods and general rental centers/us-ga",
+    "amount": 715215141.941806
+  },
+  {
+    "sector": "541100/legal services/us-ga",
+    "amount": 4286837126.9722
+  },
+  {
+    "sector": "541200/accounting, tax preparation, bookkeeping, and payroll/us-ga",
+    "amount": 502660191.746087
+  },
+  {
+    "sector": "541300/architectural, engineering, and related services/us-ga",
+    "amount": 945957512.310837
+  },
+  {
+    "sector": "541400/specialized design/us-ga",
+    "amount": 144195139.082313
+  },
+  {
+    "sector": "541511/custom computer programming/us-ga",
+    "amount": 6166848508.73312
+  },
+  {
+    "sector": "541512/computer systems design/us-ga",
+    "amount": 681193276.850864
+  },
+  {
+    "sector": "541700/scientific research and development/us-ga",
+    "amount": 8582794963.12926
+  },
+  {
+    "sector": "541800/advertising and public relations/us-ga",
+    "amount": 66820833.1700585
+  },
+  {
+    "sector": "541920/photographers/us-ga",
+    "amount": 222065821.942567
+  },
+  {
+    "sector": "541940/veterinarians/us-ga",
+    "amount": 605409297.835432
+  },
+  {
+    "sector": "561300/employment services/us-ga",
+    "amount": 49741152.2926828
+  },
+  {
+    "sector": "561400/business support/us-ga",
+    "amount": 146323186.796168
+  },
+  {
+    "sector": "561500/travel arrangement and reservation/us-ga",
+    "amount": 356173542.283078
+  },
+  {
+    "sector": "561600/investigation and security/us-ga",
+    "amount": 215786906.046086
+  },
+  {
+    "sector": "561700/buildings and dwellings services/us-ga",
+    "amount": 429144346.610023
+  },
+  {
+    "sector": "561900/other support services/us-ga",
+    "amount": 11647904.8919284
+  },
+  {
+    "sector": "562000/waste management and remediation/us-ga",
+    "amount": 469029883.740941
+  },
+  {
+    "sector": "611100/elementary and secondary schools/us-ga",
+    "amount": 1378405765.25534
+  },
+  {
+    "sector": "611a00/colleges, universities, junior colleges, and professional schools/us-ga",
+    "amount": 5957220968.10441
+  },
+  {
+    "sector": "611b00/other educational services/us-ga",
+    "amount": 1877739315.23569
+  },
+  {
+    "sector": "621100/physicians/us-ga",
+    "amount": 9912414069.35272
+  },
+  {
+    "sector": "621200/dentists/us-ga",
+    "amount": 3060398261.32685
+  },
+  {
+    "sector": "621300/healthcare practitioners (except physicians and dentists)/us-ga",
+    "amount": 1797198483.44874
+  },
+  {
+    "sector": "621400/outpatient healthcare/us-ga",
+    "amount": 2339207789.60095
+  },
+  {
+    "sector": "621500/medical laboratories/us-ga",
+    "amount": 751348813.977345
+  },
+  {
+    "sector": "621600/home healthcare/us-ga",
+    "amount": 1810916865.30746
+  },
+  {
+    "sector": "621900/ambulances/us-ga",
+    "amount": 751806317.7101
+  },
+  {
+    "sector": "622000/hospitals/us-ga",
+    "amount": 19271055895.7325
+  },
+  {
+    "sector": "623a00/nursing and community care facilities/us-ga",
+    "amount": 4040399247.37456
+  },
+  {
+    "sector": "623b00/residential mental retardation, mental health, substance abuse and other facilities/us-ga",
+    "amount": 994799105.504319
+  },
+  {
+    "sector": "624100/individual and family services/us-ga",
+    "amount": 2022621596.5624
+  },
+  {
+    "sector": "624400/child day care/us-ga",
+    "amount": 1555586796.06347
+  },
+  {
+    "sector": "624a00/community food, housing, and other relief services, including rehabilitation services/us-ga",
+    "amount": 1198725739.9958
+  },
+  {
+    "sector": "711100/performances/us-ga",
+    "amount": 582316416.132337
+  },
+  {
+    "sector": "711200/sports/us-ga",
+    "amount": 421970146.258825
+  },
+  {
+    "sector": "711500/independent artists, writers, and performers/us-ga",
+    "amount": 7837634.06236395
+  },
+  {
+    "sector": "711a00/promoters and agents/us-ga",
+    "amount": 237803144.661881
+  },
+  {
+    "sector": "712000/museums, historical sites, zoos, and parks/us-ga",
+    "amount": 317696334.036711
+  },
+  {
+    "sector": "713100/amusement parks and arcades/us-ga",
+    "amount": 300759295.212073
+  },
+  {
+    "sector": "713200/gambling establishments (except casino hotels)/us-ga",
+    "amount": 2298282390.5317
+  },
+  {
+    "sector": "713900/golf courses, marinas, ski resorts, fitness and other rec centers and industries/us-ga",
+    "amount": 1242081534.93715
+  },
+  {
+    "sector": "721000/hotels and campgrounds/us-ga",
+    "amount": 2759806709.77382
+  },
+  {
+    "sector": "722110/full-service restaurants/us-ga",
+    "amount": 6541754127.11883
+  },
+  {
+    "sector": "722211/limited-service restaurants/us-ga",
+    "amount": 8672153749.73115
+  },
+  {
+    "sector": "722a00/all other food and drinking places/us-ga",
+    "amount": 2471878997.58206
+  },
+  {
+    "sector": "811100/vehicle repair/us-ga",
+    "amount": 3683281180.80403
+  },
+  {
+    "sector": "811200/electronic  equipment repair and maintenance/us-ga",
+    "amount": 111592920.966329
+  },
+  {
+    "sector": "811400/household goods repair/us-ga",
+    "amount": 682304618.837079
+  },
+  {
+    "sector": "812100/salons and barber shops/us-ga",
+    "amount": 2082444685.93585
+  },
+  {
+    "sector": "812200/funerary services/us-ga",
+    "amount": 682877450.512131
+  },
+  {
+    "sector": "812300/dry-cleaning and laundry/us-ga",
+    "amount": 469321747.134618
+  },
+  {
+    "sector": "812900/pet care, photofinishing, parking and other sundry services/us-ga",
+    "amount": 1987343756.6252
+  },
+  {
+    "sector": "813100/religious organizations/us-ga",
+    "amount": 2783430553.47549
+  },
+  {
+    "sector": "813a00/grantmaking, giving, and social advocacy organizations/us-ga",
+    "amount": 1425516122.44446
+  },
+  {
+    "sector": "813b00/civic, social, professional, and similar organizations/us-ga",
+    "amount": 1344903011.29488
+  },
+  {
+    "sector": "814000/household employees/us-ga",
+    "amount": 626410859.89937
+  },
+  {
+    "sector": "s00203/other state and local government enterprises/us-ga",
+    "amount": 543826650.585301
+  },
+  {
+    "sector": "s00300/noncomparable imports/rous",
+    "amount": 2624228773.11291
+  },
+  {
+    "sector": "s00402/used and secondhand goods/us-ga",
+    "amount": 2473833899.69582
+  },
+  {
+    "sector": "s00500/federal general government (defense)/us-ga",
+    "amount": 18039575481.043
+  },
+  {
+    "sector": "s00600/federal general government (nondefense)/us-ga",
+    "amount": 9547258579.06446
+  },
+  {
+    "sector": "s00700/state and local general government/us-ga",
+    "amount": 50911256575.5366
+  },
+  {
+    "sector": "s00900/rest of the world adjustment/rous",
+    "amount": -3944426212.45434
+  }
+]

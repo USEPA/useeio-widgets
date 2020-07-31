@@ -697,8 +697,8 @@ console.log("hhh")
 
 
 function create_bar(d,x,y,z,x1,y1,z1){
-  console.log("ws"+x1+y1+z1)
-  console.log("vals"+d.x+d.y+d.z)
+  //console.log("ws"+x1+y1+z1)
+  //console.log("vals"+d.x+d.y+d.z)
   d3.select("#selected_bar").remove();
 
   var svg3 = d3.select("#barchart")

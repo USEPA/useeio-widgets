@@ -159,12 +159,55 @@ input:checked + .slider:before {
 <div id="barchart"></div>
 <div id="impactText2"></div>
 
-<br><br><br><br>
+
+
+
+
 
 <script>
   param.naics = "561320,336999,621111,519130,221122";
 </script>
 <script type="text/javascript" src="js/bubble.js"></script>
 
+
+
+<link rel="stylesheet" type="text/css" href="widgets.css">
+
+
+    <div class="io" style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Impact chart</h1>
+        <p>
+            The impact chart widget shows the environmental profile of one or more sectors.
+        </p>
+        <div class="impact-chart"></div>
+    </div>
+
+
+<script src="lib/d3.min.js"></script>
+<script src="lib/useeio_widgets.js"></script>
+<script>
+
+    var config = useeio.urlConfig();
+    var modelID = config.get().model || 'GAUSEEIO';
+
+    var model = useeio.model({
+        endpoint: './api',
+        model: modelID,
+        asJsonFiles: true,
+    });
+
+    var impactChart = useeio.impactChart({
+        model: model,
+        selector: '.impact-chart',
+        columns: 3,
+        width: 800,
+        height: 300,
+    });
+    impactChart.update({
+        sectors: [],
+    });
+
+</script>
+<br><br><br><br>
 </body>
 </html>
