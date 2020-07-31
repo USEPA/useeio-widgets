@@ -146,7 +146,7 @@ document.addEventListener('hashChangeEvent', function (elem) {
 //getting the listof indicators and populating the x and y dropdown options
 let dropdown = $('#graph-picklist-x');
 dropdown.empty();
-const url = './data/indicators.json';
+const url = '/io/charts/useeio/api/GAUSEEIO/indicators.json';
 // Populate dropdown with list of provinces
 $.getJSON(url, function (data) {
   $.each(data, function (key, entry) {
@@ -308,7 +308,7 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
-  d3.json("data/indicators.json").then(function(consdata){
+  d3.json("/io/charts/useeio/api/GAUSEEIO/indicators.json").then(function(consdata){
     var filteredData = consdata.filter(function(d) {
       if(d["id"]==x) {
         unitx=d["unit"]

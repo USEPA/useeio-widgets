@@ -329,14 +329,14 @@ input:checked + .slider:before {
 
 <!--div used for its attribute update,instead of using hash-->
 <div id="sector-list" class="sector-list">
-  <script src="lib/d3.min.js"></script>
-  <script src="lib/useeio_widgets.js"></script>
+  <script src="/io/charts/useeio/lib/d3.min.js"></script>
+  <script src="/io/charts/useeio/lib/useeio_widgets.js"></script>
   <!--Michael's impact chart-->
   <script>
     var config = useeio.urlConfig();
     var modelID = config.get().model || 'GAUSEEIO';
     var model = useeio.model({
-      endpoint: './api',
+      endpoint: '/io/charts/useeio/api',
       model: modelID,
       asJsonFiles: true,
     });
@@ -375,7 +375,7 @@ input:checked + .slider:before {
           var config = useeio.urlConfig();
           var modelID = config.get().model || selected_model;
           var model = useeio.model({
-            endpoint: './api',
+            endpoint: '/io/charts/useeio/api',
             model: modelID,
             asJsonFiles: true,
           });
