@@ -217,6 +217,8 @@ input:checked + .slider:before {
 
 
   </div>
+  <button onclick="clearSelection()">Clear Selection</button>
+
   <div style="clear:both"></div>
 
   
@@ -227,10 +229,80 @@ input:checked + .slider:before {
 <div id="impactText2"></div>
 
 
+<script>
+    function clearSelection(){
+      d3.selectAll(".circles").classed("selected", false);
+        d3.selectAll(".circles").style('fill', function (d) { 
+      if(boundry1=="region"){
+        if(useeioList.length>0){
+          if(d3.select(this).attr("class")!='circles selected'){
+            if (useeioList.includes( d.industry_code) ) {
+              return "url(#gradient)";
+            } else {
+              return "#303030";
+            }
+          }else{return "yellow"}
+        }else{
+          if(d3.select(this).attr("class")!='circles selected'){
+              return "#303030";
+            }else{return "yellow"}
+        }
+      }else{
+        if(d3.select(this).attr("class")!='circles selected'){
+              return "url(#gradient)";
+                }else{return "yellow"}
+      }
+          })
+                    .attr("stroke-width", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 1
+      }else{return 6}
+    })
+    .attr("stroke-opacity", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.7
+      }else{
+          return 1
+      }
+    })
+    .style("fill-opacity" , function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.5
+      }else{
+          return 1
+      }
+    })
 
+    document.getElementById("impactText").innerHTML ="";
+    document.getElementById("impactText2").innerHTML ="";
+    d3.select("#selected_bar").remove();
+    d3.select("#imp").remove();
+        var svg3 = d3.select("#impact-chart")
+        .append("div")
+        .attr('id', 'imp');
+          console.log(selected_model)
+          var config = useeio.urlConfig();
+          var modelID = config.get().model || selected_model;
+          var model = useeio.model({
+              endpoint: './api',
+              model: modelID,
+              asJsonFiles: true,
+          });
+          var impactChart = useeio.impactChart({
+              model: model,
+              selector: '#imp',
+              columns: 3,
+              width: 800,
+              height: 300,
+          });
+          impactChart.update({
+              sectors: [],
+              
+          });
 
+  }
 
-
+</script>
 <script>
   param.naics = "561320,336999,621111,519130,221122";
 </script>
@@ -287,6 +359,7 @@ input:checked + .slider:before {
           selected_sector1=document.getElementById('sector-list').getAttribute('sector')
           if(typeof selected_sector1 == "undefined" || selected_sector1==null){
               selected_sector1=[]
+              selected_sector=[]
           }else{
             selected_sector=selected_sector1.split(',')
           }
