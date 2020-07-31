@@ -275,9 +275,12 @@ input:checked + .slider:before {
 
     document.getElementById("impactText").innerHTML ="";
     document.getElementById("impactText2").innerHTML ="";
+    selected_sector=[]
+    sect_list=[]
+    document.querySelector('#sector-list').setAttribute('sector', sect_list);
     d3.select("#selected_bar").remove();
     d3.select("#imp").remove();
-        var svg3 = d3.select("#impact-chart")
+          var svg3 = d3.select("#impact-chart")
         .append("div")
         .attr('id', 'imp');
           console.log(selected_model)
@@ -296,7 +299,7 @@ input:checked + .slider:before {
               height: 300,
           });
           impactChart.update({
-              sectors: [],
+              sectors: [selected_sector],
               
           });
 
