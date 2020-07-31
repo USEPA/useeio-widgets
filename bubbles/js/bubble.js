@@ -589,10 +589,29 @@ console.log("hhh")
                 }else{return 'yellow'}
       }
           })
-    .attr("stroke-width", 1)
+
+
+    
     .style("stroke","black")
-    .attr("stroke-opacity", 0.7)
-    .style("fill-opacity" , 0.5)
+    .attr("stroke-width", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 1
+      }else{return 6}
+    })
+    .attr("stroke-opacity", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.7
+      }else{
+          return 1
+      }
+    })
+    .style("fill-opacity" , function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.5
+      }else{
+          return 1
+      }
+    })
     //.attr("stroke-width", 20)
     //console.log("plaaaa"+x)
     
@@ -621,9 +640,25 @@ console.log("hhh")
 
       }
           })
-        .attr("stroke-width", 1)
-        .attr("stroke-opacity", 0.7)
-        .style("fill-opacity" , 0.5)
+            .attr("stroke-width", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 1
+      }else{return 6}
+    })
+    .attr("stroke-opacity", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.7
+      }else{
+          return 1
+      }
+    })
+    .style("fill-opacity" , function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.5
+      }else{
+          return 1
+      }
+    })
         //.classed("norm", true)
       .on("mouseover", function(d) {
         if(d3.select(this).attr("class")!='circles selected'){
