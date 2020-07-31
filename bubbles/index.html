@@ -21,6 +21,9 @@
 
 <br><br>
 <div class="container">
+
+
+<!--This block is for adding the state,county picklist, for my future reference.-->
 <!--div>
 <form name="form">
 <table width="317" border="0" align="left">
@@ -89,6 +92,8 @@
  </table>
  </form>
 </div-->
+
+
 <!-- toggle -->
 <!-- source: https://www.w3schools.com/howto/howto_css_switch.asp -->
 <style>
@@ -159,237 +164,230 @@ input:checked + .slider:before {
 </style>
 <!-- /toggle -->
 
- <div id="industry-list" class="industry-list">
+
+
+<div id="industry-list" class="industry-list">
   <div class="bubble-graph">
 
-      <div style="float:left">
-        <h2>Environmental Impact</h2>
-        <div id="bubble-graph-title"></div>
-        <text id="bubble-graph-equation"></text>
-      </div>
-      <div style="float:right">
-        <div id="impactText"></div>
-      </div>
+    <div style="float:left">
+      <h2>Environmental Impact</h2>
+      <div id="bubble-graph-title"></div>
+      <text id="bubble-graph-equation"></text>
+    </div>
+    <div style="float:right">
+      <div id="impactText"></div>
+    </div>
 
-      <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
+    <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
 
-        <div id="graph-wrapper-z">
-            <text class="text-space-horz">Bubble-Size</text>
-            <select id="graph-picklist-z" class="graph-picklist">
-            </select>
-            <span id="unit-z"></span>
-          </div>
-
-        <div id="graph-wrapper">
-
-          
-          <div id="graph-wrapper-y">
-            <text class="text-space-vert">Y-Axis</text>
-            <select id="graph-picklist-y" class="graph-picklist">
-            </select>
-            <span id="unit-y"></span>
-          </div> 
-
-        </div>
-        <div id="graph-wrapper-x">
-            <text class="text-space-horz">X-Axis</text>
-            <select id="graph-picklist-x" class="graph-picklist">
-            </select>
-            <span id="unit-x"></span>
-         </div> 
-         
-
+      <div id="graph-wrapper-z">
+        <text class="text-space-horz">Bubble-Size</text>
+        <select id="graph-picklist-z" class="graph-picklist">
+        </select>
+        <span id="unit-z"></span>
       </div>
 
+      <div id="graph-wrapper">
+       
+      <div id="graph-wrapper-y">
+        <text class="text-space-vert">Y-Axis</text>
+        <select id="graph-picklist-y" class="graph-picklist">
+        </select>
+        <span id="unit-y"></span>
+      </div> 
 
-      <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
-      <div>
+    </div>
+
+    <div id="graph-wrapper-x">
+        <text class="text-space-horz">X-Axis</text>
+        <select id="graph-picklist-x" class="graph-picklist">
+        </select>
+        <span id="unit-x"></span>
+    </div> 
+  </div>
+
+  <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
+  <div>
         
-        <label  style="float:left; margin-right:6px" class="switch">
-          <input id="mySelect" type="checkbox" checked>
-          <span class="slider round"></span>
-        </label>
-        <div class="switch-text">
-          Top industries within region
-        </div>
-
-      </div>
-
+    <label  style="float:left; margin-right:6px" class="switch">
+      <input id="mySelect" type="checkbox" checked>
+      <span class="slider round"></span>
+    </label>
+    <div class="switch-text">
+      Top industries within region
+    </div>
 
   </div>
+
+</div>
   <button onclick="clearSelection()">Clear Selection</button>
-
   <div style="clear:both"></div>
-
-  
+ 
 </div>
 <br><br>
 
 <div id="barchart"></div>
 <div id="impactText2"></div>
 
-
+<!--clear selected bubbles-->
 <script>
-    function clearSelection(){
-      d3.selectAll(".circles").classed("selected", false);
-        d3.selectAll(".circles").style('fill', function (d) { 
-      if(boundry1=="region"){
-        if(useeioList.length>0){
-          if(d3.select(this).attr("class")!='circles selected'){
-            if (useeioList.includes( d.industry_code) ) {
-              return "url(#gradient)";
-            } else {
-              return "#303030";
-            }
-          }else{return "yellow"}
-        }else{
-          if(d3.select(this).attr("class")!='circles selected'){
+  function clearSelection(){
+    d3.selectAll(".circles").classed("selected", false);
+      d3.selectAll(".circles").style('fill', function (d) { 
+        if(boundry1=="region"){
+          if(useeioList.length>0){
+            if(d3.select(this).attr("class")!='circles selected'){
+              if (useeioList.includes( d.industry_code) ) {
+                return "url(#gradient)";
+              } else {
+                return "#303030";
+              }
+            }else{return "yellow"}
+          }else{
+            if(d3.select(this).attr("class")!='circles selected'){
               return "#303030";
             }else{return "yellow"}
+          }
+        }else{
+          if(d3.select(this).attr("class")!='circles selected'){
+            return "url(#gradient)";
+          }else{
+            return "yellow"
+          }
         }
-      }else{
+      })
+      .attr("stroke-width", function (d) { 
         if(d3.select(this).attr("class")!='circles selected'){
-              return "url(#gradient)";
-                }else{return "yellow"}
-      }
-          })
-                    .attr("stroke-width", function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
-        return 1
-      }else{return 6}
-    })
-    .attr("stroke-opacity", function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
-        return 0.7
-      }else{
           return 1
-      }
-    })
-    .style("fill-opacity" , function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
-        return 0.5
-      }else{
+        }else{
+          return 6
+        }
+      })
+      .attr("stroke-opacity", function (d) { 
+        if(d3.select(this).attr("class")!='circles selected'){
+          return 0.7
+        }else{
           return 1
-      }
-    })
+        }
+      })
+      .style("fill-opacity" , function (d) { 
+        if(d3.select(this).attr("class")!='circles selected'){
+          return 0.5
+        }else{
+          return 1
+        }
+      })
 
-    document.getElementById("impactText").innerHTML ="";
-    document.getElementById("impactText2").innerHTML ="";
-    selected_sector=[]
-    sect_list=[]
-    document.querySelector('#sector-list').setAttribute('sector', sect_list);
-    d3.select("#selected_bar").remove();
-    d3.select("#imp").remove();
-          var svg3 = d3.select("#impact-chart")
+      document.getElementById("impactText").innerHTML ="";
+      document.getElementById("impactText2").innerHTML ="";
+      selected_sector=[]
+      sect_list=[]
+      document.querySelector('#sector-list').setAttribute('sector', sect_list);
+      d3.select("#selected_bar").remove();
+
+      //impactchart clear
+      d3.select("#imp").remove();
+      var svg3 = d3.select("#impact-chart")
         .append("div")
         .attr('id', 'imp');
-          console.log(selected_model)
-          var config = useeio.urlConfig();
-          var modelID = config.get().model || selected_model;
-          var model = useeio.model({
-              endpoint: './api',
-              model: modelID,
-              asJsonFiles: true,
-          });
-          var impactChart = useeio.impactChart({
-              model: model,
-              selector: '#imp',
-              columns: 3,
-              width: 800,
-              height: 300,
-          });
-          impactChart.update({
-              sectors: [selected_sector],
-              
-          });
-
+      var config = useeio.urlConfig();
+        var modelID = config.get().model || selected_model;
+        var model = useeio.model({
+          endpoint: './api',
+          model: modelID,
+          asJsonFiles: true,
+        });
+        var impactChart = useeio.impactChart({
+          model: model,
+          selector: '#imp',
+          columns: 3,
+          width: 800,
+          height: 300,
+        });
+        impactChart.update({
+          sectors: [selected_sector],      
+        });
   }
-
 </script>
+
+<!--default naics to be highlighted-->
 <script>
   param.naics = "561320,336999,621111,519130,221122";
 </script>
+
 <script type="text/javascript" src="js/bubble.js"></script>
 
-
-
+<!--Michaels's widget: impactchart-->
 <link rel="stylesheet" type="text/css" href="widgets.css">
+<div class="io" style="max-width: 750px; margin: auto;">
+  <h1 class="text-center">Impact chart</h1>
+  <p>
+      The impact chart widget shows the environmental profile of one or more sectors.
+  </p>
+  <div id="impact-chart" class="impact-chart"></div>
+</div>
 
-
-    <div class="io" style="max-width: 750px; margin: auto;">
-        <h1 class="text-center">Impact chart</h1>
-        <p>
-            The impact chart widget shows the environmental profile of one or more sectors.
-        </p>
-        <div id="impact-chart" class="impact-chart"></div>
-    </div>
-
+<!--div used for its attribute update,instead of using hash-->
 <div id="sector-list" class="sector-list">
-<script src="lib/d3.min.js"></script>
-<script src="lib/useeio_widgets.js"></script>
-<script>
-
+  <script src="lib/d3.min.js"></script>
+  <script src="lib/useeio_widgets.js"></script>
+  <!--Michael's impact chart-->
+  <script>
     var config = useeio.urlConfig();
     var modelID = config.get().model || 'GAUSEEIO';
-
     var model = useeio.model({
-        endpoint: './api',
-        model: modelID,
-        asJsonFiles: true,
+      endpoint: './api',
+      model: modelID,
+      asJsonFiles: true,
     });
      var svg3 = d3.select("#impact-chart")
       .append("div")
       .attr('id', 'imp');
     var impactChart = useeio.impactChart({
-        model: model,
-        selector: '#impt',
-        columns: 3,
-        width: 800,
-        height: 300,
+      model: model,
+      selector: '#impt',
+      columns: 3,
+      width: 800,
+      height: 300,
     });
     selected_sector=""
-
     impactChart.update({
         sectors: [selected_sector],
     });
 
-        var element = document.querySelector('#sector-list');
+    //update the chart if the sector-list changes.
+    var element = document.querySelector('#sector-list');
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (mutation.type == "attributes") {
-
-          
           selected_sector1=document.getElementById('sector-list').getAttribute('sector')
           if(typeof selected_sector1 == "undefined" || selected_sector1==null){
-              selected_sector1=[]
-              selected_sector=[]
+            selected_sector1=[]
+            selected_sector=[]
           }else{
             selected_sector=selected_sector1.split(',')
           }
-          console.log("selected"+typeof selected_sector)
           selected_model=document.getElementById('sector-list').getAttribute('area')
           d3.select("#imp").remove();
           var svg3 = d3.select("#impact-chart")
-        .append("div")
-        .attr('id', 'imp');
-          console.log(selected_model)
+            .append("div")
+            .attr('id', 'imp');
           var config = useeio.urlConfig();
           var modelID = config.get().model || selected_model;
           var model = useeio.model({
-              endpoint: './api',
-              model: modelID,
-              asJsonFiles: true,
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
           });
           var impactChart = useeio.impactChart({
-              model: model,
-              selector: '#imp',
-              columns: 3,
-              width: 800,
-              height: 300,
+            model: model,
+            selector: '#imp',
+            columns: 3,
+            width: 800,
+            height: 300,
           });
           impactChart.update({
-              sectors: selected_sector,
-              
+            sectors: selected_sector,  
           });
         }
       });
@@ -398,7 +396,6 @@ input:checked + .slider:before {
     observer.observe(element, {
       attributes: true //configure it to listen to attribute changes
     });
-
 </script>
 <br><br><br><br>
 </body>
