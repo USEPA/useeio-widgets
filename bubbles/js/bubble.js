@@ -642,9 +642,9 @@ console.log("hhh")
         d3.select(this).classed("selected", true)
         
         console.log(d3.select(this).attr("class"))
-        document.getElementById("impactText").innerHTML = z +":"+d.z+ "<br>" + y +":"+d.y+ "<br>" + x+":"+d.x;
-        document.getElementById("impactText2").innerHTML = z +":"+d.z+ "<br>" + y +":"+d.y+ "<br>" + x+":"+d.x;
-        create_bar(d,x,y,z);
+        document.getElementById("impactText").innerHTML = z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        document.getElementById("impactText2").innerHTML = z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        create_bar(d,x,y,z,x1,y1,z1);
       })
 
 
@@ -696,8 +696,9 @@ console.log("hhh")
 }
 
 
-function create_bar(d,x,y,z){
-
+function create_bar(d,x,y,z,x1,y1,z1){
+  console.log("ws"+x1+y1+z1)
+  console.log("vals"+d.x+d.y+d.z)
   d3.select("#selected_bar").remove();
 
   var svg3 = d3.select("#barchart")
@@ -706,12 +707,13 @@ function create_bar(d,x,y,z){
       .attr("height", 380)
       .attr("class", "bar-chart")
       .attr('id', 'selected_bar');
-
-  var death_scale = d3.scaleLinear().range([300,0]).domain([0,1]);
-  var other_scale = d3.scaleBand().range([0, 300]).domain([x,y,z]);
+  maxim=Math.max(d.x,d.y,d.z)      
+  var rect_scale = d3.scaleLinear().range([300,0]).domain([maxim,0]);
+  var axis_scale = d3.scaleLinear().range([300,0]).domain([0,maxim]);
+  var other_scale = d3.scaleBand().range([0, 300]).domain([x1,y1,z1]);
 
   var chart_2 = svg3.append('g').attr('class', 'y axis')
-      .attr('transform', 'translate(450, 60)').call(d3.axisLeft(death_scale));
+      .attr('transform', 'translate(325, 60)').call(d3.axisLeft(axis_scale));
 
   chart_2.append('g')
       .attr('class', 'x axis')
@@ -731,25 +733,22 @@ function create_bar(d,x,y,z){
 
   chart_2.append("text")
       .attr('class', 'title')
-      .attr('transform', 'translate(260,-30)')
+      .style('text-anchor','middle')
+      .attr('transform', 'translate(130,-30)')
       .text( d.industry_detail)
-      .attr("fill", "black").style("font-size", "30px");
-
-  var injuries = {
-      x: d.x,
-      y: d.y,
-      z: d.z
-  };
+      .attr("fill", "black").style("font-size", "20px");
 
 
-  svg3.append("rect").attr("y", 360 - d.x*360000/300).attr("x", 480)
-      .attr("width", 50).attr("height", d.x*360000/300).attr("fill", "red");
 
-  svg3.append("rect").attr("y", 360 - d.y*360000/300).attr("x", 575)
-      .attr("width", 50).attr("height", d.y*360000/300).attr("fill", "green");
 
-  svg3.append("rect").attr("y", 360 - d.z*360000/300).attr("x", 675)
-      .attr("width", 50).attr("height", d.z*360000/300).attr("fill", "blue");
+  svg3.append("rect").attr("y", 360 - rect_scale(d.x)).attr("x", 355)
+      .attr("width", 50).attr("height", rect_scale(d.x)).attr("fill", "red");
+
+  svg3.append("rect").attr("y", 360 - rect_scale(d.y)).attr("x", 450)
+      .attr("width", 50).attr("height", rect_scale(d.y)).attr("fill", "green");
+
+  svg3.append("rect").attr("y", 360 - rect_scale(d.z)).attr("x", 550)
+      .attr("width", 50).attr("height", rect_scale(d.z)).attr("fill", "blue");
 
 
 
