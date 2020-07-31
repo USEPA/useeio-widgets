@@ -558,7 +558,7 @@ console.log("hhh")
   var selectedCircles = d3.select("#graph-plane")
     .selectAll(".circles")
     .data(records.pairs)
-    .attr('pointer-events', 'fill')
+    .attr('pointer-events', 'auto')
 
   //give a transition on the existing elements
   selectedCircles
