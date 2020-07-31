@@ -2,10 +2,7 @@ body {
   font-family: Helvetica;
   font-size: 13px;
 }
-.selected {
-    stroke-width:100px
-    fill: "yellow"
-}
+
 .bubble-graph {
   max-width:1000px;
 }

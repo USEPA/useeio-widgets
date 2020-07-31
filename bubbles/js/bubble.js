@@ -527,6 +527,7 @@ console.log("hhh")
   x1=x;
   y1=y;
   z1=z;
+  boundry1=boundry;
   (records.y).sort(function(a,b){return a-b});
   var l = (records.y).length;
   var low = Math.round(l * 0.010);
@@ -561,17 +562,24 @@ console.log("hhh")
       return zScale(d.z)+2
     })
     .style('fill', function (d) { 
-      if(boundry=="region"){
+      if(boundry1=="region"){
         if(useeioList.length>0){
+          if(d3.select(this).attr("class")!='circles selected'){
             if (useeioList.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-        }else{return "#303030";}
+          }else{return 'yellow'}
+        }else{
+          if(d3.select(this).attr("class")!='circles selected'){
+              return "#303030";
+          }else{return 'yellow'}
+        }
       }else{
+        if(d3.select(this).attr("class")!='circles selected'){
               return "url(#gradient)";
-
+                }else{return 'yellow'}
       }
           })
     .attr("stroke-width", 1)
@@ -585,16 +593,24 @@ console.log("hhh")
     selectedCircles.enter()
       .append("circle")
       .style('fill', function (d) { 
-      if(boundry=="region"){
+      if(boundry1=="region"){
         if(useeioList.length>0){
+          if(d3.select(this).attr("class")!='circles selected'){
             if (useeioList.includes( d.industry_code) ) {
+
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-        }else{return "#303030";}
+          }else{return 'yellow'}
+        }else{
+          if(d3.select(this).attr("class")!='circles selected'){
+          return "#303030";}else{return 'yellow'}
+        }
       }else{
+        if(d3.select(this).attr("class")!='circles selected'){
               return "url(#gradient)";
+            }else{return 'yellow'}
 
       }
           })
@@ -623,9 +639,10 @@ console.log("hhh")
                      
 
       .on("click", function(d,i) {
+          console.log('boundry'+boundry1)
         d3.selectAll(".circles").classed("selected", false);
         d3.selectAll(".circles").style('fill', function (d) { 
-      if(boundry=="region"){
+      if(boundry1=="region"){
         if(useeioList.length>0){
             if (useeioList.includes( d.industry_code) ) {
               return "url(#gradient)";
