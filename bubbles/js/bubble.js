@@ -772,7 +772,7 @@ console.log("hhh")
         document.getElementById("impactText2").innerHTML +="<br>"+ '<font size="5">'+d.industry_detail+"</font>"+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
         create_bar(d,x,y,z,x1,y1,z1);
         //updateHash({"sectors":d.industry_code});
-        sect_list.push(d.industry_code)
+        sect_list.push(d.industry_code.toUpperCase())
         console.log("sects"+sect_list)
         console.log(typeof sect_list[0])
         document.querySelector('#sector-list').setAttribute('sector', sect_list);
