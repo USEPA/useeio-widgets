@@ -310,8 +310,8 @@ d3.json("data/indicators.json").then(function(consdata){
       }else{
         document.getElementById("bubble-graph-title").innerHTML = "US Industries"
       }
-      $("#impactText").html(z + "<br>" + y + "<br>" + x);
-      $("#impactText2").html(z + "<br>" + y + "<br>" + x); // Using jquery avoid error if element is not in page.
+      //$("#impactText").html(z + "<br>" + y + "<br>" + x);
+      //$("#impactText2").html(z + "<br>" + y + "<br>" + x); // Using jquery avoid error if element is not in page.
       document.getElementById("unit-x").innerHTML = unitx;
       document.getElementById("unit-y").innerHTML = unity;
       document.getElementById("unit-z").innerHTML = unitz;
