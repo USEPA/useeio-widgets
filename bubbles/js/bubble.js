@@ -3,7 +3,7 @@
 let dataObject1={};
 var element = document.querySelector('#industry-list');
 
-
+sect_list=[]
 //dropdown population code
 /*
 drop_down_list();
@@ -768,11 +768,14 @@ console.log("hhh")
         d3.select(this).classed("selected", true)
         
         console.log(d3.select(this).attr("class"))
-        document.getElementById("impactText").innerHTML = d.industry_detail+"<br>"+ z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
-        document.getElementById("impactText2").innerHTML = d.industry_detail+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        document.getElementById("impactText").innerHTML ='<font size="5">'+ d.industry_detail+"</font>"+"<br>"+ z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        document.getElementById("impactText2").innerHTML +="<br>"+ '<font size="5">'+d.industry_detail+"</font>"+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
         create_bar(d,x,y,z,x1,y1,z1);
         //updateHash({"sectors":d.industry_code});
-        document.querySelector('#sector-list').setAttribute('sector', d.industry_code);
+        sect_list.push(d.industry_code)
+        console.log("sects"+sect_list)
+        console.log(typeof sect_list[0])
+        document.querySelector('#sector-list').setAttribute('sector', sect_list);
 
       })
 

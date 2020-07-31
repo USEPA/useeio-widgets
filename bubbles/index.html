@@ -253,7 +253,7 @@ input:checked + .slider:before {
 <script src="lib/d3.min.js"></script>
 <script src="lib/useeio_widgets.js"></script>
 <script>
-/*
+
     var config = useeio.urlConfig();
     var modelID = config.get().model || 'GAUSEEIO';
 
@@ -277,14 +277,20 @@ input:checked + .slider:before {
     impactChart.update({
         sectors: [selected_sector],
     });
-*/
+
         var element = document.querySelector('#sector-list');
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (mutation.type == "attributes") {
 
           
-          selected_sector=document.getElementById('sector-list').getAttribute('sector')
+          selected_sector1=document.getElementById('sector-list').getAttribute('sector')
+          if(typeof selected_sector1 == "undefined" || selected_sector1==null){
+              selected_sector1=[]
+          }else{
+            selected_sector=selected_sector1.split(',')
+          }
+          console.log("selected"+typeof selected_sector)
           selected_model=document.getElementById('sector-list').getAttribute('area')
           d3.select("#imp").remove();
           var svg3 = d3.select("#impact-chart")
@@ -306,7 +312,7 @@ input:checked + .slider:before {
               height: 300,
           });
           impactChart.update({
-              sectors: [selected_sector],
+              sectors: selected_sector,
               
           });
         }
