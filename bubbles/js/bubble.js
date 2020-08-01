@@ -734,16 +734,15 @@ function updateChart(x,y,z,useeioList,boundry){
           .attr('stroke-width', 6)
           .attr("stroke-opacity", 1)
         d3.select(this).classed("selected", true)
-        document.getElementById("impactText").innerHTML ='<font size="5">'+ d.industry_detail+"</font>"+"<br>"+ z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
-        document.getElementById("impactText2").innerHTML +="<br>"+ '<font size="5">'+d.industry_detail+"</font>"+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x;
+        $("#impactTextIntro").hide();
+        $("#impactText").html($("#impactText").html() + "<br>"+ '<font size="5">'+d.industry_detail+"</font>"+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x + "<br>");
+        $("#impact-chart").show();
         create_bar(d,x,y,z,x1,y1,z1);
         sect_list.push(d.industry_code.toUpperCase())
         console.log("sects"+sect_list)
         console.log(typeof sect_list[0])
         document.querySelector('#sector-list').setAttribute('sector', sect_list);
-
       })
-
 
       .on("mouseout", function(d) {
         if(d3.select(this).attr("class")!='circles selected'){
@@ -872,12 +871,14 @@ function clearBubbleSelection(){
       }
     })
 
-    document.getElementById("impactText").innerHTML ="";
-    document.getElementById("impactText2").innerHTML ="";
+    //document.getElementById("impactText").innerHTML ="";
     selected_sector=[]
     sect_list=[]
     document.querySelector('#sector-list').setAttribute('sector', sect_list);
     d3.select("#selected_bar").remove();
+    $("#impactText").html("");
+    $("#impactTextIntro").show();
+    $("#impact-chart").hide();
 
     //impactchart clear
     d3.select("#imp").remove();

@@ -5,8 +5,7 @@ body {
 
 .bubble-graph {
   max-width:1000px;
-  padding-top:60px;
-  position: relative;
+  /* position: relative; */ /* Bug: Popup misalign */
 }
 .bubble-graph select {
   max-width:250px;
@@ -65,8 +64,12 @@ h4{
   margin-bottom: -15px;
   text-align: center;
   z-index: 2;
-  position: absolute; /* would be better to have click pass through chart */
+
+  /* would be better to have click pass through chart */
+  /*
+  position: absolute; 
   top:0px;
+  */
   left: 30%;
 }
 
@@ -113,6 +116,9 @@ text {
   float:left;
   padding:6px 8px 0 0;
   color: #aaa;
+}
+.chart-right {
+  float:right;
 }
 @media (max-width: 800px) {
 

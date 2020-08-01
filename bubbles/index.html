@@ -173,9 +173,7 @@ input:checked + .slider:before {
       <div id="bubble-graph-title"></div>
       <text id="bubble-graph-equation"></text>
     </div>
-    <div style="float:left; margin-bottom:20px">
-      <div id="impactText"></div>
-    </div>
+
     <div style="clear:both"></div>
 
     <div class="bubble-graph">
@@ -229,13 +227,14 @@ input:checked + .slider:before {
 </div>
 <br><br>
 
-<div id="barchart"></div>
-<div id="impactText2"></div>
+<!-- Saving for later -->
+<div id="barchart" class="chart-right" style="display:none"></div>
 
-<!--clear selected bubbles-->
-<script>
-  
-</script>
+<div id="impactTextIntro">Click bubbles above to display a bar chart below for comparison.</div>
+<div id="impactText" style="float:left"></div>
+<div style="clear:both"></div>
+<br><br>
+
 
 <!--default naics to be highlighted-->
 <script>
@@ -246,12 +245,17 @@ input:checked + .slider:before {
 
 <!--Michaels's widget: impactchart-->
 <link rel="stylesheet" type="text/css" href="widgets.css">
-<div class="io" style="max-width: 750px; margin: auto;">
+
+
+<div class="io">
+<!--
   <h1 class="text-center">Impact chart</h1>
   <p>
       The impact chart widget shows the environmental profile of one or more sectors.
   </p>
-  <div id="impact-chart" class="impact-chart"></div>
+-->
+
+<div id="impact-chart" class="impact-chart" style="display:none"></div>
 </div>
 
 <!--div used for its attribute update,instead of using hash-->
