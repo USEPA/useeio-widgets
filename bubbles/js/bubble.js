@@ -1,3 +1,10 @@
+/*
+  Source: https://bl.ocks.org/luluwuluying/ace3699c70a2e3e7a2bb
+  To do: Multicolumn sort (but allow for fixed first column)
+  https://rawgit.com/joequery/Stupid-Table-Plugin/master/examples/multicolumn-sort.html
+*/
+
+
 // `hashChangeEvent` event reside in multiple widgets. 
 // Called by goHash +-++localsite.js
 let dataObject1={};
@@ -403,7 +410,8 @@ function readyfunc(){
   }else{
     model=''
   }
-  d3.csv("data/indicators_sectors"+model+".csv").then(function(data){
+  var community_data_root = "https://modelearth.github.io";
+  d3.csv(community_data_root + "/community-data/us/indicators/indicators_sectors"+model+".csv").then(function(data){
     data.forEach(function(d) {
       d.ACID = +d.ACID;
       d.ENRG= +d.ENRG;
