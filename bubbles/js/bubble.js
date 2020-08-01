@@ -823,3 +823,82 @@ function updateChart(x,y,z,useeioList,boundry){
         .attr("width", 50).attr("height", rect_scale(d.z)).attr("fill", "blue");
 
 }
+
+
+function clearBubbleSelection(){
+  d3.selectAll(".circles").classed("selected", false);
+    d3.selectAll(".circles").style('fill', function (d) { 
+      if(boundry1=="region"){
+        if(useeioList.length>0){
+          if(d3.select(this).attr("class")!='circles selected'){
+            if (useeioList.includes( d.industry_code) ) {
+              return "url(#gradient)";
+            } else {
+              return "#303030";
+            }
+          }else{return "yellow"}
+        }else{
+          if(d3.select(this).attr("class")!='circles selected'){
+            return "#303030";
+          }else{return "yellow"}
+        }
+      }else{
+        if(d3.select(this).attr("class")!='circles selected'){
+          return "url(#gradient)";
+        }else{
+          return "yellow"
+        }
+      }
+    })
+    .attr("stroke-width", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 1
+      }else{
+        return 6
+      }
+    })
+    .attr("stroke-opacity", function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.7
+      }else{
+        return 1
+      }
+    })
+    .style("fill-opacity" , function (d) { 
+      if(d3.select(this).attr("class")!='circles selected'){
+        return 0.5
+      }else{
+        return 1
+      }
+    })
+
+    document.getElementById("impactText").innerHTML ="";
+    document.getElementById("impactText2").innerHTML ="";
+    selected_sector=[]
+    sect_list=[]
+    document.querySelector('#sector-list').setAttribute('sector', sect_list);
+    d3.select("#selected_bar").remove();
+
+    //impactchart clear
+    d3.select("#imp").remove();
+    var svg3 = d3.select("#impact-chart")
+      .append("div")
+      .attr('id', 'imp');
+    var config = useeio.urlConfig();
+      var modelID = config.get().model || selected_model;
+      var model = useeio.model({
+        endpoint: './api',
+        model: modelID,
+        asJsonFiles: true,
+      });
+      var impactChart = useeio.impactChart({
+        model: model,
+        selector: '#imp',
+        columns: 3,
+        width: 800,
+        height: 300,
+      });
+      impactChart.update({
+        sectors: [selected_sector],      
+      });
+}

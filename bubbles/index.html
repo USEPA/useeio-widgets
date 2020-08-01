@@ -12,7 +12,7 @@
 
 <!-- Use local, but fallback to GitHub if necessary -->
 <script src="../../localsite/js/localsite.js"></script><!-- for UpdateHash -->
-<script>typeof param == "undefined" && document.write(unescape('%3Cscript src="//modelearth.github.io/localsite/js/localsite.js"%3E%3C/script%3E'));console.log("ALERT! localsite folder missing. Please clone into adjacent folder from https://github.com/modelearth/localsite/.")</script>
+<script>typeof param == "undefined" && document.write(unescape('%3Cscript src="//modelearth.github.io/localsite/js/localsiteX .js"%3E%3C/script%3E'));</script>
 
 <link rel="stylesheet" type="text/css" href="../../localsite/css/bootstrap.darkly.min.css"/>
 <link rel="stylesheet" type="text/css" href="css/bubble.css"/>
@@ -167,60 +167,63 @@ input:checked + .slider:before {
 
 
 <div id="industry-list" class="industry-list">
-  <div class="bubble-graph">
 
-    <div style="float:left">
+    <div style="float:left; margin-right:50px">
       <h2>Environmental Impact</h2>
       <div id="bubble-graph-title"></div>
       <text id="bubble-graph-equation"></text>
     </div>
-    <div style="float:right">
+    <div style="float:left; margin-bottom:20px">
       <div id="impactText"></div>
     </div>
+    <div style="clear:both"></div>
 
-    <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
+    <div class="bubble-graph">
 
-      <div id="graph-wrapper-z">
-        <text class="text-space-horz">Bubble-Size</text>
-        <select id="graph-picklist-z" class="graph-picklist">
-        </select>
-        <span id="unit-z"></span>
+        <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
+
+          <div id="graph-wrapper-z">
+            <text class="text-space-horz">Bubble-Size</text>
+            <select id="graph-picklist-z" class="graph-picklist">
+            </select>
+            <span id="unit-z"></span>
+          </div>
+
+          <div id="graph-wrapper">
+           
+          <div id="graph-wrapper-y">
+            <text class="text-space-vert">Y-Axis</text>
+            <select id="graph-picklist-y" class="graph-picklist">
+            </select>
+            <span id="unit-y"></span>
+          </div> 
+
+        </div>
+
+        <div id="graph-wrapper-x">
+            <text class="text-space-horz">X-Axis</text>
+            <select id="graph-picklist-x" class="graph-picklist">
+            </select>
+            <span id="unit-x"></span>
+        </div> 
       </div>
 
-      <div id="graph-wrapper">
-       
-      <div id="graph-wrapper-y">
-        <text class="text-space-vert">Y-Axis</text>
-        <select id="graph-picklist-y" class="graph-picklist">
-        </select>
-        <span id="unit-y"></span>
-      </div> 
+      <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
+      <div>
+            
+        <label  style="float:left; margin-right:6px" class="switch">
+          <input id="mySelect" type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+        <div class="switch-text">
+          Top industries within region
+        </div>
 
-    </div>
-
-    <div id="graph-wrapper-x">
-        <text class="text-space-horz">X-Axis</text>
-        <select id="graph-picklist-x" class="graph-picklist">
-        </select>
-        <span id="unit-x"></span>
-    </div> 
-  </div>
-
-  <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
-  <div>
-        
-    <label  style="float:left; margin-right:6px" class="switch">
-      <input id="mySelect" type="checkbox" checked>
-      <span class="slider round"></span>
-    </label>
-    <div class="switch-text">
-      Top industries within region
-    </div>
+      </div>
 
   </div>
 
-</div>
-  <button onclick="clearSelection()">Clear Selection</button>
+  <button onclick="clearBubbleSelection()">Clear Selection</button>
   <div style="clear:both"></div>
  
 </div>
@@ -231,83 +234,7 @@ input:checked + .slider:before {
 
 <!--clear selected bubbles-->
 <script>
-  function clearSelection(){
-    d3.selectAll(".circles").classed("selected", false);
-      d3.selectAll(".circles").style('fill', function (d) { 
-        if(boundry1=="region"){
-          if(useeioList.length>0){
-            if(d3.select(this).attr("class")!='circles selected'){
-              if (useeioList.includes( d.industry_code) ) {
-                return "url(#gradient)";
-              } else {
-                return "#303030";
-              }
-            }else{return "yellow"}
-          }else{
-            if(d3.select(this).attr("class")!='circles selected'){
-              return "#303030";
-            }else{return "yellow"}
-          }
-        }else{
-          if(d3.select(this).attr("class")!='circles selected'){
-            return "url(#gradient)";
-          }else{
-            return "yellow"
-          }
-        }
-      })
-      .attr("stroke-width", function (d) { 
-        if(d3.select(this).attr("class")!='circles selected'){
-          return 1
-        }else{
-          return 6
-        }
-      })
-      .attr("stroke-opacity", function (d) { 
-        if(d3.select(this).attr("class")!='circles selected'){
-          return 0.7
-        }else{
-          return 1
-        }
-      })
-      .style("fill-opacity" , function (d) { 
-        if(d3.select(this).attr("class")!='circles selected'){
-          return 0.5
-        }else{
-          return 1
-        }
-      })
-
-      document.getElementById("impactText").innerHTML ="";
-      document.getElementById("impactText2").innerHTML ="";
-      selected_sector=[]
-      sect_list=[]
-      document.querySelector('#sector-list').setAttribute('sector', sect_list);
-      d3.select("#selected_bar").remove();
-
-      //impactchart clear
-      d3.select("#imp").remove();
-      var svg3 = d3.select("#impact-chart")
-        .append("div")
-        .attr('id', 'imp');
-      var config = useeio.urlConfig();
-        var modelID = config.get().model || selected_model;
-        var model = useeio.model({
-          endpoint: './api',
-          model: modelID,
-          asJsonFiles: true,
-        });
-        var impactChart = useeio.impactChart({
-          model: model,
-          selector: '#imp',
-          columns: 3,
-          width: 800,
-          height: 300,
-        });
-        impactChart.update({
-          sectors: [selected_sector],      
-        });
-  }
+  
 </script>
 
 <!--default naics to be highlighted-->

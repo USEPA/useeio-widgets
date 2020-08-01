@@ -5,6 +5,8 @@ body {
 
 .bubble-graph {
   max-width:1000px;
+  padding-top:60px;
+  position: relative;
 }
 .bubble-graph select {
   max-width:250px;
@@ -64,6 +66,7 @@ h4{
   text-align: center;
   z-index: 2;
   position: absolute; /* would be better to have click pass through chart */
+  top:0px;
   left: 30%;
 }
 
