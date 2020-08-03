@@ -329,7 +329,7 @@ function updateTitle(x,y,z){
     })
     $(document).ready(function () { 
       if(dataObject1.stateshown==13){
-        document.getElementById("bubble-graph-title").innerHTML = "Georgia Industries"
+        document.getElementById("bubble-graph-title").innerHTML = "Comparison of 3 indicators for Georgia Industries - X: " + params.x + " &nbsp;Y: " + params.y + " &nbsp;Z: " + params.z;
       }else{
         document.getElementById("bubble-graph-title").innerHTML = "US Industries"
       }
