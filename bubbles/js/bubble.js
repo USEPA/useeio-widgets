@@ -315,6 +315,7 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
+  let params = loadParams(location.search,location.hash);
   d3.json("/io/charts/useeio/api/GAUSEEIO/indicators.json").then(function(consdata){
     var filteredData = consdata.filter(function(d) {
       if(d["id"]==x) {
