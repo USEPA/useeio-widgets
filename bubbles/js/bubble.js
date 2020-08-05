@@ -50,6 +50,7 @@ var observer = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     if (mutation.type == "attributes") {
       par.naics=document.getElementById('industry-list').getAttribute('data-naics').slice(0,10)
+      console.log("parrrr"+par.naics)
       if(document.getElementById("mySelect").checked){
           midFunc(params.x,params.y,params.z,par,"region");
           document.querySelector('#sector-list').setAttribute('area', 'GAUSEEIO');
@@ -540,6 +541,7 @@ function updateChart(x,y,z,useeioList,boundry){
   y1=y;
   z1=z;
   boundry1=boundry;
+  useeioList1=useeioList;
   (records.y).sort(function(a,b){return a-b});
   var l = (records.y).length;
   var low = Math.round(l * 0.010);
@@ -577,9 +579,9 @@ function updateChart(x,y,z,useeioList,boundry){
     })
     .style('fill', function (d) { 
       if(boundry1=="region"){
-        if(useeioList.length>0){
+        if(useeioList1.length>0){
           if(d3.select(this).attr("class")!='circles selected'){
-            if (useeioList.includes( d.industry_code) ) {
+            if (useeioList1.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
@@ -624,9 +626,9 @@ function updateChart(x,y,z,useeioList,boundry){
       .append("circle")
       .style('fill', function (d) { 
         if(boundry1=="region"){
-          if(useeioList.length>0){
+          if(useeioList1.length>0){
             if(d3.select(this).attr("class")!='circles selected'){
-              if (useeioList.includes( d.industry_code) ) {
+              if (useeioList1.includes( d.industry_code) ) {
 
                 return "url(#gradient)";
               } else {
@@ -690,10 +692,13 @@ function updateChart(x,y,z,useeioList,boundry){
       .on("click", function(d,i) {
         //d3.selectAll(".circles").classed("selected", false);
         d3.selectAll(".circles").style('fill', function (d) { 
+
           if(boundry1=="region"){
-            if(useeioList.length>0){
+
+            if(useeioList1.length>0){
+              console.log("usseeee")
               if(d3.select(this).attr("class")!='circles selected'){
-                if (useeioList.includes( d.industry_code) ) {
+                if (useeioList1.includes( d.industry_code) ) {
                   return "url(#gradient)";
                 } else {
                   return "#303030";
