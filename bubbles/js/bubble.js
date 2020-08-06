@@ -9,7 +9,8 @@
 // Called by goHash +-++localsite.js
 let dataObject1={};
 var element = document.querySelector('#industry-list');
-
+clickCount=-1
+colors=['rgb(198,60,65)','rgb(21,192,191)','rgb(155,89,182)','rgb(52,152,219)','rgb(46,204,113)','rgb(241,196,15)','rgb(230,126,34)','rgb(52,73,94)','rgb(192,57,43)','rgb(22,160,133)']
 //the selected bubbles sect_list starter
 sect_list=[]
 
@@ -580,41 +581,41 @@ function updateChart(x,y,z,useeioList,boundry){
     .style('fill', function (d) { 
       if(boundry1=="region"){
         if(useeioList1.length>0){
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             if (useeioList1.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-          }else{return 'yellow'}
+          }else{return colors[d3.select(this).attr("class").split("circles selected")[1]]}
         }else{
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
               return "#303030";
-          }else{return 'yellow'}
+          }else{return colors[d3.select(this).attr("class").split("circles selected")[1]]}
         }
       }else{
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           return "url(#gradient)";
         }else{
-          return 'yellow'
+          return colors[d3.select(this).attr("class").split("circles selected")[1]]
         }
       }
     })
     .style("stroke","black")
     .attr("stroke-width", function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
+      if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
         return 1
       }else{return 6}
     })
     .attr("stroke-opacity", function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
+      if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
         return 0.7
       }else{
           return 1
       }
     })
     .style("fill-opacity" , function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
+      if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
         return 0.5
       }else{
           return 1
@@ -627,45 +628,45 @@ function updateChart(x,y,z,useeioList,boundry){
       .style('fill', function (d) { 
         if(boundry1=="region"){
           if(useeioList1.length>0){
-            if(d3.select(this).attr("class")!='circles selected'){
+            if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
               if (useeioList1.includes( d.industry_code) ) {
 
                 return "url(#gradient)";
               } else {
                 return "#303030";
               }
-            }else{return 'yellow'}
+            }else{return colors[d3.select(this).attr("class").split("circles selected")[1]]}
           }else{
-            if(d3.select(this).attr("class")!='circles selected'){
+            if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
               return "#303030";
             }else{
-              return 'yellow'
+              return colors[d3.select(this).attr("class").split("circles selected")[1]]
             }
           }
         }else{
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             return "url(#gradient)";
           }else{
-            return 'yellow'
+            return colors[d3.select(this).attr("class").split("circles selected")[1]]
           }
         }
       })
       .attr("stroke-width", function (d) { 
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           return 1
         }else{
           return 6
         }
       })
       .attr("stroke-opacity", function (d) { 
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           return 0.7
         }else{
           return 1
         }
       })
       .style("fill-opacity" , function (d) { 
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           return 0.5
         }else{
           return 1
@@ -690,6 +691,7 @@ function updateChart(x,y,z,useeioList,boundry){
 
 
       .on("click", function(d,i) {
+        clickCount+=1;
         //d3.selectAll(".circles").classed("selected", false);
         d3.selectAll(".circles").style('fill', function (d) { 
 
@@ -697,44 +699,50 @@ function updateChart(x,y,z,useeioList,boundry){
 
             if(useeioList1.length>0){
               console.log("usseeee")
-              if(d3.select(this).attr("class")!='circles selected'){
+              console.log("class"+d3.select(this).attr("class"))
+              if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
+
                 if (useeioList1.includes( d.industry_code) ) {
+                  console.log("nullllll")
                   return "url(#gradient)";
                 } else {
                   return "#303030";
                 }
-              }else{return "yellow"}
+              }else{
+                return colors[d3.select(this).attr("class").split("circles selected")[1]]
+                console.log(colors[d3.select(this).attr("class").split("circles selected")[1]])
+              }
             }else{
-              if(d3.select(this).attr("class")!='circles selected'){
+              if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null) {
                 return "#303030";
               }else{
-                return "yellow"
+                return colors[d3.select(this).attr("class").split("circles selected")[1]]
               }
            }
           }else{
-            if(d3.select(this).attr("class")!='circles selected'){
+            if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
               return "url(#gradient)";
             }else{
-              return "yellow"
+              return colors[d3.select(this).attr("class").split("circles selected")[1]]
             }
           }
         })
         .attr("stroke-width", function (d) { 
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             return 1
           }else{
             return 6
           }
         })
         .attr("stroke-opacity", function (d) { 
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             return 0.7
           }else{
               return 1
           }
         })
         .style("fill-opacity" , function (d) { 
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             return 0.5
           }else{
               return 1
@@ -743,11 +751,11 @@ function updateChart(x,y,z,useeioList,boundry){
 
         d3.select(this)
           .transition()
-          .style("fill","yellow")
+          .style("fill",colors[clickCount])
           .style("fill-opacity",1)
           .attr('stroke-width', 6)
           .attr("stroke-opacity", 1)
-        d3.select(this).classed("selected", true)
+        d3.select(this).classed("selected"+clickCount, true)
         $("#impactTextIntro").hide();
         $("#impactText").html($("#impactText").html() + "<br>"+ '<font size="5">'+d.industry_detail+"</font>"+"<br>"+z1 +":"+d.z+ "<br>" + y1 +":"+d.y+ "<br>" + x1+":"+d.x + "<br>");
         $("#impact-chart").show();
@@ -759,7 +767,7 @@ function updateChart(x,y,z,useeioList,boundry){
       })
 
       .on("mouseout", function(d) {
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           d3.select(this)
           .transition()
           .attr("stroke-width", 1)
@@ -839,46 +847,50 @@ function updateChart(x,y,z,useeioList,boundry){
 
 
 function clearBubbleSelection(){
-  d3.selectAll(".circles").classed("selected", false);
+  for(l=0;l<=clickCount;l++){
+    d3.selectAll(".circles").classed("selected"+l, false);
+  }
+  
+  clickCount=-1
     d3.selectAll(".circles").style('fill', function (d) { 
       if(boundry1=="region"){
         if(useeioList.length>0){
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             if (useeioList.includes( d.industry_code) ) {
               return "url(#gradient)";
             } else {
               return "#303030";
             }
-          }else{return "yellow"}
+          }else{return colors[clickCount]}
         }else{
-          if(d3.select(this).attr("class")!='circles selected'){
+          if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
             return "#303030";
-          }else{return "yellow"}
+          }else{return colors[clickCount]}
         }
       }else{
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           return "url(#gradient)";
         }else{
-          return "yellow"
+          return colors[clickCount]
         }
       }
     })
     .attr("stroke-width", function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
+      if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
         return 1
       }else{
         return 6
       }
     })
     .attr("stroke-opacity", function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
+      if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
         return 0.7
       }else{
         return 1
       }
     })
     .style("fill-opacity" , function (d) { 
-      if(d3.select(this).attr("class")!='circles selected'){
+      if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
         return 0.5
       }else{
         return 1
