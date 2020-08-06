@@ -674,7 +674,7 @@ function updateChart(x,y,z,useeioList,boundry){
       })
 
       .on("mouseover", function(d) {
-        if(d3.select(this).attr("class")!='circles selected'){
+        if(d3.select(this).attr("class")=="circles" || d3.select(this).attr("class")==null){
           d3.select(this)
           .transition()
           .style("fill-opacity",1)
