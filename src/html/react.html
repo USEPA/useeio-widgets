@@ -12,29 +12,29 @@
         <h1 class="text-center">React</h1>
         <div id="count-combo"></div>
     </div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/react.production.min.js"></script>
+    <script src="lib/react-dom.production.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+
+    <script>
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+
+        var countCombo = useeio.countCombo({
+            model: model,
+            selector: '#count-combo',
+        });
+        config.join(countCombo);
+        config.updateIfAbsent({ count: 20 });
+    </script>
 </body>
-
-<script src="lib/d3.min.js"></script>
-<script src="lib/react.production.min.js"></script>
-<script src="lib/react-dom.production.min.js"></script>
-<script src="lib/useeio_widgets.js"></script>
-
-<script>
-    var config = useeio.urlConfig();
-    var modelID = config.get().model || 'GAUSEEIO';
-
-    var model = useeio.model({
-        endpoint: './api',
-        model: modelID,
-        asJsonFiles: true,
-    });
-
-    var countCombo = useeio.countCombo({
-        model: model,
-        selector: '#count-combo',
-    });
-    config.join(countCombo);
-    config.updateIfAbsent({count: 20});
-</script>
 
 </html>

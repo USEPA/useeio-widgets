@@ -40,17 +40,17 @@
         </pre>
         <div id="matrix-selector"></div>
     </div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+
+    <script>
+        var config = useeio.urlConfig();
+        var selector = useeio.matrixSelector({
+            selector: '#matrix-selector',
+        });
+        config.join(selector);
+    </script>
 </body>
-
-<script src="lib/d3.min.js"></script>
-<script src="lib/useeio_widgets.js"></script>
-
-<script>
-    var config = useeio.urlConfig();
-    var selector = useeio.matrixSelector({
-        selector: '#matrix-selector',
-    });
-    config.join(selector);
-</script>
 
 </html>
