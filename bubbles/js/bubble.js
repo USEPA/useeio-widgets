@@ -302,18 +302,22 @@ function getDimensions(x,y,z){
   var returnY=[];
   var returnZ=[];
   var returnPairs = [];
-  allData.forEach(function(d){
-    var pair = {x: d[x],y: d[y],z:d[z],industry_detail:d["industry_detail"],industry_code:d["industry_code"],ACID:d["ACID"],
-    ENRG:d["ENRG"],ETOX:d["ETOX"],EUTR:d["EUTR"],FOOD:d["FOOD"],GCC:d["GCC"],HAPS:d["HAPS"],
-    HAZW:d["HAZW"],HC:d["HC"],HNC:d["HNC"],HRSP:d["HRSP"],HTOX:d["HTOX"],JOBS:d["JOBS"],
-    LAND:d["LAND"],METL:d["METL"],MINE:d["MINE"],MSW:d["MSW"],NREN:d["NREN"],OZON:d["OZON"],
-    PEST:d["PEST"],REN:d["REN"],SMOG:d["SMOG"],VADD:d["VADD"],WATR:d["WATR"]}; // CUSTOM, appended year for chart, the rest for popup
-    returnPairs.push(pair);
-    returnX.push(d[x]);
-    returnY.push(d[y]);
-    returnZ.push(d[z]);
-  });
-  return {x:returnX,y:returnY,z:returnZ,pairs:returnPairs};
+  if (allData) {
+    allData.forEach(function(d){
+      var pair = {x: d[x],y: d[y],z:d[z],industry_detail:d["industry_detail"],industry_code:d["industry_code"],ACID:d["ACID"],
+      ENRG:d["ENRG"],ETOX:d["ETOX"],EUTR:d["EUTR"],FOOD:d["FOOD"],GCC:d["GCC"],HAPS:d["HAPS"],
+      HAZW:d["HAZW"],HC:d["HC"],HNC:d["HNC"],HRSP:d["HRSP"],HTOX:d["HTOX"],JOBS:d["JOBS"],
+      LAND:d["LAND"],METL:d["METL"],MINE:d["MINE"],MSW:d["MSW"],NREN:d["NREN"],OZON:d["OZON"],
+      PEST:d["PEST"],REN:d["REN"],SMOG:d["SMOG"],VADD:d["VADD"],WATR:d["WATR"]}; // CUSTOM, appended year for chart, the rest for popup
+      returnPairs.push(pair);
+      returnX.push(d[x]);
+      returnY.push(d[y]);
+      returnZ.push(d[z]);
+    });
+    return {x:returnX,y:returnY,z:returnZ,pairs:returnPairs};
+  } else {
+    console.log("ERROR: Bubble.js allData undefined.")
+  }
 }
 
 function updateTitle(x,y,z){
