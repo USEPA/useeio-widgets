@@ -417,7 +417,7 @@ function readyfunc(){
   }else{
     model=''
   }
-  var community_data_root = "https://modelearth.github.io";
+  var community_data_root = "https://model.earth";
   d3.csv(community_data_root + "/community-data/us/indicators/indicators_sectors"+model+".csv").then(function(data){
     data.forEach(function(d) {
       d.ACID = +d.ACID;
