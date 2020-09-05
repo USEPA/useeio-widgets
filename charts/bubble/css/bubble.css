@@ -1,0 +1,133 @@
+body {
+  font-family: Helvetica;
+  font-size: 13px;
+}
+
+.bubble-graph {
+  max-widthX:1000px;
+  /* position: relative; */ /* Bug: Popup misalign */
+}
+.bubble-graph select {
+  max-width:250px;
+}
+.bubble-graph svg {
+    pointer-events: none;
+}
+#imp {
+  background-color: #888;
+  padding-right: 40px;
+}
+#imp div {
+  margin: auto;
+  padding: 30px;
+  margin-right: -100px;
+}
+#bubble-graph-title {
+  font-size: 16px;
+  text-align: left;
+  border-bottomX: 2px solid black;
+  margin-bottom: 25px;
+}
+
+.graph-picklist{
+  margin-left: 5px;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+h4{
+  /* text-align: center; */ /* avoid - effect info page */
+  font-weight: normal;
+}
+
+.axis text {
+  font-size: 9.5px;
+  fill: #777;
+}
+
+.axis path {
+  display: none;
+}
+
+.axis line {
+  stroke-width:.3px;
+  stroke: #dedede;
+}
+
+#graph-wrapper-x {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  floatX:left;
+}
+#graph-wrapper-y {
+  text-align: center;
+  transform:rotate(-90deg) translateX(-374px) translateY(35px);
+  transform-origin: bottom left;
+  position: absolute;
+}
+#graph-wrapper-z {
+  margin-top: 10px;
+  margin-bottom: -15px;
+  text-align: center;
+  z-index: 2;
+
+  /* would be better to have click pass through chart */
+  /*
+  position: absolute; 
+  top:0px;
+  */
+  left: 30%;
+}
+
+#bubble-graph-equation{
+  position: absolute;
+  top:20px;
+  left:60%;
+  text-align: center;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 170px;
+  height: 106px;
+  overflow: auto;
+  padding: 2px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font: 10px sans-serif;
+  background: lightsteelblue;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+text {
+  font-size:18px;
+}
+.text-space-vert {
+  width:80px;
+  display: inline-block;
+}
+.text-space-horz {
+  margin-left: 30px;
+  display: inline-block;
+  width:120px;
+}
+.right-then-left {
+  clear:both;
+  float:right;
+}
+.switch-text {
+  font-size:14px;
+  float:left;
+  padding:6px 8px 0 0;
+  color: #aaa;
+}
+.chart-right {
+  float:right;
+}
+@media (max-width: 800px) {
+
+}
