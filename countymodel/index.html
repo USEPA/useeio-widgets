@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>NAICS - New Technology Categories</title>
+<link rel="icon" type="image/x-icon" href="../../community/img/logo/favicon.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link type="text/css" rel="stylesheet" href="../../localsite/css/base.css" />
+<script type="text/javascript" src="../../localsite/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/localsite.js"></script>
+<script type="text/javascript" src="../../localsite/js/showdown.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/navigation.js"></script>
+
+<style>
+	.content {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+	#toplogo {
+		background-color: #dae8eb; overflow: auto; padding:0px; padding-left:40px; border:0px;
+	}
+	@media (max-width: 800px) {
+		#toplogo {
+			padding-left:0px;
+		}
+	}
+</style>
+
+<script src = 'datasource.js'></script>
+<script type="text/javascript">
+
+
+
+loadMarkdown("README.md", "readmeDiv", "_parent");
+loadMarkdown("datasource.md", "dsDiv", "_parent");
+loadMarkdown("ecosystem.md", "ecoDiv", "_parent");
+
+
+
+</script>
+
+</head>
+
+<body>
+
+<div class="content contentpadding" style="margin-bottom:0px; padding-bottom:0px">
+
+
+	<div id="readmeDiv"></div>
+	<div id="dsDiv"></div>
+	<div id="ecoDiv"></div>
+	<br>
+
+
+</div>
+
+<div id="toplogo">
+    <a href="https://codeforall.org/members"><img src="../img/logo/code-for-all.png" style="width:200px; padding:20px"></a>
+</div>
+
+</body>
+</html>

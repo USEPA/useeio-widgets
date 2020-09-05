@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>NAICS - How to Add New Technology Categories</title>
+<link rel="icon" type="image/x-icon" href="../../../community/img/logo/favicon.png" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="../../../localsite/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../../../localsite/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../localsite/js/localsite.js"></script>
+<script type="text/javascript" src="../../../localsite/js/navigation.js"></script>
+<link rel="stylesheet" href="../../../localsite/css/base.css"  />
+
+<!-- For LaTex -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+<style>
+	pre {
+		font-family: inherit !important;
+	}
+	code{
+		display: block !important;
+		border-left: 5px solid #ddd !important;
+		background-color: none !important;
+		background: none !important;
+		margin: 30px 0 40px 0 !important;
+		padding: 0 0 0 20px !important;
+		font-family: inherit !important;
+		color: #555;
+	}
+
+	.code{
+		display: block !important;
+		border-left: 5px solid #ddd !important;
+		background-color: none !important;
+		background: none !important;
+		margin: 30px 0 40px 0 !important;
+		padding: 0 0 0 20px !important;
+		font-family: inherit !important;
+		color: #555;
+	}
+	.MJXc-display {
+		display: inline-block !important;
+	}
+</style>
+
+
+</head>
+
+<body>
+
+<div class="content contentpadding" style="margin-bottom:0px; padding-bottom:0px">
+
+
+<a href="../">How to add new technologies</a><br>
+<h1>LCA methodology to evaluate new technologies using USEEIO</h1>
+
+This process is being used to add an 
+<a href="../../bioeconomy/">Advanced Biofuels technology sector</a> to the US EPA IO model.<br><br>
+
+
+<b>The most recent version of the setup steps resides in:</b><br>
+<a href="../../bioeconomy/docs/LCA%20New%20tech%20Methodology%20%28V02%20CGA%202020-08-05%29.pdf">LCA Methodology to incorporate new technologies in USEEIO (PDF)</a>
+
+and 
+<a href="../../bioeconomy/docs/5%20pathways%20%28v07%20CGA%202020-07-31%29.xlsx">5 pathways (Excel)</a><br>
+By Cindy Azuero Pedraza, PhD student in the H. Milton School of Industrial and Systems Engineering at Georgia Tech  
+<br><br>
+
+<hr>
+<br>
+
+The page below is being updated to use <a href="https://www.mathjax.org/" target="_blank">mathjax.org</a> for inline equations.<br>
+LaTex is being pulled from <a href="../../bioeconomy/docs/LCA-Biofuel-Methodology.docx">MS Word</a> and can also be created with a <a href="https://arachnoid.com/latex/">LaTex generator</a> or <a href="https://www.google.com/search?q=LaTex+editor&oq=LaTex+editor">other editors</a>. Example:<br>
+
+<!--
+When $$a \ne 0$$, there are two solutions to $$ax^2 + bx + c = 0$$ and they are $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
+<br><br>
+-->
+
+<span style="font-size: 22px">
+Total final uses&nbsp; $$=\sum_{j=n_2+3+2}^{n_2+3+21}Y_{i,j}$$ or all $$i=1,\ldots,n_1+1$$
+</span>
+<br>
+
+You can also generate embedded images using  <a href="https://www.codecogs.com/latex/eqneditor.php">codecogs.com</a> to transform Latex using the svg option.<br><br>
+
+<br>
+
+
+<h2>Objective</h2>
+Current USEEIO sectors are disaggregated into multiple sectors based on available process data. To represent the new technology/bio-product/bio-service, a similar existing technology/product/service will be disaggregated into the existing (traditional) and a bio-based version.
+
+<h2>What needs to be changed</h2>
+
+Make and Use tables, A and B matrices , Y vector  
+
+<h2>Information required for each new technology sector</h2>
+
+- Which is the new sector to add (name and code).<br>
+- Which is the similar sector (BEA code).<br>
+- % of output of the original sector that new sector will produce.<br>
+- The amount spent in each of the n commodities to produce "Total Industry Output" in the new sector. (Including Z_(n+1,n+1))<br>
+- Data of all  environmental flows associated with the new sector. (Environmental flows per dollar of output of the new sector).<br>
+
+
+<h2>Modeling Steps</h2>
+
+These do not include software or management specificities, only include steps in a IO-LCA (EEIO) modelling considering some information about how it is implemented in useeior. We're applying the following steps in the <a href="https://github.com/modelearth/useeior/tree/Bio-Modeling">modeleearth useeior fork</a>. Click "Clone or download" to begin.<br><br>  
+
+ The following steps are based on the LCA EEIO methodology in <a href="https://www.lcatextbook.com/">LCAtextbook.com</a> and the way this model is implemented in useeior. Also based on the document "ERG_useeio disaggregation memo_draft.pdf" and others.<br><br>
+
+<!--We're using [LaTex in markdown](http://flennerhag.com/2017-01-14-latex/) to format equations. 
+Here's an example: \\[ a^2 = b^2 + c^2 \\]  
+<br>
+You can generate equation from a screenshot using [mathpix.com](https://mathpix.com/).  -->
+
+
+<h4>1. Modify Make Table</h4>
+
+A. Modify dimensions (add additional row and column).<br>
+
+B. Fill new row and column with data:<br>
+
+<code>
+Row n+1 -> How much the new industry produces of each commodity (in dollar values)?<br>
+</code>
+
+Assuming no secondary products.<br>
+Let s be the existing "similar" sector, 
+
+<code>
+For j= 1,2,...,n (here j is commodities){<br>
+<img src="https://latex.codecogs.com/svg.latex?Z_%7Bn&plus;1%2C%20j%7D%3D0">
+</code>
+
+Don't forget to update:<br>
+
+<div class="code">
+     <img src="https://latex.codecogs.com/svg.latex?Z_%7Bs%2Cs%7D%3DZ_%7Bs%2Cs%7D%5Ccdot%281-%25%29">
+</div>
+
+Column n+1 ->  How much each industry produces of the new commodity (in dollar values)?<br><br>
+
+Assuming no secondary producers.<br><br>
+
+For i= 1, 2, …, n (Here i is industries){  
+     <br>
+     <img src="https://latex.codecogs.com/svg.latex?Z_%20%7Bi%2C%20n&plus;1%7D%3D0">
+     <br><br>
+
+Update diagonal elements<br><br>
+	
+Assuming the inputs required by the new sector are produced by its primary producers.<br>
+
+<code>
+For i=1 to n+1 {<br>
+<img src="https://latex.codecogs.com/svg.latex?Z_%7Bi%2Ci%7D%3DZ_%7Bi%2Ci%7D&plus;inputPurchases_i">
+}
+</code>
+
+Recalculate totals<br><br>
+	
+Total Commodity Output and Total Industry Output<br><br>
+
+<h4>2. Modify Use Table</h4>
+
+A. Modify dimensions (add additional row and column).<br><br>
+B. Fill new row and column with data:<br><br>
+
+Row n+1 (Industry users/intermediate inputs)-> How much each of the industries use the new commodity to produce (in producer's prices)?<br><br>
+
+
+Let s be the existing "similar" sector,
+<code>
+	For j=1,2,…, n,
+	<br>
+	<img src="https://latex.codecogs.com/svg.latex?Z_%7Bn&plus;1%2Cj%7D%3D%20Z_%7Bs%2Cj%7D%5Ccdot%20%25">
+</code>
+
+Don't forget to update:
+	<br>
+<code>
+	For j=1,2,…, n
+	<br>
+	<img src="https://latex.codecogs.com/svg.latex?Z_%7Bs%2Cj%7D%3DZ_%7Bs%2Cj%7D%5Ccdot%281-%25%29"><br>
+	<br>
+	<img src="https://latex.codecogs.com/svg.latex?Z_%7Bn&plus;1%2C%20n&plus;1%7D%3D"> From process data
+</code>
+
+Row n+1 (Final users)-> How much final users/customers demand of the new commodity?<br><br>
+
+<img src="https://latex.codecogs.com/svg.latex?Y_%7Bn&plus;1%7D%3DY_s%20%5Ccdot%20%25"><br><br>
+
+And don't forget to update:<br>
+	<br>
+	<img src="https://latex.codecogs.com/svg.latex?Y_s%3DY_s%20%5Ccdot%20%281-%25%29"><br><br>
+
+Column n+1-> How much the new industry uses of each commodity to produce (in producer's prices)?<br><br>
+
+The amount spent in each of the n commodities to produce "Total Industry Output" in the new sector. From process data.<br><br>
+	
+Recalculate totals<br><br>
+
+Total Intermediate Inputs<br>
+Total Intermediate Use<br>
+Total Final Uses<br>
+Total Commodity Output<br>
+<br>
+
+Which is the Value Added for this new industry? (its three components: returns to labor (compensation of employees), capital (gross operating surplus), and government (taxes on production and imports less subsidies))  
+<br><br>
+
+VA= Total Industry Output- Total intermediate inputs<br>
+	<br>
+	<img src="https://latex.codecogs.com/svg.latex?%5Ctext%7BTotal%20Intermediate%20Inputs%7D%3D%5Csum_%7Bi%3D1%7D%5E%7Bn&plus;1%7DZ_%7Bi%2Cn&plus;1%7D"><br><br>
+	
+
+Assumption: each of the three components get 1/3 of VA for balance purposes and since each component individually is not used.<br><br>
+	
+Recalculate totals<br><br>
+		
+Total Industry Output<br><br>
+
+<h4>3. Recalculate normalized Make/ Market Shares matrix</h4>
+
+Recalculate V_n= each number in make table/ Total commodity output  
+<br><br>
+
+<h4>4. Recalculate normalized Use/ Direct Coefficients table</h4>
+
+Recalculate U_n= each number in use table/Total industry output  
+<br><br>
+
+<h4>5. Update A matrix</h4>
+
+Recalculate square direct requirement matrix A.<br><br>
+
+Commodity x Commodity type:<br>
+
+	A= U_n * V_n  
+	<br><br>
+
+	Industry x Industry type:<br>
+
+	A= V_n * U_n<br><br>
+
+
+<h4>6. Modify B matrix</h4>
+
+Modify dimensions (add an additional column) to matrix B. (We have now 1 sector more).  
+
+Fill data for new column (n+1) using  process data for each of the  environmental flows per dollar of output of new sector.  
+<br><br>
+
+<h4>7. Recalculate L matrix</h4>
+Recalculate Total requirements matrix<br><br>
+<img src="https://latex.codecogs.com/svg.latex?L%3D%20%28I-A%29%5E%7B-1%7D"><br><br>
+
+<h4>8. Recalculate matrix D</h4>
+
+Recalculate Direct Impact Matrix D= CB.  
+<br><br>
+
+
+<h4>9. Recalculate matrix M</h4>
+
+Recalculate Total environmental flows use per dollar M=BL.  
+<br><br>
+
+
+<h4>10. Recalculate matrix U</h4>
+
+Recalculate Total impacts per dollar matrix U= CM.  
+<br><br>
+
+<h4>11. Update final demand vector</h4>
+
+Add one row to final demand vector.  
+
+Fill the new row with the demand for the new sector extracting it from the updated Use Table.
+<br><br>
+
+<h4>12. Recalculate USEEIO model results</h4> 
+
+Re-run calculateEEIOModel()
+
+<br><br><br>
+
+</div>
+
+
+</body>
+</html>

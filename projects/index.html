@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Community Web Applications - USEEIO Model</title>
+<link rel="icon" type="image/x-icon" href="../../community/img/logo/favicon.png" />
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="../../localsite/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/showdown.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/localsite.js"></script>
+<script type="text/javascript" src="../../localsite/js/navigation.js"></script>
+<link rel="stylesheet" href="../../localsite/css/base.css"  />
+</head>
+
+<!--
+
+    Thursday from 10-11am and they are also required as part of their internship to participate in our GT Serve Learn Sustain Summer Internship Seminar Programming which will meet virtually every Wednesday from 4-5pm.
+
+
+    12-digit FIPS Code - state, county, tract, block group
+    https://www.policymap.com/2012/08/tips-on-fips-a-quick-guide-to-geographic-place-codes-part-iii/
+-->
+<body>
+<script>
+  loadMarkdown("links.md", "linksDiv", "_parent");
+
+  //loadMarkdown("Workplans/Readme.md", "workplanDiv", "_parent");
+
+  loadMarkdown("industries.md", "industriesDiv", "_parent");
+
+  //loadMarkdown("../../community/../../community/eeio/README.md", "localDiv", "_parent");
+  loadMarkdown("local.md", "localDiv", "_parent");
+
+  if (location.host.indexOf('localhost') >= 0) {
+    //loadMarkdown("../../useeio-widgets.wiki/Home.md", "homeDiv", "_parent");
+  } else {
+    ////loadMarkdown("https://raw.githubusercontent.com/wiki/USEPA/useeio-widgets/Home.md", "homeDiv", "_parent");
+    //loadMarkdown("https://model.earth/eeio/charts/steps.md", "homeDiv", "_parent");
+  }
+  loadMarkdown("../../io/charts/steps.md", "homeDiv", "_parent");
+
+  ////loadMarkdown("https://raw.githubusercontent.com/wiki/USEPA/useeio-widgets/Use.md", "localDiv", "_parent");
+
+  loadMarkdown("bioeconomy.md", "bioDiv", "_parent");
+  
+</script>
+
+<style>
+#fullcolumn {
+    background: #fafafa;
+}
+.gobutton {
+    margin: 0px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+    padding: 14px 12px 15px 12px;
+    min-height: 38px;
+    color: #fff;
+    box-sizing: border-box;
+    background: #555;
+    height: 48px;
+    text-decoration: none;
+}
+.resultsHolder {
+    background: rgba(33,33,33,0.95);
+    color: #fff;
+    padding: 10px 20px 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    line-height: 26px;
+}
+.txtbox {
+    position: relative;
+    overflow: hidden;
+    outline: none;
+    width: 100%;
+    max-width: 190px;
+    padding: 0 20px;
+    height: 48px;
+    line-height: 60px;
+    font-size: 24px;
+    color: #777;
+    border: solid 1px #b7b7b7;
+    border-radius: 5px;
+    margin-right: 7px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    float: left;
+}
+@media (max-width: 1200px) {
+    #rightcolumn {
+        display:none;
+    }
+}
+#sidecolumnX {
+    display: none !important;
+}
+#sidecolumnContentX {
+    display: none !important;
+}
+#logoholderside {
+    display: none !important;
+}
+</style>
+
+
+<div id="sidecolumn"></div>
+
+
+
+<div id="rightcolumn" style="float:right; max-width: 400px; padding-left:20px; padding-right:10px;background-color: #fff">
+    <a class="twitter-timeline" data-tweet-limit="5" href="https://twitter.com/EPA"></a> 
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</div>
+
+<div class="cardholder content contentpadding" style="overflow:auto;">
+
+    <h1 style="margin-bottom:5px">Community Web Applications</h1>
+
+
+
+    <div class="localonly">
+        
+        <b>Links</b> - 
+        <a href="https://app.slack.com/client/T013UQ7HFU2/C013E2DKREK">Slack Group</a> | 
+        <a href="https://docs.google.com/document/d/1FsIATg3XS-ZlyrNabZBIR9mdhSTWv22-yp0ZCyF80rg/edit?usp=sharing">Google Doc</a> | 
+        <a href="../../smartdata/interns/workplans">Workplans</a> |
+        <a href="https://hangouts.google.com/call/NzYJ1pjzO6pu3mU8HAX2ACEE">Hangouts</a> - 
+        <span style="white-space: nowrap;">10am to noon Mon, Tues and Wed.</span><br> 
+
+        <b>Jira</b> - 
+        <a href="https://epalca.atlassian.net/jira/your-work">Your Work</a> - 
+        <a href="https://epalca.atlassian.net/secure/RapidBoard.jspa?rapidView=2&projectKey=USEEIO&selectedIssue=USEEIO-580&sprint=59">Build/Test Sprint</a> - 
+        <a href="https://epalca.atlassian.net/secure/RapidBoard.jspa">USEEIO Board</a> - <a href="https://epalca.atlassian.net/browse/USEEIO-579">Impact Chart</a> - 
+        <a href="https://epalca.atlassian.net/secure/RapidBoard.jspa?rapidView=2&projectKey=USEEIO">All Sprints</a> - 
+        <a href="https://model.georgia.org/smartdata/interns"> Intern Info</a><br>
+
+        <b>Data Flow</b> - <a href="../about/data">LCA tool ecosystem</a> - 
+        <a href="https://app.diagrams.net/#G1Qy0ap5p1wzmG1w2Chm2Gv2Ysa-g6_60A">source</a> - A flow diagram of EPA data sources  
+        <br>
+        <!--
+        [LCA tool ecosystem](../about/data)
+([source](https://app.diagrams.net/#G1Qy0ap5p1wzmG1w2Chm2Gv2Ysa-g6_60A)) - A flow diagram of EPA data sources   
+        -->
+    </div>
+          
+    <!--  
+    <div class="pagecard">
+        <div class="cardstyle">
+            <div class="leftLogo">
+                <img src="../../community/img/logo/github.png" style="width:100%; max-width:200px">
+            </div>
+            <div style="overflow:auto">
+                <div id="homeDiv"></div>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <div class="pagecard">
+        <div class="cardstyle">
+            <div class="leftLogo">
+                <img src="../../io/img/logo/epa.png" style="width:100%; max-width:200px">
+            </div>
+            <div style="overflow:auto">
+
+                <div id="linksDiv"></div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--
+    <div class="pagecard">
+        <div class="leftLogo">
+            <img src="../../community/img/logo/epa.png" style="width:100%; max-width:200px">
+        </div>
+        <div style="overflow:auto">
+            <div id="workplanDiv"></div>
+        </div>
+    </div>
+    -->
+
+    <div class="pagecard">
+        <div class="cardstyle">
+            <div class="leftLogo">
+                <img src="../../community/projects/biomass/img/products.jpg" style="width:100%; max-width:200px">
+            </div>
+            <div style="overflow:auto">
+                <div id="bioDiv"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagecard">
+        <div class="cardstyle">
+            <div class="leftLogo">
+                <img src="../../community/img/logo/github.png" style="width:100%; max-width:200px">
+            </div>
+            <div style="overflow:auto">
+                <div id="localDiv"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pagecard">
+        <div class="cardstyle">
+            <div class="leftLogo">
+                <img src="../../community/img/logo/python.png" style="width:100%; max-width:170px">
+            </div>
+            <div style="overflow:auto">
+                <div id="industriesDiv"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="localonly">
+
+        <div class="leftLogo">
+                <img src="../../community/img/overview/usa-counties.png" style="width:100%; max-width:200px">
+        </div>
+        <div style="overflow:auto">
+            <b>Example of text that is only visible when viewing locally</b><br>
+            DIV - Use the class "localonly" --- for display:block with padding:20px<br>
+            SPAN - Use the class "local" --- for display: inline-block with padding: 0 4px 0 4px;<br>
+
+            <br>
+            <b>Rules of thumb for GitHub static website file names:</b><br>
+            1. Avoid using spaces or parentheses<br>
+            2. Use all lowercase<br>
+            3. Avoid using underscores<br>  
+        </div>
+    </div>
+
+    <div style="clear:both"></div>
+    <a href="https://docs.google.com/document/d/1FsIATg3XS-ZlyrNabZBIR9mdhSTWv22-yp0ZCyF80rg/edit?usp=sharing">Team Doc</a> (restricted)
+    <br><br>
+</div>
+
+</body>
+</html>

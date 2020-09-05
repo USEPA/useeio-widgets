@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Georgia's Environmentally-Enabled Input-Output</title>
+<link type="text/css" rel="stylesheet" href="../../localsite/css/base.css" />
+<script type="text/javascript" src="../../localsite/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/localsite.js"></script>
+<script type="text/javascript" src="../../localsite/js/showdown.min.js"></script>
+<script type="text/javascript" src="../../localsite/js/navigation.js"></script>
+
+<!-- neighborhood consulting-team -->
+
+<script>
+	param.titleArray = ["Georgia"]
+	param.footer = "/io/overview/footer.html"
+    param.headerLogo = "<img src='/community/img/logo/georgia-icon.png' style='width:64px'>";
+
+    $(window).scroll(function(){$(".herocenter").css("opacity", 1 - $(window).scrollTop() / 200);});
+</script>
+
+<style>
+	#menuNav { display:none; }
+    #logoholder { margin-top: -8px; }
+    #headerLocTitleHolder { margin-left: 10px !important; margin-top: 2px !important; }
+
+    .bgimg { background-position: 0 0px; }
+  
+  .text-flow {
+    position: absolute;
+    bottom: 10px;
+    left: 0px;
+    padding:15px 20px 15px 20px;
+    background-color: rgba(33,33,33,.85);
+  }
+  .fade-in {
+      animation: fadeIn ease 4s;
+    }
+    @keyframes fadeIn {
+      0% {
+        opacity:0;
+      }
+      100% {
+        opacity:1;
+      }
+    }
+    .bgimg-notfixed {
+        background-attachment: scroll;
+    }
+    #play-button {
+        opacity: .8;
+        cursor: pointer;
+    }
+    #play-buttonX:hover {
+        opacity: 1
+    }
+    .storybox {
+        position: absolute;
+        left: 60px;
+        bottom: 40px;
+        height: 420px;
+        width: 420px;
+        background-color: rgba(35, 35, 35, .85);
+        padding: 60px;
+        padding-top: 50px;
+        padding-bottom: 40px;
+        color:#fff;
+        line-height: 2.6em;
+        font-size: 16px;
+    }
+    .storybox-right {
+        left: auto;
+        right: 60px;
+    }
+    @media (max-width: 1400px) {
+	  .storybox {display:none;}
+	}
+</style>
+</head>
+
+<body>
+
+<!-- top hero -->
+<div style="background:#fff; min-height:150px; width:100%; position: relative">
+    <!-- logo centered -->
+    <div class="herocenter" style="position: absolute; z-index:2; top:42%">
+
+        <div class="fade-in text-flowX" style="position:fixed; 
+        left:0px; right:0px; 
+        text-align:center; 
+        margin-top:50px; color:#fff; font-size:28px; text-shadow: 2px 2px 8px #333;">
+            Georgia's <span style="font-weight:800; opacity:1">environmentally-enabled</span> input-output
+
+            <br><br>
+            <div id="play-button" style="font-size: 68px; margin-left:2px">
+            ▶️
+            </div>
+        </div>
+    </div>
+    <div class="lazy bgimg bgimg-notfixed" data-src="img/hero/woman-table-computer.jpg" style="opacity:.85">
+        <img src="img/hero/woman-table-computer.jpg" style="opacity:0;width:100%">
+    </div>
+
+</div>
+<!-- /top hero -->
+
+
+<!-- bios -->
+<style>
+.bio {
+  clear:both;
+  display:block;
+}
+.bioimage {
+  clear:both;
+}
+.bioimage img {
+    padding: 0px !important;
+    margin: 0px !important;
+    margin-right: 30px !important;
+    background-size: cover !important;
+    border-radius: 50% !important;
+    width: 120px !important;
+    height: 120px !important;
+    min-width: 120px !important;
+    min-height: 120px !important;
+}
+.biotext {
+  overflow: auto;
+  font-size: 16px;
+}
+.biotext h2 {
+  font-size: 20px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+  margin-bottom: 8px;
+}
+</style>
+<br>
+
+<div class="content contentpadding biotext">
+    <a href="../../io/team/" style="float:right">View Team Bios</a>
+    <h1 style="margin-bottom:35px">Our Team</h1>
+    <div class="pageColumns">
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+            <div class="bioimage">
+                <img src="../../io/team/img/Yilun-Zha.jpg">
+            </div>
+            <h2>Yilun Zha</h2>
+            Local Supply Chains
+            
+          </div>
+        </div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+
+            <div class="bioimage">
+                <img src="../../io/team/img/Nazanin-Tabatabaei.jpg">
+            </div>
+              <h2>Nazanin Tabatabaei</h2>
+              Industries and Indicators
+          </div>
+        </div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+            <div class="bioimage">
+                <img src="../../io/team/img/Cindy-Giselle-Azuero-Pedraza.jpg">
+            </div>
+            <h2>Cindy Azuero</h2>
+            Sustainable Bioeconomies
+          </div>
+        </div>
+
+        <div style="clear:both; height:40px"></div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+            <div class="bioimage">
+                <img src="../../io/team/img/Wesley-Ingwersen.jpg">
+            </div>
+            <h2>Wesley Ingwersen</h2>
+            US EPA Lead
+            
+          </div>
+        </div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+
+            <div class="bioimage">
+                <img src="../../io/team/img/Loren-Kevin-Heyns.jpg">
+            </div>
+              <h2>Loren Heyns</h2>
+              GA Economic Development
+          </div>
+        </div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+            <div class="bioimage">
+                <img src="../../io/team/img/Valerie-Thomas.png">
+            </div>
+            <h2>Valerie Thomas</h2>
+            Georgia Tech Advisor
+          </div>
+        </div>
+
+        <div style="clear:both; height:40px"></div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+            <div class="bioimage">
+                <img src="../../io/team/img/Barbara-Alfano.jpg">
+            </div>
+            <h2>Barbara Alfano</h2>
+            US EPA
+            
+          </div>
+        </div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+
+            <div class="bioimage">
+                <img src="../../io/team/img/Costas-Simoglou.jpg">
+            </div>
+              <h2>Costas Simoglou</h2>
+              GA Economic Development
+          </div>
+        </div>
+
+        <div class="pageColumn">
+          <div class="pageColumnInside">
+            <div class="bioimage">
+                <img src="../../io/team/img/Dawn-Price.jpg">
+            </div>
+            <h2>Dawn Price</h2>
+            GA Economic Development
+          </div>
+        </div>
+
+
+
+    </div>
+
+    
+<div style="clear:both"></div><br>
+
+
+</div>
+
+<!-- /bios -->
+
+
+
+<div class="content contentpadding" style="padding-bottom:20px;">
+    <div id="localDiv"></div>
+    <script>
+        loadMarkdown("../../io/overview/README.md", "localDiv", "_parent");
+    </script>
+</div>
+
+<div classX="widthColumns" class="content contentpadding contentwide" style="padding-bottom:20px; background: #fff">
+    
+    View <a href="../../community/start/charts/input-output-sk/">Interactive Version</a><br>
+    <img src="../../io/overview/img/hero/sankey.png" style="width:100%; bottom:0px;">
+    <br>
+</div>
+<br>
+
+<div class="lazy bgimg bgimg-notfixed" data-src="../../io/overview/img/hero/board-masks.jpg" style="top:auto; bottom:0px; opacity:.85; line-height: 0px">
+    <img src="../../io/overview/img/hero/board-masks.jpg" style="opacity:0; width:100%; bottom:0px;">
+
+    <div class="storybox storybox-right hideMobile">
+           <h2 style="color:#eee">Local Economies</h2>
+    </div>
+
+</div>
+
+<div class="content contentpadding" style="padding-bottom:20px;">
+    <div id="econDiv"></div>
+    <script>
+        loadMarkdown("README.md", "econDiv", "_parent");
+    </script>
+</div>
+
+<div class="lazy bgimg bgimg-notfixed" data-src="img/hero/group-yellow-chairs.jpg" style="top:auto; bottom:0px; opacity:.85; line-height: 0px">
+    <img src="img/hero/group-yellow-chairs.jpg" style="opacity:0; width:100%; bottom:0px;">
+</div>
+
+
+<div class="content contentpadding" style="padding-bottom:20px">
+	<div id="readmeDiv"></div>
+</div>
+<script>
+    loadMarkdown("README.md", "readmeDiv", "_parent");
+</script>
+
+
+<div class="lazy bgimg bgimg-notfixed" data-src="img/hero/postit-board.jpg" style="top:auto; bottom:0px; opacity:.85; line-height: 0px">
+        <img src="img/hero/postit-board.jpg" style="opacity:0; width:100%; bottom:0px;">
+    </div>
+
+
+<div id="footer"></div>
+
+</body>
+</html>

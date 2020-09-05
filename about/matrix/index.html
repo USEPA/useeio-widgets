@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>Environmental Education Tools - Matrix Algebra</title>
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="../../../localsite/js/d3.v5.min.js"></script>
+<script type="text/javascript" src="../../../localsite/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="../../../localsite/js/localsite.js"></script>
+<script type="text/javascript" src="../../../localsite/js/navigation.js"></script>
+<link rel="stylesheet" href="../../../localsite/css/base.css"  />
+
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<title>Supply Chain Greenhouse Gas Emission Factors for US Industries and Commodities - Appendix 1 - Technical Details of Model Construction and Factor Preparation</title>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+body {
+  font-size: 16px;
+}
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 14px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > https://linkprotect.cudasvc.com/url?a=https%3a%2f%2fli.active&c=E,1,j_6yAEsoaQScpg3vYkbh42xWHT43AIBlqMcilI6ns5PKgNB3Tbo3t4tVRbQZ2AojrxQRUemfcw21d0hXIXocILzEHI49Xbe-ogOXKZ_G&typo=1:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > https://linkprotect.cudasvc.com/url?a=https%3a%2f%2fli.active&c=E,1,rh2ljMqp-igBW2y_oMZyuOB56RDgi0JW4pj60m4220ZZhlCL0B_bRFbqV6mJ_Uj0Tyqoso9PaaOmaeM6XWC8oKSF8yfBKmx2KZj-Bo9Et6l4gKpT2Qzm2A,,&typo=1:before {
+  content: "";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > https://linkprotect.cudasvc.com/url?a=https%3a%2f%2fli.active&c=E,1,oLhm4ORlkyV2ZuDdaqvCuofMCeN5_a6fHCDyr7lpxnhrWqCTfxj92TEj0HcDrg4DEJDLH2u7oTe-cl2OG3fdSPtMZpYX9kqbXz4JZ5oMxsZwYVOUQu9kPifXc_Q,&typo=1 {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+<br>
+
+<h1>Learn about Matrix Algebra</h1>
+
+<h3 class="title toc-ignore">Details on Model Construction and Factor Preparation</h3>
+
+
+
+</div>
+<b>Supply Chain Greenhouse Gas&nbsp;(GHG) emission&nbsp;Factors 
+for&nbsp;US&nbsp;Industries&nbsp;and&nbsp;Commodities</b>
+
+
+<p>We use <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">matrix algebra</a> to represent the steps for creating the EEIO models, using conventions for variable names commonly used in the IO literature and the existing USEEIO model documentation when possible. 
+
+<ul>
+  <li>Capital letters indicate matrices and lower case letters vectors.</li>
+
+  <li>“^” over a variable represents the diagonalization of a vector as a matrix.</li>
+
+  <li>An exponent of “-1” represents an inverse.</li>
+
+  <li>A “<span class="math inline">(prime)</span>” represents the transposed (rows and columns switched) form of a matrix or vector.</li>
+</ul>
+
+</p>
+<p>The national totals of the Greenhouse Gas (GHG) Emissions by industry must be transformed into a matrix of coefficients in the form of national total per industry, also referred to as the GHG satellite account, represented as <span class="math inline">(B)</span> in the following equation, with a subscript of <span class="math inline">(I)</span> denoting its industry form, and <span class="math inline">(t)</span> denoting the USD year the same year as the IO data.</p>
+
+
+<style type="text/css">
+td {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+</style>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>models</td>
+<td>metadata</td>
+<td>A list of USEEIO models provided</td>
+</tr>
+<tr>
+<td>A</td>
+<td>component</td>
+<td>The direct requirements matrix for a given model</td>
+</tr>
+<tr>
+<td>B</td>
+<td>component</td>
+<td>The satellite matrix for a given model</td>
+</tr>
+<tr>
+<td>C</td>
+<td>component</td>
+<td>The characterization factor matrix for a given model</td>
+</tr>
+<tr>
+<td>D</td>
+<td>component</td>
+<td>The direct impact matrix for a given model</td>
+</tr>
+<tr>
+<td>L</td>
+<td>component</td>
+<td>The Leontief inverse matrix for a given model</td>
+</tr>
+<tr>
+<td>U</td>
+<td>component</td>
+<td>The total impact matrix for a given model</td>
+</tr>
+<tr>
+<td>B_dqi</td>
+<td>component</td>
+<td>Data quality scores for the B matrix for a given model</td>
+</tr>
+<tr>
+<td>D_dqi</td>
+<td>component</td>
+<td>Data quality scores for the D matrix for a given model</td>
+</tr>
+<tr>
+<td>U_dqi</td>
+<td>component</td>
+<td>Data quality scores for the U matrix for a given model</td>
+</tr>
+<tr>
+<td>sectors</td>
+<td>metadata</td>
+<td>A list of sectors in a given model</td>
+</tr>
+<tr>
+<td>flows</td>
+<td>metadata</td>
+<td>A list of flows in a given model</td>
+</tr>
+<tr>
+<td>indicators</td>
+<td>metadata</td>
+<td>A list of indicators in a given model</td>
+</tr>
+<tr>
+<td>demands</td>
+<td>metadata</td>
+<td>A list of demand vectors available for use with a given model</td>
+</tr>
+</tbody>
+</table>
+
+<h2>USEEIO Methology</h2>
+
+<a href="https://github.com/USEPA/USEEIO_API">Overview of each matrix (array of numbers)</a> and 
+<a href="https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md">Data formats for sectors, flows and LCIA categories</a><br><br>
+
+Technology matrix (A) does not include wages (compensation), taxes, nor gross opperating surplus (profits)  
+"Value Added" is the sum of wages, taxes and profits.<br><br>
+
+Environmental matrix (B) = Emission per dollar<br>
+Total industry (emmission) / output <br><br>
+
+D and U matrices are the results.<br><br>
+
+<a href="https://model.earth/community/img/overview/useeio-methodology.png"><img src="../../../community/img/overview/useeio-methodology.png" style="width:100%;max-width:800px"></a><br>
+
+Source: <a href="https://www.energy.gov/sites/prod/files/2019/04/f61/Integrated%20life%20cycle%20sustainability%20analysis%20%28ILCSA%29_NL0027593.pdf">DOE Bioenergy Technologies Office (BETO) - 2019 Project Peer Review</a>
+
+
+
+
+<div id="model-construction" class="section level2">
+<h2>Model Construction</h2>
+<p><span class="math display">
+
+<code>{1}
+  B_{I,t} = E_{I,s}hat{x}^{-1}_{s,t}
+</code>
+</span></p>
+<p>In the above equation, <span class="math inline">(E_I)</span> is a emission x industry matrix of national totals of each GHG by industy sector in year <span class="math inline">(s)</span>, and <span class="math inline">(x_{s,t})</span> is a vector of gross output by industry in year <span class="math inline">(s)</span>, given in year <span class="math inline">(t)</span> dollars. The industries in the <span class="math inline">(E)</span> columns match the industries in <span class="math inline">(x)</span>.</p>
+<p>For <span class="math inline">(x_s)</span> to be in year <span class="math inline">(t)</span> USD, <span class="math inline">(x)</span> must first be price adjusted in the following equation, <span class="math display">
+
+<br><br><code>{2}
+  x_{i,s} = x_{i,a}*rho_{i,a-&gt;b}
+</code>
+</span></p>
+<p>where <span class="math inline">(x_{i,a})</span> is the year industry ouput for industry <span class="math inline">(i)</span> in the currency year, <span class="math inline">(s)</span>, corresponding to the year of the national GHG totals. <span class="math inline">(rho)</span> is a price adjustment factor for industry <span class="math inline">(i)</span> from currency year <span class="math inline">(s)</span> to <span class="math inline">(t)</span> USD.<span class="math inline">(rho)</span> for industry <span class="math inline">(i)</span> is prepared using the following equation, <span class="math display">
+
+<br><br><code>{3}
+  rho_{i,a-&gt;b} = frac{cpi_{i,b}}{cpi_{i,a}}
+</code>
+</span></p>
+<p>where <span class="math inline">(rho)</span> from currency year <span class="math inline">(a)</span> to <span class="math inline">(b)</span> is the ratio of the industry chain price index for year <span class="math inline">(b)</span> to that of year <span class="math inline">(a)</span>. These equations are used for each industry in the given model.</p>
+<p>The core of an IO model is a direct requirements matrix,<span class="math inline">(A)</span>, representing the dollar inputs from other sectors per dollar output. Two <span class="math inline">(A)</span> matrices are derived, one in commodity x commodity form, <span class="math inline">(A_C)</span>, and the other in industry by industry form, <span class="math inline">(A_I)</span>. Both are created using a combination of normalized forms of the Make and Use tables. The Make table is normalized by the commodity output vector, <span class="math inline">(q)</span>, and the Use table by the industry output vector, <span class="math inline">(x)</span>. The only difference between <span class="math inline">(A_C)</span> and <span class="math inline">(A_I)</span> is the order of multiplication, as shown in the following two equations. <span class="math display">
+
+<br><br><code>{4}
+  A_C = Uhat{x}^{-1} * Vhat{q}^{-1} 
+</code>
+</span></p>
+<p><span class="math display">
+
+<br><br><code>{5}
+  A_C = Uhat{x}^{-1} * Vhat{q}^{-1} 
+</code>
+</span></p>
+<p>Another name for <span class="math inline">(Vhat{q}^{-1})</span> is the Market Shares matrix. The GHG satellite table for the commodity models must be transformed by this matrix to be in emission x commodity form, using the following equation. <span class="math display">
+
+<br><br><code>{6}
+  B_C = B_I * Vhat{q}^{-1}
+</code>
+</span></p>
+<p>The items of the <span class="math inline">(B_c)</span> matrix represent direct emission factors for commodities.</p>
+<p>The final factors must be calculated by calculating a total requirements matrix. Leontief first showed this could be done by subtracting the <span class="math inline">(A)</span> matrix from an identity matrix, and taking its inverse. Supply chain emission factors can be calculated by taking the product of the <span class="math inline">(B)</span> matrix of direct emission factors by the total requirements matrix, <span class="math inline">(L)</span>, where L is defined as</p>
+<p><span class="math display">
+
+<br><br><code>{7}
+  L_C = (I - A_C)^{-1}
+</code>
+</span></p>
+<p><span class="math display">
+
+<br><br><code>{8}
+  L_I = (I - A_I)^{-1}
+</code>
+</span></p>
+<p>The following two equations show this calculation for the industry and commodity, where</p>
+<p><span class="math display">
+
+<br><br><code>{9}
+  M_{I} = B_I * L_I
+</code>
+</span></p>
+<p><span class="math display">
+
+<br><br><code>{10}
+  M_{C} = B_C * L_C
+</code>
+</span></p>
+<p>This result in emission x sector matrices, <span class="math inline">(M)</span>, of supply chain factors, which include direct and indirect emissions per dollar produced for each sector. The factors in <span class="math inline">(M)</span> have to be further transformed into purchaser price using sector-specific marginal cost data. Marginal cost data includes cost for distributions, wholesale and retail of commodity. This can be done by creating a vector or marginal cost ratios, <span class="math inline">(Phi_c)</span>, both for commodities and industries for their respective models, as i the following equations.</p>
+<p><span class="math display">
+
+<br><br><code>{11}
+  bar{M}_{C} = M_{C}* hat{Phi_c}
+</code>
+</span></p>
+<p><span class="math display">
+
+<br><br><code>{12}
+  bar{M}_{I} = M_{I}* hat{Phi_I}^{prime}
+</code>
+</span></p>
+<p><span class="math inline">(Phi_c)</span> is a vector of commodity specific purchaser to producer prices. <span class="math display">
+
+<br><br><code>{13}
+  Phi_C = frac{q_{pur,c}}{q_{pro,c}}
+</code>
+</span></p>
+<p>For use in industry models, commodity margin factors, <span class="math inline">(Phi_c)</span>, need to be transformed into industry margin factors. The factors. A commodity x industry “commodity mix” matrix <span class="citation">[@miller_blair]</span>, <span class="math inline">(Vhat{x}^{-1})</span> , can be used for this purpose.</p>
+<p><span class="math display">
+
+<br><br><code>{14}
+  Phi_I = hat{Phi_C} * Vhat{x}^{-1}
+</code>
+</span></p>
+<p>where, commodity mix matrix, a commodity x industry matrix representing the mix of commodities being produced by industries.</p>
+<p>To identify the root sources of emissions for a given supply chain factor in <span class="math inline">(M)</span>, we assume $1 million USD in demand for the related sector, and calculate a scaling vector, <span class="math inline">(s)</span> , as <span class="math display">
+
+<br><br><code>{15}
+  s = (I - A)^{-1}y
+</code>
+</span></p>
+<p>where A is either A_I or A_C, depending on model type, <span class="math inline">(y)</span> a vector of the same length as A with zeroes for all sectors except the sector of interest, where the value is set to $1 million USD. This is turn used to calculate a matrix of total emissions by root emitting sector, <span class="math inline">(M_d)</span> <span class="math display">
+
+<br><br><code>{16}
+  M_d = Bhat{s}
+</code>
+</span></p>
+<p>We also estimate the potential impacts of the margins activities associated with industries and commodities, using the same margin data along with model estimates for supply chain emissions for each sector comprising the margins. We break <span class="math inline">(Phi)</span> down into its margin transportation,<span class="math inline">(t)</span>, wholesale,<span class="math inline">(w)</span>, and retail,<span class="math inline">(r)</span> sectors:</p>
+<p><span class="math display">
+
+<br><br><code>{17}
+  Phi_C = Phi_C,t + Phi_C,w + Phi_C,r
+</code>
+</span></p>
+<p>For each margin components, we allocate margin type across all margin sectors associated with that type, for example, for retail we need to allocate the retail margins across model retail sectors. For this We develop a margin allocation matrix,<span class="math inline">(MA)</span>, with rows for each of the margin components and columns for all model margin sectors. We allocate across sectors of a given margin type based on relative commodity output of the model sectors for that margin type. Note this procedure does not result in commodity or industry-specific margins types. We assemble the sector-specific margin coefficients into a commmodity by coefficient matrix, <span class="math inline">(P)</span>.We then multiply the margin coefficients matrix by the margin allocation matrix <span class="math display">
+
+<br><br><code>{18}
+  P_a =  P * MA
+</code>
+</span></p>
+<p>The result <span class="math inline">(P_a)</span> represents $ of margin input per $ producer price for each model sector by margin sector type. We transform the result, <span class="math inline">(P_a)</span>, into the shape of the A matrix, to easily match up with the emissions factors, and name the reshaped form <span class="math inline">(A_p)</span>.</p>
+<p>We derive emission factors for the margins with a multiplication of the original emission factor matrices, <span class="math inline">(M)</span> and <span class="math inline">(U)</span>, by <span class="math inline">(Pa,x,y)</span></p>
+<p><span class="math display">
+
+<br><br><code>{19}
+  M_p = M * A_p
+</code>
+</span></p>
+<p><span class="math display">
+
+<br><br><code>{20}
+  U_p = U * A_p
+</code>
+</span></p>
+<p>Finally, <span class="math inline">(M_p)</span> and <span class="math inline">(U_p)</span> are adjusted to be in purchaser prices like what is done with <span class="math inline">(M)</span> and <span class="math inline">(U)</span> above.</p>
+<p><span class="math display">
+
+<br><br><code>{21}
+  bar{M}_{p} = M_{p} * hat{Phi} 
+</code>
+</span></p>
+<p><span class="math display">
+
+<br><br><code>{22}
+  bar{U}_{p} = U_{p} * hat{Phi}
+</code>
+</span></p>
+<p>where <span class="math inline">(hat{Phi})</span> is for industries or commodities depending on the model.</p>
+</div>
+<div id="data-quality-scores-for-emission-factors" class="section level2">
+<h2>Data quality scores for emission factors</h2>
+<p>Data quality scores of 1-5 are assigned based on the US EPA LCA Data Quality system to values in <span class="math inline">(B)</span> for each of five indicators. These be represented in a matrix of the form of <span class="math inline">(B)</span> called <span class="math inline">(B_{dqi,i})</span> created for each indicator <span class="math inline">(i)</span>. To scale these scores to put them to create scores for the supply chain emission factors in , this is multiplied by <span class="math inline">(L)</span>. <span class="math display">
+
+<br><br><code>{23}
+  M_{dqi,i} = B_{dqi,i} * L
+</code>
+</span></p>
+<p>where <span class="math inline">(B)</span> and <span class="math inline">(L)</span> may be either both for industry, <span class="math inline">(B_I)</span> and <span class="math inline">(L_I)</span> or commodity, <span class="math inline">(B_C)</span> or <span class="math inline">(B_I)</span> models.</p>
+</div>
+<div id="model-validation" class="section level2">
+<h2>Model validation</h2>
+<p>The validation of the supply chain factors is performed for each model from which the factors were derived. The validation test checks that the model supply chain GHG factors can be scaled back to total GHG industry emissions.</p>
+<p>Mathematically, this validation test is based on the input-output identity that <span class="math inline">(x=Ly)</span>, where <span class="math inline">(y)</span> if the total final demand for commodities and industries. Therefore multiplying B by both sides, to scale output using the direct emission factors, should result in equality, <span class="math display">
+
+<br><br><code>{24}
+  B*x = B*L*y
+</code>
+</span></p>
+<p>This can be simplied in the form of the following equation.</p>
+<p><span class="math display">
+
+<br><br><code>{25}
+  Ei = (M*y)i + E_fi
+</code>
+</span></p>
+<p>where <span class="math inline">(i)</span> is a column vector of 1s that acts as a summation vector. <span class="math inline">(E_f)</span> is a matrix of emissions associated with the final user, and final user sectors are not part of <span class="math inline">(M)</span>. This can be understood such that the sum of the supply chain GHG factors scaled for total final demand is the same as the sum of national GHG totals for each GHG.</p>
+<p>The issue with the model <span class="math inline">(M)</span>, derived from the total requirements matrix, is that it includes foreign input requirements, and that final demand also includes imports. To use the model to estimate US-produced GHGs, then <span class="math inline">(M)</span> has to be created with domestic requirements only. This requires a recreation of an <span class="math inline">(A)</span> matrix with only domestic requriements. To do this, we modify the original Use table to remove foreign requirements using the Import matrix, <span class="math inline">(I_m)</span>.</p>
+<p><span class="math display">
+
+<br><br><code>{26}
+  U_d = U - I_m
+</code>
+</span></p>
+<p>and then we subtract the final demand provide in the import matrix, <span class="math inline">(Y&#39;)</span> from the final demand in the original Use table, to get domestic final demand, <span class="math inline">(Y_d)</span>.</p>
+<p><span class="math display">
+
+<br><br><code>{27}
+  Y_d = Y - Y_d 
+</code>
+</span></p>
+<p>Then the <span class="math inline">(A)</span> matrix with just domestic direct requirements, <span class="math inline">(A_d)</span>, can be created using a similar derviation used for <span class="math inline">(A)</span> above. Note that normalized Make table transactions are not the same. The follow equation is demonstrated below for the commodity form of the model.</p>
+<p><span class="math display">
+
+<br><br><code>{28}
+  A_{d,C} = U_dhat{x}^{-1} * Vhat{q}^{-1} 
+</code>
+</span></p>
+<p>We can follow from the steps to create <span class="math inline">(M)</span> from <span class="math inline">(A)</span> and apply them to create <span class="math inline">(M_d)</span> using the <span class="math inline">(A_d)</span>. This refines the data validation check to compare national GHG totals only to the sum of the supply chain factors based on domestic requirements scaled by the domestic final demand, as in the following equation: <span class="math display">
+
+<br><br><code>{29}
+  Ei = (M_d * y_d)i + E_fi
+</code>
+</span></p>
+<p>The difference between the left and right terms of the equations is evaluated per GHG and explained as a model error.</p>
+</div>
+
+
+
+
+</div>
+<br><br>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "<a href="https://linkprotect.cudasvc.com/url?a=https%3a%2f%2fmathjax.rstudio.com%2flatest%2fMathJax.js%3fconfig%3dTeX-AMS-MML_HTMLorMML&c=E,1,u6ulK5MPeGlSDPr0NDLwoMAOfvt18SBaus5koGErHd39eFAG8_Nb1iskaBSKSusC8gLzUNYtrUKmZ9Kt5JnXoODmWvOGVz-Ol3YtMkY6Ef9DKhXvSVM,&typo=1">https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML</a>";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

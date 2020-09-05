@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>USEEIO Widgets - Model configuration</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+    <style>
+        #tests {
+            margin: 25px auto;
+            width: 75%;
+            padding: 10px;
+            font-family: Consolas, 'Courier New', Courier, monospace;
+            background-color: rgb(248, 249, 250);
+            color: #3949ab;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Model configuration</h1>
+        <p>
+            The first step is to configure a model that is hosted on an
+            <a href="https://github.com/USEPA/USEEIO_API">
+                USEEIO API</a> instance:
+        </p>
+
+        <pre>
+            <code>
+    var model = useeio.model({
+        endpoint:   'http(s)//path/to/api',
+        model:      'the_model_id',
+        apikey:     'an_optional_api_key',
+        asJsonFiles: true, // indicates whether it is a JSON dump of a model
+    });
+            </code>
+        </pre>
+
+        <p>
+            It is a good idea to share the same model instance between different
+            widgets as it internally caches requests and calculation results.
+            Below, some model and API tests are executed:
+        </p>
+
+        <div id="model-id"></div>
+        <div id="tests"></div>
+
+    </div>
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+    <script>
+
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+        document.getElementById("model-id").textContent = "Run tests with model: " + modelID;
+
+        const model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+
+        let root;
+        const test = (header, fn) => {
+            const div = document.createElement("div");
+            root.appendChild(div)
+            const span = document.createElement("span");
+            span.textContent = "Test: " + header + " ... ";
+            div.append(span);
+            fn().then(r => {
+                span.textContent = span.textContent + "OK";
+                console.log(header, ": ", r);
+            }).catch(err => {
+                span.textContent = span.textContent + "ERROR: " + err;
+                span.setAttribute("style", "color: red");
+            });
+        };
+
+        window.onload = () => {
+            root = document.getElementById("tests");
+            test("GET /sectors", () => model.sectors());
+            test("isMultiRegional", () => model.isMultiRegional());
+            test("GET /indicators", () => model.indicators());
+            test("GET /demands", () => model.demands());
+            test("GET /demand", () => model.demands()
+                .then(demands => model.demand(demands[0].id)));
+            test("findDemand", () => model.findDemand({ type: "Production" }));
+            test("GET matrix/U", () => model.matrix("U"));
+            test("GET matrix/L?col=42", () => model.column("L", 42));
+            test("POST /calculate", () => {
+                return model.demands()
+                    .then(demands => model.demand(demands[0].id))
+                    .then(demand => model.calculate({
+                        perspective: "direct",
+                        demand: demand,
+                    }));
+            });
+            test("getTotalResults", () => {
+                return model.findDemand({ type: "Production" })
+                    .then(demandID => model.getTotalResults(demandID));
+            });
+            test("singleRegionSectors", () => model.singleRegionSectors())
+        }
+    </script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,5 @@
+Category,Geography,Industry Classification,Variables,Time Range,Data Quality,Source
+GDP by Industry,State (GA),BEA-Summary,GDP in dollars,2001-2017,"very good, 2018-2019 data partially not available ",Bureau of Economic Analysis
+GDP by Industry,County (GA),BEA-Sector,GDP in dollars,2001-2018,"fair, 10-20% NAs",Bureau of Economic Analysis
+Employment ,State + County,NAICS 2-6,"Establishment count, total compensation, employment count",2015-2018,"fair at 2-digit level, bad at more disaggregated level",Bureau of Labor Statistics
+Personal Income,State + County,Not applicable,Total personal income in dollars,2001-2017,very good,Bureau of Economic Analysis

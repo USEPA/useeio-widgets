@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>USEEIO Widgets - Analysis settings</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Analysis settings</h1>
+        <p>
+            With the <code>SettingsWidget</code> the analysis settings for the
+            result calculation can be selected.
+        </p>
+        <pre>
+            <code>
+    var settings = useeio.settingsWidget({
+        model: model,
+        selector: '.useeio-settings-widget',
+    });
+            </code>
+        </pre>
+
+        <p>
+            In the example below, the settings widget is linked to a hash
+            configuration that serializes the settings into the hash-part
+            of the URL which can be then used by other widgets.
+        </p>
+        <pre>
+            <code>
+    var config = useeio.urlConfig();
+    config.join(settings);
+            </code>
+        </pre>
+
+        <div class="useeio-settings-widget">
+        </div>
+    </div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+    <script>
+
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '.useeio-settings-widget',
+        });
+
+        // link the settings with a hash config
+        config.join(settings);
+    </script>
+</body>
+
+</html>

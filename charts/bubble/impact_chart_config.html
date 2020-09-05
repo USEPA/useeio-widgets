@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Sector list with linked impact chart</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div class="io" style="margin: 25px;">
+
+        <div style="max-width: 750px; margin: auto;">
+            <h1 class="text-center">Impact chart with configuration</h1>
+            <p>
+                The settings box, sector list, and impact chart are linked
+                via a hash configuration on this page.
+            </p>
+
+            <div class="useeio-settings-widget">
+            </div>
+        </div>
+
+        <div style="float: left; width: 40%;">
+            <h4 class="text-center">Sectors</h4>
+            <div class="useeio-sector-list">
+            </div>
+        </div>
+
+        <div style="float: left; width: 60%">
+            <h4 class="text-center">Indicator results</h4>
+            <div class="impact-chart">
+            </div>
+        </div>
+
+    </div>
+</body>
+<script src="lib/d3.min.js"></script>
+<script src="lib/useeio_widgets.js"></script>
+<script>
+
+    var config = useeio.urlConfig();
+    var modelID = config.get().model || 'GAUSEEIO';
+
+    var model = useeio.model({
+        endpoint: './api',
+        model: modelID,
+        asJsonFiles: true,
+    });
+
+    var settings = useeio.settingsWidget({
+        model: model,
+        selector: '.useeio-settings-widget',
+    });
+
+    var sectorList = useeio.sectorList({
+        model: model,
+        selector: '.useeio-sector-list',
+    });
+    var impactChart = useeio.impactChart({
+        model: model,
+        selector: '.impact-chart',
+    });
+   
+    config.join(settings);
+    config.join(sectorList);
+    config.join(impactChart);
+
+    config.updateIfAbsent({
+        perspective: 'direct',
+        analysis: 'Consumption',
+        sectors: ['334111', '334210', '334220'],
+    });
+</script>
+
+</html>
