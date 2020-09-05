@@ -1,98 +1,337 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="utf-8">
-    <title>USEEIO Widgets</title>
-    <link rel="stylesheet" type="text/css" href="widgets.css">
-    <style>
-        a {
-            color: rgb(4, 16, 184);
-        }
-    </style>
+<title>Environmental Impact - Bubble Chart</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<meta charset="utf-8">
+<script src="../../../localsite/js/d3.v5.min.js"></script>
+<script src="../../../localsite/js/jquery/jquery-1.12.4.min.js"></script>
+
+<!-- Use local, but fallback to GitHub if necessary -->
+<script src="../../../localsite/js/localsite.js"></script><!-- for UpdateHash -->
+<script>typeof param == "undefined" && document.write(unescape('%3Cscript src="//model.earth/localsite/js/localsiteX .js"%3E%3C/script%3E'));</script>
+
+<link rel="stylesheet" type="text/css" href="../../../localsite/css/bootstrap.darkly.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/bubble.css"/>
+<script src="/io/build/lib/useeio_widgets.js"></script>
+
 </head>
-
-
 <body>
-    <div style="max-width: 750px; margin: auto;">
-        <h1 class="text-center">USEEIO Widgets</h1>
-        <p>
-            A USEEIO widget is a component that can be embedded in an HTML page
-            to visualize or configure data from an
-            <a href="https://github.com/USEPA/USEEIO_API">
-            USEEIO API</a> instance. Click on the examples below to see how
-            these widgets can be used.
-        </p>
+
+<br><br>
+<div class="container">
 
 
-        <b>Configuration Test</b>
-        <ul>
-            <li>
-                <a href="./model_tests.html">
-                    Model configuration test
-                </a>
-            </li>
-        </ul>
+<!--This block is for adding the state,county picklist, for my future reference.-->
+<!--div>
+<form name="form">
+<table width="317" border="0" align="left">
+   <tr>
+     <td width="100">State</td>
+     <td width="217"><select id="state" name="state" class="picklist">
+       <option value='AL' selected>Alabama</option>
+       <option value='AK'>Alaska</option>
+       <option value='AZ'>Arizona</option>
+       <option value='AR'>Arkansas</option>
+       <option value='CA'>California</option>
+       <option value='CO'>Colorado</option>
+       <option value='CT'>Connecticut</option>
+       <option value='DE'>Delaware</option>
+       <option value='DC'>District of Columbia</option>
+       <option value='FL'>Florida</option>
+       <option value='GA'>Georgia</option>
+       <option value='HI'>Hawaii</option>
+       <option value='ID'>Idaho</option>
+       <option value='IL'>Illinois</option>
+       <option value='IN'>Indiana</option>
+       <option value='IA'>Iowa</option>
+       <option value='KS'>Kansas</option>
+       <option value='KY'>Kentucky</option>
+       <option value='LA'>Louisiana</option>
+       <option value='ME'>Maine</option>
+       <option value='MD'>Maryland</option>
+       <option value='MA'>Massachusetts</option>
+       <option value='MI'>Michigan</option>
+       <option value='MN'>Minnesota</option>
+       <option value='MS'>Mississippi</option>
+       <option value='MO'>Missouri</option>
+       <option value='MT'>Montana</option>
+       <option value='NE'>Nebraska</option>
+       <option value='NV'>Nevada</option>
+       <option value='NH'>New Hampshire</option>
+       <option value='NJ'>New Jersey</option>
+       <option value='NM'>New Mexico</option>
+       <option value='NY'>New York</option>
+       <option value='NC'>North Carolina</option>
+       <option value='ND'>North Dakota</option>
+       <option value='OH'>Ohio</option>
+       <option value='OK'>Oklahoma</option>
+       <option value='OR'>Oregon</option>
+       <option value='PA'>Pennsylvania</option>
+       <option value='RI'>Rhode Island</option>
+       <option value='SC'>South Carolina</option>
+       <option value='SD'>South Dakota</option>
+       <option value='TN'>Tennessee</option>
+       <option value='TX'>Texas</option>
+       <option value='UT'>Utah</option>
+       <option value='VT'>Vermont</option>
+       <option value='VA'>Virginia</option>
+       <option value='WA'>Washington</option>
+       <option value='WV'>West Virginia</option>
+       <option value='WI'>Wisconsin</option>
+       <option value='WY'>Wyoming</option>
+     </select></td>
+   </tr>
+   <tr>
+     <td height="33">County</td>
+     <td><div id="county_drop_down"><select id="county" name="county" class="picklist"><option value="">County...</option></select></div>
+   <span id="loading_county_drop_down"><img src="style/loader.gif" width="16" height="16" align="absmiddle">&nbsp;Loading...</span>
+   <div id="no_county_drop_down">This state has no counties.</div></td>
+   </tr>
+ </table>
+ </form>
+</div-->
 
-        <b>Filters and Charts</b>
-        <ul>
-            <li>
-                <a href="./settings.html">
-                    Analysis settings
-                </a>
-            </li>
-            <li>
-                <a href="./filter.html">
-                    Widget configuration
-                </a>
-            </li>
-            <li>
-                <a href="./sectors.html">
-                    Sector list (no heatmap option)
-                </a>
-            </li>
-            <li>
-                <a href="./impact_chart.html">
-                    Impact chart
-                </a>
-            </li>
-            <li>
-                <a href="./impact_chart_config.html">
-                    Impact chart with sector selection and configuration
-                </a>
-            </li>
-            <li>
-                <a href="./profile_chart.html">
-                    Environmental profile chart
-                </a>
-            </li>
-        </ul>
 
-        <b>Sectors with Heatmap</b>
-        <ul>
-            <li>
-                <a href="./industry_list.html">
-                    Sector list
-                </a>
-            </li>
-            <li>
-                <a href="./industry_list.html?view=mosaic">
-                    Sector list and mosaic heatmap
-                </a>
-            </li>
-            <li>
-                <a href="./industry_list.html#view=mosaic&indicators=JOBS,VADD&showvalues=true">
-                    Sector list and mosaic heatmap - positive indicators with values
-                </a>
-            </li>
-            <li>
-                <a href="./industry_list.html#view=mosaic&showvalues=true">
-                    Sector list and mosaic heatmap - with all values
-                </a>
-            </li>
-            
-        </ul>
+<!-- toggle -->
+<!-- source: https://www.w3schools.com/howto/howto_css_switch.asp -->
+<style>
+.selected {
+  stroke-width:100px
+  fill: "yellow"
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 28px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #862b23;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #862b23;
+  /* #2196F3 */
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px);
+  -ms-transform: translateX(18px);
+  transform: translateX(18px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+</style>
+<!-- /toggle -->
+
+
+
+<div id="industry-list" class="industry-list">
+
+    <div style="float:left; margin-right:50px">
+      <h2>Environmental Impact</h2>
+      <div id="bubble-graph-title"></div>
+      <text id="bubble-graph-equation"></text>
     </div>
-</body>
 
+    <div style="clear:both"></div>
+
+    <div class="bubble-graph">
+
+        <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
+
+          <div id="graph-wrapper-z">
+            <text class="text-space-horz">Bubble-Size</text>
+            <select id="graph-picklist-z" class="graph-picklist">
+            </select>
+            <span id="unit-z"></span>
+          </div>
+
+          <div id="graph-wrapper">
+           
+          <div id="graph-wrapper-y">
+            <text class="text-space-vert">Y-Axis</text>
+            <select id="graph-picklist-y" class="graph-picklist">
+            </select>
+            <span id="unit-y"></span>
+          </div> 
+
+        </div>
+
+        <div id="graph-wrapper-x">
+            <text class="text-space-horz">X-Axis</text>
+            <select id="graph-picklist-x" class="graph-picklist">
+            </select>
+            <span id="unit-x"></span>
+        </div> 
+      </div>
+
+      
+      <div>
+            
+        <label  style="float:left; margin-right:6px" class="switch">
+          <input id="mySelect" type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+        <div class="switch-text">
+          Top industries within region
+        </div>
+
+      </div>
+
+  </div>
+
+  <button onclick="clearBubbleSelection()" style="float:right">Clear Selection</button>
+  <div style="clear:both"></div>
+ 
+</div>
+<br><br>
+
+<!-- Saving for later -->
+<div id="barchart" class="chart-right" style="display:none"></div>
+
+<div id="impactTextIntro">Click bubbles above to display a bar chart below for comparison.</div>
+<div id="impactText" style="float:left"></div>
+<div style="clear:both"></div>
+<br><br>
+
+
+<!--default naics to be highlighted-->
+<script>
+  param.naics = "561320,336999,621111,519130,221122";
+</script>
+
+<script type="text/javascript" src="js/bubble.js"></script>
+
+<!--Michaels's widget: impactchart-->
+<link rel="stylesheet" type="text/css" href="widgets.css">
+
+
+<div class="io">
+<!--
+  <h1 class="text-center">Impact chart</h1>
+  <p>
+      The impact chart widget shows the environmental profile of one or more sectors.
+  </p>
+-->
+
+<div id="impact-chart" class="impact-chart" style="display:none"></div>
+</div>
+
+<!--div used for its attribute update,instead of using hash-->
+<div id="sector-list" class="sector-list">
+
+  
+  
+  <script>
+    var config = useeio.urlConfig();
+    var modelID = config.get().model || 'GAUSEEIO';
+    var model = useeio.model({
+      endpoint: '/io/charts/useeio/api',
+      model: modelID,
+      asJsonFiles: true,
+    });
+     var svg3 = d3.select("#impact-chart")
+      .append("div")
+      .attr('id', 'imp');
+    var impactChart = useeio.impactChart({
+      model: model,
+      selector: '#imp',
+      columns: 3,
+      width: 800,
+      height: 300,
+    });
+    selected_sector=""
+    impactChart.update({
+        sectors: [selected_sector],
+    });
+
+    //update the chart if the sector-list changes.
+    var element = document.querySelector('#sector-list');
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type == "attributes") {
+          selected_sector1=document.getElementById('sector-list').getAttribute('sector')
+          if(typeof selected_sector1 == "undefined" || selected_sector1==null){
+            selected_sector1=[]
+            selected_sector=[]
+          }else{
+            selected_sector=selected_sector1.split(',')
+          }
+          selected_model=document.getElementById('sector-list').getAttribute('area')
+          d3.select("#imp").remove();
+          var svg3 = d3.select("#impact-chart")
+            .append("div")
+            .attr('id', 'imp');
+          var config = useeio.urlConfig();
+          var modelID = config.get().model || selected_model;
+          var model = useeio.model({
+            endpoint: '/io/charts/useeio/api',
+            model: modelID,
+            asJsonFiles: true,
+          });
+          var impactChart = useeio.impactChart({
+            model: model,
+            selector: '#imp',
+            columns: 3,
+            width: 800,
+            height: 300,
+          });
+          impactChart.update({
+            sectors: selected_sector,  
+          });
+        }
+      });
+    });
+
+    observer.observe(element, {
+      attributes: true //configure it to listen to attribute changes
+    });
+</script>
+<br><br>
+
+  <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
+<br><br>
+</body>
 </html>

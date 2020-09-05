@@ -155,7 +155,7 @@ document.addEventListener('hashChangeEvent', function (elem) {
 //getting the listof indicators and populating the x and y dropdown options
 let dropdown = $('#graph-picklist-x');
 dropdown.empty();
-const url = '/io/charts/useeio/api/GAUSEEIO/indicators.json';
+const url = '/io/build/api/GAUSEEIO/indicators.json';
 // Populate dropdown with list of provinces
 $.getJSON(url, function (data) {
   $.each(data, function (key, entry) {
@@ -322,7 +322,7 @@ function getDimensions(x,y,z){
 
 function updateTitle(x,y,z){
   let params = loadParams(location.search,location.hash);
-  d3.json("/io/charts/useeio/api/GAUSEEIO/indicators.json").then(function(consdata){
+  d3.json("/io/build/api/GAUSEEIO/indicators.json").then(function(consdata){
     var filteredData = consdata.filter(function(d) {
       if(d["id"]==x) {
         unitx=d["unit"]
@@ -513,7 +513,7 @@ function midFunc(x,y,z,params,boundry){
     useeioList=[]
     useeiodetail=[]
     // TO DO: Add a path root here
-    d3.csv("/input-output/bubbles/data/Crosswalk_MasterCrosswalk.csv").then( function(consdata) {
+    d3.csv("/io/charts/bubble/data/Crosswalk_MasterCrosswalk.csv").then( function(consdata) {
       var filteredData = consdata.filter(function(d) {
         for(i=0;i<naicsList.length;i++){
           if(d["2012_NAICS_Code"]==naicsList[i]) {

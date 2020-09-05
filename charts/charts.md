@@ -35,9 +35,9 @@ Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-w
 [Industry Impact Bars with Configuration](useeio/impact_chart_config.html)  
 [More Input-Output Widgets](useeio/)  
 
-These can be moved into the USEEIO-widgets repo:  
-[Impact Bubble Chart](../../input-output/bubbles/) - D3 and JQuery  
-[Sankey Chart](../../community/start/charts/) - D3 with Python prep  
+
+[Impact Bubble Chart](bubble/) - D3 and JQuery  
+[Sankey Chart](sankey/) - D3 with Python prep  
 
 The [io/charts/useeio](https://github.com/modelearth/io/tree/master/charts/useeio) folder contains a recent static copy of the [nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) documented below.  
 
@@ -56,12 +56,14 @@ Using the static output, you can set parameters in the URL or javascript to cont
 We've copied a static version of the widgets into the "modelearth/io" repo. 
 You can use the Github links for embedding.
 
-[https://model.earth/io/charts/useeio](https://model.earth/io/charts/useeio)  
-
+[https://model.earth/io/charts/build](https://model.earth/io/charts/build)  
+<!--
+from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
+-->
 
 ## Build the EEIO Widgets (React)
 
-The USEEIO widgets may be built from the [GitHub source code](https://github.com/USEPA/useeio-widgets), or you may embed a [pre-built static copy](useeio).  
+The USEEIO widgets may be built using the steps below, or you may embed a [pre-built static copy](useeio).  
 
 <!--After building the widgets, you will need an API key to download the industry sector data JSON files, or you can copy the JSON files from the pre-built static copy. Post an issue to request a key.  -->
 
@@ -74,15 +76,21 @@ commands are available in your systems path (you can test this via `node -v` and
 these tools). 
 
 The first step is to install the build tools and dependencies.
+Use <code>cd useeio-widgets</code> if you are working with a direct fork.  
 
 ```
-cd useeio-widgets
+cd io
 npm install
 ```
+
 
 The above will add a node_modules folder.  
 
 You can ignore errors (about 11), including "Error: `gyp` failed with exit code: 1".  
+
+If you receive a "high severity vulnerabilities" warning, run the following as advised:  
+
+	npm audit fix
 
 <!--
 pre-React and with React, ignored:
@@ -123,7 +131,7 @@ Then open the default port (8080) at http://localhost:8080 in your browser to se
 
 [http://localhost:8887/useeio-widgets/build](http://localhost:8887/useeio-widgets/build)  
 
-How to set up [your webroot](../../community/start/local).  
+How to set up [your webroot](../../localsite/start/).  
 
 <!--
 Note that the production instance requires an API key.
@@ -134,7 +142,7 @@ npm run download -- --endpoint https://path/to/api --apikey an-optional-api-key
 
 ## How to Modify Widgets within VS Code
 
-To make updates in the NodeJS source code, fork the [USEEIO-widgets](https://github.com/USEPA/useeio-widgets/) repo and save in your local webroot (where you've [pointed](../../community/start/local) http://localhost:8887/)  
+To make updates in the NodeJS source code, fork the [USEEIO-widgets](https://github.com/USEPA/useeio-widgets/) repo and save in your local webroot (where you've [pointed](../../localsite/start/) http://localhost:8887/)  
 
 Edit the files that reside in useeio-widgets/src. (Avoid editing files in useeio-widgets/build, these will be overwritten when you run the build.)
 
@@ -150,7 +158,7 @@ View the output of your build at [http://localhost:8887/useeio-widgets/build](..
 
 Learn more in the VS Code [Node.js Tutorial](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial).  
 
-If you prefer not to build your javascript each time, the [Community repo](https://model.earth/community) is a good place to edit static javascript pages directly.  The [impact map](https://model.earth/community/impact) is a good page to work on by adding map layers and location filters. Additional filters are visible when viewed on localhost. [Getting started steps](https://model.earth/community/start/local/).
+If you prefer not to build your javascript each time, the [Community repo](https://model.earth/community) is a good place to edit static javascript pages directly.  The [impact map](https://model.earth/community/impact) is a good page to work on by adding map layers and location filters. Additional filters are visible when viewed on localhost. [Getting started steps](../../localsite/start/).
 
 
 Testing this:  
