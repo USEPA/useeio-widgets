@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Matrix selector</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Matrix selector</h1>
+        <p>
+            With the `matrix selector` widget the underlying matrix of the
+            heatmap can be selected which is based on a sector*indicator result.
+            The selected matrix is based on the following configuration
+            attributes:
+        </p>
+        <ul>
+            <li>`perspective=direct` => matrix D</li>
+            <li>`perspective=final` => matrix U</li>
+            <li>`perspective=direct&analysis=consumption|production` => direct result</li>
+            <li>`perspective=final&analysis=consumption|production` => final result</li>
+        </ul>
+        <p>
+            See the code snippets of the widget for what these matrices mean and
+            how they can be calculated. <b>Note that the matrices D and U of a
+            multi-regional model do not really make sense in the heatmap as the
+            same sectors in different regions are aggregated to a single sector
+            in the heatmap in this case.</b>
+        </p>
+        <pre>
+            <code>
+                var config = useeio.urlConfig();
+                var selector = useeio.matrixSelector({
+                    selector: '#matrix-selector',
+                });
+                config.join(selector);
+            </code>
+        </pre>
+        <div id="matrix-selector"></div>
+    </div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+
+    <script>
+        var config = useeio.urlConfig();
+        var selector = useeio.matrixSelector({
+            selector: '#matrix-selector',
+        });
+        config.join(selector);
+    </script>
+</body>
+
+</html>

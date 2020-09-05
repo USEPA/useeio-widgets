@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>USEEIO Widgets</title>
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+</head>
+
+<body>
+    <div style="max-width: 750px; margin: auto;">
+        <h1 class="text-center">Widget configuration</h1>
+        <p>
+            The communication between the widgets is done via configuration
+            objects and a set of methods that all widgets implement. The widgets
+            can join a configuration transmitter to send or get configuration
+            updates. The settings and filter widget below join a hash
+            configration that serializes the configuration state into the
+            hash/anchor part of the URL. Alternatively, it is possible to just
+            click on links with anchor references to update configrations, e.g.:
+        </p>
+        <ul>
+            <li>Perspective: <a href="#perspective=direct">Supply chain</a> or
+                <a href="#perspective=final">Point of consumption</a>
+            </li>
+            <li>Analysis type: <a href="#type=consumption">Consumption</a> or
+                <a href="#analysis=production">Production</a>
+            </li>
+        </ul>
+
+        <div class="useeio-settings-widget">
+        </div>
+
+        <p>The filter widget below shows the selected settings:</p>
+
+        <div id="filter-widget"></div>
+    </div>
+
+    <script src="lib/d3.min.js"></script>
+    <script src="lib/useeio_widgets.js"></script>
+    <script>
+
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'GAUSEEIO';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '.useeio-settings-widget',
+        });
+
+        var filter = useeio.filterWidget({
+            selector: '#filter-widget',
+        });
+
+        config.join(settings);
+        config.join(filter);
+        config.update({
+            perspective: 'direct',
+            analysis: 'Consumption',
+        });
+    </script>
+</body>
+
+</html>

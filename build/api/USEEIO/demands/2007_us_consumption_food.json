@@ -1,0 +1,362 @@
+[
+  {
+    "sector": "1111b0/fresh wheat, corn, rice, and other grains/us",
+    "amount": 1816353138.97649
+  },
+  {
+    "sector": "111200/fresh vegetables, melons, and potatoes/us",
+    "amount": 17926957254.9409
+  },
+  {
+    "sector": "111300/fresh fruits and tree nuts/us",
+    "amount": 18124893977.0746
+  },
+  {
+    "sector": "111400/greenhouse crops, mushrooms, nurseries, and flowers/us",
+    "amount": 6354817202.58095
+  },
+  {
+    "sector": "111900/tobacco, cotton, sugarcane, peanuts, sugar beets, herbs and spices, and other crops/us",
+    "amount": 213716217.250606
+  },
+  {
+    "sector": "112120/dairies/us",
+    "amount": 187613829.982437
+  },
+  {
+    "sector": "1121a0/cattle ranches and feedlots/us",
+    "amount": 143354450.611213
+  },
+  {
+    "sector": "112300/poultry farms/us",
+    "amount": 5392572503.51819
+  },
+  {
+    "sector": "112a00/animal farms and aquaculture ponds (except cattle and poultry)/us",
+    "amount": 4539545098.72141
+  },
+  {
+    "sector": "114000/wild-caught fish and game/us",
+    "amount": 6477839002.77362
+  },
+  {
+    "sector": "115000/agriculture and forestry support/us",
+    "amount": 200890878.567431
+  },
+  {
+    "sector": "221100/electricity/us",
+    "amount": 21403213318.5864
+  },
+  {
+    "sector": "221200/natural gas/us",
+    "amount": 2453527936.89721
+  },
+  {
+    "sector": "221300/drinking water and wastewater treatment/us",
+    "amount": 16231232715.2422
+  },
+  {
+    "sector": "311111/dog and cat food/us",
+    "amount": 16680077854.6084
+  },
+  {
+    "sector": "311119/other animal food/us",
+    "amount": 2890083396.44074
+  },
+  {
+    "sector": "311210/flours and malts/us",
+    "amount": 4002177793.32288
+  },
+  {
+    "sector": "311221/corn products/us",
+    "amount": 694443821.093319
+  },
+  {
+    "sector": "311225/refined vegetable, olive, and seed oils/us",
+    "amount": 5355889042.90429
+  },
+  {
+    "sector": "31122a/vegetable oils and by-products/us",
+    "amount": 1174135052.07444
+  },
+  {
+    "sector": "311230/breakfast cereals/us",
+    "amount": 9377867110.41671
+  },
+  {
+    "sector": "311300/sugar, candy, and chocolate/us",
+    "amount": 25108769906.8867
+  },
+  {
+    "sector": "311410/frozen food/us",
+    "amount": 24545431781.7724
+  },
+  {
+    "sector": "311420/fruit and vegetable preservation/us",
+    "amount": 29851779276.3083
+  },
+  {
+    "sector": "311513/cheese/us",
+    "amount": 13028246954.3671
+  },
+  {
+    "sector": "311514/dry, condensed, and evaporated dairy/us",
+    "amount": 7308292401.70076
+  },
+  {
+    "sector": "31151a/fluid milk and butter/us",
+    "amount": 22128009186.845
+  },
+  {
+    "sector": "311520/ice cream and frozen desserts/us",
+    "amount": 3308679582.68127
+  },
+  {
+    "sector": "311615/packaged poultry/us",
+    "amount": 34751438895.3673
+  },
+  {
+    "sector": "31161a/packaged meat (except poultry)/us",
+    "amount": 74436537619.2158
+  },
+  {
+    "sector": "311700/seafood/us",
+    "amount": 5431588570.92406
+  },
+  {
+    "sector": "311810/bread and other baked goods/us",
+    "amount": 46784226081.1585
+  },
+  {
+    "sector": "3118a0/cookies, crackers, pastas, and tortillas/us",
+    "amount": 22084961022.9899
+  },
+  {
+    "sector": "311910/snack foods/us",
+    "amount": 26517944066.0144
+  },
+  {
+    "sector": "311920/coffee and tea/us",
+    "amount": 5388678319.0046
+  },
+  {
+    "sector": "311930/flavored drink concentrates/us",
+    "amount": 255135615.778001
+  },
+  {
+    "sector": "311940/seasonings and dressings/us",
+    "amount": 10790954078.0694
+  },
+  {
+    "sector": "311990/all other foods/us",
+    "amount": 17033535012.4378
+  },
+  {
+    "sector": "312110/soft drinks, bottled water, and ice/us",
+    "amount": 44191394265.8875
+  },
+  {
+    "sector": "312120/breweries and beer/us",
+    "amount": 29154049394.3901
+  },
+  {
+    "sector": "312130/wineries and wine/us",
+    "amount": 14756699713.7014
+  },
+  {
+    "sector": "312140/distilleries and spirits/us",
+    "amount": 10128024031.4039
+  },
+  {
+    "sector": "312200/tobacco products/us",
+    "amount": 68007835185.4848
+  },
+  {
+    "sector": "314120/curtains and linens/us",
+    "amount": 265441066.160853
+  },
+  {
+    "sector": "3219a0/veneer, plywood, and engineered wood/us",
+    "amount": 349172869.209732
+  },
+  {
+    "sector": "322120/paper/us",
+    "amount": 5015568074.54308
+  },
+  {
+    "sector": "322210/cardboard containers/us",
+    "amount": 174641957.522811
+  },
+  {
+    "sector": "322220/paper bags and coated paper/us",
+    "amount": 40685082.609642
+  },
+  {
+    "sector": "322291/sanitary paper (tissues, napkins, diapers, etc.)/us",
+    "amount": 4581874873.37471
+  },
+  {
+    "sector": "324110/gasoline, fuels, and by-products of petroleum refining/us",
+    "amount": 26882187103.8924
+  },
+  {
+    "sector": "325190/other basic organic chemicals/us",
+    "amount": 33066256.5495075
+  },
+  {
+    "sector": "325412/pharmaceutical products (pills, powders, solutions, etc.)/us",
+    "amount": 17678493533.2429
+  },
+  {
+    "sector": "325610/soap and cleaning compounds/us",
+    "amount": 3290528236.23282
+  },
+  {
+    "sector": "3259a0/chemicals (except basic chemicals, agrichemicals, polymers, paints, pharmaceuticals,soaps, cleaning compounds)/us",
+    "amount": 134226551.99696
+  },
+  {
+    "sector": "326110/plastic bags, films, and sheets/us",
+    "amount": 518006407.540856
+  },
+  {
+    "sector": "326140/polystyrene foam products/us",
+    "amount": 130783393.575185
+  },
+  {
+    "sector": "326190/other plastic products/us",
+    "amount": 1653505727.26266
+  },
+  {
+    "sector": "326210/rubber tires/us",
+    "amount": 1303213940.50767
+  },
+  {
+    "sector": "327100/clay and ceramic products/us",
+    "amount": 307278829.649465
+  },
+  {
+    "sector": "327200/glass and glass products/us",
+    "amount": 893236185.468623
+  },
+  {
+    "sector": "327390/other concrete products/us",
+    "amount": 981463.112580996
+  },
+  {
+    "sector": "332200/cutlery and handtools/us",
+    "amount": 2400287911.9299
+  },
+  {
+    "sector": "332310/metal structural products/us",
+    "amount": 1336018.19259174
+  },
+  {
+    "sector": "333112/lawn and garden equipment/us",
+    "amount": 72137527.0972447
+  },
+  {
+    "sector": "33331a/vending, commercial laundry, and other commercial and service industry machinery/us",
+    "amount": 324675244.620593
+  },
+  {
+    "sector": "335210/small electrical appliances/us",
+    "amount": 5023474123.50503
+  },
+  {
+    "sector": "335221/home cooking appliances/us",
+    "amount": 8577591046.06113
+  },
+  {
+    "sector": "335222/home refrigerators and freezers/us",
+    "amount": 8394022377.35075
+  },
+  {
+    "sector": "335228/major home appliances (except ovens, stoves, refrigerators and laundry machines)/us",
+    "amount": 1212226462.28338
+  },
+  {
+    "sector": "336111/automobiles/us",
+    "amount": 14128793100.6191
+  },
+  {
+    "sector": "336112/pickup trucks, vans, and suvs/us",
+    "amount": 24109761632.5713
+  },
+  {
+    "sector": "336211/vehicle bodies/us",
+    "amount": 374201340.572047
+  },
+  {
+    "sector": "336213/motor homes/us",
+    "amount": 541064108.819693
+  },
+  {
+    "sector": "336214/travel trailer and campers/us",
+    "amount": 858664442.48927
+  },
+  {
+    "sector": "336310/vehicle engines and engine parts/us",
+    "amount": 155535315.944163
+  },
+  {
+    "sector": "336320/vehicle electrical and electronic equipment/us",
+    "amount": 299753798.270893
+  },
+  {
+    "sector": "336350/transmission and power train parts/us",
+    "amount": 188437214.70622
+  },
+  {
+    "sector": "336360/vehicle seating and interior trim (upholstery)/us",
+    "amount": 75731312.6351189
+  },
+  {
+    "sector": "336390/other vehicle parts/us",
+    "amount": 471131775.351716
+  },
+  {
+    "sector": "3363a0/motor vehicle steering, suspension components (except spring), and brake systems/us",
+    "amount": 115213878.315476
+  },
+  {
+    "sector": "337121/home furniture - upholstered/us",
+    "amount": 199916392.131148
+  },
+  {
+    "sector": "337122/home furniture - wood, nonupholstered/us",
+    "amount": 2770249713.19719
+  },
+  {
+    "sector": "33712a/home furniture - cabinets and non-wood, nonupholstered/us",
+    "amount": 1754345622.41335
+  },
+  {
+    "sector": "441000/vehicles and parts sales/us",
+    "amount": 13670124303.0946
+  },
+  {
+    "sector": "532100/vehicle rental and leasing/us",
+    "amount": 5663639561.47426
+  },
+  {
+    "sector": "562000/waste management and remediation/us",
+    "amount": 7609407399.08888
+  },
+  {
+    "sector": "722110/full-service restaurants/us",
+    "amount": 213436195100.367
+  },
+  {
+    "sector": "722211/limited-service restaurants/us",
+    "amount": 282944217055.618
+  },
+  {
+    "sector": "722a00/all other food and drinking places/us",
+    "amount": 80649385125.2078
+  },
+  {
+    "sector": "811100/vehicle repair/us",
+    "amount": 18059763044.604
+  }
+]
