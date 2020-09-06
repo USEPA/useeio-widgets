@@ -322,9 +322,11 @@ function getDimensions(x,y,z){
 
 function updateTitle(x,y,z){
   return; // To prevent error
+  var unitx, unity, unitz;
   console.log("updateTitle " + x + " " + y + " " + z);
   let params = loadParams(location.search,location.hash);
   d3.json("/io/build/api/GAUSEEIO/indicators.json").then(function(consdata){
+    console.log("attempt");
     var filteredData = consdata.filter(function(d) {
       if(d["id"]==x) {
         unitx=d["unit"]

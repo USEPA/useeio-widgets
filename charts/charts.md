@@ -29,17 +29,18 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 
 **Commodity Industry List**  
 Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
-[Goods & Services - Industry List and Mosaic Heatmap](useeio/industry_list.html?view=mosaic&count=50)  
-[Goods & Services - Bars for one indicator](useeio/industry_list.html#view=mosaic&indicators=WATR&showvalues=true)   
-[Goods & Services - Inflow and Outflow - Rubber tire manufacturing example](useeio/iotables.html#sectors=326210&page=5)  
-[Industry Impact Bars with Configuration](useeio/impact_chart_config.html)  
-[More Input-Output Widgets](useeio/)  
+[Goods & Services - Industry List and Mosaic Heatmap](../build/industry_list.html?view=mosaic&count=50)  
+[Goods & Services - Bars for one indicator](../build/industry_list.html#view=mosaic&indicators=WATR&showvalues=true)   
+[Goods & Services - Inflow and Outflow - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
+[Industry Impact Bars with Configuration](../build/impact_chart_config.html)  
+[More Input-Output Widgets](../build/)  
 
 
 [Impact Bubble Chart](bubble/) - D3 and JQuery  
 [Sankey Chart](sankey/) - D3 with Python prep  
 
-The [io/build](https://github.com/modelearth/io/tree/master/charts/useeio) folder contains a recent static copy of the [nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) documented below.  
+View widgets built using React at [https://model.earth/io/build](https://model.earth/io/build)  
+The [io/build](https://github.com/modelearth/io/tree/master/build) folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) documented below.  
 
 <!--
 If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
@@ -56,7 +57,6 @@ Using the static output, you can set parameters in the URL or javascript to cont
 We've copied a static version of the widgets into the "modelearth/io" repo. 
 You can use the Github links for embedding.
 
-[https://model.earth/io/charts/build](https://model.earth/io/charts/build)  
 <!--
 from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 -->
@@ -118,6 +118,8 @@ To view these examples locally, you'll need some data that you can download from
 npm run download -- --endpoint https://smmtool.app.cloud.gov/api
 ```
 This will mirror the static data of the Staging API into the `build/api` folder in two folders: USEEIO and GAUSEEIO.  The second folder contains data for Georgia, the first state using the USEEIO model.  
+
+Once had to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
 
 Note: Every 90 days the staging server requires a reboot, contact Wes to restart.  
 The '/api' address always returns 404, so use the <a href="https://smmtool.app.cloud.gov/">enpoint overview</a> to see if it is online.  
