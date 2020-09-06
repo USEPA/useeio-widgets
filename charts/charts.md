@@ -39,13 +39,13 @@ Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-w
 [Impact Bubble Chart](bubble/) - D3 and JQuery  
 [Sankey Chart](sankey/) - D3 with Python prep  
 
-The [io/charts/useeio](https://github.com/modelearth/io/tree/master/charts/useeio) folder contains a recent static copy of the [nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) documented below.  
+The [io/build](https://github.com/modelearth/io/tree/master/charts/useeio) folder contains a recent static copy of the [nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) documented below.  
 
 <!--
-If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/charts/useeio.2020.002) or copy the useeio folder into your project.
+If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
 
 
-([old version](https://model.earth/eeio/charts/useeio.2020.001), [pre-React](https://model.earth/eeio/charts/useeio.2020.003) and [new version](useeio)) 
+([old version](https://model.earth/eeio/build.2020.001), [pre-React](https://model.earth/eeio/build.2020.003) and [new version](useeio)) 
 -->
 
 
@@ -109,7 +109,7 @@ This should create a `build` folder with a `lib` sub-folder containing a small J
 ### Generate Local JSON files
 
 Once built, the `build` folder contains example HTML files that demonstrate the usage of these widgets. 
-[View&nbsp;examples](https://model.earth/io/charts/useeio/)
+[View&nbsp;examples](https://model.earth/io/build/)
   
 To view these examples locally, you'll need some data that you can download from the Staging instance of the
 [USEEIO API](https://github.com/USEPA/USEEIO_API) via the following:

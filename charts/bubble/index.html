@@ -177,6 +177,7 @@ input:checked + .slider:before {
 
     <div style="clear:both"></div>
 
+
     <div class="bubble-graph">
 
         <div style="clear:both; border-top:1px solid #999; border-bottom:1px solid #999; padding:10px; margin-bottom:10px; overflow: scroll">
@@ -268,7 +269,7 @@ input:checked + .slider:before {
     var config = useeio.urlConfig();
     var modelID = config.get().model || 'GAUSEEIO';
     var model = useeio.model({
-      endpoint: '/io/charts/useeio/api',
+      endpoint: '/io/build/api',
       model: modelID,
       asJsonFiles: true,
     });
@@ -307,7 +308,7 @@ input:checked + .slider:before {
           var config = useeio.urlConfig();
           var modelID = config.get().model || selected_model;
           var model = useeio.model({
-            endpoint: '/io/charts/useeio/api',
+            endpoint: '/io/build/api',
             model: modelID,
             asJsonFiles: true,
           });
@@ -330,6 +331,14 @@ input:checked + .slider:before {
     });
 </script>
 <br><br>
+
+<div class="content contentpadding" style="font-size: 16px">
+  To investigate:<br>
+  - updateTitle(x,y,z) is disabled in bubble.js with a "return" statement.  Stopped working when moving files into io repo and rebuilding useeio-widgets.<br>
+  - Had to manually copy the folder build/api/GAUSEEIO/demands from a prior build.
+
+  <br><br>
+</div>
 
   <a href="https://bootswatch.com/darkly/" style="float:right" target="darkly">Darkly Theme</a>
 <br><br>

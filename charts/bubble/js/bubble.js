@@ -321,6 +321,8 @@ function getDimensions(x,y,z){
 }
 
 function updateTitle(x,y,z){
+  return; // To prevent error
+  console.log("updateTitle " + x + " " + y + " " + z);
   let params = loadParams(location.search,location.hash);
   d3.json("/io/build/api/GAUSEEIO/indicators.json").then(function(consdata){
     var filteredData = consdata.filter(function(d) {
