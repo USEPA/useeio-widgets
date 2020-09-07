@@ -1,5 +1,3 @@
-import { thresholdSturges } from "d3";
-
 /**
  * The configuration of the web api.
  */

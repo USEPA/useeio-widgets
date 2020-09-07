@@ -11,6 +11,9 @@ import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
 import { IOList } from "./widgets/industry-list/io-list";
 
+export * from "./naics";
+export * from "./webapi";
+
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
 }
