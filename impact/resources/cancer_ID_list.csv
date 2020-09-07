@@ -1,0 +1,24 @@
+Cancer_Description,Cancer_ID
+All Cancer Sites,001
+Bladder,071
+Brain & ONS,076
+Breast (Female),055
+Breast (in situ) (Female),400
+Cervix (Female),057
+"Childhood (Age <15)",516
+"Childhood (Age <20)",515
+Colon & Rectum,020
+Esophagus,017
+Kidney & Renal Pelvis,072
+Leukemia,090
+Liver & Bile Duct,035
+Lung & Bronchus,047
+Melanoma of the Skin,053
+Non-Hodgkin Lymphoma,086
+Oral Cavity & Pharynx,03
+Ovary (Female),061
+Pancreas,040
+Prostate (Male),066
+Stomach,018
+Thyroid,080
+"Uterus (Female)",058

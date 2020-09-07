@@ -1,0 +1,289 @@
+
+
+/* CSS Styles from https://github.com/niandco/range */
+
+html, body, div, h1, h2, h3, h4, h5, h6, p, code, fieldset, input, main, section, header, footer {
+    /* margin: 0; */
+    padding: 0;
+    border: 0;
+}
+
+h1 {
+    margin: 10;
+    font-size: 40px;
+}
+
+div, h1, h2, h3, h4, h5, h6, p, code, fieldset, input, main, section, header, footer {
+    display: block;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+p {
+    font: 100 15px sans-serif;
+}
+
+.label {
+    font: 300 20px sans-serif;
+    margin: 0;
+}
+
+label {
+    font: 300 13px sans-serif;
+    vertical-align: middle;
+    text-align: left;
+}
+
+body {
+    background: #EBE8E1;
+    font: 300 20px/1.2 sans-serif;
+    color: #5C22FF;
+}
+
+h1, h2, h3, h4, h5, h6 { font-weight: 300; }
+
+
+a, input, button { outline: 0; }
+
+a {
+    color: #5C22FF;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+a:hover,
+a:active,
+a:focus {
+    color: #5C22FF;
+    text-decoration: none;
+
+}
+
+table, th, td {
+    /* border: 1px solid black; */
+    vertical-align: top;
+    text-align: left;
+}
+
+th {
+    padding-left: 10px;
+}
+
+input {
+    box-shadow: 0 0 5px 0 #BDBCB3;
+    border-radius: 5px;
+    color: #5C22FF;
+    background: white;
+    border: 1px solid white;
+    height: 20px;
+    line-height: 20px;
+    font-size: 15px;
+    align-self: left;
+    padding: 5px;
+    min-width: 10;
+}
+
+input:focus {
+    box-shadow: 0 0 5px 0 #5C22FF;
+    border-color: #5C22FF;
+}
+
+input[type="radio"] {
+    -ms-transform: scale(1.0); /* IE 9 */
+    -webkit-transform: scale(1.0); /* Chrome, Safari, Opera */
+    transform: scale(1.0);
+    /* width: 20px; */
+}
+
+.btn {
+    padding: 10px 20px;
+    border: 2.0px solid #5C22FF;
+    background: none;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.btn:hover,
+.btn:active,
+.btn:focus {
+    background: #5C22FF;
+    color: #EBE8E1;
+}
+
+.boxed {
+    max-width: 1600px;
+    padding: 0 10px;
+    margin: 0 auto;
+}
+
+.header { padding: 150px 0; }
+
+.header p { padding-top: 50px; }
+
+.main { margin: 50px 0 30px; }
+
+.flex {
+    display: flex;
+    flex-wrap: nowrap;
+    /* align-items: center; */
+}
+
+.flex > * { width: 100%; }
+
+.main .flex .col {
+    padding: 10px 0 10px;
+}
+
+.main .flex .col.c1 {
+    width: 1000px;
+    padding-right: 20px;
+    display: flex;
+    align-items: left;
+}
+
+.main .flex .col.c2 {
+    width: 500px;
+    padding-left: 20px;
+    display: flex;
+    align-items: right;
+}
+
+.main input {
+    display: inline-block;
+    width: 50px;
+    margin-right: 10px;
+}
+
+/* .script .dec { color: #F95B00; }
+.script .func { color: #CFA279; }
+.script .val { color: #A578D2; }
+.script .com { color: #9E9EA0; }
+
+.html .tag { color: #4AB2D6; }
+
+.html .att,
+.script .des { color: #84B400; }
+
+.html .val,
+.script .fd { color: #F69800; }
+
+.footer { padding: 50px 0; } */
+
+
+/* Maybe Leave Out */
+code {
+    background: #DEDCD5;
+    padding: 2px;
+    display: inline;
+    border-radius: 5px;
+    color: #4B4A4E;
+    position: relative;
+    word-break: break-all;
+}
+
+code.block {
+    display: block;
+    margin: 10px 0;
+    padding: 20px;
+}
+
+code.css:before,
+code.html:before,
+code.script:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #9C9B92;
+    color: white;
+    padding: 3px 5px;
+    font: 200 13px/1.2 sans-serif;
+}
+
+code.script:before { content: 'JavaScript'; }
+
+code.html:before { content: 'HTML'; }
+
+code.css:before { content: 'CSS'; }
+
+
+
+/* --------------------------------------------------------------------- */
+/* D3 Chart Styling */
+/* Generic Axis Styling */
+.axis path,
+.axis line {
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  fill: black;
+  font-size: 14px;
+  /* font-family: Arial, Helvetica, sans-serif; */
+}
+
+/* Title Styling */
+.title {
+  fill: black;
+  /* font-size: 20px; */
+  /* font-family: Arial, Helvetica, sans-serif; */
+}
+/* Title Styling */
+.axis.label {
+  fill: black;
+  /* font-size: 18px; */
+  /* font-family: Arial, Helvetica, sans-serif; */
+}
+
+
+/* Style the divs for each chart */
+.chartbox {
+  margin: 0px;
+  align-self: left;
+  /* margin-bottom: 0px; */
+}
+
+.counties {
+    fill: none;
+  }
+  
+.states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+  }
+
+/* Bar Chart Styling */
+.bar {
+  fill: rgb(150, 163, 168);
+}
+
+.legend {
+    font-size: 16px;
+}
+
+.regression {
+    stroke-width: 2px;
+    stroke: steelblue;
+    stroke-dasharray: 10, 5;
+}
+
+.equation {
+    font-size: 12px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.point {
+    fill: rgb(57, 21, 158);
+    opacity: 0.3;
+}
+
+.bar {
+    /* fill: steelblue; */
+    opacity: 0.5;
+}

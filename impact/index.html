@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cancer & Industry Incidence</title>
+
+    <meta name="description" content="A simple range plugin written in pure JavaScript" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./src/national_choropleth.css">
+
+    <!-- Call the range slider script -->
+    <script src="src/range.js"></script>
+
+    <!-- Call the relevant D3 resources -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+
+</head>
+<body>
+    <main class="main boxed">
+        
+        <h2>Exploring Cancer and Industry Hot-Spots</h2>
+        <p>Industrial activity touches nearly every facet of modern, American life. This project aims to identify localities and industries where industrial activty may contribute to elevated risk of various types of cancer</p>
+
+        <!-- ------------------------------------------------------------------------------------------------------ -->
+        <!-- Map Data Selectors -->
+        <div>
+            <table>
+                <tr>
+                    <th>Data to plot</th>
+                    <th>Data Color Scale</th>
+                    <th>Data Subset Displayed</th>
+                </tr>
+                <tr>
+                    <th align="left">
+                        <form id="dataSetOption">
+                            <input  type='radio' id="cancer" name="mode" checked>
+                            <label for="cancer">Cancer Data</label><br>
+                            <input  type='radio' id="industry" name="mode" >
+                            <label for="industry">Industry Data</label><br>
+                        </form>
+                    </th>
+                    <th align="left">
+                        <form id="colorScaleOption">
+                            <input  type='radio' id="continuous-linear" name="mode" checked>
+                            <label for="continuous-linear">Value - Linear Scale</label><br>
+                            <input  type='radio' id="continuous-log" name="mode" >
+                            <label for="continuous-log">Value - Log Scale</label><br>
+                            <input type='radio' id="DeltaLinear" name="mode">
+                            <label for="DeltaLinear">Delta from Avg</label>
+                        </form>
+                    </th>
+                    <th align="left">
+
+                        <div id="form1" class="dropDown"></div>
+                        <div id="form2" class="dropDown"></div>
+
+                    </th>
+                    <th><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></th>
+                    <th>
+                        <button class="btn" id="resetViewButton">Reset View</button>
+                    </th>
+                </tr>
+            </table>
+        </div>
+
+        <div id='mapLegend'></div>
+
+
+        <!-- ------------------------------------------------------------------------------------------------------ -->
+        <!-- Sliders -->
+        <div class="flex">
+            <div class="col c1">
+                
+                <div id="choropleth" class="chartbox"></div>
+
+            </div>
+            <div class="col c2">
+                <table>
+                    <tr>
+                        <th>
+                            <p class="label" id="LabelIndustryA">Industry A</p>
+                            <input type="text" id="IndustryA" value="100" max="200" min="0" step="5" />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <p class="label" id="LabelIndustryB">Industry B</p>
+                            <input type="text" id="IndustryB" value="100" max="200" min="0" step="5" />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <p class="label" id="LabelIndustryC">Industry C</p>
+                            <input type="text" id="IndustryC" value="100" max="200" min="0" step="5" />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <p class="label" id="LabelIndustryD">Industry D</p>
+                            <input type="text" id="IndustryD" value="100" max="200" min="0" step="5" />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>
+
+                            <p class="label" id="LabelIndustryE">Industry E</p>
+                            <input type="text" id="IndustryE" value="100" max="200" min="0" step="5" />
+                        </th>
+                    </tr>
+                    <tr><th><p> </p></th></tr>
+                    <tr><th><p> </p></th></tr>
+                    <tr><th><p> </p></th></tr>
+                    <tr><th><p>Use the above sliders to modify the amount of each industry in the selected locality. Note that 100 = 100% of baseline value.</p></th></tr>
+                    <tr><th><p> </p></th></tr>
+                    <tr><th><p>Click the 'Update Prediction' button below to re-predict the cancer rates based on the slider industry scaling.</p></th></tr>
+                    <tr><th><p> </p></th></tr>
+                    <tr><th><p> </p></th></tr>
+                    <tr>
+                        <th>
+                            <button class="btn" id="resetSlidersButton">Reset Sliders</button>
+                            <button class="btn" id="runPredictionButton">Update Prediction</button>
+                        </th>
+                    </tr>
+                </table>  
+            </div>
+        </div>
+        <!-- ------------------------------------------------------------------------------------------------------ -->
+        <!-- D3 Supporting Charts -->
+
+        <div class="flex" id="supportingCharts">
+            <div class="col c1">
+                <div>
+                    <h3>Top 5 Cancers by Incidence Rate</h3>
+                    <p>This bar chart displays the actual and predicted values for annual cancer count in the selected county.<br> Actual values are displayed as bars and predicted values are displayed as dots.<br> </p>
+                    <p id="selectedFIPS">FIPS: 13121</p>
+                </div>
+                <!-- <p>Selected County: </p> -->
+                <!-- <p><br>Selected County: </p> -->
+
+            </div>
+            <div class="col c2">
+                <div>
+                    <h3>Annual Cancer Count vs. Industry Parameters</h3>
+                    <p>This scatter plot shows the correlation between various cancer types and a selected industrial indicator.</p>
+                    <input type="checkbox" id="myCheckbox"> 
+                    <label for="myCheckbox">Use incidence rates</label><br>
+                    <select id="selectButton"></select> <br>
+                    <select id="selectButton2"></select>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="flex" id="supportingCharts">
+            <div class="col c1">
+                <div id="barsTopCancer" class="chartbox"></div>
+            </div>
+            <div class="col c2">
+                <div id="scatter" class="chart"></div>
+            </div>
+        </div>
+        
+        <!-- PATTER FILL SVG : https://iros.github.io/patternfills/sample_d3.html -->
+        <svg height="5" width="5" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="smalldot" patternUnits="userSpaceOnUse" width="5" height="5"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgo8cmVjdCB3aWR0aD0nNScgaGVpZ2h0PSc1JyBmaWxsPScjZmZmJy8+CjxyZWN0IHdpZHRoPScxJyBoZWlnaHQ9JzEnIGZpbGw9JyNjY2MnLz4KPC9zdmc+" x="0" y="0" width="5" height="5"> </image> </pattern> </defs> </svg>
+        
+
+        <!-- ------------------------------------------------------------------------------------------------------ -->
+        <!-- National Scale Data -->
+        <hr>
+        <h2>Data Sources</h2>    
+
+
+        <!-- Call the D3 Script to build the plots -->
+        <script type="text/javascript" src="./src/national_choropleth.js" charset="utf-8"></script>
+
+
+    </main>
+</body>
+</html>
