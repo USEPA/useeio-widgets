@@ -40,7 +40,7 @@ Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-w
 [Sankey Chart](sankey/) - D3 with Python prep  
 
 View widgets built using React at [https://model.earth/io/build](https://model.earth/io/build)  
-The [io/build](https://github.com/modelearth/io/tree/master/build) folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) documented below.  
+The [io/build](https://github.com/modelearth/io/tree/master/build) folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
 
 <!--
 If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
@@ -63,7 +63,7 @@ from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 
 ## Build the EEIO Widgets (React)
 
-The USEEIO widgets may be built using the steps below, or you may embed a [pre-built static copy](useeio).  
+The USEEIO widgets may be built using the steps below, or you may embed a [pre-built static copy](../build).  
 
 <!--After building the widgets, you will need an API key to download the industry sector data JSON files, or you can copy the JSON files from the pre-built static copy. Post an issue to request a key.  -->
 
