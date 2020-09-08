@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "scripts": {
-    "server": "npx http-server ./build",
+    "server": "npx http-server ./build --cors",
     "download": "node scripts/download",
     "build": "webpack --config webpack.config.js --mode=production",
     "dev": "webpack --config webpack.config.js --mode=development --watch",
