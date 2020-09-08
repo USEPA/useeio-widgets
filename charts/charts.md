@@ -102,8 +102,7 @@ Then build the widget libraries inside your local useeio-widgets folder:
 npm run build
 ```
 
-This should create a `build` folder with a `lib` sub-folder containing a small JavaScript library for each widget.  
-
+This should create a `build` folder with a `lib` sub-folder containing small JavaScript libraries used by the USEEIO widgets.  
 
 
 ### Generate Local JSON files
@@ -119,7 +118,7 @@ npm run download -- --endpoint https://smmtool.app.cloud.gov/api
 ```
 This will mirror the static data of the Staging API into the `build/api` folder in two folders: USEEIO and GAUSEEIO.  The second folder contains data for Georgia, the first state using the USEEIO model.  
 
-Once had to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
+Sometimes you may need to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
 
 Note: Every 90 days the staging server requires a reboot, contact Wes to restart.  
 The '/api' address always returns 404, so use the <a href="https://smmtool.app.cloud.gov/">enpoint overview</a> to see if it is online.  
