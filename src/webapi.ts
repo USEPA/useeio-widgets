@@ -1,27 +1,41 @@
 /**
- * The configuration of the web api.
+ * This module contains the functions and type definitions for accessing an
+ * [USEEIO API](https://github.com/USEPA/USEEIO_API) endpoint. The widgets
+ * typically fetch data directly from such an endpoint based on a configuration.
+ *
+ * @packageDocumentation
+ */
+
+/**
+ * An instance of this type contains the configuration of an [USEEIO
+ * API](https://github.com/USEPA/USEEIO_API) endpoint.
  */
 export interface WebApiConfig {
 
     /**
-     * The enpoint URL of the API.
+     * The enpoint URL of the USEEIO API, e.g. `https://path.to/useeio/api`.
+     * This can be a relative path when the API data is hosted as JSON files on
+     * the same server, e.g. `./api`.
      */
     endpoint: string;
 
     /**
-     * The ID of the EEIO model to use.
+     * The ID of the input-output model that should be used (an API endpoint
+     * can host multiple models which are identified by an unique ID).
      */
     model: string;
 
     /**
-     * An optional API key.
+     * An optional API key if such a key is required to access the data of the
+     * API endpoint.
      */
     apikey?: string;
 
     /**
-     * Indicates whether the `.json` extension should be added
-     * to the request paths. This needs to be set to `true` if
-     * we load the data just as static files from a server.
+     * Indicates whether the `.json` extension should be added to the request
+     * paths. This needs to be set to `true` if the data is hosted as static
+     * files on a server (note that in this case calculations are done locally
+     * in JavaScript and may require more time and data).
      */
     asJsonFiles?: boolean;
 

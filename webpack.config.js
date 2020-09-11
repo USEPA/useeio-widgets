@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const config = {
     entry: {
-        // we could generate a small JS lib for every widget
+        // we could also generate a small JS library for every widget
         // 'ImpactChart': './src/impact-chart.ts',
         // 'FilterWidget': './src/filter-widget.ts',
         // 'SectorList': './src/sector-list.ts',
@@ -46,6 +46,10 @@ const config = {
                 to: buildDir + '/lib/apexcharts.css', type: 'file'
             },
             /*
+            // We compile React into the generated library but we could
+            // also reference it as an external dependency (see below). 
+            // This would be useful when React is already available in
+            // the page where the widgets whould be included.
             {
                 from: 'node_modules/react/umd/react.production.min.js',
                 to: buildDir + '/lib/react.production.min.js', toType: 'file'
@@ -61,6 +65,10 @@ const config = {
     externals: {
         "d3": "d3",
         "apexcharts": "apexcharts",
+        /*
+        "react": "React",
+        "react-dom": "ReactDOM",
+        */
     }
 };
 
