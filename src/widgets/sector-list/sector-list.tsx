@@ -15,7 +15,7 @@ import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
 
-export class IndustryList extends Widget {
+export class SectorList extends Widget {
 
     /**
      * The current configuration of the heatmap.
@@ -197,7 +197,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     return HeatmapResult.from(model, result);
 }
 
-const Component = (props: { widget: IndustryList }) => {
+const Component = (props: { widget: SectorList }) => {
 
     const config = props.widget.config;
     const [sorter, setSorter] = React.useState<Indicator | null>(null);
@@ -299,7 +299,7 @@ const Component = (props: { widget: IndustryList }) => {
                         }
                     </tr>
                 </thead>
-                <tbody className="industry-list-body">
+                <tbody className="sector-list-body">
                     {rows}
                 </tbody>
             </table>
@@ -310,7 +310,7 @@ const Component = (props: { widget: IndustryList }) => {
 export type RowProps = {
     sector: Sector,
     sortIndicator: Indicator | null,
-    widget: IndustryList,
+    widget: SectorList,
     rank?: number,
 };
 

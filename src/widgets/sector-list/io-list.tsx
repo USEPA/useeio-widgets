@@ -180,7 +180,7 @@ const Component = (props: {
                         <th></th>
                     </tr>
                 </thead>
-                <tbody className="industry-list-body">
+                <tbody className="sector-list-body">
                     {rows}
                 </tbody>
             </table>

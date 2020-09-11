@@ -12,7 +12,7 @@
     <div class="io">
         <div style="margin: 0 auto;">
             <div class="matrix-title">Goods & Services</div><br><br>
-            <div class="industry-list">
+            <div class="sector-list">
             </div>
         </div>
     </div>
@@ -30,11 +30,11 @@
             asJsonFiles: true,
         });
 
-        var industryList = useeio.industryList({
+        var sectorList = useeio.sectorList({
             model: model,
-            selector: '.industry-list',
+            selector: '.sector-list',
         });
-        config.join(industryList);
+        config.join(sectorList);
 
     </script>
 </body>

@@ -7,7 +7,7 @@ const config = {
         // we could generate a small JS lib for every widget
         // 'ImpactChart': './src/impact-chart.ts',
         // 'FilterWidget': './src/filter-widget.ts',
-        // 'SectorList': './src/sector-list.ts',
+        // 'SectorDelete': './src/sector-list.ts',
         'useeio_widgets': './src/main.ts',
     },
     module: {

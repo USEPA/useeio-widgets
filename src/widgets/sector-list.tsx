@@ -6,7 +6,7 @@ import { Config, Widget } from "../widget";
 import * as colors from "../util/colors";
 import * as strings from "../util/strings";
 
-export class SectorList extends Widget {
+export class SectorDelete extends Widget {
 
     private sectors: Sector[];
     private selection: Sector[] = [];
@@ -68,7 +68,7 @@ export class SectorList extends Widget {
 
 const Component = (props: {
     sectors: Sector[],
-    widget: SectorList,
+    widget: SectorDelete,
     config: Config
 }) => {
 
@@ -106,7 +106,7 @@ const Component = (props: {
 const SectorItem = (props: {
     sector: Sector,
     config: Config,
-    widget: SectorList,
+    widget: SectorDelete,
 }) => {
 
     const sector = props.sector;
