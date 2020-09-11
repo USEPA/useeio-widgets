@@ -40,7 +40,7 @@ Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-w
 [Sankey Chart](sankey/) - D3 with Python prep  
 
 View widgets built using React at [https://model.earth/io/build](https://model.earth/io/build)  
-The [io/build](https://github.com/modelearth/io/tree/master/build) folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
+The [io/build](https://github.com/modelearth/io/tree/master/build) GitHub folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
 
 <!--
 If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
@@ -191,4 +191,4 @@ if you don't see it, be sure to right-click in the file folder when opening and 
 
 ## Sustainable Communities Web Challenge
 
-[Get involved with our 2020 Sustainable Communities Web Challenge](https://model.earth/community/challenge) - $10,000&nbsp;in&nbsp;awards!  
+[Get involved with our 2021 Sustainable Communities Web Challenge](https://model.earth/community/challenge) - $10,000&nbsp;in&nbsp;awards!  
