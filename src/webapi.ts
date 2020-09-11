@@ -42,17 +42,22 @@ export interface WebApiConfig {
 }
 
 /**
- * A class for low level web API calls. Use the Model class for typed requests
- * that also support caching etc.
+ * A class for low level web API calls. The widgets should typically use an
+ * instance of the `Model` class for accessing the web API instead as it
+ * provides advanced features like typed requests, caching, etc.
  */
 export class WebApi {
 
+    /**
+     * Creates a new instance based on the given configuration.
+     */
     constructor(private conf: WebApiConfig) { }
 
     /**
-     * This is the only get request that has no prefix of the model ID. For all
-     * other request, just use `get(<path>)` that will automatically add the
-     * model ID as a prefix.
+     * Returns information about the available models of this API endpoint. This
+     * is the only request that has no prefix of the model ID. For all other
+     * requests, just use `get(<path>)` that will automatically add the model ID
+     * as a prefix to the request path.
      */
     async getModelInfos(): Promise<ModelInfo[]> {
         let url = `${this.conf.endpoint}/models`;
@@ -63,8 +68,8 @@ export class WebApi {
     }
 
     /**
-     * Perform a get request on a model. The given path should be the fragment
-     * after the model ID, e.g. `/sectors`.
+     * Performs a `get` request on a model. The given path should be the
+     * fragment after the model ID, e.g. `/sectors`.
      */
     async get<T>(path: string): Promise<T> {
         let url = `${this.conf.endpoint}/${this.conf.model}${path}`;
@@ -74,6 +79,10 @@ export class WebApi {
         return this._get(url);
     }
 
+    /**
+     * Performs a `post` with the given data on the given path, e.g.
+     * `/calculate`.
+     */
     async post<T>(path: string, data: any): Promise<T> {
         const url = `${this.conf.endpoint}/${this.conf.model}${path}`;
         const req = this._request("POST", url);
@@ -129,6 +138,9 @@ export class WebApi {
     }
 }
 
+/**
+ * An enumeration of the valid indicator groups of the USEEIO API.
+ */
 export enum IndicatorGroup {
     IMPACT_POTENTIAL = "Impact Potential",
     RESOURCE_USE = "Resource Use",
@@ -137,28 +149,107 @@ export enum IndicatorGroup {
     CHEMICAL_RELEASES = "Chemical Releases",
 }
 
+/**
+ * An environmental, economic, or social indicator of the corresponding USEEIO
+ * model.
+ */
 export interface Indicator {
+    /**
+     * The ID of the indicator.
+     */
     id: string;
+
+    /**
+     * The matrix index of the indicator in the corresponding USEEIO model. This
+     * is the 0-based row or column of this indicator in the respective matrices
+     * of the model.
+     */
     index: number;
+
+    /**
+     * The full indicator name, e.g. `Acidification potential`.
+     */
     name: string;
+
+    /**
+     * A short indicator code, e.g. `ACID`.
+     */
     code: string;
+
+    /**
+     * The unit in which results of this indicator are given.
+     */
     unit: string;
+
+    /**
+     * The indicator group.
+     */
     group: IndicatorGroup;
 }
 
+/**
+ * Contains some meta-data of an USEEIO model.
+ */
 export interface ModelInfo {
+
+    /**
+     * The unique ID of the USEEIO model that is used in the request paths for
+     * the web API.
+     */
     id: string;
+
+    /**
+     * A descriptive name of the model.
+     */
     name: string;
+
+    /**
+     * The regional scope of the model.
+     */
     location: string;
-    description: string;
+
+    /**
+     * An optional model description.
+     */
+    description?: string;
 }
 
+/**
+ * Describes an industry sector in an USEEIO model.
+ */
 export interface Sector {
+
+    /**
+     * The unique ID of the sector.
+     */
     id: string;
+
+    /**
+     * The matrix index of the sector in the corresponding USEEIO model. This
+     * is the 0-based row or column of this sector in the respective matrices
+     * of the model.
+     */
     index: number;
+
+    /**
+     * The sector name.
+     */
     name: string;
+
+    /**
+     * The classification code of the sector.
+     */
     code: string;
+
+    /**
+     * Indicates the location of the sector. In a multi-regional model there
+     * can be multiple sectors with the same code but different locations.
+     */
     location: string;
+
+    /**
+     * An optional description of the sector.
+     */
     description?: string;
 }
 
@@ -175,11 +266,32 @@ export type DemandType = "Consumption" | "Production";
  * `<endpoint>/<model id>/demands` returns a list of `DemandInfo` objects.
  */
 export interface DemandInfo {
+
+    /**
+     * The ID of the demand vector that is used for the API request.
+     */
     id: string;
+
+    /**
+     * The year for which the demand vector is valid.
+     */
     year: number;
+
+    /**
+     * The regional scope of the demand vector.
+     */
     location: string;
+
+    /**
+     * The general scope of the demand vector (e.g. `Full system`, `Food
+     * system`, ...).
+     */
     system: string;
-    type: "Consumption" | "Production";
+
+    /**
+     * The type of the demand vector.
+     */
+    type: DemandType;
 }
 
 /**
@@ -192,23 +304,66 @@ export interface DemandEntry {
     amount: number;
 }
 
+/**
+ * Describes the perspective of a calculation result:
+ *
+ * * `direct`: direct contribution results: `D * diag(s)`
+ * * `intermediate`: direct + upstream results at each point of the supply chain
+ *    (without loop correction): `D * L * diag(s)`
+ * * `final`: final results related to the demand vector: `D * L * diag(d)`
+ */
 export type ResultPerspective =
     "direct"
     | "intermediate"
     | "final";
 
+/**
+ * The setup of a calculation request.
+ */
 export interface CalculationSetup {
+
+    /**
+     * The desired result perspective.
+     */
     perspective: ResultPerspective;
+
+    /**
+     * The demand vector.
+     */
     demand: DemandEntry[];
 }
 
+/**
+ * The calculation result.
+ */
 export interface Result {
+
+    /**
+     * The indicator IDs in matrix order.
+     */
     indicators: string[];
+
+    /**
+     * The sector IDs in matrix order.
+     */
     sectors: string[];
+
+    /**
+     * An indicator * sector matrix with the results of the requested
+     * perspective (direct, intermediate, or final results).
+     */
     data: number[][];
+
+    /**
+     * The total result (which is the same for each result perspective).
+     */
     totals: number[];
 }
 
+/**
+ * The currently supported matrices, see:
+ * https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md
+ */
 type MatrixName =
     "A"
     | "B"
@@ -217,6 +372,9 @@ type MatrixName =
     | "L"
     | "U";
 
+/**
+ * 
+ */
 export class Matrix {
 
     public static zeros(rows: number, cols: number): Matrix {
@@ -269,6 +427,7 @@ export class Matrix {
         }
         return m;
     }
+
 
     public scaleRows(f: number[]): Matrix {
         const m = Matrix.zeros(this.rows, this.cols);
