@@ -9,89 +9,122 @@
         a {
             color: rgb(4, 16, 184);
         }
+        body {
+            margin-top: 50px;
+            margin-bottom: 70px;
+        }
+        h1 {
+            font-weight: 100;
+            font-size: 38px;
+        }
+        .sectiontext {
+            display: block;
+            margin-top: 30px;
+            font-size: 20px;
+        }
+        .smalltext {
+            font-size: .9em;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
 
 <body>
     <div style="max-width: 750px; margin: auto;">
-        <h1 class="text-center">USEEIO Widgets</h1>
-        <p>
-            A USEEIO widget is a component that can be embedded in an HTML page
-            to visualize or configure data from an
+        <h1>USEEIO Widgets</h1>
+        <p style="margin-bottom:35px">
+            A collection of embeddable components for visualizing data from the
             <a href="https://github.com/USEPA/USEEIO_API">
-            USEEIO API</a> instance. Click on the examples below to see how
-            these widgets can be used.
+            USEEIO API</a>.<br><br>
+
+            Local JSON files may be generated from the API 
+            or you can use <a href="https://model.earth/io/charts/" style="white-space: nowrap">pre-generated files</a>.<br>
         </p>
 
-
-        <b>Configuration Test</b>
-        <ul>
-            <li>
-                <a href="./model_tests.html">
-                    Model configuration test
-                </a>
-            </li>
-        </ul>
-
-        <b>Filters and Charts</b>
-        <ul>
-            <li>
-                <a href="./settings.html">
-                    Analysis settings
-                </a>
-            </li>
-            <li>
-                <a href="./filter.html">
-                    Widget configuration
-                </a>
-            </li>
-            <li>
-                <a href="./sectors.html">
-                    Sector list (no heatmap option)
-                </a>
-            </li>
-            <li>
-                <a href="./impact_chart.html">
-                    Impact chart
-                </a>
-            </li>
-            <li>
-                <a href="./impact_chart_config.html">
-                    Impact chart with sector selection and configuration
-                </a>
-            </li>
-            <li>
-                <a href="./profile_chart.html">
-                    Environmental profile chart
-                </a>
-            </li>
-        </ul>
-
-        <b>Sectors with Heatmap</b>
+        <div class="sectiontext">Sector List Widget</div>
+        <div class="smalltext">
+        Commodity data from the U.S. Bureau of Economic Analysis (BEA)
+        </div>
         <ul>
             <li>
                 <a href="./industry_list.html">
-                    Sector list
+                    Sector List Alone
                 </a>
             </li>
             <li>
                 <a href="./industry_list.html?view=mosaic">
-                    Sector list and mosaic heatmap
+                    Sector List and Mosaic Heatmap
                 </a>
             </li>
             <li>
                 <a href="./industry_list.html#view=mosaic&indicators=JOBS,VADD&showvalues=true">
-                    Sector list and mosaic heatmap - positive indicators with values
+                    Sector List and Mosaic Heatmap - with positive indicator values
                 </a>
             </li>
             <li>
                 <a href="./industry_list.html#view=mosaic&showvalues=true">
-                    Sector list and mosaic heatmap - with all values
+                    Sector List and Mosaic Heatmap - with all values
+                </a>
+            </li>
+            <li>
+                <a href="./iotables.html#sectors=326210&page=5">
+                    Sector List with Inflow and Outflow - Rubber tire manufacturing example
+                </a>
+            </li>
+
+        </ul>
+
+
+        <div class="sectiontext">Impact Chart Widgets</div>
+        <div class="smalltext">
+        Environmentally-Enabled Input-Output Comparison
+        </div>
+        <ul>
+            <li>
+                <a href="./impact_chart.html">
+                    Impact Bar Chart
+                </a>
+            </li>
+            <li>
+                <a href="./impact_chart_config.html">
+                    Impact Bar Chart - with sector list and settings filter
+                </a>
+            </li>
+            <li>
+                <a href="./profile_chart.html">
+                    Environmental Profile Chart - Vertical Bar Chart
+                </a>
+            </li>
+        </ul>
+
+        
+        <div class="sectiontext">Filters and Configuration Test</div>
+        <div class="smalltext">
+        Communication occurs between widgets using hash values. Test your setup.  
+        </div>
+        <ul>
+            <li>
+                <a href="./model_tests.html">
+                    Model Configuration Test
+                </a>
+            </li>
+            <li>
+                <a href="./settings.html">
+                    Settings Filter
+                </a>
+            </li>
+            <li>
+                <a href="./filter.html">
+                    Settings Display Widget
                 </a>
             </li>
             
         </ul>
+        <br>
+
+        We encourage you to fork and expand on the widgets to add features.<br>
+        <a href="https://model.earth/localsite/info/">Sample page</a> combining multiple widgets.
     </div>
 </body>
 
