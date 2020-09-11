@@ -373,10 +373,16 @@ type MatrixName =
     | "U";
 
 /**
- * 
+ * Provides utility functions for working with matrix data.
  */
 export class Matrix {
 
+    /**
+     * Creates a new dense `m * n` matrix with all entries set to `0`.
+     *
+     * @param rows The number of rows `m`.
+     * @param cols The number of columns `n`.
+     */
     public static zeros(rows: number, cols: number): Matrix {
         const data = new Array<number[]>(rows);
         for (let row = 0; row < rows; row++) {
@@ -389,22 +395,41 @@ export class Matrix {
         return new Matrix(data);
     }
 
+    /**
+     * The number of columns of this matrix.
+     */
     public readonly cols: number;
+
+    /**
+     * The number of rows of this matrix.
+     */
     public readonly rows: number;
 
+    /**
+     * Creates a new matrix instance from the given data.
+     */
     constructor(public readonly data: number[][]) {
         this.rows = data.length;
         this.cols = this.rows === 0 ? 0 : data[0].length;
     }
 
+    /**
+     * Get the element at the given row and column: `A[i, j]`.
+     */
     public get(row: number, col: number): number {
         return this.data[row][col];
     }
 
+    /**
+     * Get the row with the given index `i`: `A[i,:]`.
+     */
     public getRow(row: number): number[] {
         return this.data[row].slice();
     }
 
+    /**
+     * Get the column with the given index `j`: `A[:,j]`.
+     */
     public getCol(col: number): number[] {
         const vals = new Array<number>(this.rows);
         for (let row = 0; row < this.rows; row++) {
@@ -413,10 +438,16 @@ export class Matrix {
         return vals;
     }
 
+    /**
+     * Set the entry at the given row and column to the given value.
+     */
     public set(row: number, col: number, val: number) {
         this.data[row][col] = val;
     }
 
+    /**
+     * Scales the columns with the given vector `f`: `A * diag(f)`.
+     */
     public scaleColumns(f: number[]): Matrix {
         const m = Matrix.zeros(this.rows, this.cols);
         for (let row = 0; row < this.rows; row++) {
@@ -428,7 +459,9 @@ export class Matrix {
         return m;
     }
 
-
+    /**
+     * Scales the rows with the given vector `f`: `diag(f) * A`.
+     */
     public scaleRows(f: number[]): Matrix {
         const m = Matrix.zeros(this.rows, this.cols);
         for (let row = 0; row < this.rows; row++) {
@@ -441,7 +474,7 @@ export class Matrix {
     }
 
     /**
-     * Performs a matrix vector multiplication with the given vector.
+     * Performs a matrix-vector-multiplication with the given `v`: `A * v`.
      */
     public multiplyVector(v: number[]): number[] {
         return this.data.map(row => row.reduce((sum, x, j) => {
@@ -455,18 +488,33 @@ export class Matrix {
 }
 
 /**
- * This type describes a sector aggregation. In case of multi-regional models
- * we have multiple sectors with the same codes and names but different
- * locations. Often we want to aggregate these multi-regional sectors. This
- * type contains the aggregated sectors and an index that maps the sector
- * codes to its new position in the aggregated version which can be then used
- * to aggregate corresponding matrices and results.
+ * This type describes a sector aggregation. In case of multi-regional models we
+ * have multiple sectors with the same codes and names but different locations.
+ * Often we want to aggregate these multi-regional sectors. This type contains
+ * the aggregated sectors and an index that maps the sector codes to its new
+ * position in the aggregated version which can be then used to aggregate
+ * corresponding matrices and results.
  */
 type SectorAggregation = {
+
+    /**
+     * A map `{sector code -> index}` that maps a sector code to the index of
+     * the corresponding sector in the sector array of this aggregation.
+     */
     index: { [code: string]: number };
+
+    /**
+     * The sectors of this aggregation.
+     */
     sectors: Sector[];
 };
 
+/**
+ * A `Model` instance caches the results of API requests and provides additional
+ * functions like aggregating multi-regional sectors of an USEEIO model.
+ * Different widgets that access the same web-API should use the same `Model`
+ * instance for efficiency reasons.
+ */
 export class Model {
 
     private _api: WebApi;
@@ -487,6 +535,9 @@ export class Model {
         this._totalResults = {};
     }
 
+    /**
+     * Returns the sectors of the USEEIO model.
+     */
     async sectors(): Promise<Sector[]> {
         if (!this._sectors) {
             this._sectors = await this._api.get("/sectors");
@@ -494,6 +545,10 @@ export class Model {
         return this._sectors;
     }
 
+    /**
+     * Returns true if this is a multi-regional model, i.e. it has sectors with
+     * different location codes.
+     */
     async isMultiRegional(): Promise<boolean> {
         if (typeof this._isMultiRegional === "boolean") {
             return this._isMultiRegional;
@@ -517,6 +572,9 @@ export class Model {
         return false;
     }
 
+    /**
+     * Returns the indicators of the USEEIO model.
+     */
     async indicators(): Promise<Indicator[]> {
         if (!this._indicators) {
             this._indicators = await this._api.get("/indicators");
@@ -524,6 +582,10 @@ export class Model {
         return this._indicators;
     }
 
+    /**
+     * Returns the information of the available demand vectors of the USEEIO
+     * model.
+     */
     async demands(): Promise<DemandInfo[]> {
         if (!this._demandInfos) {
             this._demandInfos = await this._api.get("/demands");
@@ -531,6 +593,9 @@ export class Model {
         return this._demandInfos;
     }
 
+    /**
+     * Returns the demand vector with the given ID.
+     */
     async demand(id: string): Promise<DemandEntry[]> {
         let d = this._demands[id];
         if (d) {
@@ -570,6 +635,9 @@ export class Model {
         return demand ? demand.id : null;
     }
 
+    /**
+     * Returns the matrix with the given name from the model.
+     */
     async matrix(name: MatrixName): Promise<Matrix> {
         let m = this._matrices[name];
         if (m) {
@@ -581,6 +649,9 @@ export class Model {
         return m;
     }
 
+    /**
+     * Get the column of the matrix with the given name from the model.
+     */
     async column(matrix: MatrixName, index: number): Promise<number[]> {
         if (!this._conf.asJsonFiles) {
             return this._api.get(`/matrix/${matrix}?col=${index}`);
@@ -589,6 +660,12 @@ export class Model {
         return m.getCol(index);
     }
 
+    /**
+     * Runs a calculation for the given setup. Note that this will run the
+     * calculation locally if the API is defined to fetch JSON files. Depending
+     * on the calculation type this may needs quite some calculation time and
+     * data.
+     */
     async calculate(setup: CalculationSetup): Promise<Result> {
         if (!this._conf.asJsonFiles) {
             return this._api.post("/calculate", setup);
@@ -674,6 +751,11 @@ export class Model {
         return result.totals;
     }
 
+    /**
+     * Creates a sector aggregation in case of a multi-regional model. If this
+     * is a single-region model, the sectors are just indexed by their code
+     * (which should be unique then).
+     */
     async singleRegionSectors(): Promise<SectorAggregation> {
         if (this._sectorAggregation) {
             return this._sectorAggregation;

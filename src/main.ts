@@ -46,7 +46,7 @@ export function filterWidget(conf: { selector: string }): FilterWidget {
     return new FilterWidget(conf.selector);
 }
 
-export function urlConfig() {
+export function urlConfig(): UrlConfigTransmitter {
     return new UrlConfigTransmitter();
 }
 
