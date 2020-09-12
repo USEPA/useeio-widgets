@@ -27,7 +27,7 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 [Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery  
 [Local Map](../../localsite/map/#show=suppliers) - Map only - Leaflet and JQuery  
 
-**Commodity Industry List**  
+**Sector List (BEA Commodities/Industries)**  
 Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 [Goods & Services - Industry List and Mosaic Heatmap](../build/industry_list.html?view=mosaic&count=50)  
 [Goods & Services - Bars for one indicator](../build/industry_list.html#view=mosaic&indicators=WATR&showvalues=true)   
@@ -166,7 +166,7 @@ Testing this:
 [LiveReload](https://www.logicbig.com/tutorials/misc/typescript/project-auto-refresh-with-live-reload.html) will refresh your browser as you edit.  Install using the [Extension Marketplace](https://code.visualstudio.com/docs/editor/extension-gallery)  
 
 Get under the hood! Mess with our [Python Samples](../../community/resources/useeio) and 
-[Add a new technology to the matrix using RStudio](../naics).
+[add a new technology to the matrix using RStudio](../naics).
 
 <!--
 From the following:
