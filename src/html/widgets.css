@@ -254,12 +254,12 @@ a:hover {
     font-size: 0.8em;
 }
 
-.industry-list-body a {
+.sector-list-body a {
     text-decoration: none;
     color: none;
 }
 
-.industry-list-body td {
+.sector-list-body td {
     white-space: nowrap;
     padding: 4px;
     padding-left: 6px;

@@ -9,16 +9,16 @@
 
 import { FilterWidget } from "./widgets/filter";
 import { UrlConfigTransmitter, WidgetArgs } from "./widget";
-import { IndustryList } from "./widgets/industry-list/industry-list";
+import { SectorList } from "./widgets/sector-list/sector-list";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
-import { SectorList } from "./widgets/sector-list";
+import { SectorDelete } from "./widgets/sector-list";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
-import { IOList } from "./widgets/industry-list/io-list";
+import { IOList } from "./widgets/sector-list/io-list";
 
 export * from "./naics";
 export * from "./webapi";
@@ -56,8 +56,8 @@ export function impactChart(config: ImpactChartConfig): ImpactChart {
     return chart;
 }
 
-export function industryList(args: WidgetArgs): IndustryList {
-    const widget = new IndustryList(args.model, args.selector);
+export function sectorList(args: WidgetArgs): SectorList {
+    const widget = new SectorList(args.model, args.selector);
     widget.scope = args.scope;
     return widget;
 }
@@ -74,8 +74,8 @@ export function outputList(args: WidgetArgs): IOList {
     return widget;
 }
 
-export function sectorList(args: WidgetArgs): SectorList {
-    const widget = new SectorList(args.model, args.selector);
+export function sectorDelete(args: WidgetArgs): SectorDelete {
+    const widget = new SectorDelete(args.model, args.selector);
     widget.scope = args.scope;
     return widget;
 }

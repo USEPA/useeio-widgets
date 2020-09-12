@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Indicator, IndicatorGroup, Model } from "../../webapi";
-import { RowProps } from "./industry-list";
+import { RowProps } from "./sector-list";
 import { Config } from "../../widget";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";

@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { IndustryList } from "./industry-list";
+import { SectorList } from "./sector-list";
 import { Sector, Indicator } from "../../webapi";
 
 export const DownloadSection = (props: {
-    widget: IndustryList,
+    widget: SectorList,
 }) => {
 
     const onDownload = (format: "CSV" | "JSON") => {

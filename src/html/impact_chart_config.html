@@ -53,7 +53,7 @@
             selector: '.useeio-settings-widget',
         });
 
-        var sectorList = useeio.sectorList({
+        var sectorDelete = useeio.sectorDelete({
             model: model,
             selector: '.useeio-sector-list',
         });
@@ -63,7 +63,7 @@
         });
 
         config.join(settings);
-        config.join(sectorList);
+        config.join(sectorDelete);
         config.join(impactChart);
 
         config.updateIfAbsent({

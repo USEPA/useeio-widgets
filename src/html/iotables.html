@@ -12,15 +12,15 @@
     <div style="margin: 25px;">
         <div class="grid-12" style="margin: 0 auto;">
             <div class="col-1 span-4">
-                <div id="inputs" class="industry-list">
+                <div id="inputs" class="sector-list">
                 </div>
             </div>
             <div class="col-5 span-4">
-                <div id="industry-list" class="industry-list">
+                <div id="sector-list" class="sector-list">
                 </div>
             </div>
             <div class="col-9 span-4">
-                <div id="outputs" class="industry-list">
+                <div id="outputs" class="sector-list">
                 </div>
             </div>
         </div>
@@ -44,9 +44,9 @@
             selector: '#inputs',
         });
 
-        var industryList = useeio.industryList({
+        var sectorList = useeio.sectorList({
             model: model,
-            selector: '#industry-list',
+            selector: '#sector-list',
         });
 
         var outputs = useeio.outputList({
@@ -58,7 +58,7 @@
             count: 10,
         });
         config.join(inputs);
-        config.join(industryList);
+        config.join(sectorList);
         config.join(outputs);
 
         var naics = '11,45,62,211,314,331,425,452,488,521,561,721,925,1122,'
@@ -91,7 +91,7 @@
             + '811121,811411,812210,812990,813920,921190,923130,'
             + '926150';
 
-        document.querySelector('#industry-list')
+        document.querySelector('#sector-list')
             .setAttribute('data-naics', naics);
 
     </script>
