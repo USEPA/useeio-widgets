@@ -25,10 +25,11 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 ### Widget Starter Samples
 
 [Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery  
-[Local Map](../../localsite/map/#show=suppliers) - Map only - Leaflet and JQuery  
+[Local Map - PPE Suppliers](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
+[Local Map - Farm Fresh Produce](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
 
 **Sector List (BEA Commodities/Industries)**  
-Built in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
+Developed in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 [Goods & Services - Industry List and Mosaic Heatmap](../build/industry_list.html?view=mosaic&count=50)  
 [Goods & Services - Bars for one indicator](../build/industry_list.html#view=mosaic&indicators=WATR&showvalues=true)   
 [Goods & Services - Inflow and Outflow - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
