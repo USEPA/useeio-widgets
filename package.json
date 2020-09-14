@@ -1,7 +1,19 @@
 {
   "name": "useeio-widgets",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.1.0",
+  "description": "A collection of Javascript widgets with HTML integration examples to simplify the use and display of results and data from USEEIO models in web pages.",
+  "repository": "https://github.com/USEPA/useeio-widgets",
+  "bugs": {
+    "url": "https://github.com/USEPA/useeio-widgets/issues",
+    "email": "ingwersen.wesley@epa.gov"
+  },
+  "license": "CC0-1.0",
+  "contributors": [
+    "Michael Srocka",
+    "Loren Heyns",
+    "Yilun Zha",
+    "Wesley Ingwersen"
+  ],
   "scripts": {
     "server": "npx http-server ./build --cors",
     "download": "node scripts/download",
@@ -9,8 +21,6 @@
     "dev": "webpack --config webpack.config.js --mode=development --watch",
     "clean": "node scripts/clean"
   },
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "apexcharts": "^3.19.0",
     "d3": "^5.15.0",
