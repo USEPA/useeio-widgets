@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IndustryList } from "./industry-list";
+import { SectorList } from "./sector-list";
 import { Config } from "../../widget";
 import * as strings from "../../util/strings";
 import { Sector } from "../../webapi";
@@ -7,7 +7,7 @@ import { Sector } from "../../webapi";
 type Display = "inputs" | "outputs" | "nothing";
 
 export const SectorHeader = (props: {
-    widget: IndustryList
+    widget: SectorList
 }) => {
 
     const w = props.widget;
@@ -29,7 +29,7 @@ export const SectorHeader = (props: {
 
 export const InputOutputCells = (props: {
     sector: Sector,
-    widget: IndustryList
+    widget: SectorList
 }) => {
 
     const w = props.widget;

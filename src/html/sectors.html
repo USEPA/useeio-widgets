@@ -11,16 +11,16 @@
     <div style="max-width: 750px; margin: auto;">
         <h1 class="text-center">Selecting multiple sectors</h1>
         <p>
-            With the <code>SectorList</code> widget multiple
+            With the <code>SectorDelete</code> widget multiple
             sectors can be selected from a list.
         </p>
         <pre>
             <code>
-    var sectorList = useeio.sectorList({
+    var sectorDelete = useeio.sectorDelete({
         model: model,
         selector: '.useeio-sector-list',
     });
-    useeio.urlConfig().join(sectorList);
+    useeio.urlConfig().join(sectorDelete);
             </code>
         </pre>
         <div class="useeio-sector-list"></div>
@@ -30,18 +30,18 @@
     <script src="lib/useeio_widgets.js"></script>
     <script>
         var config = useeio.urlConfig();
-        var modelID = config.get().model || 'GAUSEEIO';
+        var modelID = config.get().model || 'USEEIOv1.2';
 
         var model = useeio.model({
             endpoint: './api',
             model: modelID,
             asJsonFiles: true,
         });
-        var sectorList = useeio.sectorList({
+        var sectorDelete = useeio.sectorDelete({
             model: model,
             selector: '.useeio-sector-list',
         });
-        config.join(sectorList);
+        config.join(sectorDelete);
     </script>
 </body>
 

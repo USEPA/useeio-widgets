@@ -12,11 +12,11 @@
     <div style="margin: 25px;">
         <div class="grid-4" style="margin: 0 auto;">
             <div class="col-1 span-2">
-                <div id="industry-list-1" class="industry-list">
+                <div id="sector-list-1" class="sector-list">
                 </div>
             </div>
             <div class="col-3 span-2">
-                <div id="industry-list-2" class="industry-list">
+                <div id="sector-list-2" class="sector-list">
                 </div>
             </div>
         </div>
@@ -27,7 +27,7 @@
     <script>
 
         var config = useeio.urlConfig();
-        var modelID = config.get().model || 'GAUSEEIO';
+        var modelID = config.get().model || 'USEEIOv1.2';
 
         var model = useeio.model({
             endpoint: './api',
@@ -35,15 +35,15 @@
             asJsonFiles: true,
         });
 
-        var industryList1 = useeio.industryList({
+        var industryList1 = useeio.sectorList({
             model: model,
-            selector: '#industry-list-1',
+            selector: '#sector-list-1',
             scope: 'input'
         });
 
-        var industryList2 = useeio.industryList({
+        var industryList2 = useeio.sectorList({
             model: model,
-            selector: '#industry-list-2',
+            selector: '#sector-list-2',
             scope: 'output'
         });
 
