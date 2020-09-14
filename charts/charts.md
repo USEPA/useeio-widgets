@@ -30,8 +30,8 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 
 **Sector List (BEA Commodities/Industries)**  
 Developed in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
-[Goods & Services - Industry List and Mosaic Heatmap](../build/industry_list.html?view=mosaic&count=50)  
-[Goods & Services - Bars for one indicator](../build/industry_list.html#view=mosaic&indicators=WATR&showvalues=true)   
+[Goods & Services - Industry List and Mosaic Heatmap](../build/sector_list.html?view=mosaic&count=50)  
+[Goods & Services - Bars for one indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)   
 [Goods & Services - Inflow and Outflow - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
 [Industry Impact Bars with Configuration](../build/impact_chart_config.html)  
 [More Input-Output Widgets](../build/)  
