@@ -130,8 +130,8 @@ npm run download -- --endpoint https://api.edap-cluster.com/useeio/api --apikey 
 ```
 
 After generating build/api folder from the production API:  
-1. Rename USEEIOv1.2 to USEEIO  
-2. Duplicate USEEIO to a new folder called GAUSEEIO since GA data currently only resides on the staging server.  
+1. Duplicate USEEIOv1.2 to USEEIO for existing script in non-React widgets.  
+2. Duplicate USEEIOv1.2 to GAUSEEIO since GA data currently only resides on the staging server.  
 
 
 Note: Every 90 days the staging server requires a reboot, contact Wes to restart.  
