@@ -114,12 +114,25 @@ Once built, the `build` folder contains example HTML files that demonstrate the 
 To view these examples locally, you'll need some data that you can download from the Staging instance of the
 [USEEIO API](https://github.com/USEPA/USEEIO_API) via the following:
 
+**Sandbox test server (staging)**
+
 ```
 npm run download -- --endpoint https://smmtool.app.cloud.gov/api
 ```
 This will mirror the static data of the Staging API into the `build/api` folder in two folders: USEEIO and GAUSEEIO.  The second folder contains data for Georgia, the first state using the USEEIO model.  
 
 Sometimes you may need to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
+
+You may optionall [request the key](https://github.com/USEPA/USEEIO_API/wiki/Use-the-API) to the production API to run the following:  
+
+```
+npm run download -- --endpoint https://api.edap-cluster.com/useeio/api --apikey [Add API key here]
+```
+
+After generating build/api folder from the production API:  
+1. Rename USEEIOv1.2 to USEEIO  
+2. Duplicate USEEIO to a new folder called GAUSEEIO since GA data currently only resides on the staging server.  
+
 
 Note: Every 90 days the staging server requires a reboot, contact Wes to restart.  
 The '/api' address always returns 404, so use the <a href="https://smmtool.app.cloud.gov/">enpoint overview</a> to see if it is online.  

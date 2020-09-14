@@ -76,23 +76,23 @@
     "amount": 42229224952.741
   },
   {
-    "sector": "233210/health care structures/us",
+    "sector": "233210/health care buildings/us",
     "amount": 46077496600.7689
   },
   {
-    "sector": "233230/manufacturing structures/us",
+    "sector": "233230/manufacturing buildings/us",
     "amount": 47570560736.459
   },
   {
-    "sector": "233240/power and communication structures/us",
+    "sector": "233240/utilities buildings and infrastructure/us",
     "amount": 113820541325.32
   },
   {
-    "sector": "233262/educational and vocational structures/us",
+    "sector": "233262/schools and vocational buildings/us",
     "amount": 114948163531.713
   },
   {
-    "sector": "233293/highways and streets/us",
+    "sector": "233293/highways, streets, and bridges/us",
     "amount": 97676063271.3483
   },
   {
@@ -104,11 +104,11 @@
     "amount": 172557431304.26
   },
   {
-    "sector": "233411/single-family residential structures/us",
+    "sector": "233411/single-family homes/us",
     "amount": 302622930091.185
   },
   {
-    "sector": "233412/multifamily residential structures/us",
+    "sector": "233412/multifamily homes/us",
     "amount": 58601583963.1942
   },
   {
