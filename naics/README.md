@@ -108,6 +108,6 @@ Code > Go to File/Function
 - "intermediate" and "final consumer" margins tables for conversions
 
 - [Here is a previous release of the USEEIO model](https://github.com/USEPA/USEEIO/releases) to download a zip file with the complete list of LCIA indicators.  
-The latest USEEIER version only has Greeen House Gas (GHG) indicators.  
+The latest USEEIOR version only has Greeen House Gas (GHG) indicators.  
 
 

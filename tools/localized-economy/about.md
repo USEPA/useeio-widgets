@@ -1,4 +1,4 @@
-## Local Economy Evaluator
+# Local Economy Evaluator
 
 Auto Parts Transitions - Electric and Hydrogen  
 (Select West Central Georgia 6 and 12 county regions above.)

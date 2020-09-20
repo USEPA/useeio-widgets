@@ -15,8 +15,8 @@ percentages to perform an analysis. The technologies will include models of supp
 What are the best potential uses of our biomass resources in terms of use efficiency, employment, local value added,
 and environmental outcomes?
 
-[Bioeconomy - Biobased Energy Alternatives](../../../../io/bioeconomy/)  
+[The New Bioeconomy: Advanced Biofuels](../../../../io/bioeconomy/)  
 [Categories of Biotech Industries](../../../../community/projects/biotech/)  
-[How we add new Technology Categories (like Biofuel)](../../../../io/naics/)  
+[More about Bioeconomy Planner](../../../../io/tools/#bioeconomy)  
 
 
