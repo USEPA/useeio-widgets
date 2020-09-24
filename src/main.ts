@@ -1,3 +1,12 @@
+/**
+ * This is the entry point of the widget API. Exported functions of this module
+ * are available in the global `useeio` variable when the widget library is
+ * imported. It re-exports some other modules so that these are then also
+ * available under the `useeio` variable.
+ *
+ * @packageDocumentation
+ */
+
 import { FilterWidget } from "./widgets/filter";
 import { UrlConfigTransmitter, WidgetArgs } from "./widget";
 import { SectorList } from "./widgets/sector-list/sector-list";
@@ -14,6 +23,21 @@ import { IOList } from "./widgets/sector-list/io-list";
 export * from "./naics";
 export * from "./webapi";
 
+/**
+ * Creates a new model for the given web-API configuration. A `Model` instance
+ * caches the results of API requests and provides additional functions like
+ * aggregating multi-regional sectors. Different widgets that access the same
+ * web-API should use the same `Model` instance for efficiency reasons. Creating
+ * a model instance in JavaScript looks like this:
+ *
+ * ```js
+ * var model = useeio.model({
+ *     endpoint: './api',
+ *     model: modelID,
+ *     asJsonFiles: true,
+ * });
+ * ```
+ */
 export function model(conf: WebApiConfig): Model {
     return new Model(conf);
 }
@@ -22,7 +46,7 @@ export function filterWidget(conf: { selector: string }): FilterWidget {
     return new FilterWidget(conf.selector);
 }
 
-export function urlConfig() {
+export function urlConfig(): UrlConfigTransmitter {
     return new UrlConfigTransmitter();
 }
 
