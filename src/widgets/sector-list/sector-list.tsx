@@ -262,9 +262,7 @@ const Component = (props: { widget: SectorList }) => {
                     ? <DownloadSection widget={props.widget} />
                     : <></>
             }
-            <table style={{
-                marginRight: "80px"
-            }}>
+            <table className="sector-list-table">
                 <thead>
                     <tr className="indicator-row">
                         <ListHeader

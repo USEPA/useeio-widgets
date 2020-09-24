@@ -198,11 +198,14 @@ a:hover {
 .matrix-sub-title {
     clear: both;
     float: left;
-    padding: 5px 0px 10px 5px;
+    padding: 5px 0px 10px 0px;
 }
 
 .matrix-search {
     min-width: 98%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
 }
 
 .arrowdown {
@@ -254,6 +257,11 @@ a:hover {
     font-size: 0.8em;
 }
 
+.sector-list-table {
+    width: 100%;
+    overflow: auto;
+    display:block;
+}
 .sector-list-body a {
     text-decoration: none;
     color: none;
