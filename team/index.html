@@ -73,18 +73,19 @@
     <a href="../communities/">For Communities</a> |
     <a href="../coders/" style="white-space:nowrap;">For Coders & Designers</a> |
     <a href="../learn/" style="white-space:nowrap">For&nbsp;Teachers&nbsp;and&nbsp;Students</a>
+    <br>
 </div>
-<br>
 
 <div style="float:right; white-space: nowrap; padding-top:15px">
-<a href="javascript:$('.bios').shuffleChildren()">Reshuffle our team</a>
+<a id="reshuffle" href="javascript:goHash({'',''});$('.bios').shuffleChildren()">Reshuffle our team</a>
+<a id="expand-team" href="./" style="display:none">Expand Team</a>
 </div>
 
-<h1>Our Team</h1>
+<h1 id="pagetitle" style="margin-bottom:45px">Our Team</h1>
 
 <div class="bios">
 
-<div class="bio">
+<div class="bio presenter">
 <div class="bioimage">
 <img src="img/Wesley-Ingwersen.jpg">
 </div>
@@ -98,7 +99,7 @@ He leads the development of the GA model.
 </div>
 </div>
 
-<div class="bio">
+<div class="bio presenter">
 <div class="bioimage">
 <img src="img/Loren-Kevin-Heyns.jpg">
 </div>
@@ -109,7 +110,7 @@ Loren Heyns is a Computational Science and Civil and Environmental Engineering P
 </div>
 ​</div>
 
-<div class="bio">
+<div class="bio presenter">
 <div class="bioimage">
 <img src="img/Valerie-Thomas.png">
 </div>
@@ -183,7 +184,7 @@ Barbara Alfano is Chief of the PCB & Sustainability Section for the U.S. Environ
 </div>
 <!-- /.bios -->
 
-<div style="clear:both">
+<div class="bio" style="clear:both">
      <h2>Smart Community Partners</h2>
       We're partnering with Georgia Tech's <a href="http://smartcities.gatech.edu/2020-scc-internship-job-descriptions">Smart Community Corps (SCC)</a> graduate students to develop Georgia additions to the USEEIO model.
 </div>
@@ -208,6 +209,16 @@ $(document).ready(function () {
     });
   };
   $(".bios").shuffleChildren();
+
+
+  if(window.location.hash.includes("presenters")) {
+    $(".bio").hide();
+    $(".presenter").show();
+    $("#reshuffle").hide();
+    $("#expand-team").show();
+    $('#pagetitle').text("Industry Comparison Tools for Sustainable Communities");
+    $('.topLinks').hide();
+  }
 });
 </script>
 </body>
