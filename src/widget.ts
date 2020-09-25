@@ -649,7 +649,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
  * simply use the spread operator here (`{...config, ...changes}`) as we may
  * have to update nested scopes recursively.
  */
-const updateConfig = (config: Config, changes: Config) => {
+export const updateConfig = (config: Config, changes: Config) => {
     for (const key of Object.keys(changes)) {
         if (key === "scopes") {
             continue;

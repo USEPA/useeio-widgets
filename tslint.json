@@ -1,15 +1,16 @@
 {
     "extends": "tslint:recommended",
     "rules": {
-        "member-access": false,
+        "interface-name": false,
         "interface-over-type-literal": false,
         "max-classes-per-file": false,
-        "ordered-imports": false,
+        "member-access": false,
+        "no-empty": false,
+        "no-string-literal": false,
         "object-literal-sort-keys": false,
-        "interface-name": false,
         "one-variable-per-declaration": false,
-        "semicolon": true,
+        "ordered-imports": false,
         "quotemark": [true, "double"],
-        "no-empty": false
+        "semicolon": true
     }
 }
