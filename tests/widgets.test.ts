@@ -1,4 +1,4 @@
-import { Config, updateConfig } from "../src/widget";
+import { Config, EventBus, updateConfig, Widget } from "../src/widget";
 
 describe("Configuration updates", () => {
 
@@ -49,4 +49,32 @@ describe("Configuration updates", () => {
         expect(config.scopes["s"].page).toBe(1);
         expect(config.scopes["s"].count).toBe(10);
     });
+});
+
+describe("Test the event bus", () => {
+
+    class MockWidget extends Widget {
+
+        config: Config;
+
+        constructor() {
+            super();
+            this.ready();
+        }
+
+        async handleUpdate(config: Config) {
+            this.config = config;
+        }
+    }
+
+    it("should update another widget", () => {
+        const w1 = new MockWidget();
+        const w2 = new MockWidget();
+        const eventBus = new EventBus();
+        eventBus.join(w1);
+        eventBus.join(w2);
+        w1.fireChange({ page: 42 });
+        expect(w2.config.page).toBe(42);
+    });
+
 });

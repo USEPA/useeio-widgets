@@ -216,12 +216,13 @@ export class EventBus implements ConfigTransmitter {
         }
         this.widgets.push(widget);
         widget.onChanged(change => {
-            this.config = { ...this.config, ...change };
+            updateConfig(this.config, change);
             this.update(this.config);
         });
     }
 
     update(config: Config) {
+        this.config = config;
         for (const widget of this.widgets) {
             widget.update(config);
         }
@@ -340,34 +341,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
 
     update(config: Config) {
         const next: Config = this.get();
-        for (const key of Object.keys(config)) {
-            if (key === "scopes") {
-                continue;
-            }
-            next[key] = config[key];
-        }
-
-        // update scopes
-        if (config.scopes) {
-            if (!next.scopes) {
-                next.scopes = { ...config.scopes };
-            } else {
-                for (const scope of Object.keys(config.scopes)) {
-                    const confScope = config.scopes[scope];
-                    const nextScope = next.scopes[scope];
-                    if (!confScope) {
-                        continue;
-                    }
-                    if (!nextScope) {
-                        next.scopes[scope] = { ...confScope };
-                        continue;
-                    }
-                    for (const key of Object.keys(confScope)) {
-                        nextScope[key] = confScope[key];
-                    }
-                }
-            }
-        }
+        updateConfig(next, config);
         this.config = next;
         this.updateHash();
     }

@@ -8,7 +8,7 @@
  */
 
 import { FilterWidget } from "./widgets/filter";
-import { UrlConfigTransmitter, WidgetArgs } from "./widget";
+import { EventBus, UrlConfigTransmitter, WidgetArgs } from "./widget";
 import { SectorList } from "./widgets/sector-list/sector-list";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SectorDelete } from "./widgets/sector-list";
@@ -48,6 +48,10 @@ export function filterWidget(conf: { selector: string }): FilterWidget {
 
 export function urlConfig(): UrlConfigTransmitter {
     return new UrlConfigTransmitter();
+}
+
+export function eventBus(): EventBus {
+    return new EventBus();
 }
 
 export function impactChart(config: ImpactChartConfig): ImpactChart {
