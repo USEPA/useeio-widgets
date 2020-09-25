@@ -154,8 +154,7 @@ export abstract class Widget {
         }
     }
 
-    protected async handleUpdate(_: Config) {
-    }
+    protected abstract async handleUpdate(_: Config): Promise<void>;
 
     /**
      * If this widget is associated with a scope, this function creates a new

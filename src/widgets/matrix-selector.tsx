@@ -191,7 +191,7 @@ L = get_matrix('L')
 D = get_matrix('D')
 
 # we generate a random demand vector for this example, but typically you
-# would load a demand vector from the USEEIO API 
+# would load a demand vector from the USEEIO API
 n = D.shape[1]
 d = rand.random(n) * 1e6
 
