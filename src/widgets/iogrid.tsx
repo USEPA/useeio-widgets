@@ -125,12 +125,18 @@ export class IOGrid extends Widget {
 
     rankIt(config: Config, direction: "input" | "output"): [Sector, number][] {
 
-        const indices: number[] = [];
+        const indices: [number, number][] = [];
         if (config.sectors) {
-            for (const code of config.sectors) {
-                const idx = this.sectorIndex[code.split(":")[0]];
+            for (const s of config.sectors) {
+                const parts = s.split(":");
+                const code = parts[0];
+                const factor = parts.length < 2
+                    ? 1.0
+                    : parseInt(parts[1]) / 100;
+
+                const idx = this.sectorIndex[code];
                 if (idx !== undefined) {
-                    indices.push(idx);
+                    indices.push([idx, factor]);
                 }
             }
         }
@@ -140,10 +146,11 @@ export class IOGrid extends Widget {
         if (indices.length > 0) {
             for (const i of indices) {
                 const data = direction === "input"
-                    ? this.A.getCol(i)
-                    : this.A.getRow(i);
+                    ? this.A.getCol(i[0])
+                    : this.A.getRow(i[0]);
+                const factor = i[1];
                 data.forEach((value, j) => {
-                    ranking[j][1] += value;
+                    ranking[j][1] += factor * value;
                 });
             }
         }
