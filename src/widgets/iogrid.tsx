@@ -1,11 +1,27 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Slider, Tooltip } from "@material-ui/core";
-import { DataGrid, ColDef } from "@material-ui/data-grid";
+import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
 import { Model, Sector } from "../webapi";
 import { Config, Widget } from "../widget";
 import * as strings from "../util/strings";
+
+type NumMap = { [code: string]: number }
+
+function or<T>(val: T, defaultVal: T): T {
+    return !val
+        ? defaultVal
+        : val;
+}
+
+type Commodity = {
+    id: string,
+    name: string,
+    code: string,
+    selected: boolean,
+    value: number,
+}
 
 export class IOGrid extends Widget {
 
@@ -20,8 +36,11 @@ export class IOGrid extends Widget {
         const sectors = (await this.model.singleRegionSectors()).sectors;
         sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
         ReactDOM.render(
-            <div style={{ height: 500, width: '100%' }}>
-                <CommodityList config={config} sectors={sectors} />
+            <div style={{ height: 500, width: 450 }}>
+                <CommodityList
+                    config={config}
+                    sectors={sectors}
+                    widget={this} />
             </div>,
             document.querySelector(this.selector)
         );
@@ -29,11 +48,10 @@ export class IOGrid extends Widget {
 
 }
 
-type NumMap = { [code: string]: number }
-
 const CommodityList = (props: {
     config: Config,
     sectors: Sector[],
+    widget: Widget,
 }) => {
 
     const selection: NumMap = {};
@@ -48,6 +66,21 @@ const CommodityList = (props: {
             return numMap
         }, selection);
     }
+    const fireSelectionChange = () => {
+        const sectors = Object.keys(selection).map(
+            code => `${code}:${selection[code]}`);
+        props.widget.fireChange({ sectors });
+    };
+
+    const commodities: Commodity[] = props.sectors.map(s => {
+        return {
+            id: s.id,
+            name: s.name,
+            code: s.code,
+            selected: selection[s.code] ? true : false,
+            value: or(selection[s.code], 100),
+        };
+    });
 
     const columns: ColDef[] = [
         {
@@ -56,31 +89,51 @@ const CommodityList = (props: {
             width: 300,
         },
         {
-            field: "code",
+            field: "value",
             headerName: " ",
             width: 100,
-            renderCell: (_params) => {
-                return <SliderCell />
+            renderCell: (params) => {
+                return (
+                    <SliderCell
+                        commodity={params.data as Commodity}
+                        onChange={(code, value) => {
+                            selection[code] = value
+                            fireSelectionChange();
+                        }} />
+                );
             }
         }
     ];
 
+    const onPageChange = (p: PageChangeParams) => {
+        props.widget.fireChange({
+            page: p.page,
+            count: p.pageSize
+        });
+    };
+
     return (
         <DataGrid
             columns={columns}
-            rows={props.sectors}
-            pageSize={10}
-            checkboxSelection
-            onSelectionChange={e => console.log(e.rows)} />
+            rows={commodities}
+            pageSize={or(props.config.count, 10)}
+            page={or(props.config.page, 1)}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageChange} />
     );
 }
 
-const SliderCell = () => {
-    const [value, setValue] = React.useState(100);
+const SliderCell = (props: {
+    commodity: Commodity,
+    onChange: (code: string, value: number) => void
+}) => {
+    const commodity = props.commodity;
     return (
         <Slider
-            value={value}
-            onChange={(_, v) => setValue(v as number)}
+            value={commodity.value}
+            onChange={(_, value) => {
+                props.onChange(commodity.code, value as number);
+            }}
             min={0}
             max={500}
             ValueLabelComponent={SliderTooltip} />
