@@ -128,7 +128,7 @@ export class IOGrid extends Widget {
         const indices: number[] = [];
         if (config.sectors) {
             for (const code of config.sectors) {
-                const idx = this.sectorIndex[code];
+                const idx = this.sectorIndex[code.split(":")[0]];
                 if (idx !== undefined) {
                     indices.push(idx);
                 }
@@ -329,6 +329,21 @@ const IOList = (props: {
             headerName: "Sector",
             width: 300,
         },
+        {
+            field: "ranking",
+            width: 150,
+            renderCell: (params) => {
+                const flow = params.data as IOFlow;
+                return (
+                    <svg height="15" width="50"
+                        style={{ float: "left", clear: "both" }}>
+                        <rect x="0" y="2.5"
+                            height="10" fill="#f50057"
+                            width={50 * (0.05 + 0.95 * flow.ranking)} />
+                    </svg>
+                );
+            }
+        }
     ];
 
     return (
