@@ -19,6 +19,7 @@ import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
 import { IOList } from "./widgets/sector-list/io-list";
+import { IOGrid } from "./widgets/iogrid";
 
 export * from "./naics";
 export * from "./webapi";
@@ -74,6 +75,12 @@ export function inputList(args: WidgetArgs): IOList {
 
 export function outputList(args: WidgetArgs): IOList {
     const widget = new IOList(args.model, "outputs", args.selector);
+    widget.scope = args.scope;
+    return widget;
+}
+
+export function ioGrid(args: WidgetArgs): IOGrid {
+    const widget = new IOGrid(args.model, args.selector);
     widget.scope = args.scope;
     return widget;
 }
