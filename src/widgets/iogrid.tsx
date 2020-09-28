@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Checkbox, Slider, Tooltip } from "@material-ui/core";
+import { Checkbox, Grid, Slider, Tooltip, Typography } from "@material-ui/core";
 import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
 import { Model, Sector } from "../webapi";
@@ -36,12 +36,27 @@ export class IOGrid extends Widget {
         const sectors = (await this.model.singleRegionSectors()).sectors;
         sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
         ReactDOM.render(
-            <div style={{ height: 500, width: 500 }}>
-                <CommodityList
-                    config={config}
-                    sectors={sectors}
-                    widget={this} />
-            </div>,
+            <Grid container spacing={3}>
+                <Grid item style={{ width: "30%", height: 500 }}>
+                    <Typography variant="h6" component="span">
+                        Upstream
+                    </Typography>
+                </Grid>
+                <Grid item style={{ width: "40%", height: 500 }}>
+                    <Typography variant="h6" component="span">
+                        Commodities
+                    </Typography>
+                    <CommodityList
+                        config={config}
+                        sectors={sectors}
+                        widget={this} />
+                </Grid>
+                <Grid item style={{ width: "30%", height: 500 }}>
+                    <Typography variant="h6" component="span">
+                        Downstream
+                    </Typography>
+                </Grid>
+            </Grid>,
             document.querySelector(this.selector)
         );
     }
@@ -152,6 +167,7 @@ const SliderCell = (props: {
     return (
         <Slider
             value={commodity.value}
+            disabled={!commodity.selected}
             onChange={(_, value) => {
                 props.onChange(commodity.code, value as number);
             }}
