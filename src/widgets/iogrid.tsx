@@ -1,13 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Slider, Tooltip } from "@material-ui/core";
+import { Checkbox, Slider, Tooltip } from "@material-ui/core";
 import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
 import { Model, Sector } from "../webapi";
 import { Config, Widget } from "../widget";
 import * as strings from "../util/strings";
 
-type NumMap = { [code: string]: number }
+type NumMap = { [code: string]: number };
 
 function or<T>(val: T, defaultVal: T): T {
     return !val
@@ -21,7 +21,7 @@ type Commodity = {
     code: string,
     selected: boolean,
     value: number,
-}
+};
 
 export class IOGrid extends Widget {
 
@@ -36,7 +36,7 @@ export class IOGrid extends Widget {
         const sectors = (await this.model.singleRegionSectors()).sectors;
         sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
         ReactDOM.render(
-            <div style={{ height: 500, width: 450 }}>
+            <div style={{ height: 500, width: 500 }}>
                 <CommodityList
                     config={config}
                     sectors={sectors}
@@ -45,7 +45,6 @@ export class IOGrid extends Widget {
             document.querySelector(this.selector)
         );
     }
-
 }
 
 const CommodityList = (props: {
@@ -59,16 +58,19 @@ const CommodityList = (props: {
         props.config.sectors.reduce((numMap, code) => {
             const parts = code.split(':');
             if (parts.length < 2) {
-                numMap[code] = 100
+                numMap[code] = 100;
             } else {
-                numMap[parts[0]] = parseInt(parts[1])
+                numMap[parts[0]] = parseInt(parts[1]);
             }
-            return numMap
+            return numMap;
         }, selection);
     }
     const fireSelectionChange = () => {
         const sectors = Object.keys(selection).map(
-            code => `${code}:${selection[code]}`);
+            code => code
+                ? `${code}:${selection[code]}`
+                : null)
+            .filter(s => s ? true : false);
         props.widget.fireChange({ sectors });
     };
 
@@ -84,6 +86,23 @@ const CommodityList = (props: {
 
     const columns: ColDef[] = [
         {
+            field: "selected",
+            width: 50,
+            renderCell: (params) => {
+                const commodity = params.data as Commodity;
+                return <Checkbox
+                    checked={commodity.selected}
+                    onClick={() => {
+                        if (commodity.selected) {
+                            delete selection[commodity.code];
+                        } else {
+                            selection[commodity.code] = 100;
+                        }
+                        fireSelectionChange();
+                    }} />;
+            }
+        },
+        {
             field: "name",
             headerName: "Sector",
             width: 300,
@@ -97,7 +116,7 @@ const CommodityList = (props: {
                     <SliderCell
                         commodity={params.data as Commodity}
                         onChange={(code, value) => {
-                            selection[code] = value
+                            selection[code] = value;
                             fireSelectionChange();
                         }} />
                 );
@@ -119,9 +138,11 @@ const CommodityList = (props: {
             pageSize={or(props.config.count, 10)}
             page={or(props.config.page, 1)}
             onPageChange={onPageChange}
-            onPageSizeChange={onPageChange} />
+            onPageSizeChange={onPageChange}
+            hideFooterSelectedRowCount
+            headerHeight={0} />
     );
-}
+};
 
 const SliderCell = (props: {
     commodity: Commodity,
@@ -138,7 +159,7 @@ const SliderCell = (props: {
             max={500}
             ValueLabelComponent={SliderTooltip} />
     );
-}
+};
 
 const SliderTooltip = (props: {
     children: React.ReactElement,
@@ -155,4 +176,4 @@ const SliderTooltip = (props: {
             {children}
         </Tooltip>
     );
-}
+};
