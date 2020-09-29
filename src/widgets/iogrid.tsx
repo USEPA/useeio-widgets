@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Checkbox, Grid, Slider, Tooltip, Typography } from "@material-ui/core";
+import { Checkbox, Grid, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
 import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
 import { Matrix, Model, Sector } from "../webapi";
@@ -55,28 +55,19 @@ export class IOGrid extends Widget {
         // inputs | commodities | outputs
         ReactDOM.render(
             <Grid container spacing={3}>
-                <Grid item style={{ width: "30%", height: 500 }}>
-                    <Typography variant="h6" component="span">
-                        Upstream
-                    </Typography>
+                <Grid item style={{ width: "30%" }}>
                     <IOList
                         config={config}
                         widget={this}
                         direction="input" />
                 </Grid>
-                <Grid item style={{ width: "40%", height: 500 }}>
-                    <Typography variant="h6" component="span">
-                        Commodities
-                    </Typography>
+                <Grid item style={{ width: "40%" }}>
                     <CommodityList
                         config={config}
                         sectors={this.sectors}
                         widget={this} />
                 </Grid>
-                <Grid item style={{ width: "30%", height: 500 }}>
-                    <Typography variant="h6" component="span">
-                        Downstream
-                    </Typography>
+                <Grid item style={{ width: "30%" }}>
                     <IOList
                         config={config}
                         widget={this}
@@ -316,17 +307,29 @@ const CommodityList = (props: {
     };
 
     return (
-        <DataGrid
-            columns={columns}
-            rows={commodities}
-            pageSize={ifNone(props.config.count, 10)}
-            page={ifNone(props.config.page, 1)}
-            onPageChange={onPageChange}
-            onPageSizeChange={onPageChange}
-            rowsPerPageOptions={[10, 20, 30, 50, 100]}
-            hideFooterSelectedRowCount
-            hideFooterRowCount
-            headerHeight={0} />
+        <Grid container direction="column" spacing={2}>
+            <Grid item>
+                <Typography variant="h6" component="span">
+                    Commodities
+            </Typography>
+            </Grid>
+            <Grid item>
+                <TextField placeholder="Search" style={{ width: "100%" }} />
+            </Grid>
+            <Grid item style={{ width: "100%", height: 600 }}>
+                <DataGrid
+                    columns={columns}
+                    rows={commodities}
+                    pageSize={ifNone(props.config.count, 10)}
+                    page={ifNone(props.config.page, 1)}
+                    onPageChange={onPageChange}
+                    onPageSizeChange={onPageChange}
+                    rowsPerPageOptions={[10, 20, 30, 50, 100]}
+                    hideFooterSelectedRowCount
+                    hideFooterRowCount
+                    headerHeight={0} />
+            </Grid>
+        </Grid>
     );
 };
 
@@ -387,12 +390,26 @@ const IOList = (props: {
     ];
 
     return (
-        <DataGrid
-            columns={columns}
-            rows={flows}
-            pageSize={props.config.count}
-            hideFooterSelectedRowCount
-            hideFooterRowCount
-            headerHeight={0} />
+        <Grid container direction="column" spacing={2}>
+            <Grid item>
+                <Typography variant="h6" component="span">
+                    {props.direction == "input"
+                        ? "Upstream"
+                        : "Downstream"}
+                </Typography>
+            </Grid>
+            <Grid item>
+                <TextField placeholder="Search" style={{ width: "100%" }} />
+            </Grid>
+            <Grid item style={{ width: "100%", height: 600 }}>
+                <DataGrid
+                    columns={columns}
+                    rows={flows}
+                    pageSize={props.config.count}
+                    hideFooterSelectedRowCount
+                    hideFooterRowCount
+                    headerHeight={0} />
+            </Grid>
+        </Grid>
     );
 };
