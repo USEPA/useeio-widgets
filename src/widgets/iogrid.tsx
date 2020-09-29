@@ -6,15 +6,11 @@ import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 import { Matrix, Model, Sector } from "../webapi";
 import { Config, Widget } from "../widget";
 import * as strings from "../util/strings";
+import { TMap, ifNone, isNotNone } from "../util/util";
 
-type NumMap = { [code: string]: number };
-
-function or<T>(val: T, defaultVal: T): T {
-    return !val
-        ? defaultVal
-        : val;
-}
-
+/**
+ * The row type of the commodity list.
+ */
 type Commodity = {
     id: string,
     name: string,
@@ -23,11 +19,25 @@ type Commodity = {
     value: number,
 };
 
+/**
+ * The row type of the input or output list.
+ */
+type IOFlow = {
+    id: string,
+    name: string,
+    ranking: number,
+};
+
+/**
+ * A widget with 3 columns: inputs (upstream flows), commodities, and outputs
+ * (downstream flows). The inputs and outputs are computed based on the
+ * commodity selection and the direct coefficients matrix `A`. 
+ */
 export class IOGrid extends Widget {
 
-    A: Matrix;
-    sectors: Sector[];
-    sectorIndex: { [code: string]: number };
+    private techMatrix: Matrix;
+    private sectors: Sector[];
+    private sectorIndex: { [code: string]: number };
 
     constructor(
         private model: Model,
@@ -37,10 +47,12 @@ export class IOGrid extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        if (!this.A) {
-            await this.initFields();
+        if (!this.techMatrix) {
+            await this.initialize();
         }
 
+        // render the three columns:
+        // inputs | commodities | outputs
         ReactDOM.render(
             <Grid container spacing={3}>
                 <Grid item style={{ width: "30%", height: 500 }}>
@@ -75,22 +87,27 @@ export class IOGrid extends Widget {
         );
     }
 
-    private async initFields() {
+    private async initialize() {
         const rawSectors = await this.model.sectors();
         const rawA = await this.model.matrix("A");
         const isMultiRegional = await this.model.isMultiRegional();
+
         if (!isMultiRegional) {
-            this.A = rawA;
+            this.techMatrix = rawA;
             this.sectors = rawSectors;
         } else {
+
+            // in case of multi-regional model, we need aggregated the
+            // m*m multi-regional matrix A to a n*n single region matrix
+            // TODO: this needs to consider sector shares so that the
+            // resulting columns are based on one unit of output! e.g.,
+            // a demand vector could be used to calculate these shares
             const { index, sectors } = await this.model.singleRegionSectors();
             this.sectors = sectors;
 
-            // we aggregate the m*m multi-regional matrix to a n*n single
-            // region matrix
             const m = rawSectors.length;
             const n = sectors.length;
-            this.A = Matrix.zeros(n, n);
+            this.techMatrix = Matrix.zeros(n, n);
             for (let rawRow = 0; rawRow < m; rawRow++) {
                 const rowCode = rawSectors[rawRow].code;
                 const row = index[rowCode];
@@ -107,8 +124,8 @@ export class IOGrid extends Widget {
                     if (col === undefined) {
                         continue;
                     }
-                    const sum = this.A.get(row, col) + val;
-                    this.A.set(row, col, sum);
+                    const sum = this.techMatrix.get(row, col) + val;
+                    this.techMatrix.set(row, col, sum);
                 }
             }
         }
@@ -123,9 +140,14 @@ export class IOGrid extends Widget {
         this.sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
     }
 
-    rankIt(config: Config, direction: "input" | "output"): [Sector, number][] {
+    /**
+     * Computes an input or output ranking based on the given sector
+     * configuration. 
+     */
+    rank(config: Config, direction: "input" | "output"): IOFlow[] {
 
-        const indices: [number, number][] = [];
+        // compute the sector index and scaling factor pairs
+        const pairs: [number, number][] = [];
         if (config.sectors) {
             for (const s of config.sectors) {
                 const parts = s.split(":");
@@ -135,24 +157,31 @@ export class IOGrid extends Widget {
                     : parseInt(parts[1]) / 100;
 
                 const idx = this.sectorIndex[code];
-                if (idx !== undefined) {
-                    indices.push([idx, factor]);
+                if (isNotNone(idx)) {
+                    pairs.push([idx, factor]);
                 }
             }
         }
 
-        const ranking: [Sector, number][] = this.sectors.map(
-            sector => [sector, 0]);
-        if (indices.length > 0) {
-            for (const i of indices) {
-                const data = direction === "input"
-                    ? this.A.getCol(i[0])
-                    : this.A.getRow(i[0]);
-                const factor = i[1];
-                data.forEach((value, j) => {
-                    ranking[j][1] += factor * value;
-                });
-            }
+        // initialize the ranking; not that the sectors
+        // may are sorted by name, so we use the sector
+        // indices for the matrix -> sector -> ranking
+        // mappings below
+        const n = this.sectors.length;
+        const ranking: [Sector, number][] = new Array(n);
+        for (const sector of this.sectors) {
+            ranking[sector.index] = [sector, 0];
+        }
+
+        // put the scaled values into the rankings
+        for (const pair of pairs) {
+            const data = direction === "input"
+                ? this.techMatrix.getCol(pair[0])
+                : this.techMatrix.getRow(pair[0]);
+            const factor = pair[1];
+            data.forEach((value, i) => {
+                ranking[i][1] += factor * value;
+            });
         }
 
         // normalize the ranking value to a range [0..1]
@@ -164,14 +193,21 @@ export class IOGrid extends Widget {
             }
         }
 
+        // sort the ranking
         ranking.sort((elem1, elem2) => elem1[1] !== elem2[1]
             ? elem2[1] - elem1[1]
             : strings.compare(elem1[0].name, elem2[0].name)
         );
 
-        return ranking;
+        // map the ranking to flows and return it
+        return ranking.map(([sector, ranking]) => {
+            return {
+                id: sector.id,
+                name: sector.name,
+                ranking,
+            };
+        });
     }
-
 }
 
 const CommodityList = (props: {
@@ -180,7 +216,7 @@ const CommodityList = (props: {
     widget: Widget,
 }) => {
 
-    const selection: NumMap = {};
+    const selection: TMap<number> = {};
     if (props.config.sectors) {
         props.config.sectors.reduce((numMap, code) => {
             const parts = code.split(':');
@@ -207,7 +243,7 @@ const CommodityList = (props: {
             name: s.name,
             code: s.code,
             selected: selection[s.code] ? true : false,
-            value: or(selection[s.code], 100),
+            value: ifNone(selection[s.code], 100),
         };
     });
 
@@ -262,8 +298,8 @@ const CommodityList = (props: {
         <DataGrid
             columns={columns}
             rows={commodities}
-            pageSize={or(props.config.count, 10)}
-            page={or(props.config.page, 1)}
+            pageSize={ifNone(props.config.count, 10)}
+            page={ifNone(props.config.page, 1)}
             onPageChange={onPageChange}
             onPageSizeChange={onPageChange}
             rowsPerPageOptions={[10, 20, 30, 50, 100]}
@@ -308,27 +344,14 @@ const SliderTooltip = (props: {
     );
 };
 
-type IOFlow = {
-    id: string,
-    name: string,
-    ranking: number,
-};
-
 const IOList = (props: {
     config: Config,
     widget: IOGrid,
     direction: "input" | "output"
 }) => {
 
-    const ranking: IOFlow[] = props.widget.rankIt(
-        props.config, props.direction)
-        .map(([sector, ranking]) => {
-            return {
-                id: sector.id,
-                name: sector.name,
-                ranking,
-            };
-        });
+    const flows: IOFlow[] = props.widget.rank(
+        props.config, props.direction);
 
     const columns: ColDef[] = [
         {
@@ -356,11 +379,10 @@ const IOList = (props: {
     return (
         <DataGrid
             columns={columns}
-            rows={ranking}
+            rows={flows}
             pageSize={props.config.count}
             hideFooterSelectedRowCount
             hideFooterRowCount
             headerHeight={0} />
     );
-
 };
