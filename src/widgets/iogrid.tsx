@@ -210,12 +210,20 @@ export class IOGrid extends Widget {
     }
 }
 
+/**
+ * Creates the list with the commodities for which the inputs and outputs
+ * should be computed.
+ */
 const CommodityList = (props: {
     config: Config,
     sectors: Sector[],
     widget: Widget,
 }) => {
 
+    // collect the selected sectors and their
+    // scaling factors from the configuration
+    // and store them in a map:
+    // sector code -> factor
     const selection: TMap<number> = {};
     if (props.config.sectors) {
         props.config.sectors.reduce((numMap, code) => {
@@ -228,6 +236,9 @@ const CommodityList = (props: {
             return numMap;
         }, selection);
     }
+
+    // fire a change in the sector selection
+    // based on the current selection state
     const fireSelectionChange = () => {
         const sectors = Object.keys(selection).map(
             code => code
@@ -237,6 +248,7 @@ const CommodityList = (props: {
         props.widget.fireChange({ sectors });
     };
 
+    // map the sectors to commodity objects
     const commodities: Commodity[] = props.sectors.map(s => {
         return {
             id: s.id,
@@ -247,8 +259,10 @@ const CommodityList = (props: {
         };
     });
 
+    // create the column definitions of the data grid.
     const columns: ColDef[] = [
         {
+            // the check box with click handler
             field: "selected",
             width: 50,
             renderCell: (params) => {
@@ -266,22 +280,29 @@ const CommodityList = (props: {
             }
         },
         {
+            // sector name
             field: "name",
             headerName: "Sector",
             width: 300,
         },
         {
+            // the slider for the scaling factor
             field: "value",
             headerName: " ",
             width: 100,
             renderCell: (params) => {
+                const commodity = params.data as Commodity;
                 return (
-                    <SliderCell
-                        commodity={params.data as Commodity}
-                        onChange={(code, value) => {
-                            selection[code] = value;
+                    <Slider
+                        value={commodity.value}
+                        disabled={!commodity.selected}
+                        onChange={(_, value) => {
+                            selection[commodity.code] = value as number;
                             fireSelectionChange();
-                        }} />
+                        }}
+                        min={0}
+                        max={500}
+                        ValueLabelComponent={SliderTooltip} />
                 );
             }
         }
@@ -309,24 +330,9 @@ const CommodityList = (props: {
     );
 };
 
-const SliderCell = (props: {
-    commodity: Commodity,
-    onChange: (code: string, value: number) => void
-}) => {
-    const commodity = props.commodity;
-    return (
-        <Slider
-            value={commodity.value}
-            disabled={!commodity.selected}
-            onChange={(_, value) => {
-                props.onChange(commodity.code, value as number);
-            }}
-            min={0}
-            max={500}
-            ValueLabelComponent={SliderTooltip} />
-    );
-};
-
+/**
+ * A custom tooltip for the slider values.
+ */
 const SliderTooltip = (props: {
     children: React.ReactElement,
     open: boolean,
@@ -344,6 +350,9 @@ const SliderTooltip = (props: {
     );
 };
 
+/**
+ * Generates the list with input or output flows.
+ */
 const IOList = (props: {
     config: Config,
     widget: IOGrid,
@@ -360,6 +369,7 @@ const IOList = (props: {
             width: 300,
         },
         {
+            // the bar
             field: "ranking",
             width: 150,
             renderCell: (params) => {
