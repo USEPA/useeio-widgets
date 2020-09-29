@@ -211,6 +211,8 @@ const CommodityList = (props: {
     widget: Widget,
 }) => {
 
+    const [searchTerm, setSearchTerm] = React.useState<string>("");
+
     // collect the selected sectors and their
     // scaling factors from the configuration
     // and store them in a map:
@@ -240,7 +242,7 @@ const CommodityList = (props: {
     };
 
     // map the sectors to commodity objects
-    const commodities: Commodity[] = props.sectors.map(s => {
+    let commodities: Commodity[] = props.sectors.map(s => {
         return {
             id: s.id,
             name: s.name,
@@ -249,6 +251,11 @@ const CommodityList = (props: {
             value: ifNone(selection[s.code], 100),
         };
     });
+
+    if (strings.isNotEmpty(searchTerm)) {
+        commodities = commodities.filter(
+            c => strings.search(c.name, searchTerm) !== -1);
+    }
 
     // create the column definitions of the data grid.
     const columns: ColDef[] = [
@@ -314,7 +321,11 @@ const CommodityList = (props: {
             </Typography>
             </Grid>
             <Grid item>
-                <TextField placeholder="Search" style={{ width: "100%" }} />
+                <TextField
+                    placeholder="Search"
+                    style={{ width: "100%" }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)} />
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
@@ -362,8 +373,14 @@ const IOList = (props: {
     direction: "input" | "output"
 }) => {
 
-    const flows: IOFlow[] = props.widget.rank(
+    const [searchTerm, setSearchTerm] = React.useState<string>("");
+
+    let flows: IOFlow[] = props.widget.rank(
         props.config, props.direction);
+    if (strings.isNotEmpty(searchTerm)) {
+        flows = flows.filter(
+            f => strings.search(f.name, searchTerm) !== -1);
+    }
 
     const columns: ColDef[] = [
         {
@@ -399,7 +416,11 @@ const IOList = (props: {
                 </Typography>
             </Grid>
             <Grid item>
-                <TextField placeholder="Search" style={{ width: "100%" }} />
+                <TextField
+                    placeholder="Search"
+                    style={{ width: "100%" }}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)} />
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
