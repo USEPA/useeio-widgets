@@ -573,7 +573,7 @@ const CommoditySortMenu = (props: {
                 props.setSortBy("indicator");
                 props.setIndicator(indicator);
             }}>
-                {indicator.name}
+                {indicator.simplename || indicator.name}
             </MenuItem>
         );
     }
