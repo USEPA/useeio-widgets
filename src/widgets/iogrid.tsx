@@ -1,13 +1,24 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Box, Checkbox, Grid, IconButton, Menu, MenuItem, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
+import {
+    Checkbox,
+    Grid,
+    IconButton,
+    Menu,
+    MenuItem,
+    Slider,
+    TextField,
+    Tooltip,
+    Typography,
+} from "@material-ui/core";
 import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
-import { Matrix, Model, Sector } from "../webapi";
+import { Indicator, Matrix, Model, Sector } from "../webapi";
 import { Config, Widget } from "../widget";
 import * as strings from "../util/strings";
-import { TMap, ifNone, isNotNone } from "../util/util";
-import { MoreVert, Sort } from "@material-ui/icons";
+import { TMap, ifNone, isNotNone, isNone } from "../util/util";
+import { Sort } from "@material-ui/icons";
+import { zeros } from "../calc/calc";
 
 /**
  * The row type of the commodity list.
@@ -37,9 +48,11 @@ type IOFlow = {
  */
 export class IOGrid extends Widget {
 
-    private techMatrix: Matrix;
     private sectors: Sector[];
     private sectorIndex: { [code: string]: number };
+    private indicators: Indicator[];
+    private techMatrix: Matrix;
+    private directImpacts: Matrix;
 
     constructor(
         private model: Model,
@@ -83,15 +96,20 @@ export class IOGrid extends Widget {
     private async initialize() {
         const rawSectors = await this.model.sectors();
         const rawA = await this.model.matrix("A");
+        const rawD = await this.model.matrix("D");
         const isMultiRegional = await this.model.isMultiRegional();
+        this.indicators = await this.model.indicators();
 
         if (!isMultiRegional) {
-            this.techMatrix = rawA;
             this.sectors = rawSectors;
+            this.techMatrix = rawA;
+            this.directImpacts = rawD;
         } else {
 
             // in case of multi-regional model, we need aggregated the
             // m*m multi-regional matrix A to a n*n single region matrix
+            // and the k*m multi-regional matrix D to a k*n single region
+            // matrix
             // TODO: this needs to consider sector shares so that the
             // resulting columns are based on one unit of output! e.g.,
             // a demand vector could be used to calculate these shares
@@ -104,7 +122,7 @@ export class IOGrid extends Widget {
             for (let rawRow = 0; rawRow < m; rawRow++) {
                 const rowCode = rawSectors[rawRow].code;
                 const row = index[rowCode];
-                if (row === undefined) {
+                if (isNone(row)) {
                     continue;
                 }
                 for (let rawCol = 0; rawCol < m; rawCol++) {
@@ -114,11 +132,28 @@ export class IOGrid extends Widget {
                     }
                     const colCode = rawSectors[rawCol].code;
                     const col = index[colCode];
-                    if (col === undefined) {
+                    if (isNone(col)) {
                         continue;
                     }
                     const sum = this.techMatrix.get(row, col) + val;
                     this.techMatrix.set(row, col, sum);
+                }
+            }
+
+            this.directImpacts = Matrix.zeros(rawD.rows, n);
+            for (let i = 0; i < rawD.rows; i++) {
+                for (let j = 0; j < rawD.cols; j++) {
+                    const val = rawD.get(i, j);
+                    if (!val) {
+                        continue;
+                    }
+                    const colCode = rawSectors[j].code;
+                    const col = index[colCode];
+                    if (isNone(col)) {
+                        continue;
+                    }
+                    const sum = this.directImpacts.get(i, col) + val;
+                    this.techMatrix.set(i, col, sum);
                 }
             }
         }
@@ -131,6 +166,7 @@ export class IOGrid extends Widget {
             return idx;
         }, this.sectorIndex);
         this.sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
+        this.indicators.sort((i1, i2) => strings.compare(i1.name, i2.name));
     }
 
     /**
@@ -200,6 +236,12 @@ export class IOGrid extends Widget {
                 ranking,
             };
         });
+    }
+
+    public getIndicatorResults(indicator: Indicator): number[] {
+        return !indicator
+            ? zeros(this.sectors.length)
+            : this.directImpacts.getRow(indicator.index);
     }
 }
 
@@ -467,14 +509,22 @@ const sortCommodities = (commodities: Commodity[], config: {
     values?: number[]
 }) => {
     return commodities.sort((c1, c2) => {
+
+        // selected items first
         if (config.by === "selection" && c1.selected !== c2.selected) {
             return c1.selected ? -1 : 1;
         }
-        if (config.by === "alphabetical" || !config.values) {
-            return strings.compare(c1.name, c2.name);
+
+        // larger indicator contributions first
+        if (config.by === "indicator" && config.values) {
+            const val1 = config.values[c1.index];
+            const val2 = config.values[c2.index];
+            if (val1 !== val2) {
+                return val2 - val1;
+            }
         }
-        const val1 = config.values[c1.index];
-        const val2 = config.values[c2.index];
-        return val2 - val1;
+
+        // sort alphabetically by default
+        return strings.compare(c1.name, c2.name);
     });
 };
