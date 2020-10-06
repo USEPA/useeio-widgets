@@ -80,6 +80,7 @@ export class IOGrid extends Widget {
                     <CommodityList
                         config={config}
                         sectors={this.sectors}
+                        indicators={this.indicators}
                         widget={this} />
                 </Grid>
                 <Grid item style={{ width: "30%" }}>
@@ -252,11 +253,9 @@ export class IOGrid extends Widget {
 const CommodityList = (props: {
     config: Config,
     sectors: Sector[],
-    widget: Widget,
+    indicators: Indicator[],
+    widget: IOGrid,
 }) => {
-
-    const [searchTerm, setSearchTerm] = React.useState<string>("");
-    const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
 
     // collect the selected sectors and their
     // scaling factors from the configuration
@@ -286,6 +285,14 @@ const CommodityList = (props: {
         props.widget.fireChange({ sectors });
     };
 
+    // initialize the states
+    const [searchTerm, setSearchTerm] = React.useState<string>("");
+    const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
+    const [indicator, setIndicator] = React.useState<null | Indicator>(null);
+    const emptySelection = Object.keys(selection).length === 0;
+    const [sortBy, setSortBy] = React.useState<SortByType>(
+        emptySelection ? "alphabetical" : "selection");
+
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
         return {
@@ -296,6 +303,12 @@ const CommodityList = (props: {
             selected: selection[s.code] ? true : false,
             value: ifNone(selection[s.code], 100),
         };
+    });
+    sortCommodities(commodities, {
+        by: sortBy,
+        values: sortBy === "indicator" && indicator
+            ? props.widget.getIndicatorResults(indicator)
+            : undefined,
     });
 
     if (strings.isNotEmpty(searchTerm)) {
@@ -386,8 +399,12 @@ const CommodityList = (props: {
                         keepMounted
                         open={menuElem ? true : false}
                         onClose={() => setMenuElem(null)}>
-                        <MenuItem onClick={() => setMenuElem(null)}>Selected first</MenuItem>
-                        <MenuItem onClick={() => setMenuElem(null)}>Alphabetical</MenuItem>
+                        <CommoditySortMenu
+                            withSelection={!emptySelection}
+                            indicators={[]}
+                            setIndicator={setIndicator}
+                            setMenuElem={setMenuElem}
+                            setSortBy={setSortBy} />
                     </Menu>
                 </div>
             </Grid>
@@ -504,8 +521,63 @@ const IOList = (props: {
     );
 };
 
+type SortByType =
+    "alphabetical"
+    | "selection"
+    | "indicator";
+
+const CommoditySortMenu = (props: {
+    withSelection: boolean,
+    indicators: Indicator[],
+    setMenuElem: (elem: null | HTMLElement) => void,
+    setSortBy: (sorter: SortByType) => void,
+    setIndicator: (indicator: Indicator) => void
+}) => {
+
+    const items: JSX.Element[] = [];
+
+    if (props.withSelection) {
+        // sort by selection
+        items.push(
+            <MenuItem onClick={() => {
+                props.setMenuElem(null); // close
+                props.setSortBy("selection");
+                props.setIndicator(null);
+            }}>
+                Selected first
+            </MenuItem>
+        );
+    }
+
+    // alphabetical sorting
+    items.push(
+        <MenuItem onClick={() => {
+            props.setMenuElem(null); // close
+            props.setSortBy("alphabetical");
+            props.setIndicator(null);
+        }}>
+            Alphabetical
+        </MenuItem>
+    );
+
+    // sort items for the indicators
+    for (const indicator of props.indicators) {
+        items.push(
+            <MenuItem onClick={() => {
+                props.setMenuElem(null); // close
+                props.setSortBy("indicator");
+                props.setIndicator(indicator);
+            }}>
+                Alphabetical
+            </MenuItem>
+        );
+    }
+
+    return <>{items}</>;
+};
+
 const sortCommodities = (commodities: Commodity[], config: {
-    by: "alphabetical" | "selection" | "indicator",
+    by: SortByType,
     values?: number[]
 }) => {
     return commodities.sort((c1, c2) => {
