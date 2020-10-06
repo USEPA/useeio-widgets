@@ -1,13 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Box, Checkbox, Grid, IconButton, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Checkbox, Grid, IconButton, Menu, MenuItem, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
 import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
 import { Matrix, Model, Sector } from "../webapi";
 import { Config, Widget } from "../widget";
 import * as strings from "../util/strings";
 import { TMap, ifNone, isNotNone } from "../util/util";
-import { MoreVert } from "@material-ui/icons";
+import { MoreVert, Sort } from "@material-ui/icons";
 
 /**
  * The row type of the commodity list.
@@ -213,6 +213,7 @@ const CommodityList = (props: {
 }) => {
 
     const [searchTerm, setSearchTerm] = React.useState<string>("");
+    const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
 
     // collect the selected sectors and their
     // scaling factors from the configuration
@@ -323,14 +324,27 @@ const CommodityList = (props: {
             </Grid>
             <Grid item>
                 <div style={{ display: "flex" }}>
-                    <IconButton>
-                        <MoreVert />
-                    </IconButton>
                     <TextField
                         placeholder="Search"
                         style={{ width: "100%" }}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
+                    <IconButton
+                        aria-label="Sort by..."
+                        aria-controls="commodity-sort-menu"
+                        aria-haspopup="true"
+                        onClick={e => setMenuElem(e.currentTarget)}>
+                        <Sort />
+                    </IconButton>
+                    <Menu
+                        id="commodity-sort-menu"
+                        anchorEl={menuElem}
+                        keepMounted
+                        open={menuElem ? true : false}
+                        onClose={() => setMenuElem(null)}>
+                        <MenuItem onClick={() => setMenuElem(null)}>Selected first</MenuItem>
+                        <MenuItem onClick={() => setMenuElem(null)}>Alphabetical</MenuItem>
+                    </Menu>
                 </div>
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
@@ -423,14 +437,14 @@ const IOList = (props: {
             </Grid>
             <Grid item>
                 <div style={{ display: "flex" }}>
-                    <IconButton>
-                        <MoreVert />
-                    </IconButton>
                     <TextField
                         placeholder="Search"
                         style={{ width: "100%" }}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)} />
+                    <IconButton>
+                        <Sort />
+                    </IconButton>
                 </div>
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
