@@ -398,10 +398,15 @@ const CommodityList = (props: {
                         anchorEl={menuElem}
                         keepMounted
                         open={menuElem ? true : false}
-                        onClose={() => setMenuElem(null)}>
+                        onClose={() => setMenuElem(null)}
+                        PaperProps={{
+                            style: {
+                                maxHeight: 48 * 4.5,
+                            },
+                        }}>
                         <CommoditySortMenu
                             withSelection={!emptySelection}
-                            indicators={[]}
+                            indicators={props.indicators}
                             setIndicator={setIndicator}
                             setMenuElem={setMenuElem}
                             setSortBy={setSortBy} />
@@ -568,7 +573,7 @@ const CommoditySortMenu = (props: {
                 props.setSortBy("indicator");
                 props.setIndicator(indicator);
             }}>
-                Alphabetical
+                {indicator.name}
             </MenuItem>
         );
     }
