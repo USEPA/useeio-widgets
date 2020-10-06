@@ -14,6 +14,7 @@ import { MoreVert, Sort } from "@material-ui/icons";
  */
 type Commodity = {
     id: string,
+    index: number,
     name: string,
     code: string,
     selected: boolean,
@@ -247,6 +248,7 @@ const CommodityList = (props: {
     let commodities: Commodity[] = props.sectors.map(s => {
         return {
             id: s.id,
+            index: s.index,
             name: s.name,
             code: s.code,
             selected: selection[s.code] ? true : false,
@@ -458,4 +460,21 @@ const IOList = (props: {
             </Grid>
         </Grid>
     );
+};
+
+const sortCommodities = (commodities: Commodity[], config: {
+    by: "alphabetical" | "selection" | "indicator",
+    values?: number[]
+}) => {
+    return commodities.sort((c1, c2) => {
+        if (config.by === "selection" && c1.selected !== c2.selected) {
+            return c1.selected ? -1 : 1;
+        }
+        if (config.by === "alphabetical" || !config.values) {
+            return strings.compare(c1.name, c2.name);
+        }
+        const val1 = config.values[c1.index];
+        const val2 = config.values[c2.index];
+        return val2 - val1;
+    });
 };
