@@ -25,6 +25,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/data-grid": "^4.0.0-alpha.6",
+    "@material-ui/icons": "^4.9.1",
     "apexcharts": "^3.19.0",
     "d3": "^5.15.0",
     "react": "^16.13.1",

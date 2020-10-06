@@ -1,12 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Checkbox, Grid, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Box, Checkbox, Grid, IconButton, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
 import { DataGrid, ColDef, PageChangeParams } from "@material-ui/data-grid";
 
 import { Matrix, Model, Sector } from "../webapi";
 import { Config, Widget } from "../widget";
 import * as strings from "../util/strings";
 import { TMap, ifNone, isNotNone } from "../util/util";
+import { MoreVert } from "@material-ui/icons";
 
 /**
  * The row type of the commodity list.
@@ -321,11 +322,16 @@ const CommodityList = (props: {
             </Typography>
             </Grid>
             <Grid item>
-                <TextField
-                    placeholder="Search"
-                    style={{ width: "100%" }}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)} />
+                <div style={{ display: "flex" }}>
+                    <IconButton>
+                        <MoreVert />
+                    </IconButton>
+                    <TextField
+                        placeholder="Search"
+                        style={{ width: "100%" }}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)} />
+                </div>
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
@@ -416,11 +422,16 @@ const IOList = (props: {
                 </Typography>
             </Grid>
             <Grid item>
-                <TextField
-                    placeholder="Search"
-                    style={{ width: "100%" }}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)} />
+                <div style={{ display: "flex" }}>
+                    <IconButton>
+                        <MoreVert />
+                    </IconButton>
+                    <TextField
+                        placeholder="Search"
+                        style={{ width: "100%" }}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)} />
+                </div>
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
