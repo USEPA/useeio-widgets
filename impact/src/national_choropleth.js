@@ -44,7 +44,8 @@ const zoom = d3.zoom()
     .scaleExtent([1,8])
     .on("zoom", zoomed)
 
-svg1.call(zoom)
+// Omitted to prevent zooming when scrolling:
+//svg1.call(zoom)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // CHART 2 Canvas
