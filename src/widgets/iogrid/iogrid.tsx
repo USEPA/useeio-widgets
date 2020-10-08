@@ -24,14 +24,15 @@ import { CommodityList } from "./commodity-list";
 type IOFlow = {
     id: string,
     name: string,
-    ranking: number,
+    value: number,
+    share: number,
 };
 
 const Currency = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
 });
 
 /**
@@ -178,7 +179,6 @@ export class IOGrid extends Widget {
                 const factor = parts.length < 2
                     ? 1.0
                     : parseInt(parts[1]) / 100;
-
                 const idx = this.sectorIndex[code];
                 if (isNotNone(idx)) {
                     pairs.push([idx, factor]);
@@ -191,9 +191,9 @@ export class IOGrid extends Widget {
         // indices for the matrix -> sector -> ranking
         // mappings below
         const n = this.sectors.length;
-        const ranking: [Sector, number][] = new Array(n);
+        const sectorValues: [Sector, number][] = new Array(n);
         for (const sector of this.sectors) {
-            ranking[sector.index] = [sector, 0];
+            sectorValues[sector.index] = [sector, 0];
         }
 
         // put the scaled values into the rankings
@@ -203,33 +203,27 @@ export class IOGrid extends Widget {
                 : this.techMatrix.getRow(pair[0]);
             const factor = pair[1];
             data.forEach((value, i) => {
-                ranking[i][1] += factor * value;
+                sectorValues[i][1] += factor * value;
             });
         }
 
-        // normalize the ranking value to a range [0..1]
-        const max = ranking.reduce(
-            (m, elem) => Math.max(Math.abs(m), elem[1]), 0);
-        if (max > 0) {
-            for (const elem of ranking) {
-                elem[1] /= max;
-            }
-        }
-
-        // sort the ranking
-        ranking.sort((elem1, elem2) => elem1[1] !== elem2[1]
-            ? elem2[1] - elem1[1]
-            : strings.compare(elem1[0].name, elem2[0].name)
-        );
-
-        // map the ranking to flows and return it
-        return ranking.map(([sector, ranking]) => {
+        const total = direction === "input"
+            ? pairs.reduce((t, pair) => t + pair[1], 0)
+            : sectorValues.reduce((t, sval) => t + sval[1], 0);
+        const max = sectorValues.reduce(
+            (m, sval) => Math.max(m, Math.abs(sval[1])), 0);
+        const flows: IOFlow[] = sectorValues.map(([sector, value]) => {
             return {
                 id: sector.id,
                 name: sector.name,
-                ranking,
+                value: total ? value / total : 0,
+                share: max ? value / max : 0,
             };
         });
+        flows.sort((f1, f2) => f1.share !== f2.share
+            ? f2.share - f1.share
+            : strings.compare(f1.name, f2.name));
+        return flows;
     }
 
     public getIndicatorResults(indicator: Indicator): number[] {
@@ -269,15 +263,16 @@ const IOList = (props: {
             width: 150,
             renderCell: (params) => {
                 const flow = params.data as IOFlow;
+                const title = Currency.format(flow.value)
+                    + " " + props.direction
+                    + " per " + Currency.format(1);
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
-                        <title>
-                            {Currency.format(flow.ranking)} per {Currency.format(1)} of output
-                        </title>
+                        <title>{title}</title>
                         <rect x="0" y="2.5"
                             height="10" fill="#f50057"
-                            width={50 * (0.05 + 0.95 * flow.ranking)} />
+                            width={50 * (0.05 + 0.95 * flow.share)} />
                     </svg>
                 );
             }
