@@ -4,11 +4,11 @@ import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
 import { ifNone, isNotNone, TMap } from "../../util/util";
-import { Checkbox, Grid, IconButton, Menu, MenuItem, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
+import { Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
 
 import * as strings from "../../util/strings";
 import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
-import { Sort } from "@material-ui/icons";
+import { FiberManualRecord, RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
 
 /**
  * The row type of the commodity list.
@@ -228,6 +228,7 @@ export const CommodityList = (props: {
                         }}>
                         <CommoditySortMenu
                             withSelection={!emptySelection}
+                            currentSorter={indicator ? indicator : sortBy}
                             indicators={
                                 filterIndicators(props.indicators, props.config)
                             }
@@ -276,6 +277,7 @@ const SliderTooltip = (props: {
 
 const CommoditySortMenu = (props: {
     withSelection: boolean,
+    currentSorter: SortByType | Indicator,
     indicators: Indicator[],
     setMenuElem: (elem: null | HTMLElement) => void,
     setSortBy: (sorter: SortByType) => void,
@@ -283,6 +285,14 @@ const CommoditySortMenu = (props: {
 }) => {
 
     const items: JSX.Element[] = [];
+
+    const icon = (sorter: SortByType | Indicator) => {
+        const i = sorter === props.currentSorter
+            ? <RadioButtonChecked fontSize="small" color="secondary" />
+            : <RadioButtonUnchecked fontSize="small" color="secondary" />;
+        return <ListItemIcon>{i}</ListItemIcon>;
+    };
+
 
     if (props.withSelection) {
         // sort by selection
@@ -294,6 +304,7 @@ const CommoditySortMenu = (props: {
                     props.setSortBy("selection");
                     props.setIndicator(null);
                 }}>
+                {icon("selection")}
                 Selected First
             </MenuItem>
         );
@@ -308,6 +319,7 @@ const CommoditySortMenu = (props: {
                 props.setSortBy("alphabetical");
                 props.setIndicator(null);
             }}>
+            {icon("alphabetical")}
             Alphabetical
         </MenuItem>
     );
@@ -322,6 +334,7 @@ const CommoditySortMenu = (props: {
                     props.setSortBy("indicator");
                     props.setIndicator(indicator);
                 }}>
+                {icon(indicator)}
                 By {indicator.simplename || indicator.name}
             </MenuItem>
         );
