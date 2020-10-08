@@ -38,7 +38,7 @@ type Commodity = {
     value: number,
 };
 
-type SortByType =
+type SortBy =
     "alphabetical"
     | "selection"
     | "indicator";
@@ -92,7 +92,7 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const [indicator, setIndicator] = React.useState<null | Indicator>(null);
     const emptySelection = Object.keys(selection).length === 0;
-    const [sortBy, setSortBy] = React.useState<SortByType>(
+    const [sortBy, setSortBy] = React.useState<SortBy>(
         emptySelection ? "alphabetical" : "selection");
 
     // get the indicator results if an indicator was selected
@@ -242,7 +242,7 @@ export const CommodityList = (props: {
                                 maxHeight: 48 * 4.5,
                             },
                         }}>
-                        <CommoditySortMenu
+                        <SortMenu
                             withSelection={!emptySelection}
                             currentSorter={indicator ? indicator : sortBy}
                             indicators={
@@ -291,18 +291,18 @@ const SliderTooltip = (props: {
     );
 };
 
-const CommoditySortMenu = React.forwardRef((props: {
+const SortMenu = React.forwardRef((props: {
     withSelection: boolean,
-    currentSorter: SortByType | Indicator,
+    currentSorter: SortBy | Indicator,
     indicators: Indicator[],
     setMenuElem: (elem: null | HTMLElement) => void,
-    setSortBy: (sorter: SortByType) => void,
+    setSortBy: (sorter: SortBy) => void,
     setIndicator: (indicator: Indicator) => void
 }, _ref) => {
 
     const items: JSX.Element[] = [];
 
-    const icon = (sorter: SortByType | Indicator) => {
+    const icon = (sorter: SortBy | Indicator) => {
         const i = sorter === props.currentSorter
             ? <RadioButtonChecked fontSize="small" color="secondary" />
             : <RadioButtonUnchecked fontSize="small" color="secondary" />;
@@ -359,7 +359,7 @@ const CommoditySortMenu = React.forwardRef((props: {
 });
 
 const sortCommodities = (commodities: Commodity[], config: {
-    by: SortByType,
+    by: SortBy,
     values?: number[]
 }) => {
     return commodities.sort((c1, c2) => {
