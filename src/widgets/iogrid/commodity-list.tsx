@@ -275,14 +275,14 @@ const SliderTooltip = (props: {
     );
 };
 
-const CommoditySortMenu = (props: {
+const CommoditySortMenu = React.forwardRef((props: {
     withSelection: boolean,
     currentSorter: SortByType | Indicator,
     indicators: Indicator[],
     setMenuElem: (elem: null | HTMLElement) => void,
     setSortBy: (sorter: SortByType) => void,
     setIndicator: (indicator: Indicator) => void
-}) => {
+}, _ref) => {
 
     const items: JSX.Element[] = [];
 
@@ -292,7 +292,6 @@ const CommoditySortMenu = (props: {
             : <RadioButtonUnchecked fontSize="small" color="secondary" />;
         return <ListItemIcon>{i}</ListItemIcon>;
     };
-
 
     if (props.withSelection) {
         // sort by selection
@@ -341,7 +340,7 @@ const CommoditySortMenu = (props: {
     }
 
     return <>{items}</>;
-};
+});
 
 const sortCommodities = (commodities: Commodity[], config: {
     by: SortByType,
