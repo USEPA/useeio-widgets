@@ -246,11 +246,13 @@ const CommoditySortMenu = (props: {
     if (props.withSelection) {
         // sort by selection
         items.push(
-            <MenuItem onClick={() => {
-                props.setMenuElem(null); // close
-                props.setSortBy("selection");
-                props.setIndicator(null);
-            }}>
+            <MenuItem
+                key="sort-by-selection"
+                onClick={() => {
+                    props.setMenuElem(null); // close
+                    props.setSortBy("selection");
+                    props.setIndicator(null);
+                }}>
                 Selected First
             </MenuItem>
         );
@@ -258,11 +260,13 @@ const CommoditySortMenu = (props: {
 
     // alphabetical sorting
     items.push(
-        <MenuItem onClick={() => {
-            props.setMenuElem(null); // close
-            props.setSortBy("alphabetical");
-            props.setIndicator(null);
-        }}>
+        <MenuItem
+            key="sort-alphabetically"
+            onClick={() => {
+                props.setMenuElem(null); // close
+                props.setSortBy("alphabetical");
+                props.setIndicator(null);
+            }}>
             Alphabetical
         </MenuItem>
     );
@@ -270,11 +274,13 @@ const CommoditySortMenu = (props: {
     // sort items for the indicators
     for (const indicator of props.indicators) {
         items.push(
-            <MenuItem onClick={() => {
-                props.setMenuElem(null); // close
-                props.setSortBy("indicator");
-                props.setIndicator(indicator);
-            }}>
+            <MenuItem
+                key={`sort-by-${indicator.code}`}
+                onClick={() => {
+                    props.setMenuElem(null); // close
+                    props.setSortBy("indicator");
+                    props.setIndicator(indicator);
+                }}>
                 By {indicator.simplename || indicator.name}
             </MenuItem>
         );

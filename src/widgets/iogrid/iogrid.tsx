@@ -27,6 +27,13 @@ type IOFlow = {
     ranking: number,
 };
 
+const Currency = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+});
+
 /**
  * A widget with 3 columns: inputs (upstream flows), commodities, and outputs
  * (downstream flows). The inputs and outputs are computed based on the
@@ -265,6 +272,9 @@ const IOList = (props: {
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
+                        <title>
+                            {Currency.format(flow.ranking)} per {Currency.format(1)} of output
+                        </title>
                         <rect x="0" y="2.5"
                             height="10" fill="#f50057"
                             width={50 * (0.05 + 0.95 * flow.ranking)} />
