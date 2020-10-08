@@ -1,14 +1,30 @@
 import * as React from "react";
 
+import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
+import {
+    Checkbox,
+    Grid,
+    IconButton,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Slider,
+    TextField,
+    Tooltip,
+    Typography,
+} from "@material-ui/core";
+
+import {
+    RadioButtonChecked,
+    RadioButtonUnchecked,
+    Sort,
+} from "@material-ui/icons";
+
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
 import { ifNone, isNotNone, TMap } from "../../util/util";
-import { Checkbox, Grid, IconButton, ListItemIcon, Menu, MenuItem, Slider, TextField, Tooltip, Typography } from "@material-ui/core";
-
 import * as strings from "../../util/strings";
-import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
-import { FiberManualRecord, RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
 
 /**
  * The row type of the commodity list.
