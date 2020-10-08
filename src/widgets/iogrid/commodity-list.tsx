@@ -36,6 +36,7 @@ type Commodity = {
     code: string,
     selected: boolean,
     value: number,
+    description?: string,
 };
 
 type SortBy =
@@ -112,6 +113,7 @@ export const CommodityList = (props: {
             code: s.code,
             selected: selection[s.code] ? true : false,
             value: ifNone(selection[s.code], 100),
+            description: s.description,
         };
     });
     sortCommodities(commodities, {
@@ -136,6 +138,7 @@ export const CommodityList = (props: {
                 const commodity = params.data as Commodity;
                 return <Checkbox
                     checked={commodity.selected}
+                    title={commodity.description}
                     onClick={() => {
                         if (commodity.selected) {
                             delete selection[commodity.code];

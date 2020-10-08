@@ -1,14 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import {
-    Grid,
-    IconButton,
-    TextField,
-    Typography,
-} from "@material-ui/core";
-import { DataGrid, ColDef } from "@material-ui/data-grid";
-import { Sort } from "@material-ui/icons";
+import { Grid} from "@material-ui/core";
 
 import { Indicator, Matrix, Model, Sector } from "../../webapi";
 import { Config, Widget } from "../../widget";
