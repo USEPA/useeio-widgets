@@ -27,6 +27,11 @@ type SortByType =
     | "selection"
     | "indicator";
 
+const IndicatorValue = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+});
+
 /**
  * Creates the list with the commodities for which the inputs and outputs
  * should be computed.
@@ -74,6 +79,14 @@ export const CommodityList = (props: {
     const [sortBy, setSortBy] = React.useState<SortByType>(
         emptySelection ? "alphabetical" : "selection");
 
+    // get the indicator results if an indicator was selected
+    const indicatorResults = indicator
+        ? props.widget.getIndicatorResults(indicator)
+        : null;
+    const maxIndicatorResult = indicatorResults
+        ? indicatorResults.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+        : undefined;
+
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
         return {
@@ -88,7 +101,7 @@ export const CommodityList = (props: {
     sortCommodities(commodities, {
         by: sortBy,
         values: sortBy === "indicator" && indicator
-            ? props.widget.getIndicatorResults(indicator)
+            ? indicatorResults
             : undefined,
     });
 
@@ -145,6 +158,34 @@ export const CommodityList = (props: {
             }
         }
     ];
+
+    // add a result indicator when the list is sorted
+    // by indicator results
+    if (indicatorResults) {
+        columns.push({
+            field: "code",
+            width: 100,
+            renderCell: (params) => {
+                const commodity = params.data as Commodity;
+                const result = indicatorResults[commodity.index];
+                const share = maxIndicatorResult
+                    ? result / maxIndicatorResult
+                    : 0;
+                return (
+                    <svg height="25" width="25">
+                        <title>
+                            {IndicatorValue.format(result)} {
+                                indicator.simpleunit || indicator.unit
+                            }
+                        </title>
+                        <circle cx="12.5" cy="12.5"
+                            r={2 + 7 * share}
+                            fill="#f50057" />
+                    </svg>
+                );
+            },
+        });
+    }
 
     const onPageChange = (p: PageChangeParams) => {
         props.widget.fireChange({
