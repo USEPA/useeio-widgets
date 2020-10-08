@@ -19,7 +19,7 @@ import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
 import { IOList } from "./widgets/sector-list/io-list";
-import { IOGrid } from "./widgets/iogrid";
+import { IOGrid } from "./widgets/iogrid/iogrid";
 
 export * from "./naics";
 export * from "./webapi";
