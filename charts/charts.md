@@ -25,6 +25,7 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 ### Widget Starter Samples
 
 [Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery  
+[Commodities - Input and Output](https://useeiowidgets.imfast.io/slider.html#sectors=321100:100,322110:100,322120:100,322130:100,322210:100,322220:100,322291:100&page=1&count=15) - Adding to page above soon  
 [Local Map - PPE Suppliers](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
 [Local Map - Farm Fresh Produce](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
 
