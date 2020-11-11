@@ -24,8 +24,10 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 
 ### Widget Starter Samples
 
-[Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery  
-[Commodities - Input and Output](https://useeiowidgets.imfast.io/slider.html#sectors=321100:100,322110:100,322120:100,322130:100,322210:100,322220:100,322291:100&page=1&count=15) - Adding to page above soon  
+[Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery 
+
+[Input and Output Chart](../build/slider.html#sectors=321100:100,322110:100,322120:100,322130:100,322210:100,322220:100,322291:100&page=1&count=15) - 
+[imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=321100:100,322110:100,322120:100,322130:100,322210:100,322220:100,322291:100&page=1&count=15) - Adding to page above soon  
 [Local Map - PPE Suppliers](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
 [Local Map - Farm Fresh Produce](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
 
@@ -87,6 +89,7 @@ these tools).
 
 The first step is to install the build tools and dependencies.  
 Note: Use <code>cd useeio-widgets</code> instead if you are working with a direct fork.  
+You can optionally right-click the io folder and choose "New Terminal at Folder" on a Mac.  
 
 ```
 cd io
@@ -124,6 +127,10 @@ To view these examples locally, you'll need some data that you can download from
 [USEEIO API](https://github.com/USEPA/USEEIO_API) via the following:
 
 **Sandbox test server (staging)**
+
+
+The following is returning a 404 error (on Nov 11, 2020). 
+Instead copy the priot "build/app" folder into the new build folder.  
 
 ```
 npm run download -- --endpoint https://smmtool.app.cloud.gov/api
