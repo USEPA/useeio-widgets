@@ -42,7 +42,7 @@ Developed in React using the [USEEIO-widgets repo](https://github.com/USEPA/usee
 [Sankey Chart](sankey/) - D3 with Python prep  
 
 View widgets built using React at [https://model.earth/io/build](https://model.earth/io/build)  
-The [io/build](https://github.com/modelearth/io/tree/master/build) GitHub folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
+The [io/build](https://github.com/modelearth/io/tree/master/build) GitHub folder contains a copy of the [useeio-widgets build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
 
 <!--
 If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
@@ -70,9 +70,10 @@ from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 You can build the USEEIO React widgets locally.  Start with the following repo:
 
 [https://github.com/modelearth/io](https://github.com/modelearth/io)  
+The io repo contains a fork of [useeio-widgets](https://github.com/usepa/useeio-widgets), plus a built copy and extras.  
 
-Also clone the [https://github.com/localsite/localsite](https://github.com/localsite/localsite) repo and place it adjacent to the "io"
-repo.  Here's info on [getting started on localhost](../../localsite/start/).
+Also clone the [https://github.com/localsite/localsite](https://github.com/localsite/localsite) repo and place it adjacent to the "io" repo.  
+Here's info on [getting localhost setup on your local computer](../../localsite/start/).
 
 <!--After building the widgets, you will need an API key to download the industry sector data JSON files, or you can copy the JSON files from the pre-built static copy. Post an issue to request a key.  -->
 
@@ -84,8 +85,8 @@ commands are available in your systems path (you can test this via `node -v` and
 `npm -v` on the command line which should give you the respective version of
 these tools). 
 
-The first step is to install the build tools and dependencies.
-Use <code>cd useeio-widgets</code> if you are working with a direct fork.  
+The first step is to install the build tools and dependencies.  
+Note: Use <code>cd useeio-widgets</code> instead if you are working with a direct fork.  
 
 ```
 cd io
