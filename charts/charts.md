@@ -52,7 +52,9 @@ If your local widgets reference the "useeio" folder, they may need to be updated
 -->
 
 
-## Widget front-end settings
+## Option 1: Embed Widgets
+
+You may embed using a [pre-built static copy](../build). 
 
 Using the static output, you can set parameters in the URL or javascript to control the display of the widgets.  
 
@@ -63,15 +65,20 @@ You can use the Github links for embedding.
 from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 -->
 
-## Build the EEIO Widgets (React)
+## Option 2: Build Widgets Locally (React)
 
-The USEEIO widgets may be built using the steps below, or you may embed a [pre-built static copy](../build).  
+You can build the USEEIO React widgets locally.  Start with the following repo:
+
+[https://github.com/modelearth/io](https://github.com/modelearth/io)  
+
+Also clone the [https://github.com/localsite/localsite](https://github.com/localsite/localsite) repo and place it adjacent to the "io"
+repo.  Here's info on [getting started on localhost](../../localsite/start/).
 
 <!--After building the widgets, you will need an API key to download the industry sector data JSON files, or you can copy the JSON files from the pre-built static copy. Post an issue to request a key.  -->
 
 ---
 
-To build the widgets you'll need a current version of
+To build the React widgets locally you'll need a current version of
 [Node.js](https://nodejs.org) installed. Make sure that the `node` and `npm`
 commands are available in your systems path (you can test this via `node -v` and
 `npm -v` on the command line which should give you the respective version of
