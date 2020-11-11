@@ -80,6 +80,10 @@ export function isNullOrEmpty(s: string): boolean {
     return s.trim().length === 0;
 }
 
+export function isNotEmpty(s: string): boolean{
+    return !isNullOrEmpty(s);
+}
+
 export function isMember(x: string, xs: string[]): boolean {
     if (!xs) {
         return false;

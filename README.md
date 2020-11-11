@@ -2,7 +2,7 @@
 
 A collection of Javascript widgets with HTML integration examples
 to simplify the use and display of results and data from USEEIO models
-in web pages. [View Widget Starter Samples](https://modelearth.github.io/io/charts/)
+in web pages. [View Widget Starter Samples](https://useeiowidgets.imfast.io/)
 
 This repository includes the source code for these widgets 
 . See the build instructions and details of their use on the [Wiki](https://github.com/USEPA/useeio-widgets/wiki/).
@@ -12,7 +12,7 @@ This repository includes the source code for these widgets
 |Name|Type|Description|
 |---|---|---|
 | Configuration test | Test| A widget to test that the widgets will correctly query the selected model and data from the API |
- | Analysis Settings | Selector| A series of dropdown menus to select model calculation options|
+| Analysis Settings | Selector| A series of dropdown menus to select model calculation options|
 | Sector Selector | Selector| Allows for selection of multiple sectors from a list|
 | Impact Chart| Graphic| A panel of bar charts of relative impact for each available indicator|
 | Environmental Profile Chart| Graphic| An interactive and downloadable vertical bar chart of scores by indicator|

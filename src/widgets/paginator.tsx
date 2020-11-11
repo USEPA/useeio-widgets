@@ -116,7 +116,7 @@ const PageSelector = (props: PaginatorProps) => {
     if (page > 1) {
         items.push(
             <td className="paginator-previous"  key="paginator-previous">
-                <a onClick={() => goTo(page - 1)}>Previous</a>
+                <a onClick={() => goTo(page - 1)}>Prev</a>
             </td>
         );
     }

@@ -73,7 +73,7 @@ const Paginator = (props: {
         links.push(
             <a key="paginator-prev"
                 onClick={() => goTo(page - 1)}>
-                Previous
+                Prev
             </a>
         );
     }
