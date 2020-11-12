@@ -1,8 +1,13 @@
 # Embeddable IO Widgets
 
-## Environmentally-Enabled <span style="white-space:nowrap">Input-Output Model</span>
+[Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet, JQuery and React  
+[PPE Supplier Map](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
+[Farm Fresh Produce Map](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
+
 
 <!--
+## Environmentally-Enabled <span style="white-space:nowrap">Input-Output Model</span>
+
 In RStudio
 Tools > Install Packages > devtools
 
@@ -22,29 +27,23 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 </div>
 
 
-### Widget Starter Samples
+## React Widgets
 
-[Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery 
+The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 
-[Input and Output Chart](../build/slider.html#sectors=322130,325520,327910,541200) - 
-[imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200) - Adding to page above soon  
-[Local Map - PPE Suppliers](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
-[Local Map - Farm Fresh Produce](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
+[Industry Input-Output Chart](../build/slider.html#sectors=322130,325520,327910,541200) - 
+[imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)  
+[Sector List - Mosaic](../build/sector_list.html?view=mosaic&count=50)  
+[Sector List - One indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)<!--
+[Sector List IO - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
+[Industry Impact Bars with Configuration](../build/impact_chart_config.html)  -->  
+[More React widgets](../build/)  
 
-**Sector List (BEA Commodities/Industries)**  
-Developed in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
-[Goods & Services - Industry List and Mosaic Heatmap](../build/sector_list.html?view=mosaic&count=50)  
-[Goods & Services - Bars for one indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)   
-[Goods & Services - Inflow and Outflow - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
-[Industry Impact Bars with Configuration](../build/impact_chart_config.html)  
-[More Input-Output Widgets](../build/)  
-
+## JQuery Widgets
 
 [Impact Bubble Chart](bubble/) - D3 and JQuery  
 [Sankey Chart](sankey/) - D3 with Python prep  
 
-View widgets built using React at [https://model.earth/io/build](https://model.earth/io/build)  
-The [io/build](https://github.com/modelearth/io/tree/master/build) GitHub folder contains a copy of the [useeio-widgets build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
 
 <!--
 If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
@@ -52,7 +51,10 @@ If your local widgets reference the "useeio" folder, they may need to be updated
 
 ([old version](https://model.earth/eeio/build.2020.001), [pre-React](https://model.earth/eeio/build.2020.003) and [new version](useeio)) 
 -->
+<br>
 
+
+# Add or Edit Widgets
 
 ## Option 1: Embed Widgets
 
