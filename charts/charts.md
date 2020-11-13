@@ -69,7 +69,7 @@ You can use the Github links for embedding.
 from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 -->
 
-## Option 2: Build Widgets Locally (React)
+## Option 2: Build and Edit Widgets Locally (React)
 
 You can build the USEEIO React widgets locally.  Start with the following repo:
 
