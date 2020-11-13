@@ -143,9 +143,6 @@ a:hover {
 .useeio-settings-widget {
     border: lightgray solid 1px;
     border-radius: 5px;
-    width: 100%;
-    max-width: 750px;
-    margin: auto;
     padding: 15px;
 }
 
@@ -198,11 +195,14 @@ a:hover {
 .matrix-sub-title {
     clear: both;
     float: left;
-    padding: 5px 0px 10px 5px;
+    padding: 5px 0px 10px 0px;
 }
 
 .matrix-search {
     min-width: 98%;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
 }
 
 .arrowdown {
@@ -254,6 +254,13 @@ a:hover {
     font-size: 0.8em;
 }
 
+.sector-list-table {
+    width: 100%;
+    display:block;
+}
+.ioColumnInside .sector-list-table {
+   overflow: auto; /* prevents overlap of right side */
+}
 .sector-list-body a {
     text-decoration: none;
     color: none;
@@ -267,6 +274,56 @@ a:hover {
 
 .indicator-value {
     font-size: .9em;
+}
+
+/*
+table {
+  border-spacing: 0px;
+}
+input[type="search" i] {
+    padding-left: 0px;
+}
+*/
+.indicator-row {
+  height: auto;
+}
+.ioColumns {
+  width:100%;
+  overflow: hidden; /* Allows bottom padding to apply after float:left columns */
+}
+.ioColumn {
+  width:33.33%;
+  float:left;
+  margin-bottom: 0px;
+  font-size: 12px;
+}
+/*
+.full .ioColumn {
+  width:100%;
+}
+.two .ioColumn {
+  width:50%;
+}
+*/
+.ioColumnInside {
+  position: relative;
+  padding-left: 22px;
+  margin-right:30px;
+  border: 1px solid rgba(255,255,255,0);
+}
+.ioColumnTitle {
+  font-size: 1.27em;
+  line-height: 1.3em;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+@media (max-width:1200px) {
+  .ioColumn, .two .ioColumn {
+    width:100%;
+  }
+  .ioColumnInside {
+    margin-bottom:20px;
+  }
 }
 
 .noborder {

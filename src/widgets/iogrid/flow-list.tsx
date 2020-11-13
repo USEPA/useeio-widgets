@@ -72,7 +72,7 @@ export const FlowList = (props: {
                         style={{ float: "left", clear: "both" }}>
                         <title>{title}</title>
                         <rect x="0" y="2.5"
-                            height="10" fill="#f50057"
+                            height="10" fill="#f5005AIzaSyCVxSSf3qiNcQCOVDuBF19ms3rL7b6J_N47"
                             width={50 * (0.05 + 0.95 * flow.share)} />
                     </svg>
                 );
