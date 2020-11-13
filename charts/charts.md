@@ -1,8 +1,13 @@
 # Embeddable IO Widgets
 
-## Environmentally-Enabled <span style="white-space:nowrap">Input-Output Model</span>
+[Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet, JQuery and React  
+[PPE Supplier Map](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
+[Farm Fresh Produce Map](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
+
 
 <!--
+## Environmentally-Enabled <span style="white-space:nowrap">Input-Output Model</span>
+
 In RStudio
 Tools > Install Packages > devtools
 
@@ -22,27 +27,23 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 </div>
 
 
-### Widget Starter Samples
+## React Widgets
 
-[Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet and JQuery  
-[Commodities - Input and Output](https://useeiowidgets.imfast.io/slider.html#sectors=321100:100,322110:100,322120:100,322130:100,322210:100,322220:100,322291:100&page=1&count=15) - Adding to page above soon  
-[Local Map - PPE Suppliers](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
-[Local Map - Farm Fresh Produce](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
+The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 
-**Sector List (BEA Commodities/Industries)**  
-Developed in React using the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
-[Goods & Services - Industry List and Mosaic Heatmap](../build/sector_list.html?view=mosaic&count=50)  
-[Goods & Services - Bars for one indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)   
-[Goods & Services - Inflow and Outflow - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
-[Industry Impact Bars with Configuration](../build/impact_chart_config.html)  
-[More Input-Output Widgets](../build/)  
+[Industry Input-Output Chart](../build/slider.html#sectors=322130,325520,327910,541200) - 
+[imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)  
+[Sector List - Mosaic](../build/sector_list.html?view=mosaic&count=50)  
+[Sector List - One indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)<!--
+[Sector List IO - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
+[Industry Impact Bars with Configuration](../build/impact_chart_config.html)  -->  
+[More React widgets](../build/)  
 
+## JQuery Widgets
 
 [Impact Bubble Chart](bubble/) - D3 and JQuery  
 [Sankey Chart](sankey/) - D3 with Python prep  
 
-View widgets built using React at [https://model.earth/io/build](https://model.earth/io/build)  
-The [io/build](https://github.com/modelearth/io/tree/master/build) GitHub folder contains a copy of the [useeio-widgets React nodeJS build](https://github.com/USEPA/useeio-widgets/wiki) which is documented below.  
 
 <!--
 If your local widgets reference the "useeio" folder, they may need to be updated occasionally as parameters change. For stability, point your local widgets at one of the [numbered backups](https://model.earth/eeio/build.2020.002) or copy the useeio folder into your project.
@@ -50,7 +51,10 @@ If your local widgets reference the "useeio" folder, they may need to be updated
 
 ([old version](https://model.earth/eeio/build.2020.001), [pre-React](https://model.earth/eeio/build.2020.003) and [new version](useeio)) 
 -->
+<br>
 
+
+# Add or Edit Widgets
 
 ## Option 1: Embed Widgets
 
@@ -65,14 +69,15 @@ You can use the Github links for embedding.
 from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 -->
 
-## Option 2: Build Widgets Locally (React)
+## Option 2: Build and Edit Widgets Locally (React)
 
 You can build the USEEIO React widgets locally.  Start with the following repo:
 
 [https://github.com/modelearth/io](https://github.com/modelearth/io)  
+The io repo contains a fork of [useeio-widgets](https://github.com/usepa/useeio-widgets), plus a built copy and extras.  
 
-Also clone the [https://github.com/localsite/localsite](https://github.com/localsite/localsite) repo and place it adjacent to the "io"
-repo.  Here's info on [getting started on localhost](../../localsite/start/).
+Also clone the [https://github.com/localsite/localsite](https://github.com/localsite/localsite) repo and place it adjacent to the "io" repo.  
+Here's info on [getting localhost setup on your local computer](../../localsite/start/).
 
 <!--After building the widgets, you will need an API key to download the industry sector data JSON files, or you can copy the JSON files from the pre-built static copy. Post an issue to request a key.  -->
 
@@ -84,8 +89,9 @@ commands are available in your systems path (you can test this via `node -v` and
 `npm -v` on the command line which should give you the respective version of
 these tools). 
 
-The first step is to install the build tools and dependencies.
-Use <code>cd useeio-widgets</code> if you are working with a direct fork.  
+The first step is to install the build tools and dependencies.  
+Note: Use <code>cd useeio-widgets</code> instead if you are working with a direct fork.  
+You can optionally right-click the io folder and choose "New Terminal at Folder" on a Mac.  
 
 ```
 cd io
@@ -123,6 +129,10 @@ To view these examples locally, you'll need some data that you can download from
 [USEEIO API](https://github.com/USEPA/USEEIO_API) via the following:
 
 **Sandbox test server (staging)**
+
+
+The following is returning a 404 error (on Nov 11, 2020). 
+Instead copy the priot "build/app" folder into the new build folder.  
 
 ```
 npm run download -- --endpoint https://smmtool.app.cloud.gov/api

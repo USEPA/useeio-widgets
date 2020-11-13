@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>IO Tables</title>
+    <title>IO Tables with Config</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="widgets.css">
@@ -11,6 +11,17 @@
 
 <body>
     <div style="margin: 25px;">
+
+        <div style="max-width: 750px; margin: auto;">
+            <h1 class="text-center">IO Tables with configuration</h1>
+            <p style="font-size:0.95em">
+                The settings box and IO tables are linked
+                via a hash configuration on this page.
+            </p>
+
+            <div class="useeio-settings-widget">
+            </div>
+        </div><br>
 
         <div class="ioColumns">
 
@@ -58,6 +69,11 @@
             asJsonFiles: true,
         });
 
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '.useeio-settings-widget',
+        });
+
         var inputs = useeio.inputList({
             model: model,
             selector: '#inputs',
@@ -76,6 +92,7 @@
         config.withDefaults({
             count: 10,
         });
+        config.join(settings);
         config.join(inputs);
         config.join(sectorList);
         config.join(outputs);
@@ -112,6 +129,12 @@
 
         document.querySelector('#sector-list')
             .setAttribute('data-naics', naics);
+
+        config.updateIfAbsent({
+            perspective: 'direct',
+            analysis: 'Consumption',
+            sectors: ['334111', '334210', '334220'],
+        });
 
     </script>
 
