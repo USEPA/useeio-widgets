@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import { Config, Widget } from "../widget";
-import { Indicator, Sector, Matrix, Model, DemandInfo } from "../webapi";
+import { Indicator, Sector, Model, DemandInfo } from "../webapi";
 import * as colors from "../util/colors";
 import * as conf from "../config";
 import { SectorAnalysis } from "../calc/sector-analysis";

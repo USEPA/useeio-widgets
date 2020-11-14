@@ -53,7 +53,7 @@ async function fetch(path) {
     return new Promise((resolve, reject) => {
 
         const url = `${endpoint}${path}`;
-        console.log(`fetch data from ${url}`)
+        console.log(`fetch data from ${url}`);
         const options = {};
         if (apikey) {
             options.headers = {
@@ -146,6 +146,9 @@ async function download(modelID) {
         if (!fs.existsSync(targetDir)) {
             fs.mkdirSync(targetDir);
         }
+        fetch('/sectorcrosswalk.csv').then(csv => {
+            fs.writeFile(targetDir + '/sectorcrosswalk.csv', csv, () => { });
+        });
         const modelText = await fetch('/models');
         fs.writeFile(targetDir + '/models.json', modelText, () => { });
         const models = JSON.parse(modelText);
@@ -153,7 +156,7 @@ async function download(modelID) {
             download(model.id);
         }
     } catch (e) {
-        console.log('Download failed:')
+        console.log('Download failed:');
         console.log(e);
     }
 })();

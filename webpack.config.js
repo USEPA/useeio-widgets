@@ -30,36 +30,41 @@ const config = {
     },
 
     plugins: [
-        new CopyPlugin([
-            { from: 'src/**/*.html', to: buildDir, flatten: true },
-            { from: 'src/**/*.css', to: buildDir, flatten: true },
-            {
-                from: 'node_modules/d3/dist/d3.min.js',
-                to: buildDir + '/lib/d3.min.js', type: 'file'
-            },
-            {
-                from: 'node_modules/apexcharts/dist/apexcharts.min.js',
-                to: buildDir + '/lib/apexcharts.min.js', type: 'file'
-            },
-            {
-                from: 'node_modules/apexcharts/dist/apexcharts.css',
-                to: buildDir + '/lib/apexcharts.css', type: 'file'
-            },
-            /*
-            // We compile React into the generated library but we could
-            // also reference it as an external dependency (see below). 
-            // This would be useful when React is already available in
-            // the page where the widgets whould be included.
-            {
-                from: 'node_modules/react/umd/react.production.min.js',
-                to: buildDir + '/lib/react.production.min.js', toType: 'file'
-            },
-            {
-                from: 'node_modules/react-dom/umd/react-dom.production.min.js',
-                to: buildDir + '/lib/react-dom.production.min.js', toType: 'file'
-            },
-            */
-        ]),
+        new CopyPlugin({
+            patterns: [
+                { from: 'src/**/*.html', to: buildDir, flatten: true },
+                { from: 'src/**/*.css', to: buildDir, flatten: true },
+                {
+                    from: 'node_modules/d3/dist/d3.min.js',
+                    to: buildDir + '/lib/d3.min.js',
+                    toType: 'file',
+                },
+                {
+                    from: 'node_modules/apexcharts/dist/apexcharts.min.js',
+                    to: buildDir + '/lib/apexcharts.min.js', 
+                    toType: 'file'
+                },
+                {
+                    from: 'node_modules/apexcharts/dist/apexcharts.css',
+                    to: buildDir + '/lib/apexcharts.css', 
+                    toType: 'file'
+                },
+                /*
+                // We compile React into the generated library but we could
+                // also reference it as an external dependency (see below). 
+                // This would be useful when React is already available in
+                // the page where the widgets whould be included.
+                {
+                    from: 'node_modules/react/umd/react.production.min.js',
+                    to: buildDir + '/lib/react.production.min.js', toType: 'file'
+                },
+                {
+                    from: 'node_modules/react-dom/umd/react-dom.production.min.js',
+                    to: buildDir + '/lib/react-dom.production.min.js', toType: 'file'
+                },
+                */
+            ]
+        }),
     ],
 
     externals: {

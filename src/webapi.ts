@@ -185,6 +185,16 @@ export interface Indicator {
      * The indicator group.
      */
     group: IndicatorGroup;
+
+    /**
+     * A simplefied name of the indicator.
+     */
+    simplename: string;
+
+    /**
+     * A simple name for the indicator unit.
+     */
+    simpleunit: string;
 }
 
 /**
