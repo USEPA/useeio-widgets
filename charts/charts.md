@@ -141,6 +141,10 @@ This will mirror the static data of the Staging API into the `build/api` folder 
 
 Sometimes you may need to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
 
+Note: Every 90 days the staging server requires a reboot, contact [Wes](https://github.com/WesIngwersen) to restart.  
+If the '/api' address returns 404, you can use the staging 
+<a href="https://smmtool.app.cloud.gov/" target="_blank">endpoint overview</a> to see if it is online.  
+
 You may optionall [request the key](https://github.com/USEPA/USEEIO_API/wiki/Use-the-API) to the production API to run the following:  
 
 ```
@@ -151,14 +155,13 @@ Production API (Requires API key, what's the URL format?)
 <a href="https://api.edap-cluster.com/" target="_blank">endpoint overview</a>
 </div>
 
+Learn more about [using the USEEIO API](https://github.com/USEPA/USEEIO_API/wiki/Use-the-API)
+
 After generating build/api folder from the production API:  
 1. Duplicate USEEIOv1.2 to USEEIO for existing script in non-React widgets.  
 2. Duplicate USEEIOv1.2 to GAUSEEIO since GA data currently only resides on the staging server.  
 
 
-Note: Every 90 days the staging server requires a reboot, contact [Wes](https://github.com/WesIngwersen) to restart.  
-If the '/api' address returns 404, you can use the staging 
-<a href="https://smmtool.app.cloud.gov/" target="_blank">endpoint overview</a> to see if it is online.  
 
 You now have two options for viewing the widgets locally.
 
