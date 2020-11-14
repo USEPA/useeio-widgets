@@ -146,14 +146,19 @@ You may optionall [request the key](https://github.com/USEPA/USEEIO_API/wiki/Use
 ```
 npm run download -- --endpoint https://api.edap-cluster.com/useeio/api --apikey [Add API key here]
 ```
+<div class="local" style="display:none; margin-bottom:20px">
+Production API (Requires API key, what's the URL format?) 
+<a href="https://api.edap-cluster.com/" target="_blank">endpoint overview</a>
+</div>
 
 After generating build/api folder from the production API:  
 1. Duplicate USEEIOv1.2 to USEEIO for existing script in non-React widgets.  
 2. Duplicate USEEIOv1.2 to GAUSEEIO since GA data currently only resides on the staging server.  
 
 
-Note: Every 90 days the staging server requires a reboot, contact Wes to restart.  
-The '/api' address always returns 404, so use the <a href="https://smmtool.app.cloud.gov/">enpoint overview</a> to see if it is online.  
+Note: Every 90 days the staging server requires a reboot, contact [Wes](https://github.com/WesIngwersen) to restart.  
+If the '/api' address returns 404, you can use the staging 
+<a href="https://smmtool.app.cloud.gov/" target="_blank">endpoint overview</a> to see if it is online.  
 
 You now have two options for viewing the widgets locally.
 
