@@ -141,7 +141,7 @@ This will mirror the static data of the Staging API into the `build/api` folder 
 
 Sometimes you may need to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
 
-Note: Every 90 days the staging server requires a reboot, contact [Wes](https://github.com/WesIngwersen) to restart.  
+Note: Every 90 days the staging server requires a reboot, email the [contact person](https://github.com/USEPA/USEEIO_API/wiki/People#Contact) to restart.  
 If the '/api' address returns 404, you can use the staging 
 <a href="https://smmtool.app.cloud.gov/" target="_blank">endpoint overview</a> to see if it is online.  
 
@@ -152,7 +152,9 @@ npm run download -- --endpoint https://api.edap-cluster.com/useeio/api --apikey 
 ```
 <div class="local" style="display:none; margin-bottom:20px">
 Production API (Requires API key, what's the URL format?) 
-<a href="https://api.edap-cluster.com/" target="_blank">endpoint overview</a>
+<a href="https://api.edap-cluster.com/?x-api-key=" target="_blank">endpoint overview</a>
+
+
 </div>
 
 Learn more about [using the USEEIO API](https://github.com/USEPA/USEEIO_API/wiki/Use-the-API)
