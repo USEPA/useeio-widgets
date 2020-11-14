@@ -111,7 +111,7 @@ export const CommodityList = (props: {
             index: s.index,
             name: s.name,
             code: s.code,
-            selected: selection[s.code] ? true : false,
+            selected: selection[s.code] >= 0 ? true : false,
             value: ifNone(selection[s.code], 100),
             description: s.description,
         };
@@ -213,6 +213,17 @@ export const CommodityList = (props: {
         });
     };
 
+    //makes the selected value of what commodity is clicked to true
+    //when its slider is clicked
+    const ifSliderIsClicked = function (e: any) {
+        const commodity = commodities.filter(com => com.name === e.data.name)[0]
+        if (e.field === 'value') {
+            commodity.selected = true
+            selection[commodity.code] = commodity.value as number;
+            fireSelectionChange();
+        }
+    }
+
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item>
@@ -268,7 +279,9 @@ export const CommodityList = (props: {
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
-                    headerHeight={0} />
+                    headerHeight={0}
+                    onCellClick={ifSliderIsClicked}
+                />
             </Grid>
         </Grid>
     );
