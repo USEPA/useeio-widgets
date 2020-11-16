@@ -77,7 +77,8 @@
 </div>
 
 <div style="float:right; white-space: nowrap; padding-top:15px">
-<a id="reshuffle" href="javascript:goHash({'',''});$('.bios').shuffleChildren()">Reshuffle our team</a>
+  <!-- Caused error after javascript: goHash({'',''}); -->
+<a id="reshuffle" href="javascript:$('.bios').shuffleChildren()">Reshuffle our team</a>
 <a id="expand-team" href="./" style="display:none">Expand Team</a>
 </div>
 
