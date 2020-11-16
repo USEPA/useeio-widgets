@@ -96,31 +96,31 @@
     "amount": 42624034026.465
   },
   {
-    "sector": "230301/nonresidential building repair and maintanence/us",
+    "sector": "230301/nonresidential maintenance and repair/us",
     "amount": 94273127.0614104
   },
   {
-    "sector": "230302/residential building repair and maintanence/us",
+    "sector": "230302/residential maintenance and repair/us",
     "amount": 14351550.0514331
   },
   {
-    "sector": "233210/health care buildings/us",
+    "sector": "233210/health care structures/us",
     "amount": 46077496600.7689
   },
   {
-    "sector": "233230/manufacturing buildings/us",
+    "sector": "233230/manufacturing structures/us",
     "amount": 47570560736.459
   },
   {
-    "sector": "233240/utilities buildings and infrastructure/us",
+    "sector": "233240/power and communication structures/us",
     "amount": 113820541325.32
   },
   {
-    "sector": "233262/schools and vocational buildings/us",
+    "sector": "233262/educational and vocational structures/us",
     "amount": 114948163531.713
   },
   {
-    "sector": "233293/highways, streets, and bridges/us",
+    "sector": "233293/highways and streets/us",
     "amount": 97676063271.3483
   },
   {
@@ -132,11 +132,11 @@
     "amount": 172557431304.26
   },
   {
-    "sector": "233411/single-family homes/us",
+    "sector": "233411/single-family residential structures/us",
     "amount": 302622930091.185
   },
   {
-    "sector": "233412/multifamily homes/us",
+    "sector": "233412/multifamily residential structures/us",
     "amount": 58601583963.1942
   },
   {
