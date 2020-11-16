@@ -30,6 +30,7 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 ## React Widgets
 
 The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
+View [module documentation and functions](https://useeiowidgets.imfast.io/apidoc/modules/_main_.html) generated using [TypeDoc](https://typedoc.org/).  
 
 [Industry Input-Output Chart](../build/slider.html#sectors=322130,325520,327910,541200) - 
 [imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)  
