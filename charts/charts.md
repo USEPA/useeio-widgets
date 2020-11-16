@@ -125,22 +125,19 @@ This should create a `build` folder with a `lib` sub-folder containing small Jav
 
 Once built, the `build` folder contains example HTML files that demonstrate the usage of these widgets. 
 [View&nbsp;examples](https://model.earth/io/build/)
-  
-To view these examples locally, you'll need some data that you can download from the Staging instance of the
+ 
+
+**io/build/api folder is already populated from the staging server**
+
+To view widget examples locally, we've download from the Staging instance of the
 [USEEIO API](https://github.com/USEPA/USEEIO_API) via the following:
-
-**Sandbox test server (staging)**
-
-
-The following is returning a 404 error (on Nov 11, 2020). 
-Instead copy the priot "build/app" folder into the new build folder.  
 
 ```
 npm run download -- --endpoint https://smmtool.app.cloud.gov/api
 ```
-This will mirror the static data of the Staging API into the `build/api` folder in two folders: USEEIO and GAUSEEIO.  The second folder contains data for Georgia, the first state using the USEEIO model.  
+The command above mirrors the static data from the Staging API into the `build/api` folder in two folders: USEEIO and GAUSEEIO (and a third for upcoming v2 data).  The GAUSEEIO folder contains data for Georgia.  
 
-Sometimes you may need to run a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
+Sometimes we have to run the command above a second time to populate build/api/GAUSEEIO/demands table. (Aug 2020)  
 
 Note: Every 90 days the staging server requires a reboot, email the [contact person](https://github.com/USEPA/USEEIO_API/wiki/People#Contact) to restart.  
 If the '/api' address returns 404, you can use the staging 
@@ -161,10 +158,11 @@ Production API (Requires API key, what's the URL format?)
 Learn more about [using the USEEIO API](https://github.com/USEPA/USEEIO_API/wiki/Use-the-API)
 
 After generating build/api folder from the production API:  
+<!--
 1. Duplicate USEEIOv1.2 to USEEIO for existing script in non-React widgets.  
 2. Duplicate USEEIOv1.2 to GAUSEEIO since GA data currently only resides on the staging server.  
-
-
+-->
+Duplicate GAUSEEIO to USEEIOv1.2 for IO Grid Chart  
 
 You now have two options for viewing the widgets locally.
 
