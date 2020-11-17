@@ -3,7 +3,8 @@
 [Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet, JQuery and React  
 [PPE Supplier Map](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
 [Farm Fresh Produce Map](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
-
+[Simple embedded map sample](https://model.earth/community/impact/)  
+[Getting started with localsite](https://model.earth/localsite/start/)  
 
 <!--
 ## Environmentally-Enabled <span style="white-space:nowrap">Input-Output Model</span>
@@ -40,7 +41,7 @@ View [module documentation and functions](https://useeiowidgets.imfast.io/apidoc
 [Industry Impact Bars with Configuration](../build/impact_chart_config.html)  -->  
 [More React widgets](../build/)  
 
-## JQuery Widgets
+## JQuery Widgets 
 
 [Impact Bubble Chart](bubble/) - D3 and JQuery  
 [Sankey Chart](sankey/) - D3 with Python prep  
@@ -169,17 +170,13 @@ You now have two options for viewing the widgets locally.
 <b>Option 1:</b> Start a server using the command <code>npm run server</code>. 
 Then open the default port (8080) at http://localhost:8080 in your browser to see the widgets.  Your command window will become inoperable since it is running a server.  Open a new command window to issue further commands.  
 
-<b>Option 2:</b> View at the following URL if the useeio-widgets folder resides in your webroot:
+<b>Option 2:</b> View at the following URL if the "io" folder resides in your webroot.  
+
+[http://localhost:8887/io/build](http://localhost:8887/io/build)  
+
+If you are working in a direct fork of the "useeio-widgets" repo, view here:  
 
 [http://localhost:8887/useeio-widgets/build](http://localhost:8887/useeio-widgets/build)  
-
-How to set up [your webroot](../../localsite/start/).  
-
-<!--
-Note that the production instance requires an API key.
-npm run download -- --endpoint https://path/to/api --apikey an-optional-api-key
-<b>Important:</b> Change the folder created in `build/api` folder from `USEEIOv1.2` to `GAUSEEIO`.
--->
 
 
 ## How to Modify Widgets within VS Code
@@ -196,11 +193,9 @@ Open a command shell window within VS Code (Ctrl + \` backtick) or (View > Termi
 
 Use the up-arrow to run the line above again after making a change.  
 
-View the output of your build at [http://localhost:8887/useeio-widgets/build](../../useeio-widgets/build) 
+View the output of your build at [http://localhost:8887/io/build](http://localhost:8887/io/build) 
 
 Learn more in the VS Code [Node.js Tutorial](https://code.visualstudio.com/docs/nodejs/nodejs-tutorial).  
-
-If you prefer not to build your javascript each time, the [Community repo](https://model.earth/community) is a good place to edit static javascript pages directly.  The [impact map](https://model.earth/community/impact) is a good page to work on by adding map layers and location filters. Additional filters are visible when viewed on localhost. [Getting started steps](../../localsite/start/).
 
 
 Testing this:  
