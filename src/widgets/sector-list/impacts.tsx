@@ -73,7 +73,7 @@ export const ImpactHeader = (props: {
         return (
             <th className="indicator" key={indicator.code}>
                 <div>
-                    <a>{indicator.name} ({indicator.code})</a>
+                    <a>{indicator.simplename || indicator.name} ({indicator.code})</a>
                 </div>
             </th>
         );
@@ -104,7 +104,7 @@ export const ImpactHeader = (props: {
             <th key={key} className="indicator">
                 <div>
                     <a onClick={() => props.onClick(indicator)}>
-                        {indicator.name} ({indicator.code})
+                        {indicator.simplename || indicator.name} ({indicator.code})
                     </a>
                 </div>
             </th>
