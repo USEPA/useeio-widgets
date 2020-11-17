@@ -3,7 +3,7 @@
 [Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet, JQuery and React  
 [PPE Supplier Map](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
 [Farm Fresh Produce Map](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
-[Simple embedded map sample](https://model.earth/community/impact/)  
+[Simple embedded map sample](embed/)<!-- Remove: https://model.earth/community/impact/ -->  
 [Getting started with localsite](https://model.earth/localsite/start/)  
 
 <!--
