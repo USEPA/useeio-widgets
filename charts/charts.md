@@ -33,8 +33,8 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 View [module documentation and functions](https://useeiowidgets.imfast.io/apidoc/modules/_main_.html) generated using [TypeDoc](https://typedoc.org/).  
 
-[Inflow-Outflow Chart](../build/slider.html#sectors=322130,327910,541200&page=1&count=10) - 
-[imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)  
+[Inflow-Outflow Chart](../build/slider.html#sectors=322130,327910,541200&page=1&count=10)<!-- 
+[imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)-->  
 [Sector List - Mosaic](../build/sector_list.html?view=mosaic&count=50)  
 [Sector List - One indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)<!--
 [Sector List IO - Rubber tire manufacturing example](../build/iotables.html#sectors=326210&page=5)  
@@ -163,7 +163,7 @@ After generating build/api folder from the production API:
 1. Duplicate USEEIOv1.2 to USEEIO for existing script in non-React widgets.  
 2. Duplicate USEEIOv1.2 to GAUSEEIO since GA data currently only resides on the staging server.  
 -->
-Duplicate GAUSEEIO to USEEIOv1.2 for IO Grid Chart  
+Duplicate GAUSEEIO to USEEIOv1.2 for Inflow-Outflow Chart  
 
 You now have two options for viewing the widgets locally.
 
