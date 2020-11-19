@@ -20,6 +20,9 @@ import {
     Sort,
 } from "@material-ui/icons";
 
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
@@ -93,8 +96,9 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const [indicator, setIndicator] = React.useState<null | Indicator>(null);
     const emptySelection = Object.keys(selection).length === 0;
-    const [sortBy, setSortBy] = React.useState<SortBy>(
-        emptySelection ? "alphabetical" : "selection");
+    const [displaySelectedOnly, setDisplaySelectedOnly] = React.useState<boolean>(false)
+    const [selectedFirst, setSelectedFirst] = React.useState<boolean>(true)
+    const [sortBy, setSortBy] = React.useState<SortBy>("alphabetical");
 
     // get the indicator results if an indicator was selected
     const indicatorResults = indicator
@@ -106,22 +110,24 @@ export const CommodityList = (props: {
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
+
         return {
             id: s.id,
             index: s.index,
             name: s.name,
             code: s.code,
-            selected: selection[s.code] ? true : false,
+            selected: selection[s.code] >= 0 ? true : false,
             value: ifNone(selection[s.code], 100),
             description: s.description,
-        };
+
+        }
     });
-    sortCommodities(commodities, {
+    sortCommodities(displaySelectedOnly ? commodities = commodities.filter(commodity => commodity.selected === true) : commodities, {
         by: sortBy,
         values: sortBy === "indicator" && indicator
             ? indicatorResults
             : undefined,
-    });
+    }, displaySelectedOnly, selectedFirst);
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
@@ -150,10 +156,40 @@ export const CommodityList = (props: {
             }
         },
         {
+
             // sector name
             field: "name",
             headerName: "Sector",
             width: 300,
+            renderCell: (params) => {
+                const name = params.data.name
+                if (indicatorResults) {
+                    const commodity = params.data as Commodity;
+                    const result = indicatorResults[commodity.index];
+                    return (
+                        <div>
+                            <Typography>
+                                {name}
+                            </Typography>
+                            <Typography color='textSecondary'>
+                                {IndicatorValue.format(result)} {
+                                    indicator.simpleunit || indicator.unit
+                                }
+                            </Typography>
+                        </div>
+                    );
+                } else {
+                    return (
+                        <div>
+                            <Typography>
+                                {name}
+                            </Typography>
+
+                        </div>
+                    )
+                }
+            },
+
         },
         {
             // the slider for the scaling factor
@@ -197,9 +233,9 @@ export const CommodityList = (props: {
                                 indicator.simpleunit || indicator.unit
                             }
                         </title>
-                        <circle cx="12.5" cy="12.5"
-                            r={2 + 7 * share}
-                            fill="#f50057" />
+                        <rect x="0" y="2.5"
+                            height="10" fill="#f50057"
+                            width={50 * (0.05 + 0.95 * share)} />
                     </svg>
                 );
             },
@@ -212,6 +248,17 @@ export const CommodityList = (props: {
             count: p.pageSize
         });
     };
+
+    //makes the selected value of what commodity is clicked to true
+    //when its slider is clicked
+    const ifSliderIsClicked = function (e: any) {
+        const commodity = commodities.filter(com => com.name === e.data.name)[0]
+        if (e.field === 'value') {
+            commodity.selected = true
+            selection[commodity.code] = commodity.value as number;
+            fireSelectionChange();
+        }
+    }
 
     return (
         <Grid container direction="column" spacing={2}>
@@ -253,7 +300,12 @@ export const CommodityList = (props: {
                             }
                             setIndicator={setIndicator}
                             setMenuElem={setMenuElem}
-                            setSortBy={setSortBy} />
+                            setSortBy={setSortBy}
+                            displaySelectedOnly={displaySelectedOnly}
+                            setDisplaySelectedOnly={setDisplaySelectedOnly}
+                            selectedFirst={selectedFirst}
+                            setSelectedFirst={setSelectedFirst} />
+
                     </Menu>
                 </div>
             </Grid>
@@ -268,7 +320,9 @@ export const CommodityList = (props: {
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
-                    headerHeight={0} />
+                    headerHeight={0}
+                    onCellClick={ifSliderIsClicked}
+                />
             </Grid>
         </Grid>
     );
@@ -298,12 +352,37 @@ const SortMenu = React.forwardRef((props: {
     withSelection: boolean,
     currentSorter: SortBy | Indicator,
     indicators: Indicator[],
+    displaySelectedOnly: boolean,
+    selectedFirst: boolean,
+    setDisplaySelectedOnly: (displaySelectedOnly: boolean) => void,
+    setSelectedFirst: (selectedFirst: boolean) => void,
     setMenuElem: (elem: null | HTMLElement) => void,
     setSortBy: (sorter: SortBy) => void,
     setIndicator: (indicator: Indicator) => void
 }, _ref) => {
 
     const items: JSX.Element[] = [];
+
+    const checkBoxIcon = (sorter: boolean) => {
+        const i = sorter ? <CheckBoxIcon fontSize='small' color='secondary' />
+            :
+            <CheckBoxOutlineBlankIcon fontSize='small' color='secondary' />;
+        return <ListItemIcon> {i} </ListItemIcon>
+    }
+
+    items.push(
+        <MenuItem
+            key='selectedOnly'
+            onClick={() => {
+                props.setMenuElem(null); // close
+                props.setDisplaySelectedOnly(!props.displaySelectedOnly)
+            }}
+        >
+            {checkBoxIcon(props.displaySelectedOnly)}
+            Selected Only
+        </MenuItem>
+
+    )
 
     const icon = (sorter: SortBy | Indicator) => {
         const i = sorter === props.currentSorter
@@ -319,10 +398,9 @@ const SortMenu = React.forwardRef((props: {
                 key="sort-by-selection"
                 onClick={() => {
                     props.setMenuElem(null); // close
-                    props.setSortBy("selection");
-                    props.setIndicator(null);
+                    props.setSelectedFirst(!props.selectedFirst);
                 }}>
-                {icon("selection")}
+                {checkBoxIcon(props.selectedFirst)}
                 Selected First
             </MenuItem>
         );
@@ -364,26 +442,48 @@ const SortMenu = React.forwardRef((props: {
 const sortCommodities = (commodities: Commodity[], config: {
     by: SortBy,
     values?: number[]
-}) => {
-    return commodities.sort((c1, c2) => {
-
-        // selected items first
-        if (config.by === "selection" && c1.selected !== c2.selected) {
-            return c1.selected ? -1 : 1;
-        }
-
+}, displaySelectedOnly: boolean, selectedFirst: boolean) => {
+    if (displaySelectedOnly) {
         // larger indicator contributions first
-        if (config.by === "indicator" && config.values) {
-            const val1 = config.values[c1.index];
-            const val2 = config.values[c2.index];
-            if (val1 !== val2) {
-                return val2 - val1;
+        return commodities.sort((c1, c2) => {
+            // selected items first
+            if (selectedFirst && c1.selected !== c2.selected) {
+                return c1.selected ? -1 : 1;
             }
-        }
 
-        // sort alphabetically by default
-        return strings.compare(c1.name, c2.name);
-    });
+            if (config.by === "indicator" && config.values) {
+                const val1 = config.values[c1.index];
+                const val2 = config.values[c2.index];
+                if (val1 !== val2) {
+                    return val2 - val1;
+                }
+            }
+
+            // sort alphabetically by default
+            return strings.compare(c1.name, c2.name);
+        })
+    } else {
+
+        return commodities.sort((c1, c2) => {
+
+            // selected items first
+            if (selectedFirst && c1.selected !== c2.selected) {
+                return c1.selected ? -1 : 1;
+            }
+
+            // larger indicator contributions first
+            if (config.by === "indicator" && config.values) {
+                const val1 = config.values[c1.index];
+                const val2 = config.values[c2.index];
+                if (val1 !== val2) {
+                    return val2 - val1;
+                }
+            }
+
+            // sort alphabetically by default
+            return strings.compare(c1.name, c2.name);
+        });
+    }
 };
 
 /**
