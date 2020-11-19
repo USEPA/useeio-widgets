@@ -33,7 +33,7 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 View [module documentation and functions](https://useeiowidgets.imfast.io/apidoc/modules/_main_.html) generated using [TypeDoc](https://typedoc.org/).  
 
-[Industry Input-Output Chart](../build/slider.html#sectors=322130,325520,327910,541200) - 
+[Inflow-Outflow Chart](../build/slider.html#sectors=322130,327910,541200&page=1&count=10) - 
 [imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)  
 [Sector List - Mosaic](../build/sector_list.html?view=mosaic&count=50)  
 [Sector List - One indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)<!--
@@ -168,7 +168,7 @@ Duplicate GAUSEEIO to USEEIOv1.2 for IO Grid Chart
 You now have two options for viewing the widgets locally.
 
 <b>Option 1:</b> Start a server using the command <code>npm run server</code>. 
-Then open the default port (8080) at http://localhost:8080 in your browser to see the widgets.  Your command window will become inoperable since it is running a server.  Open a new command window to issue further commands.  
+Then open the default port (8080) at http://localhost:8080 in your browser to see the widgets.  Your command window will become inoperable since it is running a server.  Open a new command window (by clicking plus) to issue further commands.  
 
 <b>Option 2:</b> View at the following URL if the "io" folder resides in your webroot.  
 
