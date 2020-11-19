@@ -52,7 +52,7 @@ def USEEIO_GET_MATRIX(model, matrix, sector, axis):
     '''
     Mat = pd.DataFrame(data = None, index = sector_names)
 
-    if sector == 'all':
+    if= 'all':
         '''query all sectors, no sectoral specification needed
         '''
         i = 0
@@ -103,8 +103,8 @@ var energyjson = {"nodes":[
 ]};
 '''
 
-input_mat = USEEIO_GET_MATRIX(model = 'GAUSEEIO', matrix = 'A', sector = ['336111', '333613', '335912'], axis = 0).iloc[:, [0,2,4]]
-output_mat = USEEIO_GET_MATRIX(model = 'GAUSEEIO', matrix = 'A', sector = ['336111', '333613', '335912'], axis = 1).iloc[:, [0,2,4]]
+input_mat = USEEIO_GET_MATRIX(model = 'GAUSEEIO', matrix = 'A', ['336111', '333613', '335912'], axis = 0).iloc[:, [0,2,4]]
+output_mat = USEEIO_GET_MATRIX(model = 'GAUSEEIO', matrix = 'A', ['336111', '333613', '335912'], axis = 1).iloc[:, [0,2,4]]
 
 
 def BUILD_JSON_FOR_IO_SANKEY(input_mat,  output_mat, topn = 10):
