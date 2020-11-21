@@ -41,7 +41,7 @@ export const DownloadSection = (props: {
             }
             if (w.result && w.indicators) {
                 for (const i of w.indicators) {
-                    text += `,"${i.code} - ${i.name} [${i.simpleunit}]"`;
+                    text += `,"${i.code} - ${i.name} [${i.unit}]"`;
                 }
                 text += ",ranking";
             }

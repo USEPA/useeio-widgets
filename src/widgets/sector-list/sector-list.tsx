@@ -116,7 +116,10 @@ export class SectorList extends Widget {
     }
 
     // load the demand vector if required
-    if (this.matrixA || (config.showvalues && (!this.demand || needsCalc))) {
+    if (
+      this.matrixA ||
+      (config.showvalues || config.showSimplevalues) && (!this.demand || needsCalc)
+    ) {
       const demandID = await this.model.findDemand(config);
       const demand = await this.model.demand(demandID);
       if (demand) {
@@ -267,10 +270,15 @@ const Component = (props: { widget: SectorList }) => {
 
             {
               // optional demand column
-              config.showvalues ? (
+               config.showvalues ? (
                 <th>
                   <div>
                     <span>Demand</span>
+                    <p style={{
+                      fontSize: "1em",
+                      color: "grey",
+                      fontStyle:"italicize"
+                    }}></p>
                   </div>
                 </th>
               ) : (
@@ -359,10 +367,10 @@ const Row = (props: RowProps) => {
           whiteSpace: "nowrap",
         }}
       >
-        {demandVal ? demandVal.toFixed(3) : null}
+        {(demandVal > 10000000) ? (demandVal / 1000000000).toFixed(2) : (demandVal / 1000000000).toFixed(4)}
       </td>
     );
-  }
+  } 
 
   // display the ranking value if view=ranking
   let rank;
@@ -399,7 +407,7 @@ const Row = (props: RowProps) => {
           </a>
         </div>
       </td>
-      {config.showvalues ? demand : <></>}
+      {config.showvalues || config.showSimplevalues ? demand : <></>}
       <ImpactResult {...props} />
       <InputOutputCells sector={props.sector} widget={props.widget} />
       {rank ? rank : <></>}

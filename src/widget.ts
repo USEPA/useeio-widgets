@@ -7,102 +7,107 @@ import * as strings from "./util/strings";
  * the codes of industry sectors or indicators).
  */
 export interface Config {
+  [key: string]: any;
 
-    [key: string]: any;
+  /**
+   * The ID of the input output model
+   */
+  model?: string;
 
-    /**
-     * The ID of the input output model
-     */
-    model?: string;
+  /**
+   * An array of sector codes.
+   */
+  sectors?: string[];
 
-    /**
-     * An array of sector codes.
-     */
-    sectors?: string[];
+  /**
+   * A possible additional array of NAICS sector codes.
+   * We translate them to BEA codes when parsing the
+   * confiration.
+   */
+  naics?: string[];
 
-    /**
-     * A possible additional array of NAICS sector codes.
-     * We translate them to BEA codes when parsing the
-     * confiration.
-     */
-    naics?: string[];
+  /**
+   * An array of indicator codes.
+   */
+  indicators?: string[];
 
-    /**
-     * An array of indicator codes.
-     */
-    indicators?: string[];
+  /**
+   * The result perspective.
+   */
+  perspective?: ResultPerspective;
 
-    /**
-     * The result perspective.
-     */
-    perspective?: ResultPerspective;
+  /**
+   * The type of the demand vector.
+   */
+  analysis?: DemandType;
 
-    /**
-     * The type of the demand vector.
-     */
-    analysis?: DemandType;
+  /**
+   * The year of the demand vector.
+   */
+  year?: number;
 
-    /**
-     * The year of the demand vector.
-     */
-    year?: number;
+  /**
+   * An optional location code to filter sectors
+   * by location in multi-regional models.
+   */
+  location?: string;
 
-    /**
-     * An optional location code to filter sectors
-     * by location in multi-regional models.
-     */
-    location?: string;
+  /**
+   * The number of items a widget should display.
+   * This is typically the number of sectors.
+   */
+  count?: number;
 
-    /**
-     * The number of items a widget should display.
-     * This is typically the number of sectors.
-     */
-    count?: number;
+  /**
+   * Can be used together with the `count` property
+   * to page through a number of items.
+   */
+  page?: number;
 
-    /**
-     * Can be used together with the `count` property
-     * to page through a number of items.
-     */
-    page?: number;
+  /**
+   * `view=mosaic` is currently used in the industry list widget
+   * to switch between a plain sector list or the real heatmap.
+   */
+  view?: string[];
 
-    /**
-     * `view=mosaic` is currently used in the industry list widget
-     * to switch between a plain sector list or the real heatmap.
-     */
-    view?: string[];
+  /**
+   * Indicates if result values should be shown in a widget.
+   */
+  showvalues?: boolean;
 
-    /**
-     * Indicates if result values should be shown in a widget.
-     */
-    showvalues?: boolean;
+  /**
+   * Indicates if result values should be shown in scientific notation or not.
+   */
+  /**
+   * Indicates if result values should be shown with identifiers simplename or simpleunit in a widget.
+   */
+  showSimplevalues?: boolean;
 
-    /**
-     * Indicates if result values should be shown in scientific notation or not.
-     */
+  /**
     showscientific?: boolean;
 
     /**
      * Indicates whether the matrix selector should be shown or not.
      */
-    selectmatrix?: boolean;
+  selectmatrix?: boolean;
 
-    /**
-     * Indicates whether download links should be shown or not.
-     */
-    showdownload?: boolean;
+  /**
+   * Indicates whether download links should be shown or not.
+   */
+  showdownload?: boolean;
 
-    /**
-     * Indicates whether code examples should be displayed.
-     */
-    showcode?: boolean;
+  /**
+   * Indicates whether code examples should be displayed.
+   */
+  showcode?: boolean;
 
-    /**
-     * Optional scoped configurations. Widgets can be combined
-     * in scopes. Each scope has then its own configuration
-     * state. A scope has a unique name which is added as a
-     * prefix to the configuration options in the URL parameters.
-     */
-    scopes?: { [scope: string]: Config };
+  /**
+   * Optional scoped configurations. Widgets can be combined
+   * in scopes. Each scope has then its own configuration
+   * state. A scope has a unique name which is added as a
+   * prefix to the configuration options in the URL parameters.
+   */
+  scopes?: { [scope: string]: Config };
 }
 
 export interface WidgetArgs {
@@ -485,62 +490,60 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             }
 
             switch (_key) {
+              // simple string values
+              case "model":
+              case "location":
+                _update(_key, val, scope);
+                break;
 
-                // simple string values
-                case "model":
-                case "location":
-                    _update(_key, val, scope);
-                    break;
+              // integers
+              case "year":
+              case "count":
+              case "page":
+                try {
+                  const _int = parseInt(val, 10);
+                  _update(_key, _int, scope);
+                } catch (_) {}
+                break;
 
-                // integers
-                case "year":
-                case "count":
-                case "page":
-                    try {
-                        const _int = parseInt(val, 10);
-                        _update(_key, _int, scope);
-                    } catch (_) { }
-                    break;
+              // booleans
+              case "showvalues":
+              case "showSimplevalues":
+              case "showcode":
+              case "selectmatrix":
+              case "showdownload":
+              case "showscientific":
+                const _bool = strings.eq(val, "true", "1", "yes");
+                _update(_key, _bool, scope);
+                break;
 
-                // booleans
-                case "showvalues":
-                case "showcode":
-                case "selectmatrix":
-                case "showdownload":
-                case "showscientific":
-                    const _bool = strings.eq(val, "true", "1", "yes");
-                    _update(_key, _bool, scope);
-                    break;
+              // lists
+              case "sectors":
+              case "indicators":
+              case "naics":
+              case "view":
+                const _list = strings.isNullOrEmpty(val) ? [] : val.split(",");
+                _update(_key, _list, scope);
+                break;
 
-                // lists
-                case "sectors":
-                case "indicators":
-                case "naics":
-                case "view":
-                    const _list = strings.isNullOrEmpty(val)
-                        ? []
-                        : val.split(",");
-                    _update(_key, _list, scope);
-                    break;
+              case "type":
+              case "analysis":
+                if (strings.eq(val, "consumption")) {
+                  _update("analysis", "Consumption", scope);
+                } else if (strings.eq(val, "production")) {
+                  _update("analysis", "Production", scope);
+                }
+                break;
 
-                case "type":
-                case "analysis":
-                    if (strings.eq(val, "consumption")) {
-                        _update("analysis", "Consumption", scope);
-                    } else if (strings.eq(val, "production")) {
-                        _update("analysis", "Production", scope);
-                    }
-                    break;
+              case "perspective":
+                const p = this.getPerspective(val);
+                if (p) {
+                  _update("perspective", p, scope);
+                }
+                break;
 
-                case "perspective":
-                    const p = this.getPerspective(val);
-                    if (p) {
-                        _update("perspective", p, scope);
-                    }
-                    break;
-
-                default:
-                    break;
+              default:
+                break;
             }
         }
     }

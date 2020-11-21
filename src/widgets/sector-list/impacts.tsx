@@ -168,13 +168,18 @@ export const ImpactResult = (props: RowProps) => {
             alpha *= 0.25;
         }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.simpleunit}`;
+        const displayDemandValues = (unitType:string) => {
+            return `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${unitType}`;
+        } 
+
         items.push(
-            <td className="indicator-value" key={ind.id}
-                title={value}
-                style={{ backgroundColor: color }}>
-                {config.showvalues ? value : ""}
-            </td>
+          <td
+            className="indicator-value"
+            key={ind.id}
+            style={{ backgroundColor: color }}
+          >
+            {config.showvalues ? displayDemandValues(ind.simpleunit) : ""}
+          </td>,
         );
     }
     return <>{items}</>;
