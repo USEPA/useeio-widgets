@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Inflow-Outflow</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link type="text/css" href="../../../localsite/css/base.css" rel="stylesheet" />
+<script type="text/javascript" src="../../../localsite/js/d3.v5.min.js"></script>
+<!--script type="text/javascript" src="../../../localsite/js/showdown.min.js"></script-->
+<script type="text/javascript" src="../../../localsite/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../../localsite/js/localsite.js"></script>
+<script type="text/javascript" src="../../../localsite/js/navigation.js"></script>
+
+<style>
+.MuiDataGrid-root .MuiDataGrid-window {
+    overflow-x: hidden !important;
+    /* overflow-y: hidden !important; */
+}
+#impactIcons {
+    float:right;
+}
+#impactIcons div {
+    float: left;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    width: 100px;
+    padding: 20px;
+    margin-right: 20px;
+    text-align: center
+}
+#impactIcons div.active {
+    border: 4px solid #aaa;
+    padding: 17px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="contentpadding" style="padding-bottom:20px">
+
+    <div id="impactIcons">
+        <div>Air</div>
+        <div>Water</div>
+        <div class="active">Land</div>
+        <div>Energy</div>
+        <div>Prosperity</div>
+        <div>Health</div>
+    </div>
+
+    <div style="float:left;">
+        <a style="font-size: 13px" href="https://github.com/modelearth/useeior/blob/Bio-Modeling/inst/extdata/USEEIO_LCIA_Indicators.csv">Impact Areas</a><br>
+        <h1 style="margin-top:0px; margin-bottom:10px;">Minerals and Metal Use</h1>
+    </div>
+
+    <div style="clear:both; font-size: 13px">
+    <a href="../../../localsite/info/">Industry Details</a> | 
+    <b>Supply Chain</b> | 
+    <a href="../../charts/sankey/">Flow Diagram</a> | 
+    All
+    </div>
+</div>
+<hr style="margin:0px; padding:0px">
+
+<div class="contentpadding" >
+
+<!-- INFLOW OUTFLOW -->
+<!--
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+-->
+
+<div id="iogrid"></div>
+
+<script src="../../build/lib/d3.min.js"></script>
+<script src="../../build/lib/useeio_widgets.js"></script>
+<script>
+	var naics = "311615,311812,321113,221112,113310,322110,311821,311612,325211,311813,311911,311919,311830,311119,322121,311824,311941,325991,311710,311930";
+
+    var naicsCodes = naics.split(',');
+
+    var config = useeio.urlConfig();
+
+    //var config = {
+    //	page: 1,
+    //    count: 50,
+    //    naics: naicsCodes
+    //};
+
+    // Not working
+    //config.naics = naicsCodes;
+
+    var modelID = config.get().model || 'USEEIO'; // USEEIOv1.2 currently shows over $300 for agriculture
+    //var modelID = 'USEEIOv1.2';
+
+    var model = useeio.model({
+        endpoint: '/io/build/api',
+        model: modelID,
+        asJsonFiles: true,
+    });
+    var ioGrid = useeio.ioGrid({
+        model: model,
+        selector: '#iogrid',
+    });
+    config.join(ioGrid);
+
+</script>
+<!-- /INFLOW OUTFLOW -->
+
+<!--
+<br><br><br>
+Prior version...<br>
+-->
+
+<br><br>
+We're using <a href="https://material-ui.com/components/slider/">material-ui sliders</a>
+
+</div>
+
+</body>
+</html>

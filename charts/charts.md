@@ -33,7 +33,7 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 View [module documentation and functions](https://useeiowidgets.imfast.io/apidoc/modules/_main_.html) generated using [TypeDoc](https://typedoc.org/).  
 
-[Inflow-Outflow Chart](../build/slider.html#sectors=322130,327910,541200&page=1&count=10)<!-- 
+[Inflow-Outflow Chart](inflow-outflow/#sectors=326210&page=1&count=10) - <a href="../build/slider.html#sectors=322130,327910,541200&page=1&count=10">Widget only</a><!-- 
 [imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)-->  
 [Sector List - Mosaic](../build/sector_list.html?view=mosaic&count=50)  
 [Sector List - One indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)<!--
