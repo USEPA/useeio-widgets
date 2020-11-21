@@ -219,7 +219,7 @@ export const CommodityList = (props: {
     if (indicatorResults) {
         columns.push({
             field: "code",
-            width: 100,
+            width: 150,
             renderCell: (params) => {
                 const commodity = params.data as Commodity;
                 const result = indicatorResults[commodity.index];
@@ -233,9 +233,10 @@ export const CommodityList = (props: {
                                 indicator.simpleunit || indicator.unit
                             }
                         </title>
+
                         <rect x="0" y="2.5"
                             height="10" fill="#f50057"
-                            width={50 * (0.05 + 0.95 * share)} />
+                            width={25 * (0.05 + 0.95 * result)} />
                     </svg>
                 );
             },

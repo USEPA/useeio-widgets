@@ -18,12 +18,14 @@ import { Config } from "../../widget";
 import { IOFlow, IOGrid } from "./iogrid";
 import * as strings from "../../util/strings";
 
+
 const Currency = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
 });
+
 
 type SortBy = "alphabetical" | "contribution";
 
@@ -57,6 +59,19 @@ export const FlowList = (props: {
             field: "name",
             headerName: "Sector",
             width: 300,
+            renderCell: (params) => {
+                const name = params.data.name
+                const flow = params.data as IOFlow;
+                const title = Currency.format(flow.value)
+                    + " " + props.direction
+                    + " per " + Currency.format(1).split('.')[0];
+                return (
+                    <div>
+                        <Typography>{name}</Typography>
+                        <Typography color="textSecondary">{title}</Typography>
+                    </div>
+                )
+            },
         },
         {
             // the bar
@@ -66,7 +81,7 @@ export const FlowList = (props: {
                 const flow = params.data as IOFlow;
                 const title = Currency.format(flow.value)
                     + " " + props.direction
-                    + " per " + Currency.format(1);
+                    + " per " + Currency.format(1).split('.')[0];
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
