@@ -2,7 +2,8 @@ import json, os, requests
 import pandas as pd
 import numpy as np
 
-os.chdir('/Users/eloncha/Documents/GitHub/community/start/charts/sankey')
+#os.chdir('/Users/eloncha/Documents/GitHub/community/start/charts/sankey')
+os.chdir('C:/Users/kwing/Documents/GitHub/io/charts/sankey')
 '''api set-up
 '''
 base_url = 'https://smmtool.app.cloud.gov/api/'
@@ -157,9 +158,11 @@ def BUILD_JSON_FOR_IO_SANKEY(input_mat,  output_mat, topn = 10):
     js = {'nodes':node_list, 'links':link_list}
 
     with open('data/IO.js', 'w') as f:
-        json.dump(js, f)
+        f.write('var iojson = ')
+        json.dump(js, f, indent=4)
 
     return(js)
 
 
+#BUILD_JSON_FOR_IO_SANKEY(input_mat, output_mat, topn = 10)
 BUILD_JSON_FOR_IO_SANKEY(input_mat, output_mat, topn = 10)
