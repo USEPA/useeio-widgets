@@ -16,6 +16,7 @@ import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
 import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
+import { Widgets } from "@material-ui/icons";
 
 export class SectorList extends Widget {
   /**
@@ -274,11 +275,6 @@ const Component = (props: { widget: SectorList }) => {
                 <th>
                   <div>
                     <span>Demand</span>
-                    <p style={{
-                      fontSize: "1em",
-                      color: "grey",
-                      fontStyle:"italicize"
-                    }}></p>
                   </div>
                 </th>
               ) : (
@@ -356,7 +352,7 @@ const Row = (props: RowProps) => {
 
   // display the demand value if
   let demand;
-  if (config.showvalues) {
+  if (config.showvalues ) {
     // demand value
     const demandVal = props.widget.demand[sector.code];
     demand = (
@@ -367,7 +363,7 @@ const Row = (props: RowProps) => {
           whiteSpace: "nowrap",
         }}
       >
-        {(demandVal > 10000000) ? (demandVal / 1000000000).toFixed(2) : (demandVal / 1000000000).toFixed(4)}
+        {(demandVal > 10000000) ? (demandVal / 1000000000).toFixed(2) : 'n/a'}
       </td>
     );
   } 
