@@ -8,6 +8,7 @@ import { Config, Widget } from "../../widget";
 import { isNotNone, isNone } from "../../util/util";
 import { zeros } from "../../calc/calc";
 import * as strings from "../../util/strings";
+import * as naics from "../../naics";
 
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
@@ -47,6 +48,8 @@ export class IOGrid extends Widget {
             await this.initialize();
         }
 
+        const commoditySectors = naics.filter(config.naics, this.sectors);
+
         // render the three columns:
         // inputs | commodities | outputs
         ReactDOM.render(
@@ -60,7 +63,7 @@ export class IOGrid extends Widget {
                 <Grid item style={{ width: "40%" }}>
                     <CommodityList
                         config={config}
-                        sectors={this.sectors}
+                        sectors={commoditySectors}
                         indicators={this.indicators}
                         widget={this} />
                 </Grid>
