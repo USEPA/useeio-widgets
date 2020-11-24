@@ -51,6 +51,22 @@
     background-color: #77f;
     text-decoration: none;
 }
+#impactTopBar {
+    float:left;
+}
+#impactTopBar div {
+    font-size: 14px;
+    color: #fff;
+    background-color: #779;
+    padding: 8px 28px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 0 10px 14px 0;
+    float: left;
+}
+#impactTopBar .active {
+    background-color: #333;
+}
 
 /* For darkly */
 .MuiGrid-container {
@@ -68,6 +84,21 @@
     /* overflow-y: hidden !important; */
 }
 </style>
+
+<!-- For Facebook -->
+<meta property="og:type" content="article" />
+<meta property="og:image" content="https://model.earth/io/charts/inflow-outflow/img/social-thumb.jpg" />
+<meta property="og:url" content="https://model.earth/io/charts/inflow-outflow/" />
+<meta property="og:title" content="Inflow-Outflow" />
+<meta property="og:description" content="Environmentally Enabled Impact Analysis" />
+
+<!-- For Twitter -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Inflow-Outflow" />
+<meta name="twitter:description" content="Environmentally Enabled Impact Analysis." />
+<meta name="twitter:image" content="https://model.earth/io/charts/inflow-outflow/img/social-thumb.jpg" />
+
+
 </head>
 
 <body>
@@ -76,6 +107,12 @@
     <div class="lazy bgimg bgimg-notfixed" data-src="img/bkgd.jpg" style="opacity:.85">
         <img src="img/bkgd.jpg" style="opacity:0;width:100%">
     </div>
+    -->
+
+    <!--
+        Background source:
+        Airbender: https://wallpapersafari.com/w/fXi214
+        Avatar: 
     -->
 
     <img class="fixedBkgd backgroundAbsoluteX" src="img/bkgd.jpg" style="width:100%; " alt="">
@@ -119,7 +156,8 @@
         <h2 style="padding-top:0px">Ask a question [annyang placeholder]&nbsp; Say . . .</h2>
         <div class="buttonLinks" style="margin:20px 20px 0 0; font-size: 13px">
             <a href="https://github.com/modelearth/useeior/blob/Bio-Modeling/inst/extdata/USEEIO_LCIA_Indicators.csv">Show Impact Areas</a>
-            <a href="../../../community/tools/#projects">Show Project Areas</a>
+            <a href="#chart">Show Water Impacts</a>
+            <a href="../../../community/tools/#projects" style="margin-right:0px">Show Project Areas</a>
         </div>
     </div>
 </div>
@@ -134,7 +172,7 @@
 
 
 
-<hr style="clear:both; margin:10px 0 0 0; padding:10px 0 0 0">
+<!--hr style="clear:both; margin:10px 0 0 0; padding:10px 0 0 0"-->
 
 <div class="contentpadding" >
 
@@ -142,6 +180,12 @@
 <!--
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 -->
+<div id="impactTopBar">
+    <div class="active">Quantity of Water Used</div>
+    <div>Causes Acid Rain</div>
+    <div>Harmful Algae Growth</div><!-- Water Eutrophication -->
+    <div>Toxic to Fish</div>
+</div>
 
 <div id="iogrid"></div>
 
