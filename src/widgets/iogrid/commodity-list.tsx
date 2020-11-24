@@ -236,7 +236,7 @@ export const CommodityList = (props: {
 
                         <rect x="0" y="2.5"
                             height="10" fill="#f50057"
-                            width={25 * (0.05 + 0.95 * result)} />
+                            width={20 * (0.05 + 0.95 * result)} />
                     </svg>
                 );
             },
@@ -290,7 +290,7 @@ export const CommodityList = (props: {
                         onClose={() => setMenuElem(null)}
                         PaperProps={{
                             style: {
-                                maxHeight: 48 * 4.5,
+                                maxHeight: '85vh',
                             },
                         }}>
                         <SortMenu
