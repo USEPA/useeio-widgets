@@ -16,18 +16,7 @@
 <link rel="stylesheet" type="text/css" href="/localsite/css/bootstrap.darkly.min.css"/>
 
 <style>
-/* For darkly */
-.MuiGrid-item {
-    background-color: #ddd;
-}
-.MuiDataGrid-mainGridContainer {
-    background-color: #fff;
-}
 
-.MuiDataGrid-root .MuiDataGrid-window {
-    overflow-x: hidden !important;
-    /* overflow-y: hidden !important; */
-}
 
 #impactIcons div {
     float: left;
@@ -42,42 +31,78 @@
     border: 4px solid #aaa;
     padding: 17px;
 }
+
+.fixedBkgd {
+    position: fixed;
+    z-index: -1;
+    width: 100%;
+    min-width: 1040px;
+}
+
+
+/* For darkly */
+.MuiGrid-item {
+    background-color: #ddd;
+}
+.MuiDataGrid-mainGridContainer {
+    background-color: #fff;
+}
+
+.MuiDataGrid-root .MuiDataGrid-window {
+    overflow-x: hidden !important;
+    /* overflow-y: hidden !important; */
+}
 </style>
 </head>
 
 <body>
-
-<div class="contentpadding" style="padding-bottom:20px">
-
-    <div style="float:right;">
-        <div id="impactIcons">
-            <div>Air</div>
-            <div>Water</div>
-            <div class="active">Land</div>
-            <div>Energy</div>
-            <div>Prosperity</div>
-            <div>Health</div>
-        </div><br>
-
-        <div class="hideMobile" style="float:right; margin:20px 20px 0 0; font-size: 13px">
-            <a href="../../../community/tools/#projects">A work in progress</a>
-        </div>
+<div style="position:relative">
+    <!--  
+    <div class="lazy bgimg bgimg-notfixed" data-src="img/bkgd.jpg" style="opacity:.85">
+        <img src="img/bkgd.jpg" style="opacity:0;width:100%">
     </div>
+    -->
 
-    <div style="float:left;">
-        <a style="font-size: 13px" href="https://github.com/modelearth/useeior/blob/Bio-Modeling/inst/extdata/USEEIO_LCIA_Indicators.csv">Impact Areas</a><br>
-        <h1 style="margin-top:0px; margin-bottom:10px;">Minerals and Metal Use</h1>
+    <img class="fixedBkgd backgroundAbsoluteX" src="img/bkgd.jpg" style="width:100%; z-index:0" alt="">
 
-        <div style="clear:both; font-size: 13px">
-        <a href="../../../localsite/info/">Industry Details</a> | 
-        <b>Supply Chain</b> | 
-        <a href="../../charts/sankey/">Flow Diagram</a> | 
-        All
+    <div class="contentpadding" style="position:absolute; top:0px; width:100%; padding-bottom:20px; background-color: rgba(33,33,33,.5);">
+
+        <div style="float:right;">
+            <div id="impactIcons">
+                <div>Air</div>
+                <div class="active">Water</div>
+                <div>Land</div>
+                <div>Energy</div>
+                <div>Prosperity</div>
+                <div>Health</div>
+            </div><br>
+
+            <div class="hideMobile" style="float:right; margin:20px 20px 0 0; font-size: 13px">
+                <a href="../../../community/tools/#projects">Project Areas</a> | <a style="font-size: 13px" href="https://github.com/modelearth/useeior/blob/Bio-Modeling/inst/extdata/USEEIO_LCIA_Indicators.csv">Impact Areas (GitHub)</a>
+            </div>
+        </div>
+
+        <div style="float:left;">
+            <br>
+            <!-- Minerals and Metal Use -->
+            <h1 class="h1-home" style="margin-top:0px; margin-bottom:10px;">Water Eutrophication</h1>
+
+            <div style="clear:both; font-size: 13px">
+            <a href="#chart">Inflow Outflow</a> | 
+            <a href="../../charts/sankey/">Flow Diagram</a>
+            </div>
         </div>
     </div>
 </div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+<div id="chart"></div>
+
+<br><br><br><br><br><br><br><br><br><br><br>
 
 <div style="clear:both;"></div>
+
+
 
 <hr style="clear:both; margin:10px 0 0 0; padding:10px 0 0 0">
 
