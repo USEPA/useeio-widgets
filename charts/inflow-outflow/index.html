@@ -38,9 +38,24 @@
     width: 100%;
     min-width: 1040px;
 }
-
+.buttonLinks a {
+    background-color: #779;
+    color: #fff;
+    padding: 10px 30px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 0 10px 14px 0;
+    font-size: 16px;
+}
+.buttonLinks a:hover {
+    background-color: #77f;
+    text-decoration: none;
+}
 
 /* For darkly */
+.MuiGrid-container {
+    background-color: rgba(33,33,33,.8);
+}
 .MuiGrid-item {
     background-color: #ddd;
 }
@@ -63,11 +78,11 @@
     </div>
     -->
 
-    <img class="fixedBkgd backgroundAbsoluteX" src="img/bkgd.jpg" style="width:100%; z-index:0" alt="">
+    <img class="fixedBkgd backgroundAbsoluteX" src="img/bkgd.jpg" style="width:100%; " alt="">
 
     <div class="contentpadding" style="position:absolute; top:0px; width:100%; padding-bottom:20px; background-color: rgba(33,33,33,.5);">
 
-        <div style="float:right;">
+        <div style="float:right;" class="hideMobile">
             <div id="impactIcons">
                 <div>Air</div>
                 <div class="active">Water</div>
@@ -77,9 +92,7 @@
                 <div>Health</div>
             </div><br>
 
-            <div class="hideMobile" style="float:right; margin:20px 20px 0 0; font-size: 13px">
-                <a href="../../../community/tools/#projects">Project Areas</a> | <a style="font-size: 13px" href="https://github.com/modelearth/useeior/blob/Bio-Modeling/inst/extdata/USEEIO_LCIA_Indicators.csv">Impact Areas (GitHub)</a>
-            </div>
+            
         </div>
 
         <div style="float:left;">
@@ -97,11 +110,25 @@
         </div>
     </div>
 </div>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+<div class="contentpadding">
+    <div style="background-color:#559; padding:30px; max-width:700px; border-radius:8px">
+        <h2 style="padding-top:0px">Ask a question [annyang placeholder]&nbsp; Say . . .</h2>
+        <div class="buttonLinks" style="margin:20px 20px 0 0; font-size: 13px">
+            <a href="../../../community/tools/#projects">Show me Project Areas</a>
+            <a href="https://github.com/modelearth/useeior/blob/Bio-Modeling/inst/extdata/USEEIO_LCIA_Indicators.csv">Show me Impact Areas</a>
+        </div>
+    </div>
+</div>
+
+<br>
 
 <div id="chart"></div>
 
-<br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
 
 <div style="clear:both;"></div>
 
