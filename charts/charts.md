@@ -30,7 +30,7 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 The React widgets originate from the EPA's [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
 You can make updates in the [model.earth io repo](https://github.com/modelearth/io/) and we'll push into the EPA repo.  
 
-[Inflow-Outflow Chart](inflow-outflow/#sectors=326210&page=1&count=10) - <a href="../build/slider.html#sectors=322130,327910,541200&page=1&count=10">Widget only</a><!-- 
+[Inflow-Outflow Chart](inflow-outflow/#sectors=326210&page=1&count=10) - <a href="../build/slider.html#sectors=333613,335912,336111&page=1&count=10">Widget only</a><!-- 
 [imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)-->  
 [Sector List - Mosaic](../build/sector_list.html?view=mosaic&count=50)  
 [Sector List - One indicator](../build/sector_list.html#view=mosaic&indicators=WATR&showvalues=true)<!--
