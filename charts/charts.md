@@ -1,10 +1,9 @@
 # Embeddable IO Widgets
-
+<div class="floatright">
+<img src="../img/logo/epa.png" style="width:100%; max-width:200px; margin-left:30px">
+</div>
 [Local Industry Evaluator](../../localsite/info/) - Contains multiple widgets - Leaflet, JQuery and React  
-[PPE Supplier Map](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
-[Farm Fresh Produce Map](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
-[Simple embedded map sample](embed/)<!-- Remove: https://model.earth/community/impact/ -->  
-[Getting started with localsite](https://model.earth/localsite/start/)  
+[Getting started with localsite](https://model.earth/localsite/start/) - clone [io repo](https://github.com/modelearth/io/) and [localsite repo](https://github.com/localsite/localsite/) into the same web root.  
 
 <!--
 ## Environmentally-Enabled <span style="white-space:nowrap">Input-Output Model</span>
@@ -22,10 +21,6 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 
 <style>
 </style>
-
-<div class="floatright">
-<img src="../img/logo/epa.png" style="width:100%; max-width:200px; margin-left:30px">
-</div>
 
 
 ## React Widgets
@@ -55,6 +50,14 @@ If your local widgets reference the "useeio" folder, they may need to be updated
 
 ([old version](https://model.earth/eeio/build.2020.001), [pre-React](https://model.earth/eeio/build.2020.003) and [new version](useeio)) 
 -->
+
+## Related Map Work
+
+[Simple embedded map sample](embed/)<!-- Remove: https://model.earth/community/impact/ -->  
+[PPE Supplier Map](../../localsite/map/#show=suppliers) - Leaflet and JQuery  
+[Farm Fresh Produce Map](../../localsite/map/#show=farmfresh) - Leaflet and JQuery  
+
+
 <br>
 
 
