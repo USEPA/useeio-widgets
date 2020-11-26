@@ -30,8 +30,10 @@ Rstudio has devtools intalled already, so maybe just library(devtools) to call i
 
 ## React Widgets
 
-The following originate from the [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
-View [module documentation and functions](https://useeiowidgets.imfast.io/apidoc/modules/_main_.html) generated using [TypeDoc](https://typedoc.org/).  
+[View documentation and functions](https://useeiowidgets.imfast.io/apidoc/modules/_main_.html) generated using [TypeDoc](https://typedoc.org/).  
+
+The React widgets originate from the EPA's [USEEIO-widgets repo](https://github.com/USEPA/useeio-widgets/).  
+You can make updates in the [model.earth io repo](https://github.com/modelearth/io/) and we'll push into the EPA repo.  
 
 [Inflow-Outflow Chart](inflow-outflow/#sectors=326210&page=1&count=10) - <a href="../build/slider.html#sectors=322130,327910,541200&page=1&count=10">Widget only</a><!-- 
 [imfast.io](https://useeiowidgets.imfast.io/slider.html#sectors=322130,325520,327910,541200)-->  
@@ -76,7 +78,7 @@ from the [GitHub source code](https://github.com/USEPA/useeio-widgets)
 You can build the USEEIO React widgets locally.  Start with the following repo:
 
 [https://github.com/modelearth/io](https://github.com/modelearth/io)  
-The io repo contains a fork of [useeio-widgets](https://github.com/usepa/useeio-widgets), plus a built copy and extras.  
+The io repo contains a fork of [useeio-widgets](https://github.com/usepa/useeio-widgets), plus a built copy and extras (navigation and configuration examples).  
 
 Also clone the [https://github.com/localsite/localsite](https://github.com/localsite/localsite) repo and place it adjacent to the "io" repo.  
 Here's info on [getting localhost setup on your local computer](../../localsite/start/).
