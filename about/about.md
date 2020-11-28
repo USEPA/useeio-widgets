@@ -8,7 +8,9 @@ In 2019, EPA awarded a [Regional Sustainability and Environmental Sciences Resea
 (Community-driven Application Development Using USEEIO Models) to support EPA and the Center of Innovation for Energy to work with Georgia communities to build their own interfaces to the GA model.  
 
 View the new [Input-Output Tools](../../localsite/info/)  
-Learn about our [Team Members](../team)
+Learn about our [Team Members](../team)  
+
+[View webinar video](https://youtu.be/GRJSvyUx0t4) <!--and [slide presentation](https://smartcities.ipat.gatech.edu/sites/default/files/Smarter_Together_Webinar_Industry-Comparison-Tools_10-15-2020.pdf) -->from our [Georgia Tech Smarter Together Presentation](https://smartcities.ipat.gatech.edu/smarter-together) in 2020.  
 
 ## Timeline
 
