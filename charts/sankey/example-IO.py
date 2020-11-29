@@ -1,11 +1,22 @@
+
+"""
+To run:
+python example-IO.py
+
+If you've been using virtual environments, you may get: No module named 'requests'  No module named 'pandas'
+If so, install requests and pandas in a virtual environment using these four lines:
+
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install requests
+pip3 install pandas
+"""
+
 import json, os, requests
 import pandas as pd
 import numpy as np
 
-#os.chdir('/Users/eloncha/Documents/GitHub/community/start/charts/sankey')
-os.chdir('C:/Users/kwing/Documents/GitHub/io/charts/sankey')
-'''api set-up
-'''
+# EPA API
 base_url = 'https://smmtool.app.cloud.gov/api/'
 api_headers = {'x-api-key':'lySopVteG11Ru0m5ucnRharYBWco1CIGWlxKvro0'}
 
