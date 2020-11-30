@@ -213,6 +213,27 @@ export const CommodityList = (props: {
     }
 
     const onPageChange = (p: PageChangeParams) => {
+        if (!p) {
+            return;
+        }
+
+        // avoid unnecessary change events
+        const currentPage = props.config.page || 1;
+        const currentSize = props.config.count || 10;
+        if (p.page === currentPage
+            && p.pageSize === currentSize) {
+            return;
+        }
+
+        if (p.pageSize !== currentSize) {
+            // jump back to page 1 when the page size changes
+            props.widget.fireChange({
+                page: 1,
+                count: p.pageSize,
+            });
+            return;
+        }
+
         props.widget.fireChange({
             page: p.page,
             count: p.pageSize
@@ -222,7 +243,7 @@ export const CommodityList = (props: {
     // makes the selected value of what commodity is clicked to true
     // when its slider is clicked
     const onSliderClicked = (e: CellParams) => {
-        if (e.field !== "value"){
+        if (e.field !== "value") {
             return;
         }
         const commodity = e.data as Commodity;
