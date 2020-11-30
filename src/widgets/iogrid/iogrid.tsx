@@ -48,7 +48,8 @@ export class IOGrid extends Widget {
             await this.initialize();
         }
 
-        const commoditySectors = naics.filter(config.naics, this.sectors);
+        const commoditySectors = naics.filterByNAICS(
+            config.naics, this.sectors);
 
         // render the three columns:
         // inputs | commodities | outputs

@@ -2,31 +2,54 @@ import { Sector } from "./webapi";
 import { TMap } from "./util/util";
 
 /**
- * Applies the `naics` filter from the given configuration on the given
- * list of sectors. That is it includes matching sectors. The order of the
- * given sectors is preserved. If the naics configuration is empty, the
- * sectors are returned unchanged.
+ * Maps the given NAICS codes to BEA codes and then filters the given sectors
+ * to only include sectors with a matching BEA code.
  */
-export function filter(naicsCodes: string[], sectors: Sector[]): Sector[] {
-    if (!sectors)
+export function filterByNAICS(
+    naicsCodes: string | string[], sectors: Sector[]): Sector[] {
+    if (!sectors) {
         return [];
-    if (!naicsCodes || naicsCodes.length == 0)
-        return sectors;
-    try {
-        const beaFilter: TMap<boolean> = {};
-        for (const naicsCode of naicsCodes) {
-            const mapped = mapping[naicsCode.trim()];
-            if (!mapped)
-                continue;
-            for (const bea of mapped) {
-                beaFilter[bea] = true;
-            }
-        }
-        return sectors.filter(sector => beaFilter[sector.code]);
-    } catch (e) {
+    }
+    if (!naicsCodes || naicsCodes.length === 0) {
         return sectors;
     }
+    const f = _beaFilter(naicsCodes);
+    return sectors.filter(sector => f[sector.code]);
 }
+
+/**
+ * Returns a set of correspondig BEA codes for the given NAICS codes. Note that
+ * a NAICS code can be mapped to multiple BEA codes so that the returned list
+ * can contain more codes than the input list
+ */
+export function toBEA(naicsCodes: string | string[]): string[] {
+    return Object.keys(_beaFilter(naicsCodes)).sort();
+}
+
+
+const _beaFilter = (naicsCodes: string | string[]): TMap<boolean> => {
+    const filter: TMap<boolean> = {};
+    if (!naicsCodes) {
+        return filter;
+    }
+    const ncodes = typeof naicsCodes === 'string'
+        ? naicsCodes.split(',')
+        : naicsCodes;
+    for (const naicsCode of ncodes) {
+        if (!naicsCode) {
+            continue;
+        }
+        const mapped = mapping[naicsCode.trim()];
+        if (!mapped) {
+            continue;
+        }
+        for (const bea of mapped) {
+            filter[bea] = true;
+        }
+    }
+    return filter;
+};
+
 
 const mapping: TMap<string[]> = {
     "11": [
