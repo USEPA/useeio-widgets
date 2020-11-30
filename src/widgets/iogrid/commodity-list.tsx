@@ -23,7 +23,7 @@ import {
 } from "@material-ui/icons";
 
 import { Indicator, Sector } from "../../webapi";
-import { Config } from "../../widget";
+import { Config, Widget } from "../../widget";
 import { IOGrid } from "./iogrid";
 import { ifNone, isNotNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
@@ -269,6 +269,8 @@ export const CommodityList = (props: {
                             indicators={
                                 filterIndicators(props.indicators, props.config)
                             }
+                            widget={props.widget}
+                            config={props.config}
                             setIndicator={setIndicator}
                             setMenuElem={setMenuElem}
                             setSortBy={setSortBy}
@@ -320,6 +322,8 @@ const SortMenu = React.forwardRef((props: {
     selectedOnly: boolean,
     currentSorter: SortBy | Indicator,
     indicators: Indicator[],
+    widget: IOGrid,
+    config: Config,
     setMenuElem: (elem: null | HTMLElement) => void,
     setSortBy: (sorter: SortBy) => void,
     setIndicator: (indicator: Indicator) => void,
@@ -333,6 +337,19 @@ const SortMenu = React.forwardRef((props: {
             ? <RadioButtonChecked fontSize="small" color="secondary" />
             : <RadioButtonUnchecked fontSize="small" />;
         return <ListItemIcon>{i}</ListItemIcon>;
+    };
+
+    const onSortBy = (nextSorter: SortBy, indicator?: Indicator) => {
+        props.setMenuElem(null); // close the menu
+        if (!indicator && nextSorter === props.currentSorter) {
+            return;
+        }
+        props.setSortBy(nextSorter);
+        props.setIndicator(indicator ? indicator : null);
+        // reset the page to 1 if the sorting type changes
+        if (props.config.page && props.config.page > 1) {
+            props.widget.fireChange({ page: 1 });
+        }
     };
 
     if (props.withSelection) {
@@ -355,11 +372,7 @@ const SortMenu = React.forwardRef((props: {
         items.push(
             <MenuItem
                 key="sort-by-selection"
-                onClick={() => {
-                    props.setMenuElem(null); // close
-                    props.setSortBy("selection");
-                    props.setIndicator(null);
-                }}>
+                onClick={() => onSortBy("selection")}>
                 {icon("selection")}
                 Selected First
             </MenuItem>
@@ -370,11 +383,7 @@ const SortMenu = React.forwardRef((props: {
     items.push(
         <MenuItem
             key="sort-alphabetically"
-            onClick={() => {
-                props.setMenuElem(null); // close
-                props.setSortBy("alphabetical");
-                props.setIndicator(null);
-            }}>
+            onClick={() => onSortBy("alphabetical")}>
             {icon("alphabetical")}
             Alphabetical
         </MenuItem>
@@ -385,11 +394,7 @@ const SortMenu = React.forwardRef((props: {
         items.push(
             <MenuItem
                 key={`sort-by-${indicator.code}`}
-                onClick={() => {
-                    props.setMenuElem(null); // close
-                    props.setSortBy("indicator");
-                    props.setIndicator(indicator);
-                }}>
+                onClick={() => onSortBy("indicator", indicator)}>
                 {icon(indicator)}
                 By {indicator.simplename || indicator.name}
             </MenuItem>
