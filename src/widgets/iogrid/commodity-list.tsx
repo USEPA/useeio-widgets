@@ -15,6 +15,8 @@ import {
 } from "@material-ui/core";
 
 import {
+    CheckBoxOutlineBlankOutlined,
+    CheckBoxOutlined,
     RadioButtonChecked,
     RadioButtonUnchecked,
     Sort,
@@ -93,6 +95,7 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const [indicator, setIndicator] = React.useState<null | Indicator>(null);
     const emptySelection = Object.keys(selection).length === 0;
+    const [selectedOnly, setSelectedOnly] = React.useState<boolean>(false);
     const [sortBy, setSortBy] = React.useState<SortBy>(
         emptySelection ? "alphabetical" : "selection");
 
@@ -116,6 +119,9 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
+    if (selectedOnly) {
+        commodities = commodities.filter(c => c.selected);
+    }
     sortCommodities(commodities, {
         by: sortBy,
         values: sortBy === "indicator" && indicator
@@ -195,11 +201,11 @@ export const CommodityList = (props: {
                         <title>
                             {IndicatorValue.format(result)} {
                                 indicator.simpleunit || indicator.unit
-                            }
+                            } per $1.000
                         </title>
-                        <circle cx="12.5" cy="12.5"
-                            r={2 + 7 * share}
-                            fill="#f50057" />
+                        <rect x="0" y="2.5"
+                            height="10" fill="#f50057"
+                            width={50 * (0.05 + 0.95 * share)} />
                     </svg>
                 );
             },
@@ -258,13 +264,15 @@ export const CommodityList = (props: {
                         }}>
                         <SortMenu
                             withSelection={!emptySelection}
+                            selectedOnly={selectedOnly}
                             currentSorter={indicator ? indicator : sortBy}
                             indicators={
                                 filterIndicators(props.indicators, props.config)
                             }
                             setIndicator={setIndicator}
                             setMenuElem={setMenuElem}
-                            setSortBy={setSortBy} />
+                            setSortBy={setSortBy}
+                            setSelectedOnly={setSelectedOnly} />
                     </Menu>
                 </div>
             </Grid>
@@ -309,11 +317,13 @@ const SliderTooltip = (props: {
 
 const SortMenu = React.forwardRef((props: {
     withSelection: boolean,
+    selectedOnly: boolean,
     currentSorter: SortBy | Indicator,
     indicators: Indicator[],
     setMenuElem: (elem: null | HTMLElement) => void,
     setSortBy: (sorter: SortBy) => void,
-    setIndicator: (indicator: Indicator) => void
+    setIndicator: (indicator: Indicator) => void,
+    setSelectedOnly: (selectedOnly: boolean) => void,
 }, _ref) => {
 
     const items: JSX.Element[] = [];
@@ -321,11 +331,26 @@ const SortMenu = React.forwardRef((props: {
     const icon = (sorter: SortBy | Indicator) => {
         const i = sorter === props.currentSorter
             ? <RadioButtonChecked fontSize="small" color="secondary" />
-            : <RadioButtonUnchecked fontSize="small" color="secondary" />;
+            : <RadioButtonUnchecked fontSize="small" />;
         return <ListItemIcon>{i}</ListItemIcon>;
     };
 
     if (props.withSelection) {
+
+        // check box to filter only selected commodities
+        items.push(
+            <MenuItem
+                key="filter-selected-only"
+                onClick={() => props.setSelectedOnly(!props.selectedOnly)}>
+                <ListItemIcon>
+                    {props.selectedOnly
+                        ? <CheckBoxOutlined fontSize="small" color="secondary" />
+                        : <CheckBoxOutlineBlankOutlined fontSize="small" />}
+                </ListItemIcon>
+                Selected Only
+            </MenuItem>
+        );
+
         // sort by selection
         items.push(
             <MenuItem

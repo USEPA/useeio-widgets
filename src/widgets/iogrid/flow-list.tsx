@@ -139,7 +139,7 @@ export const FlowList = (props: {
                                         fontSize="small"
                                         color="secondary" />}
                             </ListItemIcon>
-                            By Contribution
+                            By Impact
                         </MenuItem>
                     </Menu>
                 </div>
