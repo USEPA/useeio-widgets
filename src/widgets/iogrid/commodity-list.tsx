@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
+import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
     Checkbox,
     Grid,
@@ -23,7 +23,7 @@ import {
 } from "@material-ui/icons";
 
 import { Indicator, Sector } from "../../webapi";
-import { Config, Widget } from "../../widget";
+import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
 import { ifNone, isNotNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
@@ -219,16 +219,20 @@ export const CommodityList = (props: {
         });
     };
 
-    //makes the selected value of what commodity is clicked to true
-    //when its slider is clicked
-    const ifSliderIsClicked = function (e: any) {
-        const commodity = commodities.filter(com => com.name === e.data.name)[0]
-        if (e.field === 'value') {
-            commodity.selected = true
-            selection[commodity.code] = commodity.value as number;
-            fireSelectionChange();
+    // makes the selected value of what commodity is clicked to true
+    // when its slider is clicked
+    const onSliderClicked = (e: CellParams) => {
+        if (e.field !== "value"){
+            return;
         }
-    }
+        const commodity = e.data as Commodity;
+        if (commodity.selected) {
+            return;
+        }
+        commodity.selected = true;
+        selection[commodity.code] = commodity.value as number;
+        fireSelectionChange();
+    };
 
     return (
         <Grid container direction="column" spacing={2}>
@@ -290,7 +294,7 @@ export const CommodityList = (props: {
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
-                    onCellClick={ifSliderIsClicked}
+                    onCellClick={e => onSliderClicked(e)}
                 />
             </Grid>
         </Grid>
