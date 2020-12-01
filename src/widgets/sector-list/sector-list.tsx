@@ -31,8 +31,6 @@ export class SectorList extends Widget {
      */
     sectors: Sector[];
 
-    private _naicsAttr: string;
-
     /**
      * The direct requirements matrix A of the underlying input-output model.
      * This matrix is only loaded if sector inputs or outputs should be
@@ -40,22 +38,26 @@ export class SectorList extends Widget {
      */
     matrixA: Matrix;
 
+    _naicsCodes: string[];
+
     constructor(private model: Model, private selector: string) {
         super();
         this.ready();
         const parent = document.querySelector(selector);
         if (parent) {
-            this._naicsAttr = parent.getAttribute("data-naics");
+            const naics = parent.getAttribute("data-naics");
+            if (strings.isNotEmpty(naics)) {
+                this._naicsCodes = naics.split(',');
+            }
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(mutation => {
                     if (mutation.attributeName === "data-naics") {
-                        this._naicsAttr = parent.getAttribute("data-naics");
+                        const naics = parent.getAttribute("data-naics");
+                        this._naicsCodes = naics.split(',');
                         const config: Config = this.config
                             ? { ... this.config }
                             : {};
-                        config.naics = this._naicsAttr
-                            ? this._naicsAttr.split(",").map(code => code.trim())
-                            : undefined;
+                        config.naics = this._naicsCodes;
                         this.handleUpdate(config);
                     }
                 });
@@ -85,28 +87,10 @@ export class SectorList extends Widget {
             const { sectors } = await this.model.singleRegionSectors();
             this.sectors = sectors;
         }
-        const _naics = config.naics
-            ? config.naics
-            : this._naicsAttr
-                ? this._naicsAttr.split(",").map(code => code.trim())
-                : null;
-        if (!_naics) {
-            this.sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
-        } else {
-            const dups: { [code: string]: boolean } = {};
-            const codes = _naics.map(ncode => naics.toBEA(ncode))
-                .filter(code => !code || dups[code]
-                    ? false
-                    : dups[code] = true
-                );
-            const sectorIdx: { [code: string]: Sector } = {};
-            this.sectors.reduce((idx, sector) => {
-                idx[sector.code] = sector;
-                return idx;
-            }, sectorIdx);
-            this.sectors = codes.map(code => sectorIdx[code])
-                .filter(sector => sector);
-        }
+
+        this.sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
+        const naicsCodes = this._naicsCodes || config.naics;
+        this.sectors = naics.filterByNAICS(naicsCodes, this.sectors);
 
         // load the matrix A for the display of sector inputs or outputs
         // if this is required
