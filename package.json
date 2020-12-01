@@ -15,11 +15,12 @@
     "Wesley Ingwersen"
   ],
   "scripts": {
-    "server": "npx http-server ./build --cors",
-    "download": "node scripts/download",
     "build": "webpack --config webpack.config.js --mode=production",
-    "dev": "webpack --config webpack.config.js --mode=development --watch",
     "clean": "node scripts/clean",
+    "dev": "webpack --config webpack.config.js --mode=development --watch",
+    "dist": "node scripts/dist",
+    "download": "node scripts/download",
+    "server": "npx http-server ./build --cors",
     "test": "ts-node ./node_modules/jasmine/bin/jasmine --config=jasmine.json"
   },
   "dependencies": {
@@ -38,6 +39,7 @@
     "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",
+    "archiver": "^5.1.0",
     "copy-webpack-plugin": "^6.1.1",
     "eslint": "^7.9.0",
     "http-server": "^0.12.3",

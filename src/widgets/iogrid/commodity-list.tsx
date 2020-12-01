@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
+import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
     Checkbox,
     Grid,
@@ -15,13 +15,12 @@ import {
 } from "@material-ui/core";
 
 import {
+    CheckBoxOutlineBlankOutlined,
+    CheckBoxOutlined,
     RadioButtonChecked,
     RadioButtonUnchecked,
     Sort,
 } from "@material-ui/icons";
-
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
@@ -96,9 +95,9 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const [indicator, setIndicator] = React.useState<null | Indicator>(null);
     const emptySelection = Object.keys(selection).length === 0;
-    const [displaySelectedOnly, setDisplaySelectedOnly] = React.useState<boolean>(false)
-    const [selectedFirst, setSelectedFirst] = React.useState<boolean>(true)
-    const [sortBy, setSortBy] = React.useState<SortBy>("alphabetical");
+    const [selectedOnly, setSelectedOnly] = React.useState<boolean>(false);
+    const [sortBy, setSortBy] = React.useState<SortBy>(
+        emptySelection ? "alphabetical" : "selection");
 
     // get the indicator results if an indicator was selected
     const indicatorResults = indicator
@@ -110,7 +109,6 @@ export const CommodityList = (props: {
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
-
         return {
             id: s.id,
             index: s.index,
@@ -119,15 +117,17 @@ export const CommodityList = (props: {
             selected: selection[s.code] >= 0 ? true : false,
             value: ifNone(selection[s.code], 100),
             description: s.description,
-
-        }
+        };
     });
-    sortCommodities(displaySelectedOnly ? commodities = commodities.filter(commodity => commodity.selected === true) : commodities, {
+    if (selectedOnly) {
+        commodities = commodities.filter(c => c.selected);
+    }
+    sortCommodities(commodities, {
         by: sortBy,
         values: sortBy === "indicator" && indicator
             ? indicatorResults
             : undefined,
-    }, displaySelectedOnly, selectedFirst);
+    });
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
@@ -156,40 +156,10 @@ export const CommodityList = (props: {
             }
         },
         {
-
             // sector name
             field: "name",
             headerName: "Sector",
             width: 300,
-            renderCell: (params) => {
-                const name = params.data.name
-                if (indicatorResults) {
-                    const commodity = params.data as Commodity;
-                    const result = indicatorResults[commodity.index];
-                    return (
-                        <div>
-                            <Typography>
-                                {name}
-                            </Typography>
-                            <Typography color='textSecondary'>
-                                {IndicatorValue.format(result)} {
-                                    indicator.simpleunit || indicator.unit
-                                }
-                            </Typography>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div>
-                            <Typography>
-                                {name}
-                            </Typography>
-
-                        </div>
-                    )
-                }
-            },
-
         },
         {
             // the slider for the scaling factor
@@ -231,7 +201,7 @@ export const CommodityList = (props: {
                         <title>
                             {IndicatorValue.format(result)} {
                                 indicator.simpleunit || indicator.unit
-                            }
+                            } per $1.000
                         </title>
                         <rect x="0" y="2.5"
                             height="10" fill="#f50057"
@@ -243,22 +213,47 @@ export const CommodityList = (props: {
     }
 
     const onPageChange = (p: PageChangeParams) => {
+        if (!p) {
+            return;
+        }
+
+        // avoid unnecessary change events
+        const currentPage = props.config.page || 1;
+        const currentSize = props.config.count || 10;
+        if (p.page === currentPage
+            && p.pageSize === currentSize) {
+            return;
+        }
+
+        if (p.pageSize !== currentSize) {
+            // jump back to page 1 when the page size changes
+            props.widget.fireChange({
+                page: 1,
+                count: p.pageSize,
+            });
+            return;
+        }
+
         props.widget.fireChange({
             page: p.page,
             count: p.pageSize
         });
     };
 
-    //makes the selected value of what commodity is clicked to true
-    //when its slider is clicked
-    const ifSliderIsClicked = function (e: any) {
-        const commodity = commodities.filter(com => com.name === e.data.name)[0]
-        if (e.field === 'value') {
-            commodity.selected = true
-            selection[commodity.code] = commodity.value as number;
-            fireSelectionChange();
+    // makes the selected value of what commodity is clicked to true
+    // when its slider is clicked
+    const onSliderClicked = (e: CellParams) => {
+        if (e.field !== "value") {
+            return;
         }
-    }
+        const commodity = e.data as Commodity;
+        if (commodity.selected) {
+            return;
+        }
+        commodity.selected = true;
+        selection[commodity.code] = commodity.value as number;
+        fireSelectionChange();
+    };
 
     return (
         <Grid container direction="column" spacing={2}>
@@ -294,18 +289,17 @@ export const CommodityList = (props: {
                         }}>
                         <SortMenu
                             withSelection={!emptySelection}
+                            selectedOnly={selectedOnly}
                             currentSorter={indicator ? indicator : sortBy}
                             indicators={
                                 filterIndicators(props.indicators, props.config)
                             }
+                            widget={props.widget}
+                            config={props.config}
                             setIndicator={setIndicator}
                             setMenuElem={setMenuElem}
                             setSortBy={setSortBy}
-                            displaySelectedOnly={displaySelectedOnly}
-                            setDisplaySelectedOnly={setDisplaySelectedOnly}
-                            selectedFirst={selectedFirst}
-                            setSelectedFirst={setSelectedFirst} />
-
+                            setSelectedOnly={setSelectedOnly} />
                     </Menu>
                 </div>
             </Grid>
@@ -321,7 +315,7 @@ export const CommodityList = (props: {
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
-                    onCellClick={ifSliderIsClicked}
+                    onCellClick={e => onSliderClicked(e)}
                 />
             </Grid>
         </Grid>
@@ -350,57 +344,61 @@ const SliderTooltip = (props: {
 
 const SortMenu = React.forwardRef((props: {
     withSelection: boolean,
+    selectedOnly: boolean,
     currentSorter: SortBy | Indicator,
     indicators: Indicator[],
-    displaySelectedOnly: boolean,
-    selectedFirst: boolean,
-    setDisplaySelectedOnly: (displaySelectedOnly: boolean) => void,
-    setSelectedFirst: (selectedFirst: boolean) => void,
+    widget: IOGrid,
+    config: Config,
     setMenuElem: (elem: null | HTMLElement) => void,
     setSortBy: (sorter: SortBy) => void,
-    setIndicator: (indicator: Indicator) => void
+    setIndicator: (indicator: Indicator) => void,
+    setSelectedOnly: (selectedOnly: boolean) => void,
 }, _ref) => {
 
     const items: JSX.Element[] = [];
 
-    const checkBoxIcon = (sorter: boolean) => {
-        const i = sorter ? <CheckBoxIcon fontSize='small' color='secondary' />
-            :
-            <CheckBoxOutlineBlankIcon fontSize='small' color='secondary' />;
-        return <ListItemIcon> {i} </ListItemIcon>
-    }
-
-    items.push(
-        <MenuItem
-            key='selectedOnly'
-            onClick={() => {
-                props.setMenuElem(null); // close
-                props.setDisplaySelectedOnly(!props.displaySelectedOnly)
-            }}
-        >
-            {checkBoxIcon(props.displaySelectedOnly)}
-            Selected Only
-        </MenuItem>
-
-    )
-
     const icon = (sorter: SortBy | Indicator) => {
         const i = sorter === props.currentSorter
             ? <RadioButtonChecked fontSize="small" color="secondary" />
-            : <RadioButtonUnchecked fontSize="small" color="secondary" />;
+            : <RadioButtonUnchecked fontSize="small" />;
         return <ListItemIcon>{i}</ListItemIcon>;
     };
 
+    const onSortBy = (nextSorter: SortBy, indicator?: Indicator) => {
+        props.setMenuElem(null); // close the menu
+        if (!indicator && nextSorter === props.currentSorter) {
+            return;
+        }
+        props.setSortBy(nextSorter);
+        props.setIndicator(indicator ? indicator : null);
+        // reset the page to 1 if the sorting type changes
+        if (props.config.page && props.config.page > 1) {
+            props.widget.fireChange({ page: 1 });
+        }
+    };
+
     if (props.withSelection) {
+
+        // check box to filter only selected commodities
+        items.push(
+            <MenuItem
+                key="filter-selected-only"
+                onClick={() => props.setSelectedOnly(!props.selectedOnly)}>
+                <ListItemIcon>
+                    {props.selectedOnly
+                        ? <CheckBoxOutlined fontSize="small" color="secondary" />
+                        : <CheckBoxOutlineBlankOutlined fontSize="small" />}
+                </ListItemIcon>
+                Selected Only
+            </MenuItem>
+        );
+
         // sort by selection
         items.push(
             <MenuItem
                 key="sort-by-selection"
-                onClick={() => {
-                    props.setMenuElem(null); // close
-                    props.setSelectedFirst(!props.selectedFirst);
-                }}>
-                {checkBoxIcon(props.selectedFirst)}
+                onClick={() => onSortBy("selection")}>
+                {icon("selection")}
                 Selected First
             </MenuItem>
         );
@@ -410,11 +408,7 @@ const SortMenu = React.forwardRef((props: {
     items.push(
         <MenuItem
             key="sort-alphabetically"
-            onClick={() => {
-                props.setMenuElem(null); // close
-                props.setSortBy("alphabetical");
-                props.setIndicator(null);
-            }}>
+            onClick={() => onSortBy("alphabetical")}>
             {icon("alphabetical")}
             Alphabetical
         </MenuItem>
@@ -425,11 +419,7 @@ const SortMenu = React.forwardRef((props: {
         items.push(
             <MenuItem
                 key={`sort-by-${indicator.code}`}
-                onClick={() => {
-                    props.setMenuElem(null); // close
-                    props.setSortBy("indicator");
-                    props.setIndicator(indicator);
-                }}>
+                onClick={() => onSortBy("indicator", indicator)}>
                 {icon(indicator)}
                 By {indicator.simplename || indicator.name}
             </MenuItem>
@@ -442,48 +432,26 @@ const SortMenu = React.forwardRef((props: {
 const sortCommodities = (commodities: Commodity[], config: {
     by: SortBy,
     values?: number[]
-}, displaySelectedOnly: boolean, selectedFirst: boolean) => {
-    if (displaySelectedOnly) {
+}) => {
+    return commodities.sort((c1, c2) => {
+
+        // selected items first
+        if (config.by === "selection" && c1.selected !== c2.selected) {
+            return c1.selected ? -1 : 1;
+        }
+
         // larger indicator contributions first
-        return commodities.sort((c1, c2) => {
-            // selected items first
-            if (selectedFirst && c1.selected !== c2.selected) {
-                return c1.selected ? -1 : 1;
+        if (config.by === "indicator" && config.values) {
+            const val1 = config.values[c1.index];
+            const val2 = config.values[c2.index];
+            if (val1 !== val2) {
+                return val2 - val1;
             }
+        }
 
-            if (config.by === "indicator" && config.values) {
-                const val1 = config.values[c1.index];
-                const val2 = config.values[c2.index];
-                if (val1 !== val2) {
-                    return val2 - val1;
-                }
-            }
-
-            // sort alphabetically by default
-            return strings.compare(c1.name, c2.name);
-        })
-    } else {
-
-        return commodities.sort((c1, c2) => {
-
-            // selected items first
-            if (selectedFirst && c1.selected !== c2.selected) {
-                return c1.selected ? -1 : 1;
-            }
-
-            // larger indicator contributions first
-            if (config.by === "indicator" && config.values) {
-                const val1 = config.values[c1.index];
-                const val2 = config.values[c2.index];
-                if (val1 !== val2) {
-                    return val2 - val1;
-                }
-            }
-
-            // sort alphabetically by default
-            return strings.compare(c1.name, c2.name);
-        });
-    }
+        // sort alphabetically by default
+        return strings.compare(c1.name, c2.name);
+    });
 };
 
 /**
