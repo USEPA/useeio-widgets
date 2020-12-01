@@ -339,7 +339,7 @@ const Row = (props: RowProps) => {
             padding: "5px 0px",
             whiteSpace: "nowrap",
         }}>
-            {demandVal ? demandVal.toFixed(3) : null}
+            {(demandVal > 10000000) ? (demandVal / 1000000000).toFixed(2) : "n/a"}
         </td>;
     }
 
