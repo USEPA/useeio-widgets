@@ -10,3 +10,6 @@ for (const file of fs.readdirSync(buildDir)) {
         fs.rmdirSync(path, { recursive: true });
     }
 }
+
+const distDir = __dirname + '/../dist';
+fs.rmdirSync(distDir, {recursive: true});
