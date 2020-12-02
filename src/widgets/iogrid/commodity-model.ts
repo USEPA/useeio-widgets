@@ -1,6 +1,7 @@
 import { isNone, isNotNone } from "../../util/util";
 import { Indicator } from "../../webapi";
 import * as strings from "../../util/strings";
+import { ThumbUpSharp } from "@material-ui/icons";
 
 /**
  * The row type of the commodity list.
@@ -88,23 +89,9 @@ export class SortOptions {
         return this._maxResult | 0;
     }
 
-
-    setSelectedOnly(b: boolean): SortOptions {
-        const next = new SortOptions(this);
-        next._selectedOnly = b;
-        return next;
-    }
-
     swapSelectedOnly(): SortOptions {
-        const next = new SortOptions(this);
-        next._selectedOnly = !this._selectedOnly;
-        return next;
-    }
-
-    setSelectedFirst(b: boolean): SortOptions {
-        const next = new SortOptions(this);
-        next._selectedFirst = b;
-        return next;
+        return this._copy(n =>
+            n._selectedOnly = !this._selectedOnly);
     }
 
     swapSelectedFirst(): SortOptions {
@@ -113,21 +100,21 @@ export class SortOptions {
     }
 
     setIndicator(indicator: Indicator, results: number[]): SortOptions {
-        const next = new SortOptions(this);
-        next._indicator = indicator;
-        next._results = results;
-        next._maxResult = results
-            ? results.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
-            : 0;
-        return next;
+        return this._copy(n => {
+            n._indicator = indicator;
+            n._results = results;
+            n._maxResult = results
+                ? results.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+                : 0;
+        });
     }
 
     setAlphabetical(): SortOptions {
-        const next = new SortOptions(this);
-        next._indicator = null;
-        next._results = null;
-        next._maxResult = 0;
-        return next;
+        return this._copy(n => {
+            n._indicator = null;
+            n._results = null;
+            n._maxResult = 0;
+        });
     }
 
     private _copy(f: (next: SortOptions) => void): SortOptions {
