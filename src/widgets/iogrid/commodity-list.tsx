@@ -29,7 +29,6 @@ import { ifNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 
 import { Commodity, SortOptions } from "./commodity-model";
-import { sortIndicators } from "./indicators";
 
 
 const IndicatorValue = new Intl.NumberFormat("en-US", {
@@ -44,9 +43,10 @@ const IndicatorValue = new Intl.NumberFormat("en-US", {
 export const CommodityList = (props: {
     sectors: Sector[],
     config: Config,
-    indicators: Indicator[],
     widget: IOGrid,
 }) => {
+
+    const grid = props.widget;
 
     // collect the selected sectors and their
     // scaling factors from the configuration
@@ -73,7 +73,7 @@ export const CommodityList = (props: {
                 ? `${code}:${selection[code]}`
                 : null)
             .filter(s => s ? true : false);
-        props.widget.fireChange({ sectors });
+        grid.fireChange({ sectors });
     };
 
     // initialize the states
@@ -210,14 +210,14 @@ export const CommodityList = (props: {
 
         if (p.pageSize !== currentSize) {
             // jump back to page 1 when the page size changes
-            props.widget.fireChange({
+            grid.fireChange({
                 page: 1,
                 count: p.pageSize,
             });
             return;
         }
 
-        props.widget.fireChange({
+        grid.fireChange({
             page: p.page,
             count: p.pageSize
         });
@@ -279,11 +279,11 @@ export const CommodityList = (props: {
                                 setSortOpts(nextOpts);
                                 // reset the page to 1 if the sorting type changes
                                 if (props.config.page && props.config.page > 1) {
-                                    props.widget.fireChange({ page: 1 });
+                                    grid.fireChange({ page: 1 });
                                 }
                             }}
-                            indicators={sortIndicators(props.indicators)}
-                            widget={props.widget} />
+                            indicators={grid.getSortedIndicators()}
+                            widget={grid} />
                     </Menu>
                 </div>
             </Grid>
