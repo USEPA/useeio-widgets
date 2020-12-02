@@ -5,7 +5,7 @@ import * as strings from "../../util/strings";
 /**
  * The row type of the commodity list.
  */
-type Commodity = {
+export type Commodity = {
     id: string,
     index: number,
     name: string,
@@ -95,10 +95,21 @@ export class SortOptions {
         return next;
     }
 
+    swapSelectedOnly(): SortOptions {
+        const next = new SortOptions(this);
+        next._selectedOnly = !this._selectedOnly;
+        return next;
+    }
+
     setSelectedFirst(b: boolean): SortOptions {
         const next = new SortOptions(this);
         next._selectedFirst = b;
         return next;
+    }
+
+    swapSelectedFirst(): SortOptions {
+        return this._copy(n =>
+            n._selectedFirst = !this._selectedFirst);
     }
 
     setIndicator(indicator: Indicator, results: number[]): SortOptions {
@@ -119,11 +130,17 @@ export class SortOptions {
         return next;
     }
 
+    private _copy(f: (next: SortOptions) => void): SortOptions {
+        const n = new SortOptions(this);
+        f(n);
+        return n;
+    }
+
     apply(commodities: Commodity[]): Commodity[] {
         if (!commodities) {
             return [];
         }
-        
+
         const list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;

@@ -345,7 +345,7 @@ const SortMenu = React.forwardRef((props: {
         items.push(
             <MenuItem
                 key="filter-selected-only"
-                onClick={() => props.onChange()}>
+                onClick={() => props.onChange(opts.swapSelectedOnly())}>
                 <ListItemIcon>
                     {opts.isSelectedOnly
                         ? <CheckBoxOutlined fontSize="small" color="secondary" />
@@ -358,20 +358,32 @@ const SortMenu = React.forwardRef((props: {
         // sort by selection
         items.push(
             <MenuItem
-                key="sort-by-selection"
-                onClick={() => onSortBy("selection")}>
-                {icon("selection")}
+                key="sort-selected-first"
+                onClick={() => props.onChange(opts.swapSelectedFirst())}>
+                <ListItemIcon>
+                    {opts.isSelectedFirst
+                        ? <CheckBoxOutlined fontSize="small" color="secondary" />
+                        : <CheckBoxOutlineBlankOutlined fontSize="small" />}
+                </ListItemIcon>
                 Selected First
             </MenuItem>
         );
     }
 
     // alphabetical sorting
+    const alphaIcon = opts.isAlphabetical
+        ? <RadioButtonChecked fontSize="small" color="secondary" />
+        : <RadioButtonUnchecked fontSize="small" />;
     items.push(
         <MenuItem
             key="sort-alphabetically"
-            onClick={() => onSortBy("alphabetical")}>
-            {icon("alphabetical")}
+            onClick={() => {
+                if (opts.isAlphabetical) {
+                    return;
+                }
+                props.onChange(opts.setAlphabetical());
+            }}>
+            <ListItemIcon>{alphaIcon}</ListItemIcon>
             Alphabetical
         </MenuItem>
     );
@@ -388,14 +400,11 @@ const SortMenu = React.forwardRef((props: {
             <MenuItem
                 key={`sort-by-${indicator.code}`}
                 onClick={() => {
-                    let next: SortOptions;
                     if (selected) {
-                        next = opts.setAlphabetical();
-                    } else {
-                        const results = props.widget
-                            .getIndicatorResults(indicator);
-                        next = opts.setIndicator(indicator, results);
+                        return;
                     }
+                    const results = props.widget.getIndicatorResults(indicator);
+                    const next = opts.setIndicator(indicator, results);
                     props.onChange(next);
                 }}>
                 <ListItemIcon>{icon}</ListItemIcon>
