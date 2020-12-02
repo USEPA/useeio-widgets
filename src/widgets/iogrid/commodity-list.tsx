@@ -28,20 +28,7 @@ import { IOGrid } from "./iogrid";
 import { ifNone, isNotNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 
-import {SortOptions} from "./commodity-model";
-
-/**
- * The row type of the commodity list.
- */
-type Commodity = {
-    id: string,
-    index: number,
-    name: string,
-    code: string,
-    selected: boolean,
-    value: number,
-    description?: string,
-};
+import { Commodity, SortOptions } from "./commodity-model";
 
 
 const IndicatorValue = new Intl.NumberFormat("en-US", {
@@ -54,8 +41,8 @@ const IndicatorValue = new Intl.NumberFormat("en-US", {
  * should be computed.
  */
 export const CommodityList = (props: {
-    config: Config,
     sectors: Sector[],
+    config: Config,
     indicators: Indicator[],
     widget: IOGrid,
 }) => {
@@ -93,15 +80,7 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selection).length === 0;
 
-    const [sortOptions, setSortOptions] = React.useState(new SortOptions());
-
-    // get the indicator results if an indicator was selected
-    const indicatorResults = indicator
-        ? props.widget.getIndicatorResults(indicator)
-        : null;
-    const maxIndicatorResult = indicatorResults
-        ? indicatorResults.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
-        : undefined;
+    const [sortOpts, setSortOpts] = React.useState(new SortOptions());
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
@@ -115,16 +94,7 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
-
-    if (selectedOnly) {
-        commodities = commodities.filter(c => c.selected);
-    }
-    sortCommodities(commodities, {
-        by: sortBy,
-        values: sortBy === "indicator" && indicator
-            ? indicatorResults
-            : undefined,
-    });
+    commodities = sortOpts.apply(commodities);
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
@@ -160,12 +130,10 @@ export const CommodityList = (props: {
             renderCell: (params) => {
                 const commodity = params.data as Commodity;
                 let subTitle: JSX.Element = null;
-                if (indicatorResults) {
-                    const result = indicatorResults[commodity.index];
+                if (sortOpts.isByIndicator) {
+                    const result = sortOpts.indicatorResult(commodity);
                     subTitle = <Typography color='textSecondary'>
-                        {IndicatorValue.format(result)} {
-                            sortOptions.indicator.simpleunit || sortOptions.indicator.unit
-                        }
+                        {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
                     </Typography>;
                 }
                 return (
@@ -201,13 +169,13 @@ export const CommodityList = (props: {
 
     // add a result indicator when the list is sorted
     // by indicator results
-    if (indicatorResults) {
+    if (sortOpts.isByIndicator) {
         columns.push({
             field: "code",
             width: 150,
             renderCell: (params) => {
                 const commodity = params.data as Commodity;
-                const result = indicatorResults[commodity.index];
+                const result = sortOpts.indicatorResult(commodity);
                 const share = maxIndicatorResult
                     ? result / maxIndicatorResult
                     : 0;
