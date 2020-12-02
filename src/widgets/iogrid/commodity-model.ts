@@ -1,7 +1,7 @@
-import { isNone, isNotNone } from "../../util/util";
+import { isNone } from "../../util/util";
 import { Indicator } from "../../webapi";
 import * as strings from "../../util/strings";
-import { ThumbUpSharp } from "@material-ui/icons";
+import { IOGrid } from "./iogrid";
 
 /**
  * The row type of the commodity list.
@@ -24,11 +24,11 @@ export class SortOptions {
 
     private _selectedOnly: boolean;
     private _selectedFirst: boolean;
-    private _indicator?: Indicator;
+    private _indicators: Indicator[];
     private _results?: number[];
     private _maxResult?: number;
 
-    constructor(other?: SortOptions) {
+    constructor(readonly grid: IOGrid, other?: SortOptions) {
         if (!other) {
             // default values
             this._selectedOnly = false;
@@ -36,7 +36,7 @@ export class SortOptions {
         } else {
             this._selectedOnly = other._selectedOnly;
             this._selectedFirst = other._selectedFirst;
-            this._indicator = other._indicator;
+            this._indicators = other._indicators;
             this._results = other._results;
             this._maxResult = other._maxResult;
         }
@@ -50,16 +50,23 @@ export class SortOptions {
         return this._selectedFirst;
     }
 
-    get isByIndicator(): boolean {
-        return isNotNone(this._indicator);
+    get isByIndicators(): boolean {
+        return isNone(this._indicators)
+            ? false
+            : this._indicators.length > 0;
     }
 
-    get indicator(): Indicator | undefined {
-        return this._indicator;
+    get hasSingleIndicator(): boolean {
+        return isNone(this._indicators)
+            || this.indicators.length !== 1
+            ? false
+            : true;
     }
 
-    get indicatorResults(): number[] | undefined {
-        return this._results;
+    get indicators(): Indicator[] {
+        return isNone(this._indicators)
+            ? []
+            : this.indicators.slice(0);
     }
 
     indicatorResult(c: Commodity): number {
@@ -75,14 +82,17 @@ export class SortOptions {
     }
 
     get indicatorUnit(): string {
-        const indicator = this._indicator;
+        if (!this.hasSingleIndicator) {
+            return "";
+        }
+        const indicator = this._indicators[0];
         return !indicator
             ? ""
             : indicator.simpleunit || indicator.unit;
     }
 
     get isAlphabetical(): boolean {
-        return isNone(this._indicator);
+        return !this.isByIndicators;
     }
 
     get maxIndicatorResult(): number {
@@ -99,26 +109,60 @@ export class SortOptions {
             n._selectedFirst = !this._selectedFirst);
     }
 
-    setIndicator(indicator: Indicator, results: number[]): SortOptions {
-        return this._copy(n => {
-            n._indicator = indicator;
-            n._results = results;
-            n._maxResult = results
-                ? results.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+    swapSelectionOf(indicator: Indicator): SortOptions {
+        if (!indicator) {
+            return this;
+        }
+
+        // create the new indicator list
+        const indicators: Indicator[] = [];
+        let found = false;
+        for (const i of this._indicators) {
+            if (i === indicator) {
+                found = true;
+                continue;
+            }
+            indicators.push(i);
+        }
+        if (!found) {
+            indicators.push(indicator);
+        }
+        if (indicators.length === 0) {
+            return this.setAlphabetical();
+        }
+
+        const absmax = (nums: number[]): number =>
+            nums
+                ? nums.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
                 : 0;
+
+        // calculate the combined results
+        let results: number[];
+        for (const i of indicators) {
+            const r = this.grid.getIndicatorResults(i);
+            const m = absmax(r);
+            results = results
+                ? results.map((total, i) => total + (m ? r[i] / m : 0))
+                : r.map((val) => m ? val / m : 0);
+        }
+
+        return this._copy(n => {
+            n._indicators = indicators;
+            n._results = results;
+            n._maxResult = absmax(results);
         });
     }
 
     setAlphabetical(): SortOptions {
         return this._copy(n => {
-            n._indicator = null;
+            n._indicators = null;
             n._results = null;
             n._maxResult = 0;
         });
     }
 
     private _copy(f: (next: SortOptions) => void): SortOptions {
-        const n = new SortOptions(this);
+        const n = new SortOptions(this.grid, this);
         f(n);
         return n;
     }
@@ -142,7 +186,7 @@ export class SortOptions {
             }
 
             // sort by indicator
-            if (this.isByIndicator && this._results) {
+            if (this.isByIndicators && this._results) {
                 const r1 = this.indicatorResult(c1);
                 const r2 = this.indicatorResult(c2);
                 return r2 - r1;
