@@ -114,7 +114,7 @@ export const CommodityList = (props: {
             index: s.index,
             name: s.name,
             code: s.code,
-            selected: selection[s.code] >= 0 ? true : false,
+            selected: typeof selection[s.code] === "number",
             value: ifNone(selection[s.code], 100),
             description: s.description,
         };
@@ -160,6 +160,24 @@ export const CommodityList = (props: {
             field: "name",
             headerName: "Sector",
             width: 300,
+            renderCell: (params) => {
+                const commodity = params.data as Commodity;
+                let subTitle: JSX.Element = null;
+                if (indicatorResults) {
+                    const result = indicatorResults[commodity.index];
+                    subTitle = <Typography color='textSecondary'>
+                        {IndicatorValue.format(result)} {
+                            indicator.simpleunit || indicator.unit
+                        }
+                    </Typography>;
+                }
+                return (
+                    <div>
+                        <Typography>{commodity.name}</Typography>
+                        {subTitle}
+                    </div>
+                );
+            }
         },
         {
             // the slider for the scaling factor
@@ -189,7 +207,7 @@ export const CommodityList = (props: {
     if (indicatorResults) {
         columns.push({
             field: "code",
-            width: 100,
+            width: 150,
             renderCell: (params) => {
                 const commodity = params.data as Commodity;
                 const result = indicatorResults[commodity.index];
@@ -284,7 +302,7 @@ export const CommodityList = (props: {
                         onClose={() => setMenuElem(null)}
                         PaperProps={{
                             style: {
-                                maxHeight: 48 * 4.5,
+                                maxHeight: "85vh",
                             },
                         }}>
                         <SortMenu
