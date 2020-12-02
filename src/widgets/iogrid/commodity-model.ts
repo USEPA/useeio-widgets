@@ -1,5 +1,6 @@
 import { isNone, isNotNone } from "../../util/util";
 import { Indicator } from "../../webapi";
+import * as strings from "../../util/strings";
 
 /**
  * The row type of the commodity list.
@@ -57,13 +58,19 @@ export class SortOptions {
     }
 
     get indicatorResults(): number[] | undefined {
-        return this._indicatorResults;
+        return this._results;
     }
 
     indicatorResult(c: Commodity): number {
-        return !c || !this._indicatorResults
+        return !c || !this._results
             ? 0
-            : this._indicatorResults[c.index];
+            : this._results[c.index];
+    }
+
+    relativeIndicatorResult(c: Commodity): number {
+        return !c || !this._maxResult
+            ? 0
+            : this.indicatorResult(c) / this._maxResult;
     }
 
     get indicatorUnit(): string {
@@ -78,10 +85,7 @@ export class SortOptions {
     }
 
     get maxIndicatorResult(): number {
-        return !this._indicatorResults
-            ? 0
-            : this._indicatorResults.reduce(
-                (max, val) => Math.max(max, Math.abs(val)), 0);
+        return this._maxResult | 0;
     }
 
 
@@ -100,14 +104,18 @@ export class SortOptions {
     setIndicator(indicator: Indicator, results: number[]): SortOptions {
         const next = new SortOptions(this);
         next._indicator = indicator;
-        next._indicatorResults = results;
+        next._results = results;
+        next._maxResult = results
+            ? results.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+            : 0;
         return next;
     }
 
     setAlphabetical(): SortOptions {
         const next = new SortOptions(this);
         next._indicator = null;
-        next._indicatorResults = null;
+        next._results = null;
+        next._maxResult = 0;
         return next;
     }
 
@@ -115,10 +123,30 @@ export class SortOptions {
         if (!commodities) {
             return [];
         }
-        let list = this._selectedOnly
+        
+        const list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;
 
-        return list;
+        return list.sort((c1, c2) => {
+
+            // if selected first and if the selection
+            // state is different
+            if (this.isSelectedFirst
+                && c1.selected !== c2.selected) {
+                return c1.selected ? -1 : 1;
+            }
+
+            // sort by indicator
+            if (this.isByIndicator && this._results) {
+                const r1 = this.indicatorResult(c1);
+                const r2 = this.indicatorResult(c2);
+                return r2 - r1;
+            }
+
+            // sort alphabetically by default
+            return strings.compare(c1.name, c2.name);
+
+        });
     }
 }

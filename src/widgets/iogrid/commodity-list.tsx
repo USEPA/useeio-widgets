@@ -174,16 +174,15 @@ export const CommodityList = (props: {
             field: "code",
             width: 150,
             renderCell: (params) => {
-                const commodity = params.data as Commodity;
-                const result = sortOpts.indicatorResult(commodity);
-                const share = maxIndicatorResult
-                    ? result / maxIndicatorResult
-                    : 0;
+                const c = params.data as Commodity;
+                const result = sortOpts.indicatorResult(c);
+                const share = sortOpts.relativeIndicatorResult(c);
+
                 return (
                     <svg height="25" width="25">
                         <title>
                             {IndicatorValue.format(result)} {
-                                indicator.simpleunit || indicator.unit
+                                sortOpts.indicatorUnit
                             } per $1.000
                         </title>
                         <rect x="0" y="2.5"
@@ -272,17 +271,20 @@ export const CommodityList = (props: {
                         }}>
                         <SortMenu
                             withSelection={!emptySelection}
-                            selectedOnly={selectedOnly}
-                            currentSorter={indicator ? indicator : sortBy}
+                            options={sortOpts}
+                            onChange={nextOpts => {
+                                // close the menu
+                                setMenuElem(null);
+                                setSortOpts(nextOpts);
+                                // reset the page to 1 if the sorting type changes
+                                if (props.config.page && props.config.page > 1) {
+                                    props.widget.fireChange({ page: 1 });
+                                }
+                            }}
                             indicators={
                                 filterIndicators(props.indicators, props.config)
                             }
-                            widget={props.widget}
-                            config={props.config}
-                            setIndicator={setIndicator}
-                            setMenuElem={setMenuElem}
-                            setSortBy={setSortBy}
-                            setSelectedOnly={setSelectedOnly} />
+                            widget={props.widget} />
                     </Menu>
                 </div>
             </Grid>
@@ -327,39 +329,15 @@ const SliderTooltip = (props: {
 
 const SortMenu = React.forwardRef((props: {
     withSelection: boolean,
-    selectedOnly: boolean,
-
-    currentSorter: SortBy | Indicator,
+    options: SortOptions,
     indicators: Indicator[],
     widget: IOGrid,
-    config: Config,
-    setMenuElem: (elem: null | HTMLElement) => void,
-    setSortBy: (sorter: SortBy) => void,
-    setIndicator: (indicator: Indicator) => void,
-    setSelectedOnly: (selectedOnly: boolean) => void,
+    onChange: (options: SortOptions) => void,
 }, _ref) => {
 
     const items: JSX.Element[] = [];
+    const opts = props.options;
 
-    const icon = (sorter: SortBy | Indicator) => {
-        const i = sorter === props.currentSorter
-            ? <RadioButtonChecked fontSize="small" color="secondary" />
-            : <RadioButtonUnchecked fontSize="small" />;
-        return <ListItemIcon>{i}</ListItemIcon>;
-    };
-
-    const onSortBy = (nextSorter: SortBy, indicator?: Indicator) => {
-        props.setMenuElem(null); // close the menu
-        if (!indicator && nextSorter === props.currentSorter) {
-            return;
-        }
-        props.setSortBy(nextSorter);
-        props.setIndicator(indicator ? indicator : null);
-        // reset the page to 1 if the sorting type changes
-        if (props.config.page && props.config.page > 1) {
-            props.widget.fireChange({ page: 1 });
-        }
-    };
 
     if (props.withSelection) {
 
@@ -367,9 +345,9 @@ const SortMenu = React.forwardRef((props: {
         items.push(
             <MenuItem
                 key="filter-selected-only"
-                onClick={() => props.setSelectedOnly(!props.selectedOnly)}>
+                onClick={() => props.onChange()}>
                 <ListItemIcon>
-                    {props.selectedOnly
+                    {opts.isSelectedOnly
                         ? <CheckBoxOutlined fontSize="small" color="secondary" />
                         : <CheckBoxOutlineBlankOutlined fontSize="small" />}
                 </ListItemIcon>
@@ -398,13 +376,29 @@ const SortMenu = React.forwardRef((props: {
         </MenuItem>
     );
 
+
     // sort items for the indicators
     for (const indicator of props.indicators) {
+        const selected = opts.indicator === indicator;
+        const icon = selected
+            ? <RadioButtonChecked fontSize="small" color="secondary" />
+            : <RadioButtonUnchecked fontSize="small" />;
+
         items.push(
             <MenuItem
                 key={`sort-by-${indicator.code}`}
-                onClick={() => onSortBy("indicator", indicator)}>
-                {icon(indicator)}
+                onClick={() => {
+                    let next: SortOptions;
+                    if (selected) {
+                        next = opts.setAlphabetical();
+                    } else {
+                        const results = props.widget
+                            .getIndicatorResults(indicator);
+                        next = opts.setIndicator(indicator, results);
+                    }
+                    props.onChange(next);
+                }}>
+                <ListItemIcon>{icon}</ListItemIcon>
                 By {indicator.simplename || indicator.name}
             </MenuItem>
         );
@@ -412,31 +406,6 @@ const SortMenu = React.forwardRef((props: {
 
     return <>{items}</>;
 });
-
-const sortCommodities = (commodities: Commodity[], config: {
-    by: SortBy,
-    values?: number[]
-}) => {
-    return commodities.sort((c1, c2) => {
-
-        // selected items first
-        if (config.by === "selection" && c1.selected !== c2.selected) {
-            return c1.selected ? -1 : 1;
-        }
-
-        // larger indicator contributions first
-        if (config.by === "indicator" && config.values) {
-            const val1 = config.values[c1.index];
-            const val2 = config.values[c2.index];
-            if (val1 !== val2) {
-                return val2 - val1;
-            }
-        }
-
-        // sort alphabetically by default
-        return strings.compare(c1.name, c2.name);
-    });
-};
 
 /**
  * Sort the indicators for the `sort-by` menu. We also filter the indicators
