@@ -66,7 +66,7 @@ export class SortOptions {
     get indicators(): Indicator[] {
         return isNone(this._indicators)
             ? []
-            : this.indicators.slice(0);
+            : this._indicators.slice(0);
     }
 
     indicatorResult(c: Commodity): number {
@@ -109,6 +109,16 @@ export class SortOptions {
             n._selectedFirst = !this._selectedFirst);
     }
 
+    isSelected(indicator: Indicator): boolean {
+        if (!indicator || !this._indicators)
+            return false;
+        for (const i of this._indicators) {
+            if (i === indicator)
+                return true;
+        }
+        return false;
+    }
+
     swapSelectionOf(indicator: Indicator): SortOptions {
         if (!indicator) {
             return this;
@@ -116,8 +126,9 @@ export class SortOptions {
 
         // create the new indicator list
         const indicators: Indicator[] = [];
+        const current = this._indicators || [];
         let found = false;
-        for (const i of this._indicators) {
+        for (const i of current) {
             if (i === indicator) {
                 found = true;
                 continue;
@@ -138,12 +149,16 @@ export class SortOptions {
 
         // calculate the combined results
         let results: number[];
-        for (const i of indicators) {
-            const r = this.grid.getIndicatorResults(i);
-            const m = absmax(r);
-            results = results
-                ? results.map((total, i) => total + (m ? r[i] / m : 0))
-                : r.map((val) => m ? val / m : 0);
+        if (indicators.length === 1) {
+            results = this.grid.getIndicatorResults(indicators[0]);
+        } else {
+            for (const i of indicators) {
+                const r = this.grid.getIndicatorResults(i);
+                const m = absmax(r);
+                results = results
+                    ? results.map((total, i) => total + (m ? r[i] / m : 0))
+                    : r.map((val) => m ? val / m : 0);
+            }
         }
 
         return this._copy(n => {

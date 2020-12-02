@@ -17,8 +17,6 @@ import {
 import {
     CheckBoxOutlineBlankOutlined,
     CheckBoxOutlined,
-    RadioButtonChecked,
-    RadioButtonUnchecked,
     Sort,
 } from "@material-ui/icons";
 
@@ -81,7 +79,7 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selection).length === 0;
 
-    const [sortOpts, setSortOpts] = React.useState(new SortOptions());
+    const [sortOpts, setSortOpts] = React.useState(new SortOptions(grid));
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
@@ -131,7 +129,7 @@ export const CommodityList = (props: {
             renderCell: (params) => {
                 const commodity = params.data as Commodity;
                 let subTitle: JSX.Element = null;
-                if (sortOpts.isByIndicator) {
+                if (sortOpts.hasSingleIndicator) {
                     const result = sortOpts.indicatorResult(commodity);
                     subTitle = <Typography color='textSecondary'>
                         {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
@@ -170,7 +168,7 @@ export const CommodityList = (props: {
 
     // add a result indicator when the list is sorted
     // by indicator results
-    if (sortOpts.isByIndicator) {
+    if (sortOpts.isByIndicators) {
         columns.push({
             field: "code",
             width: 150,
@@ -179,13 +177,18 @@ export const CommodityList = (props: {
                 const result = sortOpts.indicatorResult(c);
                 const share = sortOpts.relativeIndicatorResult(c);
 
+                let title: JSX.Element = null;
+                if (sortOpts.hasSingleIndicator) {
+                    title = <title>
+                        {IndicatorValue.format(result)} {
+                            sortOpts.indicatorUnit
+                        } per $1.000
+                        </title>;
+                }
+
                 return (
                     <svg height="25" width="25">
-                        <title>
-                            {IndicatorValue.format(result)} {
-                                sortOpts.indicatorUnit
-                            } per $1.000
-                        </title>
+                        {title}
                         <rect x="0" y="2.5"
                             height="10" fill="#f50057"
                             width={50 * (0.05 + 0.95 * share)} />
@@ -337,7 +340,6 @@ const SortMenu = React.forwardRef((props: {
     const items: JSX.Element[] = [];
     const opts = props.options;
 
-
     if (props.withSelection) {
 
         // check box to filter only selected commodities
@@ -345,11 +347,7 @@ const SortMenu = React.forwardRef((props: {
             <MenuItem
                 key="filter-selected-only"
                 onClick={() => props.onChange(opts.swapSelectedOnly())}>
-                <ListItemIcon>
-                    {opts.isSelectedOnly
-                        ? <CheckBoxOutlined fontSize="small" color="secondary" />
-                        : <CheckBoxOutlineBlankOutlined fontSize="small" />}
-                </ListItemIcon>
+                <CheckBox checked={opts.isSelectedOnly} />
                 Selected Only
             </MenuItem>
         );
@@ -359,20 +357,13 @@ const SortMenu = React.forwardRef((props: {
             <MenuItem
                 key="sort-selected-first"
                 onClick={() => props.onChange(opts.swapSelectedFirst())}>
-                <ListItemIcon>
-                    {opts.isSelectedFirst
-                        ? <CheckBoxOutlined fontSize="small" color="secondary" />
-                        : <CheckBoxOutlineBlankOutlined fontSize="small" />}
-                </ListItemIcon>
+                <CheckBox checked={opts.isSelectedFirst} />
                 Selected First
             </MenuItem>
         );
     }
 
     // alphabetical sorting
-    const alphaIcon = opts.isAlphabetical
-        ? <RadioButtonChecked fontSize="small" color="secondary" />
-        : <RadioButtonUnchecked fontSize="small" />;
     items.push(
         <MenuItem
             key="sort-alphabetically"
@@ -382,7 +373,7 @@ const SortMenu = React.forwardRef((props: {
                 }
                 props.onChange(opts.setAlphabetical());
             }}>
-            <ListItemIcon>{alphaIcon}</ListItemIcon>
+            <CheckBox checked={opts.isAlphabetical} />
             Alphabetical
         </MenuItem>
     );
@@ -390,23 +381,14 @@ const SortMenu = React.forwardRef((props: {
 
     // sort items for the indicators
     for (const indicator of props.indicators) {
-        const selected = opts.indicator === indicator;
-        const icon = selected
-            ? <RadioButtonChecked fontSize="small" color="secondary" />
-            : <RadioButtonUnchecked fontSize="small" />;
-
+        const selected = opts.isSelected(indicator);
         items.push(
             <MenuItem
                 key={`sort-by-${indicator.code}`}
                 onClick={() => {
-                    if (selected) {
-                        return;
-                    }
-                    const results = props.widget.getIndicatorResults(indicator);
-                    const next = opts.setIndicator(indicator, results);
-                    props.onChange(next);
+                    props.onChange(opts.swapSelectionOf(indicator));
                 }}>
-                <ListItemIcon>{icon}</ListItemIcon>
+                <CheckBox checked={selected} />
                 By {indicator.simplename || indicator.name}
             </MenuItem>
         );
@@ -414,3 +396,11 @@ const SortMenu = React.forwardRef((props: {
 
     return <>{items}</>;
 });
+
+
+const CheckBox = (props: { checked: boolean }) =>
+    <ListItemIcon>
+        {props.checked
+            ? <CheckBoxOutlined fontSize="small" color="secondary" />
+            : <CheckBoxOutlineBlankOutlined fontSize="small" />}
+    </ListItemIcon>;
