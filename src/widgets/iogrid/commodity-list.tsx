@@ -28,6 +28,8 @@ import { IOGrid } from "./iogrid";
 import { ifNone, isNotNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 
+import {SortOptions} from "./commodity-model";
+
 /**
  * The row type of the commodity list.
  */
@@ -41,10 +43,6 @@ type Commodity = {
     description?: string,
 };
 
-type SortBy =
-    "alphabetical"
-    | "selection"
-    | "indicator";
 
 const IndicatorValue = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -91,13 +89,11 @@ export const CommodityList = (props: {
     };
 
     // initialize the states
-    const [searchTerm, setSearchTerm] = React.useState<string>("");
+    const [searchTerm, setSearchTerm] = React.useState("");
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
-    const [indicator, setIndicator] = React.useState<null | Indicator>(null);
     const emptySelection = Object.keys(selection).length === 0;
-    const [selectedOnly, setSelectedOnly] = React.useState<boolean>(false);
-    const [sortBy, setSortBy] = React.useState<SortBy>(
-        emptySelection ? "alphabetical" : "selection");
+
+    const [sortOptions, setSortOptions] = React.useState(new SortOptions());
 
     // get the indicator results if an indicator was selected
     const indicatorResults = indicator
@@ -119,6 +115,7 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
+
     if (selectedOnly) {
         commodities = commodities.filter(c => c.selected);
     }
@@ -167,7 +164,7 @@ export const CommodityList = (props: {
                     const result = indicatorResults[commodity.index];
                     subTitle = <Typography color='textSecondary'>
                         {IndicatorValue.format(result)} {
-                            indicator.simpleunit || indicator.unit
+                            sortOptions.indicator.simpleunit || sortOptions.indicator.unit
                         }
                     </Typography>;
                 }
@@ -363,6 +360,7 @@ const SliderTooltip = (props: {
 const SortMenu = React.forwardRef((props: {
     withSelection: boolean,
     selectedOnly: boolean,
+
     currentSorter: SortBy | Indicator,
     indicators: Indicator[],
     widget: IOGrid,
