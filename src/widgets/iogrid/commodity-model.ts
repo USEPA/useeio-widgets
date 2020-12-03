@@ -78,7 +78,7 @@ export class SortOptions {
                 .sort()
                 .reduce((codes, code) => codes === null
                     ? code
-                    : `${codes},code`, null);
+                    : `${codes},${code}`, null);
     }
 
     get hasSingleIndicator(): boolean {

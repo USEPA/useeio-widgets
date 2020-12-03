@@ -23,7 +23,7 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, TMap } from "../../util/util";
+import { ifNone, isNotNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 
 import { Commodity, SortOptions } from "./commodity-model";
@@ -79,7 +79,8 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selection).length === 0;
 
-    const [sortOpts, setSortOpts] = React.useState(new SortOptions(grid));
+    const [sortOpts, setSortOpts] = React.useState(
+        SortOptions.create(grid, props.config));
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
@@ -265,12 +266,21 @@ export const CommodityList = (props: {
                             withSelection={!emptySelection}
                             options={sortOpts}
                             onChange={nextOpts => {
+                                const indicatorConfig = nextOpts.indicatorConfig;
+                                const indicatorChange =
+                                    indicatorConfig !== sortOpts.indicatorConfig;
                                 // close the menu
                                 setMenuElem(null);
                                 setSortOpts(nextOpts);
                                 // reset the page to 1 if the sorting type changes
-                                if (props.config.page && props.config.page > 1) {
-                                    grid.fireChange({ page: 1 });
+                                if ((props.config.page && props.config.page > 1)
+                                    || indicatorChange) {
+                                    grid.fireChange({
+                                        page: 1,
+                                        indicators: isNotNone(indicatorConfig)
+                                            ? indicatorConfig.split(",")
+                                            : null,
+                                    });
                                 }
                             }}
                             indicators={grid.getSortedIndicators()}
