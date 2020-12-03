@@ -1,7 +1,8 @@
-import { isNone } from "../../util/util";
+import { isNone, isNoneOrEmpty } from "../../util/util";
 import { Indicator } from "../../webapi";
 import * as strings from "../../util/strings";
 import { IOGrid } from "./iogrid";
+import { Config } from "../../widget";
 
 /**
  * The row type of the commodity list.
@@ -42,6 +43,15 @@ export class SortOptions {
         }
     }
 
+    static create(grid: IOGrid, config: Config): SortOptions {
+        const opts = new SortOptions(grid);
+        if (isNoneOrEmpty(config?.indicators))
+            return opts;
+        const indicators = grid.getSortedIndicators()
+            .filter(i => config.indicators.indexOf(i.code) >= 0);
+        return opts.setIndicators(indicators);
+    }
+
     get isSelectedOnly(): boolean {
         return this._selectedOnly;
     }
@@ -54,6 +64,21 @@ export class SortOptions {
         return isNone(this._indicators)
             ? false
             : this._indicators.length > 0;
+    }
+
+    /**
+     * Get the indicator configuration string from this options. With this
+     * string we can easily check differences between options.
+     */
+    get indicatorConfig(): string | null {
+        return isNoneOrEmpty(this._indicators)
+            ? null
+            : this._indicators
+                .map(i => i.code)
+                .sort()
+                .reduce((codes, code) => codes === null
+                    ? code
+                    : `${codes},code`, null);
     }
 
     get hasSingleIndicator(): boolean {
@@ -135,10 +160,16 @@ export class SortOptions {
             }
             indicators.push(i);
         }
+
         if (!found) {
             indicators.push(indicator);
         }
-        if (indicators.length === 0) {
+
+        return this.setIndicators(indicators);
+    }
+
+    setIndicators(indicators: Indicator[]): SortOptions {
+        if (isNoneOrEmpty(indicators)) {
             return this.setAlphabetical();
         }
 

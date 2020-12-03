@@ -11,6 +11,15 @@ export function isNone<T>(obj?: T | null | undefined): obj is null | undefined {
     return typeof obj === "undefined" || obj === null;
 }
 
+export function isNoneOrEmpty<T>(array?: T[] | null | undefined):
+    array is null | undefined | [] {
+    return isNone(array) || array.length === 0;
+}
+
+export function isNotEmpty<T>(array: T[]): boolean {
+    return !isNoneOrEmpty(array);
+}
+
 /**
  * Returns true if the given object is not `null` or undefined.
  */
