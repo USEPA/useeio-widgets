@@ -23,7 +23,7 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNotNone, TMap } from "../../util/util";
+import { ifNone, isNone, isNoneOrEmpty, isNotNone, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 
 import { Commodity, SortOptions } from "./commodity-model";
@@ -45,14 +45,15 @@ export const CommodityList = (props: {
 }) => {
 
     const grid = props.widget;
+    const config = props.config;
 
     // collect the selected sectors and their
     // scaling factors from the configuration
     // and store them in a map:
     // sector code -> factor
     const selection: TMap<number> = {};
-    if (props.config.sectors) {
-        props.config.sectors.reduce((numMap, code) => {
+    if (config.sectors) {
+        config.sectors.reduce((numMap, code) => {
             const parts = code.split(':');
             if (parts.length < 2) {
                 numMap[code] = 100;
@@ -78,9 +79,18 @@ export const CommodityList = (props: {
     const [searchTerm, setSearchTerm] = React.useState("");
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selection).length === 0;
+    const [sortOpts, setSortOpts] = React.useState(SortOptions.create(grid, config));
 
-    const [sortOpts, setSortOpts] = React.useState(
-        SortOptions.create(grid, props.config));
+    // push indicator updates of the configuration
+    if (strings.areListsNotEqual(config.indicators, sortOpts.indicatorCodes)) {
+        if (isNoneOrEmpty(config.indicators)) {
+            setSortOpts(sortOpts.setAlphabetical());
+        } else {
+            const indicators = grid.getSortedIndicators()
+                .filter(i => config.indicators.indexOf(i.code) >= 0);
+            setSortOpts(sortOpts.setIndicators(indicators));
+        }
+    }
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
@@ -193,8 +203,8 @@ export const CommodityList = (props: {
         }
 
         // avoid unnecessary change events
-        const currentPage = props.config.page || 1;
-        const currentSize = props.config.count || 10;
+        const currentPage = config.page || 1;
+        const currentSize = config.count || 10;
         if (p.page === currentPage
             && p.pageSize === currentSize) {
             return;
@@ -266,20 +276,18 @@ export const CommodityList = (props: {
                             withSelection={!emptySelection}
                             options={sortOpts}
                             onChange={nextOpts => {
-                                const indicatorConfig = nextOpts.indicatorConfig;
-                                const indicatorChange =
-                                    indicatorConfig !== sortOpts.indicatorConfig;
+                                const nextCodes = nextOpts.indicatorCodes;
+                                const indicatorChange = strings.areListsNotEqual(
+                                    nextCodes, sortOpts.indicatorCodes);
                                 // close the menu
                                 setMenuElem(null);
                                 setSortOpts(nextOpts);
                                 // reset the page to 1 if the sorting type changes
-                                if ((props.config.page && props.config.page > 1)
+                                if ((config.page && config.page > 1)
                                     || indicatorChange) {
                                     grid.fireChange({
                                         page: 1,
-                                        indicators: isNotNone(indicatorConfig)
-                                            ? indicatorConfig.split(",")
-                                            : null,
+                                        indicators: nextCodes,
                                     });
                                 }
                             }}
@@ -292,8 +300,8 @@ export const CommodityList = (props: {
                 <DataGrid
                     columns={columns}
                     rows={commodities}
-                    pageSize={ifNone(props.config.count, 10)}
-                    page={ifNone(props.config.page, 1)}
+                    pageSize={ifNone(config.count, 10)}
+                    page={ifNone(config.page, 1)}
                     onPageChange={onPageChange}
                     onPageSizeChange={onPageChange}
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}

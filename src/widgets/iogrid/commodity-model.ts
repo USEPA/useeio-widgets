@@ -66,19 +66,12 @@ export class SortOptions {
             : this._indicators.length > 0;
     }
 
-    /**
-     * Get the indicator configuration string from this options. With this
-     * string we can easily check differences between options.
-     */
-    get indicatorConfig(): string | null {
+    get indicatorCodes(): string[] | null {
         return isNoneOrEmpty(this._indicators)
             ? null
             : this._indicators
                 .map(i => i.code)
-                .sort()
-                .reduce((codes, code) => codes === null
-                    ? code
-                    : `${codes},${code}`, null);
+                .sort();
     }
 
     get hasSingleIndicator(): boolean {
