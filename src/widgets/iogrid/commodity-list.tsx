@@ -126,22 +126,10 @@ export const CommodityList = (props: {
             field: "name",
             headerName: "Sector",
             width: 300,
-            renderCell: (params) => {
-                const commodity = params.data as Commodity;
-                let subTitle: JSX.Element = null;
-                if (sortOpts.hasSingleIndicator) {
-                    const result = sortOpts.indicatorResult(commodity);
-                    subTitle = <Typography color='textSecondary'>
-                        {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
-                    </Typography>;
-                }
-                return (
-                    <div>
-                        <Typography>{commodity.name}</Typography>
-                        {subTitle}
-                    </div>
-                );
-            }
+            renderCell: (params) =>
+                <NameCell
+                    commodity={params.data as Commodity}
+                    sortOpts={sortOpts} />,
         },
         {
             // the slider for the scaling factor
@@ -368,10 +356,9 @@ const SortMenu = React.forwardRef((props: {
         <MenuItem
             key="sort-alphabetically"
             onClick={() => {
-                if (opts.isAlphabetical) {
-                    return;
+                if (!opts.isAlphabetical) {
+                    props.onChange(opts.setAlphabetical());
                 }
-                props.onChange(opts.setAlphabetical());
             }}>
             <CheckBox checked={opts.isAlphabetical} />
             Alphabetical
@@ -396,6 +383,25 @@ const SortMenu = React.forwardRef((props: {
 
     return <>{items}</>;
 });
+
+
+const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions }) => {
+    const { commodity, sortOpts } = props;
+    let subTitle: JSX.Element = null;
+    if (sortOpts.hasSingleIndicator) {
+        const result = sortOpts.indicatorResult(commodity);
+        subTitle =
+            <Typography color='textSecondary'>
+                {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
+            </Typography>;
+    }
+    return (
+        <div>
+            <Typography>{commodity.name}</Typography>
+            {subTitle}
+        </div>
+    );
+};
 
 
 const CheckBox = (props: { checked: boolean }) =>
