@@ -103,7 +103,7 @@ type OptList = string[] | undefined | null;
 export function areListsEqual(xs: OptList, ys: OptList): boolean {
     if (xs === ys)
         return true;
-    if (isNone(xs) && isNone(xs))
+    if (isNone(xs) && isNone(ys))
         return true;
     if (isNone(xs) || isNone(ys))
         return false;
