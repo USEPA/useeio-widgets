@@ -23,7 +23,7 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNone, isNoneOrEmpty, isNotNone, TMap } from "../../util/util";
+import { ifNone, isNoneOrEmpty, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 
 import { Commodity, SortOptions } from "./commodity-model";
