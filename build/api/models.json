@@ -1,1 +1,1 @@
-[{"id":"USEEIOv1.2","name":"USEEIOv1.2","location":"US","description":"USEEIO v1.1 with waste tables and indicators"}]
+[{"id":"USEEIO","name":"USEEIO","location":"US","description":"Example IO model from the IO-Model-Builder","sectorschema":"BEA_2007_Detail_Code"},{"id":"GAUSEEIO","name":"GAUSEEIO","location":"GA","description":"2 region GA ROUS model","sectorschema":"BEA_2007_Detail_Code"},{"id":"USEEIOv2.0-GHG","name":"USEEIOv2.0-GHG","location":"US","description":"Uses 2012 IO tables and 2016 GHG data with three indicators","sectorschema":"BEA_2012_Detail_Code"}]

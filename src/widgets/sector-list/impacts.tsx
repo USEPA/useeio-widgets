@@ -139,7 +139,7 @@ export const ImpactResult = (props: RowProps) => {
             <td key={ind.id}>
                 <div>
                     <span style={{ float: "left" }}>
-                        {`${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.simpleunit}`}
+                        {`${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`}
                     </span>
                     <svg height="15" width="210"
                         style={{ float: "left", clear: "both" }}>
@@ -169,7 +169,7 @@ export const ImpactResult = (props: RowProps) => {
             alpha *= 0.25;
         }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.simpleunit}`;
+        const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`;
         items.push(
             <td className="indicator-value" key={ind.id}
                 title={value}
