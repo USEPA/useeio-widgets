@@ -1,3 +1,5 @@
+import { isNone } from "./util";
+
 export function compare(s1: string, s2: string): number {
     if (!s1 && !s2) {
         return 0;
@@ -80,7 +82,7 @@ export function isNullOrEmpty(s: string): boolean {
     return s.trim().length === 0;
 }
 
-export function isNotEmpty(s: string): boolean{
+export function isNotEmpty(s: string): boolean {
     return !isNullOrEmpty(s);
 }
 
@@ -89,4 +91,31 @@ export function isMember(x: string, xs: string[]): boolean {
         return false;
     }
     return xs.indexOf(x) >= 0;
+}
+
+type OptList = string[] | undefined | null;
+
+/**
+ * Returns true if xs contains every element of ys and the other way around.
+ * If both lists are null or undefined they are also considered as the same
+ * lists. 
+ */
+export function areListsEqual(xs: OptList, ys: OptList): boolean {
+    if (xs === ys)
+        return true;
+    if (isNone(xs) && isNone(ys))
+        return true;
+    if (isNone(xs) || isNone(ys))
+        return false;
+    if (xs.length != ys.length)
+        return false;
+    for (const x of xs) {
+        if (ys.indexOf(x) < 0)
+            return false;
+    }
+    return true;
+}
+
+export function areListsNotEqual(xs: OptList, ys: OptList): boolean {
+    return !areListsEqual(xs, ys);
 }
