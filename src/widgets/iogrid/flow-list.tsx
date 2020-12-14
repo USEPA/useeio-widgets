@@ -60,7 +60,7 @@ export const FlowList = (props: {
             headerName: "Sector",
             width: 300,
             renderCell: (params) => {
-                const name = params.data.name
+                const name = params.data.name;
                 const flow = params.data as IOFlow;
                 const title = Currency.format(flow.value)
                     + " " + props.direction
@@ -70,7 +70,7 @@ export const FlowList = (props: {
                         <Typography>{name}</Typography>
                         <Typography color="textSecondary">{title}</Typography>
                     </div>
-                )
+                );
             },
         },
         {
