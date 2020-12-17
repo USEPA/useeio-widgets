@@ -16,8 +16,6 @@ import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
 
 const Currency = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
 });
@@ -337,10 +335,13 @@ const Row = (props: RowProps) => {
 
     // display the demand value if showvalues=true
     let demand;
-
     if (config.showvalues) {
-        // demand value
-        const demandVal = props.widget.demand[sector.code] || 0;
+        const demandVal = props.widget.demand[sector.code];
+        const demandStr = !demandVal
+            ? "---"
+            : demandVal < 500_000
+                ? "0.000"
+                : Currency.format(demandVal / 1_000_000_000);
         demand = (
             <td
                 style={{
@@ -350,7 +351,7 @@ const Row = (props: RowProps) => {
                     textAlign: "right",
                 }}
             >
-                {Currency.format(demandVal / 1_000_000_000)}
+                {demandStr}
             </td>
         );
     }
