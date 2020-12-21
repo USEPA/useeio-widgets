@@ -1,5 +1,7 @@
 import { DemandType, ResultPerspective, Model } from "./webapi";
 import * as strings from "./util/strings";
+import { utcMilliseconds } from "d3";
+import { isNone } from "./util/util";
 
 /**
  * A common configuration object of our widgets. Often our widgets take
@@ -495,8 +497,8 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
         }
 
         // check for a global `hiddenhash` variable
-        const hiddenhash = (window as any).hiddenhash;
-        if (typeof hiddenhash === "string") {
+        const hiddenhash = this.getHiddenHash();
+        if (hiddenhash !== "") {
             urls.push("#" + hiddenhash);
         }
 
@@ -507,6 +509,26 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             this.updateConfig(config, otherParams);
         }
         return config;
+    }
+
+    /**
+     * We check for a global `hiddenhash` attribute for additional configuration
+     * settings. This can be a string or an object with string values.
+     */
+    private getHiddenHash(): string {
+        const hiddenhash = (window as any).hiddenhash;
+        if (isNone(hiddenhash)) {
+            return "";
+        }
+        if (typeof hiddenhash === "string") {
+            return hiddenhash;
+        }
+        if (typeof hiddenhash === "object") {
+            return Object.keys(hiddenhash)
+                .map(key => `${key}=${hiddenhash[key]}`)
+                .join("&");
+        }
+        return "";
     }
 
     /**
