@@ -23,8 +23,9 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNoneOrEmpty, TMap } from "../../util/util";
+import { ifNone, isNoneOrEmpty } from "../../util/util";
 import * as strings from "../../util/strings";
+import * as selection from "./selection";
 
 import { Commodity, SortOptions } from "./commodity-model";
 
@@ -47,29 +48,16 @@ export const CommodityList = (props: {
     const grid = props.widget;
     const config = props.config;
 
-    // collect the selected sectors and their
-    // scaling factors from the configuration
-    // and store them in a map:
-    // sector code -> factor
-    const selection: TMap<number> = {};
-    if (config.sectors) {
-        config.sectors.reduce((numMap, code) => {
-            const parts = code.split(':');
-            if (parts.length < 2) {
-                numMap[code] = 100;
-            } else {
-                numMap[parts[0]] = parseInt(parts[1]);
-            }
-            return numMap;
-        }, selection);
-    }
+    // collect the selected sectors and their scaling factors from the
+    // configuration and store them in a map: sector code -> factor
+    const selected = selection.fromConfig(config, props.sectors);
 
     // fire a change in the sector selection
     // based on the current selection state
     const fireSelectionChange = () => {
-        const sectors = Object.keys(selection).map(
+        const sectors = Object.keys(selected).map(
             code => code
-                ? `${code}:${selection[code]}`
+                ? `${code}:${selected[code]}`
                 : null)
             .filter(s => s ? true : false);
         grid.fireChange({ sectors });
@@ -78,7 +66,7 @@ export const CommodityList = (props: {
     // initialize the states
     const [searchTerm, setSearchTerm] = React.useState("");
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
-    const emptySelection = Object.keys(selection).length === 0;
+    const emptySelection = Object.keys(selected).length === 0;
     const [sortOpts, setSortOpts] = React.useState(SortOptions.create(grid, config));
 
     // push indicator updates of the configuration
@@ -99,8 +87,8 @@ export const CommodityList = (props: {
             index: s.index,
             name: s.name,
             code: s.code,
-            selected: typeof selection[s.code] === "number",
-            value: ifNone(selection[s.code], 100),
+            selected: typeof selected[s.code] === "number",
+            value: ifNone(selected[s.code], 100),
             description: s.description,
         };
     });
@@ -124,9 +112,9 @@ export const CommodityList = (props: {
                     title={commodity.description}
                     onClick={() => {
                         if (commodity.selected) {
-                            delete selection[commodity.code];
+                            delete selected[commodity.code];
                         } else {
-                            selection[commodity.code] = 100;
+                            selected[commodity.code] = 100;
                         }
                         fireSelectionChange();
                     }} />;
@@ -154,7 +142,7 @@ export const CommodityList = (props: {
                         value={commodity.value}
                         disabled={!commodity.selected}
                         onChange={(_, value) => {
-                            selection[commodity.code] = value as number;
+                            selected[commodity.code] = value as number;
                             fireSelectionChange();
                         }}
                         min={0}
@@ -236,7 +224,7 @@ export const CommodityList = (props: {
             return;
         }
         commodity.selected = true;
-        selection[commodity.code] = commodity.value as number;
+        selected[commodity.code] = commodity.value as number;
         fireSelectionChange();
     };
 

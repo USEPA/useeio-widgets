@@ -9,6 +9,7 @@ import { isNotNone, isNone, TMap } from "../../util/util";
 import { zeros } from "../../calc/calc";
 import * as strings from "../../util/strings";
 import * as naics from "../../naics";
+import * as selection from "./selection";
 
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
@@ -35,6 +36,7 @@ export class IOGrid extends Widget {
     private indicators: Indicator[];
     private techMatrix: Matrix;
     private directImpacts: Matrix;
+    private commoditySectors: Sector[] = [];
 
     constructor(
         private model: Model,
@@ -48,7 +50,7 @@ export class IOGrid extends Widget {
             await this.initialize();
         }
 
-        const commoditySectors = naics.filterByNAICS(
+        this.commoditySectors = naics.filterByNAICS(
             config.naics, this.sectors);
 
         // render the three columns:
@@ -64,7 +66,7 @@ export class IOGrid extends Widget {
                 <Grid item style={{ width: "40%" }}>
                     <CommodityList
                         config={config}
-                        sectors={commoditySectors}
+                        sectors={this.commoditySectors}
                         widget={this} />
                 </Grid>
                 <Grid item style={{ width: "30%" }}>
@@ -162,17 +164,15 @@ export class IOGrid extends Widget {
 
         // compute the sector index and scaling factor pairs
         const pairs: [number, number][] = [];
-        if (config.sectors) {
-            for (const s of config.sectors) {
-                const parts = s.split(":");
-                const code = parts[0];
-                const factor = parts.length < 2
-                    ? 1.0
-                    : parseInt(parts[1]) / 100;
-                const idx = this.sectorIndex[code];
-                if (isNotNone(idx)) {
-                    pairs.push([idx, factor]);
-                }
+        const selected = selection.fromConfig(config, this.commoditySectors);
+        for (const code of Object.keys(selected)) {
+            const share = selected[code];
+            if (!share) {
+                continue;
+            }
+            const idx = this.sectorIndex[code];
+            if (isNotNone(idx)) {
+                pairs.push([idx, share / 100]);
             }
         }
 
@@ -255,5 +255,3 @@ export class IOGrid extends Widget {
     }
 
 }
-
-
