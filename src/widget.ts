@@ -409,7 +409,67 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             return parts.join("&");
         };
 
-        window.location.hash = "#" + str(this.config);
+        this.patchHash(str(this.config));
+    }
+
+    /**
+     * Update the current hash with the given value but keep current hash
+     * attributes that are no configuration attributes in the hash. Note that
+     * configuration attributes can be dropped intentionally from the hash part
+     * (indicating that something is not set). Also, configuration attributes
+     * can have scope prefixes. Thus, it is not enough to just keep the current
+     * attributes in the has; we need to check for each current attribute if it
+     * is a configuration attribute instead.
+     */
+    private patchHash(configHash: string) {
+        const current = window.location.hash;
+        if (strings.isNullOrEmpty(current) || current === "#") {
+            window.location.hash = "#" + configHash;
+            return;
+        }
+        const configKeys = [
+            "model",
+            "sectors",
+            "naics",
+            "indicators",
+            "perspective",
+            "analysis",
+            "year",
+            "location",
+            "count",
+            "page",
+            "view",
+            "showvalues",
+            "showscientific",
+            "selectmatrix",
+            "showdownload",
+            "showcode",
+        ];
+
+        let prefix = "";
+        const currentParts = current.substring(1).split("&");
+        for (const part of currentParts) {
+            const [key,] = part.split("=");
+            let addIt = true;
+            for (const configKey of configKeys) {
+                if (key === configKey
+                    || key.endsWith(`-${configKey}`)) {
+                    addIt = false;
+                    break;
+                }
+            }
+            if (!addIt) {
+                continue;
+            }
+            if (prefix.length > 0) {
+                prefix += "&";
+            }
+            prefix += part;
+        }
+
+        window.location.hash = strings.isNullOrEmpty(prefix)
+            ? `#${configHash}`
+            : `#${prefix}&${configHash}`;
     }
 
     /**
