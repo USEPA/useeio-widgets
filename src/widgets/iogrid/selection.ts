@@ -1,4 +1,4 @@
-import { isNone, TMap } from "../../util/util";
+import { isNone, isNotNone, TMap } from "../../util/util";
 import { Sector } from "../../webapi";
 import { Config } from "../../widget";
 
@@ -24,10 +24,11 @@ export function fromConfig(config: Config, sectors: Sector[]): TMap<number> {
             const [sectorCode, share] = parts;
             if (share === "disabled") {
                 disabled.push(sectorCode);
+                continue;
             }
             try {
                 s[sectorCode] = parseInt(share);
-            } catch(e) {
+            } catch (e) {
                 s[sectorCode] = 100;
             }
         }
@@ -48,4 +49,20 @@ export function fromConfig(config: Config, sectors: Sector[]): TMap<number> {
     }
 
     return s;
+}
+
+export function toConfig(
+    config: Config, sectors: Sector[], selected: TMap<number>): string[] {
+
+    if (!config.naics || config.naics.length === 0) {
+        return Object.keys(selected)
+            .map(code => [code, selected[code]])
+            .filter(([_, share]) => isNotNone(share))
+            .map(([code, share]) => `${code}:${share}`);
+    }
+    return sectors.map(s => [s.code, selected[s.code]])
+        .filter(([_, share]) => share !== 100)
+        .map(([code, share]) => isNone(share)
+            ? `${code}:disabled`
+            : `${code}:${share}`);
 }

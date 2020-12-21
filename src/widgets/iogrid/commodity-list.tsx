@@ -55,11 +55,7 @@ export const CommodityList = (props: {
     // fire a change in the sector selection
     // based on the current selection state
     const fireSelectionChange = () => {
-        const sectors = Object.keys(selected).map(
-            code => code
-                ? `${code}:${selected[code]}`
-                : null)
-            .filter(s => s ? true : false);
+        const sectors = selection.toConfig(config, props.sectors, selected);
         grid.fireChange({ sectors });
     };
 
