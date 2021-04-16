@@ -48,6 +48,24 @@ export function fromConfig(config: Config, sectors: Sector[]): TMap<number> {
         }
     }
 
+    // If no naics and sectors are set, we select the first 10 not disabled sectors by default
+    if (!config.naics && !config.sectors) {
+        const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
+        let i = 0;
+        for (const sector of sectors) {
+            if (disabled.indexOf(sector.code) >= 0) {
+                continue;
+            }
+            const share = s[sector.code];
+            if (isNone(share)) {
+                s[sector.code] = 100;
+                i++;
+            }
+            if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
+                break;
+            }
+        }
+    }
     return s;
 }
 
