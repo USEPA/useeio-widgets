@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 
 import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
@@ -58,23 +58,27 @@ export const CommodityList = (props: {
         const sectors = selection.toConfig(config, props.sectors, selected);
         grid.fireChange({ sectors });
     };
-
+    
     // initialize the states
     const [searchTerm, setSearchTerm] = React.useState("");
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selected).length === 0;
     const [sortOpts, setSortOpts] = React.useState(SortOptions.create(grid, config));
 
-    // push indicator updates of the configuration
-    if (strings.areListsNotEqual(config.indicators, sortOpts.indicatorCodes)) {
-        if (isNoneOrEmpty(config.indicators)) {
-            setSortOpts(sortOpts.setAlphabetical());
-        } else {
-            const indicators = grid.getSortedIndicators()
-                .filter(i => config.indicators.indexOf(i.code) >= 0);
-            setSortOpts(sortOpts.setIndicators(indicators));
+    // Run when component did mount
+    useEffect(() => {
+        // push indicator updates of the configuration
+        if (strings.areListsNotEqual(config.indicators, sortOpts.indicatorCodes)) {
+            if (isNoneOrEmpty(config.indicators)) {
+                setSortOpts(sortOpts.setAlphabetical());
+            } else {
+                const indicators = grid.getSortedIndicators()
+                    .filter(i => config.indicators.indexOf(i.code) >= 0);
+                setSortOpts(sortOpts.setIndicators(indicators));
+            }
         }
-    }
+    });
+
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
