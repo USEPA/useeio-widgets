@@ -32,7 +32,7 @@ export async function selectIndicators(
     }
 
     // filter indicators by configuration codes
-    let codes = config.indicators;
+    let codes = config.view_indicators;
     if (!codes || codes.length === 0) {
         codes = conf.DEFAULT_INDICATORS;
     }
