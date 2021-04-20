@@ -78,7 +78,7 @@ export const CommodityList = (props: {
                 setSortOpts(sortOpts.setIndicators(indicators));
             }
         }
-    });
+    }, [config]);
 
 
     // map the sectors to commodity objects
