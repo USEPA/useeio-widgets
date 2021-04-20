@@ -9,6 +9,7 @@ import {
     Menu,
     MenuItem,
     Slider,
+    TablePagination,
     TextField,
     Tooltip,
     Typography,
@@ -23,7 +24,7 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNoneOrEmpty } from "../../util/util";
+import { ifNan, ifNone, isNoneOrEmpty } from "../../util/util";
 import * as strings from "../../util/strings";
 import * as selection from "./selection";
 
@@ -202,14 +203,14 @@ export const CommodityList = (props: {
             // jump back to page 1 when the page size changes
             grid.fireChange({
                 page: 1,
-                count: p.pageSize,
+                count: (p.pageSize !== -1) ? p.pageSize : commodities.length,
             });
             return;
         }
 
         grid.fireChange({
             page: p.page,
-            count: p.pageSize
+            count: (p.pageSize !== -1) ? p.pageSize : commodities.length
         });
     };
 
@@ -227,7 +228,6 @@ export const CommodityList = (props: {
         selected[commodity.code] = commodity.value as number;
         fireSelectionChange();
     };
-
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item>
@@ -290,18 +290,59 @@ export const CommodityList = (props: {
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
                     page={ifNone(config.page, 1)}
-                    onPageChange={onPageChange}
-                    onPageSizeChange={onPageChange}
-                    rowsPerPageOptions={[10, 20, 30, 50, 100]}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
                     onCellClick={e => onSliderClicked(e)}
+                    components={{ pagination: (parameters) => TablePaginationDataGrid({ ...parameters, config, onPageChange, items: commodities }) }}
                 />
             </Grid>
         </Grid>
     );
 };
+
+
+/**
+ * Component that allow to paginate a DataGrid
+ * @param props Contains the config and a callback function onPageChange
+ * @returns 
+ */
+function TablePaginationDataGrid(props: any) {
+    const [page, setPage] = React.useState(ifNan(props.config.page - 1, 0));
+    const [rowsPerPage, setRowsPerPage] = React.useState(ifNone(props.config.count, 10));
+
+    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        setPage(newPage);
+        const p: PageChangeParams = { page: newPage + 1, pageSize: rowsPerPage, paginationMode: 'client', pageCount: 0, rowCount: 0 };
+        if (props.onPageChange !== undefined)
+            props.onPageChange(p);
+    };
+
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        const pageSize = parseInt(event.target.value, 10);
+        const p: PageChangeParams = { page: 1, pageSize: pageSize, paginationMode: 'client', pageCount: 0, rowCount: 0 };
+
+        setRowsPerPage(pageSize);
+        setPage(0);
+        if (props.onPageChange !== undefined)
+            props.onPageChange(p);
+    };
+
+    return (
+        <TablePagination
+            component="div"
+            count={props.items.length}
+            page={page}
+            onChangePage={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+            rowsPerPageOptions={[10, 20, 30, 50, 100, 200, 300, { label: "All", value: props.items.length }]}
+        />
+    );
+}
+
 
 /**
  * A custom tooltip for the slider values.

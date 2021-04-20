@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 
 
 import {
@@ -7,16 +7,18 @@ import {
     ListItemIcon,
     Menu,
     MenuItem,
+    TablePagination,
     TextField,
     Typography,
 } from "@material-ui/core";
-import { ColDef, DataGrid } from "@material-ui/data-grid";
+import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
 
 
 import { Config } from "../../widget";
 import { IOFlow, IOGrid } from "./iogrid";
 import * as strings from "../../util/strings";
+import { ifNone } from "../../util/util";
 
 
 const Currency = new Intl.NumberFormat("en-US", {
@@ -35,13 +37,23 @@ type SortBy = "alphabetical" | "contribution";
 export const FlowList = (props: {
     config: Config,
     widget: IOGrid,
-    direction: "input" | "output"
+    direction: "input" | "output",
 }) => {
-
+    console.log("init flow");
     // initialize states
-    const [searchTerm, setSearchTerm] = React.useState<string>("");
-    const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
-    const [sortBy, setSortBy] = React.useState<SortBy>("contribution");
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [menuElem, setMenuElem] = useState<null | HTMLElement>(null);
+    const [page, setPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
+    const [sortBy, setSortBy] = useState<SortBy>("contribution");
+
+    // Update the pagination settings on config count changes
+    useEffect(() => {
+        if (props.config.count !== undefined && props.config.count != pageSize) {
+            setPageSize(props.config.count);
+            setPage(1);
+        }
+    }, [props.config.count]);
 
     // prepare the flow list
     let flows: IOFlow[] = props.widget.rank(
@@ -95,6 +107,22 @@ export const FlowList = (props: {
         }
     ];
 
+    const onPageChange = (p: PageChangeParams) => {
+        console.log("update");
+        if (!p) {
+            return;
+        }
+
+        if (p.page === page
+            && p.pageSize === pageSize) {
+            return;
+        }
+
+        if (p.page !== page) {
+            setPage(p.page);
+            return;
+        }
+    };
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item>
@@ -163,11 +191,40 @@ export const FlowList = (props: {
                 <DataGrid
                     columns={columns}
                     rows={flows}
-                    pageSize={props.config.count}
+                    pageSize={pageSize}
+                    page={page}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
-                    headerHeight={0} />
+                    headerHeight={0}
+                    onPageChange={onPageChange}
+                    rowsPerPageOptions={[]}
+                // components={{ pagination: (parameters) => TablePaginationDataGrid({ ...parameters, config, onPageChange, items: flows, page, pageSize }) }}
+                />
             </Grid>
         </Grid>
     );
 };
+
+
+/**
+ * Component that allow to paginate a DataGrid
+ * @param props Contains the config and a callback function onPageChange
+ * @returns 
+ */
+function TablePaginationDataGrid(props: any) {
+    const handleChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+        const p: PageChangeParams = { page: newPage, pageSize: props.pageSize, paginationMode: 'client', pageCount: 0, rowCount: 0 };
+        props.onPageChange(p);
+    };
+
+    return (
+        <TablePagination
+            component="div"
+            count={props.items.length}
+            page={props.page}
+            onChangePage={handleChangePage}
+            rowsPerPage={props.pageSize}
+            rowsPerPageOptions={[]}
+        />
+    );
+}
