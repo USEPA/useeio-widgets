@@ -286,6 +286,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
+                    // rowHeight={54 + 15 * (sortOpts.indicators.length)}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -300,7 +301,6 @@ export const CommodityList = (props: {
         </Grid>
     );
 };
-
 
 /**
  * Component that allow to paginate a DataGrid
@@ -376,7 +376,15 @@ const SortMenu = React.forwardRef((props: {
     const opts = props.options;
 
     if (props.withSelection) {
-
+        // Choose all commodities
+        items.push(
+            <MenuItem
+                key="sort-all-selected"
+                onClick={() => props.onChange(opts.swapSelectAll())}>
+                <CheckBox checked={opts.isAllSelected} />
+        Choose All Commodities
+    </MenuItem>
+        );
         // check box to filter only selected commodities
         items.push(
             <MenuItem

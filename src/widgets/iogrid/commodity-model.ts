@@ -23,6 +23,7 @@ export type Commodity = {
  */
 export class SortOptions {
 
+    private _selectAll: boolean;
     private _selectedOnly: boolean;
     private _selectedFirst: boolean;
     private _indicators: Indicator[];
@@ -34,6 +35,7 @@ export class SortOptions {
             // default values
             this._selectedOnly = false;
             this._selectedFirst = true;
+            this._selectAll = false;
         } else {
             this._selectedOnly = other._selectedOnly;
             this._selectedFirst = other._selectedFirst;
@@ -50,6 +52,10 @@ export class SortOptions {
         const indicators = grid.getSortedIndicators()
             .filter(i => config.indicators.indexOf(i.code) >= 0);
         return opts.setIndicators(indicators);
+    }
+
+    get isAllSelected(): boolean {
+        return this._selectAll;
     }
 
     get isSelectedOnly(): boolean {
@@ -115,6 +121,11 @@ export class SortOptions {
 
     get maxIndicatorResult(): number {
         return this._maxResult | 0;
+    }
+
+    swapSelectAll(): SortOptions {
+        return this._copy(n =>
+            n._selectAll = !this._selectAll);
     }
 
     swapSelectedOnly(): SortOptions {
@@ -210,7 +221,9 @@ export class SortOptions {
         if (!commodities) {
             return [];
         }
-
+        if (this._selectAll) {
+            commodities.forEach(c => c.selected = true);
+        }
         const list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;

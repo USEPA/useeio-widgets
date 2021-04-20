@@ -7,7 +7,6 @@ import {
     ListItemIcon,
     Menu,
     MenuItem,
-    TablePagination,
     TextField,
     Typography,
 } from "@material-ui/core";
@@ -39,7 +38,6 @@ export const FlowList = (props: {
     widget: IOGrid,
     direction: "input" | "output",
 }) => {
-    console.log("init flow");
     // initialize states
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [menuElem, setMenuElem] = useState<null | HTMLElement>(null);
@@ -108,21 +106,17 @@ export const FlowList = (props: {
     ];
 
     const onPageChange = (p: PageChangeParams) => {
-        console.log("update");
         if (!p) {
             return;
         }
 
-        if (p.page === page
-            && p.pageSize === pageSize) {
+        if (p.page === page) {
             return;
         }
 
-        if (p.page !== page) {
-            setPage(p.page);
-            return;
-        }
+        setPage(p.page);
     };
+
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item>
@@ -198,33 +192,8 @@ export const FlowList = (props: {
                     headerHeight={0}
                     onPageChange={onPageChange}
                     rowsPerPageOptions={[]}
-                // components={{ pagination: (parameters) => TablePaginationDataGrid({ ...parameters, config, onPageChange, items: flows, page, pageSize }) }}
                 />
             </Grid>
         </Grid>
     );
 };
-
-
-/**
- * Component that allow to paginate a DataGrid
- * @param props Contains the config and a callback function onPageChange
- * @returns 
- */
-function TablePaginationDataGrid(props: any) {
-    const handleChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        const p: PageChangeParams = { page: newPage, pageSize: props.pageSize, paginationMode: 'client', pageCount: 0, rowCount: 0 };
-        props.onPageChange(p);
-    };
-
-    return (
-        <TablePagination
-            component="div"
-            count={props.items.length}
-            page={props.page}
-            onChangePage={handleChangePage}
-            rowsPerPage={props.pageSize}
-            rowsPerPageOptions={[]}
-        />
-    );
-}
