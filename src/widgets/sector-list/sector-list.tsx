@@ -14,6 +14,7 @@ import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
 import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
+import { isNone } from "../../util/util";
 
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -72,6 +73,14 @@ export class SectorList extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
+        // Hardcoded default value for count
+        if (isNone(config.count)) {
+            config.count = 10;
+        }
+        // Hardcoded default value for view
+        if (isNone(config.view)) {
+            config.view = ["mosaic"];
+        }
         // run a new calculation if necessary
         const needsCalc = this.needsCalculation(this.config, config);
         if (needsCalc) {
