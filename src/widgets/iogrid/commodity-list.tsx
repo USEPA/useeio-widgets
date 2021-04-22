@@ -9,7 +9,6 @@ import {
     Menu,
     MenuItem,
     Slider,
-    TablePagination,
     TextField,
     Tooltip,
     Typography,
@@ -24,7 +23,7 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNan, ifNone, isNoneOrEmpty } from "../../util/util";
+import { ifNone, isNone, isNoneOrEmpty } from "../../util/util";
 import * as strings from "../../util/strings";
 import * as selection from "./selection";
 
@@ -94,7 +93,20 @@ export const CommodityList = (props: {
         };
     });
     commodities = sortOpts.apply(commodities);
-
+    // If no sectors are selected initially, we select the top 10 by default
+    if (isNone(config.sectors)) {
+        const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
+        let i = 0;
+        for (const commodity of commodities) {
+            commodity.selected = true;
+            selected[commodity.code] = 100;
+            i++;
+            if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
+                break;
+            }
+        }
+        fireSelectionChange();
+    }
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
             c => strings.search(c.name, searchTerm) !== -1);
@@ -129,7 +141,8 @@ export const CommodityList = (props: {
             renderCell: (params) =>
                 <NameCell
                     commodity={params.data as Commodity}
-                    sortOpts={sortOpts} />,
+                    sortOpts={sortOpts}
+                    grid={grid} />,
         },
         {
             // the slider for the scaling factor
@@ -286,63 +299,24 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    // rowHeight={54 + 15 * (sortOpts.indicators.length)}
+                    rowHeight={50 + 20 * (sortOpts.indicators.length)}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
                     page={ifNone(config.page, 1)}
+                    onPageChange={onPageChange}
+                    onPageSizeChange={onPageChange}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
                     onCellClick={e => onSliderClicked(e)}
-                    components={{ pagination: (parameters) => TablePaginationDataGrid({ ...parameters, config, onPageChange, items: commodities }) }}
+                    rowsPerPageOptions={[10, 20, 30, 50, 100]}
+
                 />
             </Grid>
         </Grid>
     );
 };
-
-/**
- * Component that allow to paginate a DataGrid
- * @param props Contains the config and a callback function onPageChange
- * @returns 
- */
-function TablePaginationDataGrid(props: any) {
-    const [page, setPage] = React.useState(ifNan(props.config.page - 1, 0));
-    const [rowsPerPage, setRowsPerPage] = React.useState(ifNone(props.config.count, 10));
-
-    const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-        setPage(newPage);
-        const p: PageChangeParams = { page: newPage + 1, pageSize: rowsPerPage, paginationMode: 'client', pageCount: 0, rowCount: 0 };
-        if (props.onPageChange !== undefined)
-            props.onPageChange(p);
-    };
-
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-        const pageSize = parseInt(event.target.value, 10);
-        const p: PageChangeParams = { page: 1, pageSize: pageSize, paginationMode: 'client', pageCount: 0, rowCount: 0 };
-
-        setRowsPerPage(pageSize);
-        setPage(0);
-        if (props.onPageChange !== undefined)
-            props.onPageChange(p);
-    };
-
-    return (
-        <TablePagination
-            component="div"
-            count={props.items.length}
-            page={page}
-            onChangePage={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
-            rowsPerPageOptions={[10, 20, 30, 50, 100, 200, 300, { label: "All", value: props.items.length }]}
-        />
-    );
-}
-
 
 /**
  * A custom tooltip for the slider values.
@@ -440,23 +414,45 @@ const SortMenu = React.forwardRef((props: {
 });
 
 
-const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions }) => {
+const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IOGrid }) => {
     const { commodity, sortOpts } = props;
-    let subTitle: JSX.Element = null;
+    let subTitles: JSX.Element[] = [];
     if (sortOpts.hasSingleIndicator) {
         const result = sortOpts.indicatorResult(commodity);
-        subTitle =
+        subTitles.push(
             <Typography color='textSecondary'>
                 {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
-            </Typography>;
+            </Typography>);
+    } else {
+        subTitles = sortOpts.indicators.map(indicator => {
+            const results = props.grid.getIndicatorResults(indicator);
+            const result = results[commodity.index];
+            const toolTip = indicator.simpleunit || indicator.unit;
+            return (
+                <Tooltip
+                    enterTouchDelay={0}
+                    placement="top"
+                    title={toolTip.length > 32 ? toolTip : ""}>
+                    {<Typography color='textSecondary'>
+                        {IndicatorValue.format(result)} {toolTip}
+                    </Typography>}
+                </Tooltip>
+
+            );
+        });
     }
-    return (
+
+    const items = <div>
+        <Typography>{commodity.name}</Typography>
         <div>
-            <Typography>{commodity.name}</Typography>
-            {subTitle}
+            {subTitles.map(subtitle => (
+                subtitle
+            ))}
         </div>
-    );
-};
+    </div>;
+
+    return items;
+    };
 
 
 const CheckBox = (props: { checked: boolean }) =>

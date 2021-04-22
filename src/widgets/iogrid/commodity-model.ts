@@ -227,7 +227,7 @@ export class SortOptions {
         const list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;
-
+            
         return list.sort((c1, c2) => {
 
             // if selected first and if the selection
