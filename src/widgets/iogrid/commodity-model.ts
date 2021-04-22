@@ -223,6 +223,7 @@ export class SortOptions {
         }
         if (this._selectAll) {
             commodities.forEach(c => c.selected = true);
+            this._selectAll = false;
         }
         const list = this._selectedOnly
             ? commodities.filter(c => c.selected)

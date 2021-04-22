@@ -107,6 +107,13 @@ export const CommodityList = (props: {
         }
         fireSelectionChange();
     }
+    useEffect(() => {
+        commodities.filter(commodity => commodity.selected).forEach(commodity => {
+            selected[commodity.code] = 100;
+        });
+        fireSelectionChange();
+    }, [commodities]);
+
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
             c => strings.search(c.name, searchTerm) !== -1);
@@ -348,17 +355,16 @@ const SortMenu = React.forwardRef((props: {
 
     const items: JSX.Element[] = [];
     const opts = props.options;
-
-    if (props.withSelection) {
-        // Choose all commodities
+ // Choose all commodities
         items.push(
             <MenuItem
                 key="sort-all-selected"
                 onClick={() => props.onChange(opts.swapSelectAll())}>
-                <CheckBox checked={opts.isAllSelected} />
+                <CheckBox checked={false} />
         Choose All Commodities
     </MenuItem>
         );
+    if (props.withSelection) {
         // check box to filter only selected commodities
         items.push(
             <MenuItem
