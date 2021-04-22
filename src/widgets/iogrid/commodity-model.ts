@@ -1,4 +1,4 @@
-import { isNone, isNoneOrEmpty } from "../../util/util";
+import { ifNan, ifNone, isNone, isNoneOrEmpty } from "../../util/util";
 import { Indicator } from "../../webapi";
 import * as strings from "../../util/strings";
 import { IOGrid } from "./iogrid";
@@ -24,34 +24,54 @@ export type Commodity = {
 export class SortOptions {
 
     private _selectAll: boolean;
+    private _hasSelectAllBeenTrue: boolean;
+    private _selectAllVisible: boolean;
+    private _hasSelectAllVisibleBeenTrue: boolean;
     private _selectedOnly: boolean;
     private _selectedFirst: boolean;
     private _indicators: Indicator[];
     private _results?: number[];
     private _maxResult?: number;
+    private _page: number;
+    private _count: number;
 
     constructor(readonly grid: IOGrid, other?: SortOptions) {
+        this._selectAll = false;
+        this._selectAllVisible = false;
         if (!other) {
             // default values
             this._selectedOnly = false;
             this._selectedFirst = true;
-            this._selectAll = false;
         } else {
             this._selectedOnly = other._selectedOnly;
             this._selectedFirst = other._selectedFirst;
             this._indicators = other._indicators;
             this._results = other._results;
             this._maxResult = other._maxResult;
+            this._page = other._page;
+            this._count = other._count;
         }
     }
 
     static create(grid: IOGrid, config: Config): SortOptions {
         const opts = new SortOptions(grid);
+        opts._count = ifNone(config.count, 10);
+        opts._page = ifNan(config.page - 1, 0);
         if (isNoneOrEmpty(config?.indicators))
             return opts;
         const indicators = grid.getSortedIndicators()
             .filter(i => config.indicators.indexOf(i.code) >= 0);
         return opts.setIndicators(indicators);
+    }
+
+    setPagination(count: number, page: number): SortOptions {
+        this._count = ifNone(count, 10);
+        this._page = ifNan(page - 1, 0);
+        return this;
+    }
+
+    get isAllVisibleSelected(): boolean {
+        return this._selectAllVisible;
     }
 
     get isAllSelected(): boolean {
@@ -124,8 +144,17 @@ export class SortOptions {
     }
 
     swapSelectAll(): SortOptions {
-        return this._copy(n =>
-            n._selectAll = !this._selectAll);
+        return this._copy(n => {
+            n._selectAll = !this._selectAll;
+            n._hasSelectAllVisibleBeenTrue = this._selectAll ? true : this._hasSelectAllBeenTrue;
+        });
+    }
+
+    swapSelectAllVisible(): SortOptions {
+        return this._copy(n => {
+            n._selectAllVisible = !this._selectAllVisible;
+            n._hasSelectAllVisibleBeenTrue = this._selectAllVisible ? true : this._hasSelectAllVisibleBeenTrue;
+        });
     }
 
     swapSelectedOnly(): SortOptions {
@@ -222,14 +251,18 @@ export class SortOptions {
             return [];
         }
         if (this._selectAll) {
-            commodities.forEach(c => c.selected = true);
-            this._selectAll = false;
+            commodities.filter(commodity => !commodity.selected).forEach(c => c.selected = true);
+        } else {
+            if (this._hasSelectAllBeenTrue) {
+                this._hasSelectAllBeenTrue = false;
+                commodities.forEach(commodity => commodity.selected = false);
+            }
         }
-        const list = this._selectedOnly
+        let list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;
             
-        return list.sort((c1, c2) => {
+        list = list.sort((c1, c2) => {
 
             // if selected first and if the selection
             // state is different
@@ -249,5 +282,25 @@ export class SortOptions {
             return strings.compare(c1.name, c2.name);
 
         });
+
+        if (!this._selectAll && this._selectAllVisible) {
+            list.filter(commodity => commodity.selected).forEach(commodity => commodity.selected = false);
+            const startIndex = this._page * this._count;
+            const endIndex = this._count * (this._page + 1);
+            // commodities.filter((_, i) => i >= startIndex || i < endIndex).forEach(c => c.selected = true);
+            console.log(" ");
+            for (let index = startIndex; index < endIndex; index++) {
+                console.log(index);
+                list[index].selected = true;
+            }
+            // commodities.slice(this._page * this._count, this._count * (this._page + 1)).forEach(c => c.selected = true);
+        } else if (!this._selectAll && !this._selectAllVisible) {
+            if (this._hasSelectAllVisibleBeenTrue) {
+                this._hasSelectAllVisibleBeenTrue = false;
+                list.forEach(commodity => commodity.selected = false);
+            }
+        }
+        console.log(list.filter(c => c.selected).length);
+        return list;
     }
 }

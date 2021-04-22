@@ -23,7 +23,7 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNone, isNoneOrEmpty } from "../../util/util";
+import { ifNone, isNone, isNoneOrEmpty, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 import * as selection from "./selection";
 
@@ -54,7 +54,7 @@ export const CommodityList = (props: {
 
     // fire a change in the sector selection
     // based on the current selection state
-    const fireSelectionChange = () => {
+    const fireSelectionChange = (selected: TMap<number>) => {
         const sectors = selection.toConfig(config, props.sectors, selected);
         grid.fireChange({ sectors });
     };
@@ -77,8 +77,12 @@ export const CommodityList = (props: {
                 setSortOpts(sortOpts.setIndicators(indicators));
             }
         }
-    }, [config]);
+    }, [config.indicators]);
 
+    // Update the sortOpts with pagination settings
+    useEffect(() => {
+        setSortOpts(sortOpts.setPagination(config.count, config.page));
+    }, [config.count, config.page]);
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
@@ -105,13 +109,15 @@ export const CommodityList = (props: {
                 break;
             }
         }
-        fireSelectionChange();
+        fireSelectionChange(selected);
     }
+
+    // Update when some changes are done on the commodities
     useEffect(() => {
         commodities.filter(commodity => commodity.selected).forEach(commodity => {
             selected[commodity.code] = 100;
         });
-        fireSelectionChange();
+        fireSelectionChange(selected);
     }, [commodities]);
 
     if (strings.isNotEmpty(searchTerm)) {
@@ -136,7 +142,7 @@ export const CommodityList = (props: {
                         } else {
                             selected[commodity.code] = 100;
                         }
-                        fireSelectionChange();
+                        fireSelectionChange(selected);
                     }} />;
             }
         },
@@ -164,7 +170,7 @@ export const CommodityList = (props: {
                         disabled={!commodity.selected}
                         onChange={(_, value) => {
                             selected[commodity.code] = value as number;
-                            fireSelectionChange();
+                            fireSelectionChange(selected);
                         }}
                         min={0}
                         max={500}
@@ -218,6 +224,18 @@ export const CommodityList = (props: {
             && p.pageSize === currentSize) {
             return;
         }
+        // if (sortOpts.isAllVisibleSelected && (p.pageSize !== currentSize || p.page !== currentPage)) {
+        //     selected = {};
+        //     commodities.filter(commodity => commodity.selected).forEach(commodity => {
+        //         commodity.selected = false;
+        //     });
+        //     const startIndex = p.page * p.pageSize;
+        //     const endIndex = p.pageSize * (p.page + 1);
+        //     // for (let index = startIndex; index < endIndex; index++) {
+        //     //     selected[commodities[index].code] = 100;
+        //     // }
+        //     fireSelectionChange(selected);
+        // }
 
         if (p.pageSize !== currentSize) {
             // jump back to page 1 when the page size changes
@@ -246,7 +264,7 @@ export const CommodityList = (props: {
         }
         commodity.selected = true;
         selected[commodity.code] = commodity.value as number;
-        fireSelectionChange();
+        fireSelectionChange(selected);
     };
     return (
         <Grid container direction="column" spacing={2}>
@@ -300,7 +318,11 @@ export const CommodityList = (props: {
                                 }
                             }}
                             indicators={grid.getSortedIndicators()}
-                            widget={grid} />
+                            widget={grid}
+                            commodities={commodities}
+                            selected={selected}
+                            fireSelectionChange={fireSelectionChange}
+                        />
                     </Menu>
                 </div>
             </Grid>
@@ -351,6 +373,9 @@ const SortMenu = React.forwardRef((props: {
     indicators: Indicator[],
     widget: IOGrid,
     onChange: (options: SortOptions) => void,
+    commodities: Commodity[],
+    selected: any,
+    fireSelectionChange: any
 }, _ref) => {
 
     const items: JSX.Element[] = [];
@@ -359,11 +384,30 @@ const SortMenu = React.forwardRef((props: {
         items.push(
             <MenuItem
                 key="sort-all-selected"
-                onClick={() => props.onChange(opts.swapSelectAll())}>
-                <CheckBox checked={false} />
+                onClick={() => {
+                    props.onChange(opts.swapSelectAll());
+                    if (opts.isAllSelected) {
+                        props.fireSelectionChange({});
+                    }
+                }}>
+                <CheckBox checked={opts.isAllSelected} />
         Choose All Commodities
     </MenuItem>
         );
+    // Choose all commodities
+    items.push(
+        <MenuItem
+            key="sort-all-visible-selected"
+            onClick={() => {
+                props.onChange(opts.swapSelectAllVisible());
+                if (opts.isAllVisibleSelected) {
+                    props.fireSelectionChange({});
+                }
+            }}>
+            <CheckBox checked={opts.isAllVisibleSelected} />
+Choose All Visible
+</MenuItem>
+    );
     if (props.withSelection) {
         // check box to filter only selected commodities
         items.push(
