@@ -500,3 +500,31 @@ th.io-sector-column-header>div {
 .span-12 {
     grid-column-end: span 12;
 }
+
+.sector-list .noborder {
+    background-color: transparent;
+}
+.sector-list-table tbody td {
+    position: relative;
+  }
+.sector-list-table_sorted-cell-top:after{
+    top: -4px !important;
+    border-top: 1px solid #333;
+}
+.sector-list-table_sorted-cell-bottom:after {
+    bottom: -4px !important;
+    border-bottom: 1px solid #333;
+}
+.sector-list-table_sorted-cell-side:after {
+  content: "";
+  position: absolute;
+  padding-left:1px;
+  padding-right:6px;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
+  left: -4px;
+  bottom: 0px;
+  top: -2px;
+  width: 100%;
+  z-index: 1;
+}

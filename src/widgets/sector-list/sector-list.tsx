@@ -227,13 +227,14 @@ const Component = (props: { widget: SectorList }) => {
     const page = config.page ? config.page : 1;
     ranking = paging.select(ranking, { count, page });
 
-    const rows: JSX.Element[] = ranking.map(([sector, rank]) => (
+    const rows: JSX.Element[] = ranking.map(([sector, rank], i) => (
         <Row
             key={sector.code}
             sector={sector}
             sortIndicator={sorter}
             widget={props.widget}
             rank={rank}
+            index={i}
         />
     ));
 
@@ -311,6 +312,7 @@ export type RowProps = {
     sortIndicator: Indicator | null;
     widget: SectorList;
     rank?: number;
+    index: number;
 };
 
 const Row = (props: RowProps) => {
