@@ -50,7 +50,7 @@ export const CommodityList = (props: {
 
     // collect the selected sectors and their scaling factors from the
     // configuration and store them in a map: sector code -> factor
-    const selected = selection.fromConfig(config, props.sectors);
+    let selected = selection.fromConfig(config, props.sectors);
 
     // fire a change in the sector selection
     // based on the current selection state
@@ -64,7 +64,10 @@ export const CommodityList = (props: {
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selected).length === 0;
     const [sortOpts, setSortOpts] = React.useState(SortOptions.create(grid, config));
-
+    
+    // If we want just to see the visible commodities, we deselect all the selected sectors
+    if (sortOpts.isAllVisibleSelected)
+        selected = {};
     // Run when component did mount
     useEffect(() => {
         // push indicator updates of the configuration
@@ -96,7 +99,7 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
-    commodities = sortOpts.apply(commodities);
+
     // If no sectors are selected initially, we select the top 10 by default
     if (isNone(config.sectors)) {
         const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
@@ -111,6 +114,8 @@ export const CommodityList = (props: {
         }
         fireSelectionChange(selected);
     }
+    commodities = sortOpts.apply(commodities);
+
 
     // Update when some changes are done on the commodities
     useEffect(() => {

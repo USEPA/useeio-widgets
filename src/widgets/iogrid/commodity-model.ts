@@ -287,20 +287,15 @@ export class SortOptions {
             list.filter(commodity => commodity.selected).forEach(commodity => commodity.selected = false);
             const startIndex = this._page * this._count;
             const endIndex = this._count * (this._page + 1);
-            // commodities.filter((_, i) => i >= startIndex || i < endIndex).forEach(c => c.selected = true);
-            console.log(" ");
             for (let index = startIndex; index < endIndex; index++) {
-                console.log(index);
                 list[index].selected = true;
             }
-            // commodities.slice(this._page * this._count, this._count * (this._page + 1)).forEach(c => c.selected = true);
         } else if (!this._selectAll && !this._selectAllVisible) {
             if (this._hasSelectAllVisibleBeenTrue) {
                 this._hasSelectAllVisibleBeenTrue = false;
                 list.forEach(commodity => commodity.selected = false);
             }
         }
-        console.log(list.filter(c => c.selected).length);
         return list;
     }
 }
