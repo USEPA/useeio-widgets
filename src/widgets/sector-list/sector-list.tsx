@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import * as ReactDOM from "react-dom";
 
 import { Widget, Config } from "../../widget";
@@ -14,7 +14,7 @@ import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
 import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
-import { isNone } from "../../util/util";
+import { isNone, isNoneOrEmpty } from "../../util/util";
 
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -192,11 +192,22 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
 
 const Component = (props: { widget: SectorList }) => {
     const config = props.widget.config;
-    const [sorter, setSorter] = React.useState<Indicator | null>(null);
-    const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
-
     const indicators = props.widget.indicators;
     const result = props.widget.result;
+    let indicatorsConfig = [];
+    // Get an Indicator array from the config
+    if (!isNone(config.indicators)) {
+        indicatorsConfig = config.indicators.map(indicatorConfig => {
+            let result = null;
+            indicators.some(
+                (indicator: Indicator) => {
+                    return indicator.code === indicatorConfig ? ((result = indicator), true) : false;
+                });
+            return result;
+        });
+    }
+    const [sorter, setSorter] = React.useState<Indicator[]>(indicatorsConfig);
+    const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
 
     let sectors = props.widget.sectors;
     if (searchTerm) {
@@ -209,7 +220,7 @@ const Component = (props: { widget: SectorList }) => {
         ranking = sectors.map((s) => [s, 0]);
     } else {
         const ranks: { [code: string]: number } = {};
-        result.getRanking(sorter ? [sorter] : indicators).reduce((r, rank) => {
+        result.getRanking(!isNoneOrEmpty(sorter) ? sorter : indicators).reduce((r, rank) => {
             const sector = rank[0];
             const value = rank[1];
             r[sector.code] = value;
@@ -277,7 +288,15 @@ const Component = (props: { widget: SectorList }) => {
 
                         <ImpactHeader
                             indicators={indicators}
-                            onClick={(i) => setSorter(sorter === i ? null : i)}
+                            onClick={(i) => {
+                                const s = sorter;
+                                if (s.includes(i)) {
+                                    s.splice(s.indexOf(i), 1); // Remove the Indicator
+                                } else {
+                                    s.push(i);
+                                }
+                                setSorter([...s]);
+                            }}
                         />
 
                         {
@@ -309,7 +328,7 @@ const Component = (props: { widget: SectorList }) => {
 
 export type RowProps = {
     sector: Sector;
-    sortIndicator: Indicator | null;
+    sortIndicator: Indicator[];
     widget: SectorList;
     rank?: number;
     index: number;

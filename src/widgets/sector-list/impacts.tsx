@@ -173,7 +173,7 @@ export const ImpactResult = (props: RowProps) => {
         const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`;
         let isIndicatorSelected = "";
         // We box the sorted column
-        if (isNotNone(props.sortIndicator) && ind.code === props.sortIndicator.code) {
+        if (isNotNone(props.sortIndicator) && props.sortIndicator.includes(ind)) {
             isIndicatorSelected = "sector-list-table_sorted-cell-side";
             if (props.index === 0) {
                 isIndicatorSelected += " sector-list-table_sorted-cell-top";
