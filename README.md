@@ -2,7 +2,8 @@
 
 A collection of Javascript widgets with HTML integration examples
 to simplify the use and display of results and data from USEEIO models
-in web pages. [View Widget Starter Samples](https://msrocka.github.io/useeio-widget-builds/)
+in web pages. [View React widgets](https://model.earth/io/build/) or
+[view additionnal USEEIO widgets](https://model.earth/io/charts/).
 
 This repository includes the source code for these widgets 
 . See the build instructions and details of their use on the [Wiki](https://github.com/USEPA/useeio-widgets/wiki/).
