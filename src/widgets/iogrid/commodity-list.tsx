@@ -229,18 +229,6 @@ export const CommodityList = (props: {
             && p.pageSize === currentSize) {
             return;
         }
-        // if (sortOpts.isAllVisibleSelected && (p.pageSize !== currentSize || p.page !== currentPage)) {
-        //     selected = {};
-        //     commodities.filter(commodity => commodity.selected).forEach(commodity => {
-        //         commodity.selected = false;
-        //     });
-        //     const startIndex = p.page * p.pageSize;
-        //     const endIndex = p.pageSize * (p.page + 1);
-        //     // for (let index = startIndex; index < endIndex; index++) {
-        //     //     selected[commodities[index].code] = 100;
-        //     // }
-        //     fireSelectionChange(selected);
-        // }
 
         if (p.pageSize !== currentSize) {
             // jump back to page 1 when the page size changes

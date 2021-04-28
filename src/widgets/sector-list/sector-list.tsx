@@ -289,13 +289,11 @@ const Component = (props: { widget: SectorList }) => {
                         <ImpactHeader
                             indicators={indicators}
                             onClick={(i) => {
-                                const s = sorter;
-                                if (s.includes(i)) {
-                                    s.splice(s.indexOf(i), 1); // Remove the Indicator
-                                } else {
+                                const s = [];
+                                if (!sorter.includes(i)) {
                                     s.push(i);
                                 }
-                                setSorter([...s]);
+                                setSorter(s);
                             }}
                         />
 
