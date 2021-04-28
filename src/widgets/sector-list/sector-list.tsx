@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Widget, Config } from "../../widget";
@@ -197,7 +197,8 @@ const Component = (props: { widget: SectorList }) => {
     let indicatorsConfig = [];
     // Get an Indicator array from the config
     if (!isNone(config.indicators)) {
-        indicatorsConfig = config.indicators.map(indicatorConfig => {
+        const indicatorsCode = indicators.map(i => i.code);
+        indicatorsConfig = config.indicators.filter(i => indicatorsCode.includes(i)).map(indicatorConfig => {
             let result = null;
             indicators.some(
                 (indicator: Indicator) => {
