@@ -170,7 +170,11 @@ export const ImpactResult = (props: RowProps) => {
         //     alpha *= 0.25;
         // }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`;
+        let valueFixed: string;
+        if (!config.showscientific) {
+            valueFixed = getValueWithVariableDecimalNumber(r);
+        }
+        const value = `${config.showscientific ? r.toExponential(2) : valueFixed} ${ind.unit}`;
         let isIndicatorSelected = "";
         // We box the sorted column
         if (isNotNone(props.sortIndicator) && props.sortIndicator.includes(ind)) {
@@ -194,3 +198,23 @@ export const ImpactResult = (props: RowProps) => {
     }
     return <>{items}</>;
 };
+
+/**
+ * Increases the number of decimal digits until the number has the right number of digits
+ */
+function getValueWithVariableDecimalNumber(r: number) {
+    let valueFixed: string;
+    let decimal = 3; // 3 digits by default
+    if (r === 0.0)
+        return r.toFixed(decimal);
+
+    let n;
+    do {
+        valueFixed = r.toFixed(decimal);
+        n = parseFloat(valueFixed);
+        decimal++;
+    } while (n === 0.0);
+
+    return valueFixed;
+}
+
