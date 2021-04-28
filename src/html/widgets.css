@@ -226,8 +226,6 @@ a:hover {
 .sector-list-table_sorted-cell-side:after {
   content: "";
   position: absolute;
-  padding-left:1px;
-  /* padding-right:2px; */
   border-left: 1px solid #333;
   border-right: 1px solid #333;
   left: -1px;
