@@ -47,7 +47,6 @@ export const CommodityList = (props: {
 
     const grid = props.widget;
     const config = props.config;
-
     // collect the selected sectors and their scaling factors from the
     // configuration and store them in a map: sector code -> factor
     const selected = selection.fromConfig(config, props.sectors);
@@ -358,7 +357,6 @@ const SortMenu = React.forwardRef((props: {
     fireSelectionChange: any,
     config: Config
 }, _ref) => {
-
     const items: JSX.Element[] = [];
     const opts = props.options;
  // Choose all commodities

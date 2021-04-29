@@ -58,7 +58,8 @@ export function toConfig(
         return Object.keys(selected)
             .map(code => [code, selected[code]])
             .filter(([_, share]) => isNotNone(share))
-            .map(([code, share]) => `${code}:${share}`);
+            // Don't display default share (100)
+            .map(([code, share]) => `${code}${isNotNone(share) && share != 100 ? `:${share}` : ``}`);
     }
     return sectors.map(s => [s.code, selected[s.code]])
         .filter(([_, share]) => share !== 100)
