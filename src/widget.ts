@@ -1,6 +1,5 @@
 import { DemandType, ResultPerspective, Model } from "./webapi";
 import * as strings from "./util/strings";
-import { utcMilliseconds } from "d3";
 import { isNone } from "./util/util";
 
 /**
@@ -33,6 +32,11 @@ export interface Config {
      * An array of indicator codes.
      */
     indicators?: string[];
+
+    /**
+    * An array of indicator codes for the heatmap that will be displayed.
+    */
+    view_indicators?: string[];
 
     /**
      * The result perspective.
@@ -377,6 +381,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             const lists = [
                 "sectors",
                 "indicators",
+                "view_indicators",
                 "naics",
                 "view"
             ];
@@ -434,6 +439,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
             "sectors",
             "naics",
             "indicators",
+            "view_indicators",
             "perspective",
             "analysis",
             "year",
@@ -605,6 +611,7 @@ export class UrlConfigTransmitter implements ConfigTransmitter {
                 // lists
                 case "sectors":
                 case "indicators":
+                case "view_indicators":
                 case "naics":
                 case "view":
                     const _list = strings.isNullOrEmpty(val)

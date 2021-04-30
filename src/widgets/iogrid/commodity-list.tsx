@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 
 import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
@@ -23,12 +23,12 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../widget";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNoneOrEmpty } from "../../util/util";
+import { ifNone, isNone, isNoneOrEmpty, TMap } from "../../util/util";
 import * as strings from "../../util/strings";
 import * as selection from "./selection";
 
 import { Commodity, SortOptions } from "./commodity-model";
-
+import { CSSProperties } from "@material-ui/styles";
 
 const IndicatorValue = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -47,34 +47,36 @@ export const CommodityList = (props: {
 
     const grid = props.widget;
     const config = props.config;
-
     // collect the selected sectors and their scaling factors from the
     // configuration and store them in a map: sector code -> factor
     const selected = selection.fromConfig(config, props.sectors);
 
     // fire a change in the sector selection
     // based on the current selection state
-    const fireSelectionChange = () => {
+    const fireSelectionChange = (selected: TMap<number>) => {
         const sectors = selection.toConfig(config, props.sectors, selected);
         grid.fireChange({ sectors });
     };
-
+    
     // initialize the states
     const [searchTerm, setSearchTerm] = React.useState("");
     const [menuElem, setMenuElem] = React.useState<null | HTMLElement>(null);
     const emptySelection = Object.keys(selected).length === 0;
     const [sortOpts, setSortOpts] = React.useState(SortOptions.create(grid, config));
 
-    // push indicator updates of the configuration
-    if (strings.areListsNotEqual(config.indicators, sortOpts.indicatorCodes)) {
-        if (isNoneOrEmpty(config.indicators)) {
-            setSortOpts(sortOpts.setAlphabetical());
-        } else {
-            const indicators = grid.getSortedIndicators()
-                .filter(i => config.indicators.indexOf(i.code) >= 0);
-            setSortOpts(sortOpts.setIndicators(indicators));
+    // Run when component did mount
+    useEffect(() => {
+        // push indicator updates of the configuration
+        if (strings.areListsNotEqual(config.indicators, sortOpts.indicatorCodes)) {
+            if (isNoneOrEmpty(config.indicators)) {
+                setSortOpts(sortOpts.setAlphabetical());
+            } else {
+                const indicators = grid.getSortedIndicators()
+                    .filter(i => config.indicators.indexOf(i.code) >= 0);
+                setSortOpts(sortOpts.setIndicators(indicators));
+            }
         }
-    }
+    }, [config.indicators]);
 
     // map the sectors to commodity objects
     let commodities: Commodity[] = props.sectors.map(s => {
@@ -88,7 +90,23 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
+
     commodities = sortOpts.apply(commodities);
+
+    // If no sectors are selected initially, we select the top 10 by default
+    if (isNone(config.sectors)) {
+        const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
+        let i = 0;
+        for (const commodity of commodities) {
+            commodity.selected = true;
+            selected[commodity.code] = 100;
+            i++;
+            if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
+                break;
+            }
+        }
+        fireSelectionChange(selected);
+    }
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
@@ -112,7 +130,7 @@ export const CommodityList = (props: {
                         } else {
                             selected[commodity.code] = 100;
                         }
-                        fireSelectionChange();
+                        fireSelectionChange(selected);
                     }} />;
             }
         },
@@ -121,10 +139,13 @@ export const CommodityList = (props: {
             field: "name",
             headerName: "Sector",
             width: 300,
+            cellClassName: "commodityGridCell",
             renderCell: (params) =>
                 <NameCell
                     commodity={params.data as Commodity}
-                    sortOpts={sortOpts} />,
+                    sortOpts={sortOpts}
+                    grid={grid}
+                />,
         },
         {
             // the slider for the scaling factor
@@ -139,7 +160,7 @@ export const CommodityList = (props: {
                         disabled={!commodity.selected}
                         onChange={(_, value) => {
                             selected[commodity.code] = value as number;
-                            fireSelectionChange();
+                            fireSelectionChange(selected);
                         }}
                         min={0}
                         max={500}
@@ -198,14 +219,14 @@ export const CommodityList = (props: {
             // jump back to page 1 when the page size changes
             grid.fireChange({
                 page: 1,
-                count: p.pageSize,
+                count: (p.pageSize !== -1) ? p.pageSize : commodities.length,
             });
             return;
         }
 
         grid.fireChange({
             page: p.page,
-            count: p.pageSize
+            count: (p.pageSize !== -1) ? p.pageSize : commodities.length
         });
     };
 
@@ -221,9 +242,8 @@ export const CommodityList = (props: {
         }
         commodity.selected = true;
         selected[commodity.code] = commodity.value as number;
-        fireSelectionChange();
+        fireSelectionChange(selected);
     };
-
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item>
@@ -276,27 +296,36 @@ export const CommodityList = (props: {
                                 }
                             }}
                             indicators={grid.getSortedIndicators()}
-                            widget={grid} />
+                            widget={grid}
+                            commodities={commodities}
+                            fireSelectionChange={fireSelectionChange}
+                            config={config}
+                        />
                     </Menu>
                 </div>
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
+                    rowHeight={25 + 27 * clamp(sortOpts.indicators.length, 0, 4)}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
                     page={ifNone(config.page, 1)}
                     onPageChange={onPageChange}
                     onPageSizeChange={onPageChange}
-                    rowsPerPageOptions={[10, 20, 30, 50, 100]}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
                     onCellClick={e => onSliderClicked(e)}
+                    rowsPerPageOptions={[10, 20, 30, 50, 100]}
                 />
             </Grid>
         </Grid>
     );
+};
+
+const clamp = (n: number, min: number, max: number) => {
+    return Math.min(Math.max(n, min), max);
 };
 
 /**
@@ -325,13 +354,65 @@ const SortMenu = React.forwardRef((props: {
     indicators: Indicator[],
     widget: IOGrid,
     onChange: (options: SortOptions) => void,
+    commodities: Commodity[],
+    fireSelectionChange: any,
+    config: Config
 }, _ref) => {
-
     const items: JSX.Element[] = [];
     const opts = props.options;
+ // Choose all commodities
+        items.push(
+            <MenuItem
+                key="sort-all-selected"
+                onClick={() => {
+                    const selected: TMap<number> = {};
+                    if (!opts.isAllSelected) {
+                        props.commodities.forEach(c => {
+                            c.selected = true;
+                            selected[c.code] = ifNone(c.value, 100);
+                        });
+                    } else {
+                        props.commodities.forEach(c => {
+                            c.selected = false;
+                        });
+                    }
+                    props.onChange(opts.swapSelectAll());
+                    props.fireSelectionChange(selected);
+                }}>
+                <CheckBox checked={opts.isAllSelected} />
+                Choose All Commodities
+            </MenuItem>
+        );
+    // Choose all commodities
+    items.push(
+         <MenuItem
+            key="sort-all-visible-selected"
+            onClick={() => {
+                const selected: TMap<number> = {};
+                if (!opts.isAllVisibleSelected) {
+                    const page = ifNone(props.config.page, 1);
+                    const pageSize = ifNone(props.config.count, 10);
+                    const start = pageSize * (page - 1);
+                    const end = pageSize * page;
+                    for (let index = start; index < end; index++) {
+                        const c = props.commodities[index];
+                        c.selected = true;
+                        selected[c.code] = ifNone(c.value, 100);
+                    }
+                } else {
+                    props.commodities.forEach(c => {
+                        c.selected = false;
+                    });
+                }
 
+                props.onChange(opts.swapSelectAllVisible());
+                props.fireSelectionChange(selected);
+            }}>
+            <CheckBox checked={opts.isAllVisibleSelected} />
+            Choose All Visible
+        </MenuItem>
+    );
     if (props.withSelection) {
-
         // check box to filter only selected commodities
         items.push(
             <MenuItem
@@ -387,23 +468,70 @@ const SortMenu = React.forwardRef((props: {
 });
 
 
-const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions }) => {
+const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IOGrid }) => {
     const { commodity, sortOpts } = props;
-    let subTitle: JSX.Element = null;
+    let subTitles: JSX.Element[] = [];
     if (sortOpts.hasSingleIndicator) {
         const result = sortOpts.indicatorResult(commodity);
-        subTitle =
+        subTitles.push(
             <Typography color='textSecondary'>
                 {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
-            </Typography>;
+            </Typography>);
+    } else {
+        subTitles = sortOpts.indicators.slice(0, 4).map(indicator => {
+            const values = sortOpts.getCommodityValues(indicator, commodity);
+            const toolTip = indicator.simpleunit || indicator.unit;
+            const containerStyles: CSSProperties = {
+                height: 20,
+                width: '100%',
+                margin: 7,
+                display: 'block'
+            };
+
+            const fillerStyles: CSSProperties = {
+                height: '100%',
+                width: `${values.share * 100}%`,
+                backgroundColor: '#e0e0de',
+                textAlign: 'left',
+                paddingBottom: '22px'
+            };
+
+            return (
+                <div style={containerStyles}>
+                    <div style={fillerStyles}>
+                    <Tooltip
+                    enterTouchDelay={0}
+                    placement="top"
+                    title={toolTip.length > 32 ? toolTip : ""}>
+                            {<Typography color='textSecondary'>
+                                {IndicatorValue.format(values.result)} {toolTip}
+                    </Typography>}
+                </Tooltip>
+                    </div>
+                </div>
+
+
+            );
+        });
     }
-    return (
+
+    const items = <div>
+        <Tooltip
+            enterTouchDelay={0}
+            placement="top"
+            title={commodity.name.length > 35 ? commodity.name : ""}
+        >
+            {<Typography>{commodity.name}</Typography>}
+        </Tooltip>
         <div>
-            <Typography>{commodity.name}</Typography>
-            {subTitle}
+            {subTitles.map(subtitle => (
+                subtitle
+            ))}
         </div>
-    );
-};
+    </div>;
+
+    return items;
+    };
 
 
 const CheckBox = (props: { checked: boolean }) =>

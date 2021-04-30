@@ -6,6 +6,7 @@ import { Config } from "../../widget";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
 import * as conf from "../../config";
+import { isNotNone } from "../../util/util";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -32,7 +33,7 @@ export async function selectIndicators(
     }
 
     // filter indicators by configuration codes
-    let codes = config.indicators;
+    let codes = config.view_indicators;
     if (!codes || codes.length === 0) {
         codes = conf.DEFAULT_INDICATORS;
     }
@@ -163,16 +164,30 @@ export const ImpactResult = (props: RowProps) => {
         }
         const r = result.getResult(ind, props.sector);
         const share = result.getShare(ind, props.sector);
-        let alpha = 0.1 + 0.9 * share;
-        if (props.sortIndicator && props.sortIndicator !== ind) {
-            alpha *= 0.25;
-        }
+        const alpha = 0.1 + 0.9 * share;
+        // Extra transparency on non sorted columns
+        // if (props.sortIndicator && props.sortIndicator !== ind) {
+        //     alpha *= 0.25;
+        // }
         const color = colors.forIndicatorGroup(ind.group, alpha);
         const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`;
+        let isIndicatorSelected = "";
+        // We box the sorted column
+        if (isNotNone(props.sortIndicator) && props.sortIndicator.includes(ind)) {
+            isIndicatorSelected = "sector-list-table_sorted-cell-side";
+            if (props.index === 0) {
+                isIndicatorSelected += " sector-list-table_sorted-cell-top";
+            } else if (props.index === config.count - 1) {
+                isIndicatorSelected += " sector-list-table_sorted-cell-bottom";
+            }
+        }
         items.push(
-            <td className="indicator-value" key={ind.id}
+            <td
+                className={`indicator-value ${isIndicatorSelected}`}
+                key={ind.id}
                 title={value}
-                style={{ backgroundColor: color }}>
+                style={{ backgroundColor: color }}
+            >
                 {config.showvalues ? value : ""}
             </td>
         );

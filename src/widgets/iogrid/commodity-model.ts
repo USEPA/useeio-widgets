@@ -23,6 +23,8 @@ export type Commodity = {
  */
 export class SortOptions {
 
+    private _selectAll: boolean;
+    private _selectAllVisible: boolean;
     private _selectedOnly: boolean;
     private _selectedFirst: boolean;
     private _indicators: Indicator[];
@@ -30,6 +32,8 @@ export class SortOptions {
     private _maxResult?: number;
 
     constructor(readonly grid: IOGrid, other?: SortOptions) {
+        this._selectAll = false;
+        this._selectAllVisible = false;
         if (!other) {
             // default values
             this._selectedOnly = false;
@@ -50,6 +54,14 @@ export class SortOptions {
         const indicators = grid.getSortedIndicators()
             .filter(i => config.indicators.indexOf(i.code) >= 0);
         return opts.setIndicators(indicators);
+    }
+
+    get isAllVisibleSelected(): boolean {
+        return this._selectAllVisible;
+    }
+
+    get isAllSelected(): boolean {
+        return this._selectAll;
     }
 
     get isSelectedOnly(): boolean {
@@ -117,6 +129,18 @@ export class SortOptions {
         return this._maxResult | 0;
     }
 
+    swapSelectAll(): SortOptions {
+        return this._copy(n => {
+            n._selectAll = !this._selectAll;
+        });
+    }
+
+    swapSelectAllVisible(): SortOptions {
+        return this._copy(n => {
+            n._selectAllVisible = !this._selectAllVisible;
+        });
+    }
+
     swapSelectedOnly(): SortOptions {
         return this._copy(n =>
             n._selectedOnly = !this._selectedOnly);
@@ -161,15 +185,15 @@ export class SortOptions {
         return this.setIndicators(indicators);
     }
 
+    absmax = (nums: number[]): number =>
+        nums
+            ? nums.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+            : 0;
+
     setIndicators(indicators: Indicator[]): SortOptions {
         if (isNoneOrEmpty(indicators)) {
             return this.setAlphabetical();
         }
-
-        const absmax = (nums: number[]): number =>
-            nums
-                ? nums.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
-                : 0;
 
         // calculate the combined results
         let results: number[];
@@ -178,7 +202,7 @@ export class SortOptions {
         } else {
             for (const i of indicators) {
                 const r = this.grid.getIndicatorResults(i);
-                const m = absmax(r);
+                const m = this.absmax(r);
                 results = results
                     ? results.map((total, i) => total + (m ? r[i] / m : 0))
                     : r.map((val) => m ? val / m : 0);
@@ -188,8 +212,20 @@ export class SortOptions {
         return this._copy(n => {
             n._indicators = indicators;
             n._results = results;
-            n._maxResult = absmax(results);
+            n._maxResult = this.absmax(results);
         });
+    }
+
+    // Return the corresponding result and share for a chosen indicator and commodity
+    getCommodityValues(indicator: Indicator, commodity: Commodity) {
+        const results = this.grid.getIndicatorResults(indicator);
+        const result = results[commodity.index];
+        const max = this.absmax(results);
+        const share = result / max;
+        return {
+            result: result,
+            share: share
+        };
     }
 
     setAlphabetical(): SortOptions {
@@ -210,12 +246,13 @@ export class SortOptions {
         if (!commodities) {
             return [];
         }
-
-        const list = this._selectedOnly
+        let list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;
-
-        return list.sort((c1, c2) => {
+            
+        if (this._selectAllVisible)
+            this._selectAllVisible = false;
+        list = list.sort((c1, c2) => {
 
             // if selected first and if the selection
             // state is different
@@ -235,5 +272,6 @@ export class SortOptions {
             return strings.compare(c1.name, c2.name);
 
         });
+        return list;
     }
 }

@@ -43,3 +43,21 @@ export function ifNone<T>(
     }
     return defaultValue;
 }
+
+export function ifNan<T>(
+    obj: T | null | undefined, defaultValue: T | (() => T)): T {
+    if (!isNone(obj)) {
+        if (typeof obj === "number") {
+            if (!isNaN(obj)) {
+                return obj;
+            }
+        } else {
+            return obj;
+        }
+    }
+    if (typeof defaultValue === "function") {
+        const fn = defaultValue as () => T;
+        return fn();
+    }
+    return defaultValue;
+}
