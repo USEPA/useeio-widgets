@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { Config, Widget } from "../widget";
 import { Indicator, Sector, Model, DemandInfo } from "../webapi";
 import * as colors from "../util/colors";
-import * as conf from "../config";
+import * as constants from "../constants";
 import { SectorAnalysis } from "../calc/sector-analysis";
 import { zeros } from "../calc/calc";
 import { createStyles, makeStyles, Theme, withStyles, Tooltip } from "@material-ui/core";
@@ -221,7 +221,7 @@ const Bar = ({ x, y, width, height, color, sectorName }: BarProps) => {
 async function selectIndicators(model: Model, c: Config): Promise<Indicator[]> {
     if (!model) return [];
     const _codes = !c || !c.indicators || c.indicators.length === 0
-        ? conf.DEFAULT_INDICATORS
+        ? constants.DEFAULT_INDICATORS
         : c.indicators;
     const indicators = await model.indicators();
     const selected = [];
