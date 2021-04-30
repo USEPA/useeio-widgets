@@ -1,4 +1,5 @@
 import { DemandType, ResultPerspective } from "./webapi";
+import * as strings from "./util/strings";
 
 /**
  * A common configuration object of our widgets. Often our widgets take the same
@@ -141,12 +142,77 @@ export function parseConfig(s: string): Config {
                 } catch (_) { }
                 break;
 
+            // booleans
+            case "showvalues":
+            case "showcode":
+            case "selectmatrix":
+            case "showdownload":
+            case "showscientific":
+                config[key] = strings.eq(val, "true", "1", "yes");
+                break;
+
+            // lists
+            case "sectors":
+            case "indicators":
+            case "view_indicators":
+            case "naics":
+            case "view":
+                config[key] = strings.isNullOrEmpty(val)
+                    ? []
+                    : val.split(",");
+                break;
+
+            // enumerations
+            case "type":
+            case "analysis":
+                if (strings.eq(val, "consumption")) {
+                    config.analysis = "Consumption";
+                } else if (strings.eq(val, "production")) {
+                    config.analysis = "Production";
+                }
+                break;
+            case "perspective":
+                const p = perspectiveOf(val);
+                if (p) {
+                    config.perspective = p;
+                }
+                break;
+
             default:
-                // per default simply store the strings
+                // simply store the strings per default
+                // also store unknown things
                 config[key] = val;
         }
 
     }
     return config;
+}
+
+function perspectiveOf(val: string): ResultPerspective | null {
+    if (!val) {
+        return null;
+    }
+    switch (val.trim().toLowerCase()) {
+
+        case "direct":
+        case "direct results":
+        case "supply":
+        case "supply chain":
+            return "direct";
+
+        case "final":
+        case "final results":
+        case "consumption":
+        case "final consumption":
+        case "point of consumption":
+            return "final";
+
+        case "intermediate":
+        case "intermediate results":
+            return "intermediate";
+
+        default:
+            return null;
+    }
 }
 
