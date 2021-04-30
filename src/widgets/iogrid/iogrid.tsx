@@ -14,6 +14,7 @@ import * as selection from "./selection";
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
 
+
 /**
  * The row type of the input or output list.
  */
@@ -61,19 +62,22 @@ export class IOGrid extends Widget {
                     <FlowList
                         config={config}
                         widget={this}
-                        direction="input" />
+                        direction="input"
+                    />
                 </Grid>
                 <Grid item style={{ width: "40%" }}>
                     <CommodityList
                         config={config}
                         sectors={this.commoditySectors}
-                        widget={this} />
+                        widget={this}
+                    />
                 </Grid>
                 <Grid item style={{ width: "30%" }}>
                     <FlowList
                         config={config}
                         widget={this}
-                        direction="output" />
+                        direction="output"
+                    />
                 </Grid>
             </Grid>,
             document.querySelector(this.selector)

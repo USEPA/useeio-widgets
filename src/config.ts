@@ -3,17 +3,29 @@ export const DEFAULT_INDICATORS = [
     "ACID",
     "ETOX",
     "EUTR",
-    "GHG",
+    "GCC",
+    "HC",
+    "HNC",
+    "GHG", // The code is GCC ?
     "HRSP",
     "HTOX",
     "OZON",
     "SMOG",
     "ENRG",
     "LAND",
-    "MNRL",
+    "MINE",
+    "NREN",
+    "REN",
+    "MNRL", // ?
     "WATR",
-    "CMSW",
-    "CRHW",
-    "METL",
+    "FOOD",
+    "HAZW",
+    "MSW",
+    "CMSW", // ?
+    "CRHW", // ?
+    "HAPS",
+    "METL", 
     "PEST",
+    "JOBS",
+    "VADD"
 ];
