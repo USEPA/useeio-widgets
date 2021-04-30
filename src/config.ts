@@ -31,7 +31,12 @@ export interface Config {
     indicators?: string[];
 
     /**
-     * An array of indicator codes for the heatmap that will be displayed.
+     * In some widgets, e.g. the heatmap, there is a difference between the
+     * indicators that are used for sorting and/or the calculation and the
+     * indicators that should be displayed. In this case, the `indicator`
+     * attribute would contain the codes of the indicators for the
+     * calculation/sorting and the `view_indicators` the codes of the indicators
+     * that should be displayed.
      */
     view_indicators?: string[];
 
@@ -99,3 +104,49 @@ export interface Config {
      */
     showcode?: boolean;
 }
+
+/**
+ * Parses a configuration from the given string. The format is expected to be
+ * exactly like in the parameter part of an URL, thus, a set of key-value pairs
+ * where the pairs are separated by `&` and the keys from the values by `=`, e.g.
+ * "page=42&count=10".
+ */
+export function parseConfig(s: string): Config {
+    if (!s || Array.isArray(s)) {
+        return {};
+    }
+    if (typeof s === "object") {
+        return s as Config;
+    }
+    if (typeof s !== "string") {
+        return {};
+    }
+    const config: Config = {};
+    for (const part of s.split("&")) {
+        const keyVal = part.split("=");
+        if (keyVal.length < 2) {
+            continue;
+        }
+        const key = keyVal[0].trim();
+        const val = keyVal[1].trim();
+
+        switch (key) {
+
+            // integers
+            case "year":
+            case "count":
+            case "page":
+                try {
+                    config[key] = parseInt(val, 10);
+                } catch (_) { }
+                break;
+
+            default:
+                // per default simply store the strings
+                config[key] = val;
+        }
+
+    }
+    return config;
+}
+

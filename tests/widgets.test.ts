@@ -54,4 +54,14 @@ describe("Test the event bus", () => {
         expect(w.config.count).toBe(10);
     });
 
+    it("should handle updateIfAbsent", () => {
+        const w = new MockWidget();
+        const eventBus = new EventBus();
+        eventBus.withDefaults({ page: 21 });
+        eventBus.join(w);
+        eventBus.updateIfAbsent({ page: 11, count: 5 });
+        expect(w.config.page).toBe(21);
+        expect(w.config.count).toBe(5);
+    });
+
 });
