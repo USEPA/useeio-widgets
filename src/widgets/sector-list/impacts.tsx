@@ -2,11 +2,11 @@ import * as React from "react";
 
 import { Indicator, IndicatorGroup, Model } from "../../webapi";
 import { RowProps } from "./sector-list";
-import { Config } from "../../widget";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
 import * as constants from "../../constants";
 import { isNotNone } from "../../util/util";
+import { Config } from "../../config";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,

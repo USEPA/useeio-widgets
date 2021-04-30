@@ -1,8 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../widget";
+import { Config } from "../config";
 import { Model } from "../webapi";
+import { Widget } from "../widget";
 
 export class CountCombo extends Widget {
 

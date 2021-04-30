@@ -1,5 +1,5 @@
 import { render } from "react-dom";
-import { Widget, Config } from "../widget";
+import { Widget, Config } from "../";
 import React from "react";
 import { createStyles, List, ListItem, makeStyles, Theme } from "@material-ui/core";
 

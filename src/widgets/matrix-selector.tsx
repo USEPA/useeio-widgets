@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Widget, Config } from "../widget";
+import { Widget, Config } from "../";
 
 /**
  * Mnemonics for the different matrices:

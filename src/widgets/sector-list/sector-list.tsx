@@ -1,7 +1,8 @@
 import React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../../widget";
+import { Config } from "../../config";
+import { Widget } from "../../widget";
 import { Indicator, Model, Sector, Matrix } from "../../webapi";
 import { HeatmapResult } from "../../calc/heatmap-result";
 import { MatrixCombo } from "../matrix-selector";

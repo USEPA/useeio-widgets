@@ -2,7 +2,7 @@ import { isNone, isNoneOrEmpty } from "../../util/util";
 import { Indicator } from "../../webapi";
 import * as strings from "../../util/strings";
 import { IOGrid } from "./iogrid";
-import { Config } from "../../widget";
+import { Config } from "../../";
 
 /**
  * The row type of the commodity list.

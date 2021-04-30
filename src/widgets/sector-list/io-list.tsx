@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../../widget";
+import { Widget, Config } from "../../";
 import { Model, Matrix, Sector } from "../../webapi";
 import { ListHeader } from "./list-header";
 import * as strings from "../../util/strings";

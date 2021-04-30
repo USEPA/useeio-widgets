@@ -1,5 +1,5 @@
 import * as strings from "../util/strings";
-import { Widget, Config } from "../widget";
+import { Widget, Config } from "../";
 import {
     DemandType,
     Model,

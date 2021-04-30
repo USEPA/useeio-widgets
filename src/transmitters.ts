@@ -1,7 +1,8 @@
 import { ResultPerspective } from "./webapi";
-import { Config, ConfigTransmitter, Widget, updateConfig } from "./widget";
+import { ConfigTransmitter, Widget } from "./widget";
 import * as strings from "./util/strings";
 import { isNone } from "./util/util";
+import { Config, updateConfig } from "./config";
 
 /**
  * A simple `ConfigTransmitter` implementation that shares configuration

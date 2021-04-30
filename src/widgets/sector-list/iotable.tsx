@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SectorList } from "./sector-list";
-import { Config } from "../../widget";
+import { Config } from "../../";
 import * as strings from "../../util/strings";
 import { Sector } from "../../webapi";
 

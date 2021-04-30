@@ -1,6 +1,6 @@
+import { Config } from "../../config";
 import { isNone, isNotNone, TMap } from "../../util/util";
 import { Sector } from "../../webapi";
-import { Config } from "../../widget";
 
 /**
  * Get the selected sectors for the IO grid in a map of `sector-code : share`

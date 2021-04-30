@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Sector, Model } from "../webapi";
-import { Config, Widget } from "../widget";
+import { Config, Widget } from "../";
 import * as colors from "../util/colors";
 import * as strings from "../util/strings";
 
