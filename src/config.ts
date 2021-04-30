@@ -1,5 +1,6 @@
 import { DemandType, ResultPerspective } from "./webapi";
 import * as strings from "./util/strings";
+import { isNone } from "./util";
 
 /**
  * A common configuration object of our widgets. Often our widgets take the same
@@ -131,6 +132,13 @@ export function parseConfig(s: string): Config {
         const key = keyVal[0].trim();
         const val = keyVal[1].trim();
 
+        // things are explicitly set to null,
+        // when the value is empty
+        if (val === "") {
+            config[key] = null;
+            continue;
+        }
+
         switch (key) {
 
             // integers
@@ -216,3 +224,34 @@ function perspectiveOf(val: string): ResultPerspective | null {
     }
 }
 
+export function serializeConfig(config: Config): string {
+    if (!config) {
+        return "";
+    }
+    if (typeof config === "string") {
+        return config as string;
+    }
+    if (Array.isArray(config)) {
+        return (config as []).join("&");
+    }
+    if (typeof config !== "object") {
+        return "";
+    }
+    let s = "";
+    for (const key of Object.keys(config)) {
+        if (s !== "") {
+            s += "&";
+        }
+        s += key + "=";
+        const val = config[key];
+        if (isNone(val)) {
+            continue;
+        }
+        if (Array.isArray(val)) {
+            s += val.join(",");
+            continue;
+        }
+        s += val;
+    }
+    return s;
+}
