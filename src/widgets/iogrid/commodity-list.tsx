@@ -28,7 +28,7 @@ import * as strings from "../../util/strings";
 import * as selection from "./selection";
 
 import { Commodity, SortOptions } from "./commodity-model";
-
+import { CSSProperties } from "@material-ui/styles";
 
 const IndicatorValue = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -139,11 +139,13 @@ export const CommodityList = (props: {
             field: "name",
             headerName: "Sector",
             width: 300,
+            cellClassName: "commodityGridCell",
             renderCell: (params) =>
                 <NameCell
                     commodity={params.data as Commodity}
                     sortOpts={sortOpts}
-                    grid={grid} />,
+                    grid={grid}
+                />,
         },
         {
             // the slider for the scaling factor
@@ -304,7 +306,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={29.2 + 22 * clamp(sortOpts.indicators.length, 0, 4)}
+                    rowHeight={29.2 + 27 * clamp(sortOpts.indicators.length, 0, 4)}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -316,7 +318,6 @@ export const CommodityList = (props: {
                     headerHeight={0}
                     onCellClick={e => onSliderClicked(e)}
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}
-
                 />
             </Grid>
         </Grid>
@@ -478,25 +479,50 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
             </Typography>);
     } else {
         subTitles = sortOpts.indicators.slice(0, 4).map(indicator => {
-            const results = props.grid.getIndicatorResults(indicator);
-            const result = results[commodity.index];
+            const values = sortOpts.getCommodityValues(indicator, commodity);
             const toolTip = indicator.simpleunit || indicator.unit;
+            const containerStyles: CSSProperties = {
+                height: 20,
+                width: '100%',
+                margin: 7,
+                display: 'block'
+            };
+
+            const fillerStyles: CSSProperties = {
+                height: '100%',
+                width: `${values.share * 100}%`,
+                backgroundColor: '#e0e0de',
+                textAlign: 'left',
+                paddingBottom: '22px'
+            };
+
             return (
-                <Tooltip
+                <div style={containerStyles}>
+                    <div style={fillerStyles}>
+                    <Tooltip
                     enterTouchDelay={0}
                     placement="top"
                     title={toolTip.length > 32 ? toolTip : ""}>
-                    {<Typography color='textSecondary'>
-                        {IndicatorValue.format(result)} {toolTip}
+                            {<Typography color='textSecondary'>
+                                {IndicatorValue.format(values.result)} {toolTip}
                     </Typography>}
                 </Tooltip>
+                    </div>
+                </div>
+
 
             );
         });
     }
 
     const items = <div>
-        <Typography>{commodity.name}</Typography>
+        <Tooltip
+            enterTouchDelay={0}
+            placement="top"
+            title={commodity.name.length > 35 ? commodity.name : ""}
+        >
+            {<Typography>{commodity.name}</Typography>}
+        </Tooltip>
         <div>
             {subTitles.map(subtitle => (
                 subtitle

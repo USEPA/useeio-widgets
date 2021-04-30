@@ -185,15 +185,15 @@ export class SortOptions {
         return this.setIndicators(indicators);
     }
 
+    absmax = (nums: number[]): number =>
+        nums
+            ? nums.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
+            : 0;
+
     setIndicators(indicators: Indicator[]): SortOptions {
         if (isNoneOrEmpty(indicators)) {
             return this.setAlphabetical();
         }
-
-        const absmax = (nums: number[]): number =>
-            nums
-                ? nums.reduce((max, val) => Math.max(max, Math.abs(val)), 0)
-                : 0;
 
         // calculate the combined results
         let results: number[];
@@ -202,7 +202,7 @@ export class SortOptions {
         } else {
             for (const i of indicators) {
                 const r = this.grid.getIndicatorResults(i);
-                const m = absmax(r);
+                const m = this.absmax(r);
                 results = results
                     ? results.map((total, i) => total + (m ? r[i] / m : 0))
                     : r.map((val) => m ? val / m : 0);
@@ -212,8 +212,20 @@ export class SortOptions {
         return this._copy(n => {
             n._indicators = indicators;
             n._results = results;
-            n._maxResult = absmax(results);
+            n._maxResult = this.absmax(results);
         });
+    }
+
+    // Return the corresponding result and share for a chosen indicator and commodity
+    getCommodityValues(indicator: Indicator, commodity: Commodity) {
+        const results = this.grid.getIndicatorResults(indicator);
+        const result = results[commodity.index];
+        const max = this.absmax(results);
+        const share = result / max;
+        return {
+            result: result,
+            share: share
+        };
     }
 
     setAlphabetical(): SortOptions {
