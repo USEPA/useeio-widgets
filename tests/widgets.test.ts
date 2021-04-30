@@ -1,7 +1,6 @@
-import { Config, EventBus, updateConfig, Widget } from "../src/widget";
+import { Config, EventBus, Widget } from "../src/";
 
 describe("Configuration updates", () => {
-
     it("should update a simple field", () => {
         const config: Config = {
             page: 1,
@@ -10,62 +9,28 @@ describe("Configuration updates", () => {
             page: 5,
             count: 2,
         };
-        updateConfig(config, changes);
-        expect(config.page).toBe(5);
-        expect(config.count).toBe(2);
-    });
-
-    it("should add a scope", () => {
-        const config: Config = {
-            page: 1,
-        };
-        const changes: Config = {
-            scopes: {
-                "s": {
-                    page: 5,
-                }
-            }
-        };
-        updateConfig(config, changes);
-        expect(config.scopes["s"].page).toBe(5);
-    });
-
-    it("should update a scope", () => {
-        const config: Config = {
-            scopes: {
-                "s": {
-                    page: 1,
-                }
-            }
-        };
-        const changes: Config = {
-            scopes: {
-                "s": {
-                    count: 10,
-                }
-            }
-        };
-        updateConfig(config, changes);
-        expect(config.scopes["s"].page).toBe(1);
-        expect(config.scopes["s"].count).toBe(10);
+        const updated = { ...config, ...changes };
+        expect(updated.page).toBe(5);
+        expect(updated.count).toBe(2);
     });
 });
 
-describe("Test the event bus", () => {
 
-    class MockWidget extends Widget {
+class MockWidget extends Widget {
 
-        config: Config;
+    config: Config;
 
-        constructor() {
-            super();
-            this.ready();
-        }
-
-        async handleUpdate(config: Config) {
-            this.config = config;
-        }
+    constructor() {
+        super();
+        this.ready();
     }
+
+    async handleUpdate(config: Config) {
+        this.config = config;
+    }
+}
+
+describe("Test the event bus", () => {
 
     it("should update another widget", () => {
         const w1 = new MockWidget();
@@ -75,6 +40,18 @@ describe("Test the event bus", () => {
         eventBus.join(w2);
         w1.fireChange({ page: 42 });
         expect(w2.config.page).toBe(42);
+    });
+
+    it("should handle defaults", () => {
+        const w = new MockWidget();
+        const eventBus = new EventBus();
+        eventBus.withDefaults({ page: 21, count: 5 });
+        eventBus.join(w);
+        expect(w.config.page).toBe(21);
+        expect(w.config.count).toBe(5);
+        eventBus.update({ count: 10 });
+        expect(w.config.page).toBe(21);
+        expect(w.config.count).toBe(10);
     });
 
 });

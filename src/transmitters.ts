@@ -2,56 +2,17 @@ import { ResultPerspective } from "./webapi";
 import { ConfigTransmitter, Widget } from "./widget";
 import * as strings from "./util/strings";
 import { isNone } from "./util/util";
-import { Config, updateConfig } from "./config";
+import { Config } from "./config";
 
-/**
- * A simple `ConfigTransmitter` implementation that shares configuration
- * updates with the joined widgtes.
- */
- export class EventBus implements ConfigTransmitter {
+abstract class AbstractTransmitter implements ConfigTransmitter {
 
-    private readonly widgets = new Array<Widget>();
-    private config: Config = {};
-
-    join(widget: Widget) {
-        if (!widget) {
-            return;
-        }
-        this.widgets.push(widget);
-        widget.onChanged(change => {
-            updateConfig(this.config, change);
-            this.update(this.config);
-        });
-    }
-
-    update(config: Config) {
-        this.config = config;
-        for (const widget of this.widgets) {
-            widget.update(config);
-        }
-    }
-}
-
-/**
- * A `ConfigTransmitter` implementation that reads and serializes
- * its configuration state from and to the hash part of the current
- * URL.
- */
- export class UrlConfigTransmitter implements ConfigTransmitter {
-
-    private widgets = new Array<Widget>();
-    private config: Config = {};
-    private defaultConfig: Config;
-
-    constructor() {
-        this.config = this.parseUrlConfig({ withScripts: true });
-        window.onhashchange = () => this.onHashChanged();
-        window.addEventListener("popstate", () => this.onHashChanged());
-        document.addEventListener("hashChangeEvent", () => this.onHashChanged());
-    }
+    protected readonly widgets = new Array<Widget>();
+    protected config: Config = {};
+    protected defaultConfig: Config;
 
     /**
-     * Returns the current configuration of this transmitter.
+     * Returns a copy of the current configuration of this transmitter
+     * including possible default values..
      */
     public get(): Config {
         return !this.defaultConfig
@@ -61,12 +22,35 @@ import { Config, updateConfig } from "./config";
 
     /**
      * Set the default configuration options of this transmitter. The default
-     * values are not serialized in the hash part of the URL but are passed
-     * to the joined widgets. The default configuration should be set before
-     * widgets join this transmitter.
+     * values are not serialized, e.g. when updating the hash value of an URL,
+     * but are passed to joined widgets. The default configuration should be set
+     * before widgets join this transmitter.
      */
     withDefaults(config: Config) {
         this.defaultConfig = config;
+    }
+
+    /**
+     * Let the given widget join this configuration transmitter. The widget will
+     * be initialized with the current configuration of this transmitter.
+     */
+    join(widget: Widget) {
+        if (!widget) {
+            return;
+        }
+        this.widgets.push(widget);
+        widget.update(this.get());
+        widget.onChanged(change => {
+            this.update(change);
+        });
+    }
+
+    update(change: Partial<Config>) {
+        const current: Config = this.get();
+        this.config = { ...current, ...change };
+        for (const widget of this.widgets) {
+            widget.update(this.config);
+        }
     }
 
     /**
@@ -75,48 +59,50 @@ import { Config, updateConfig } from "./config";
      * such property, an update is fired.
      */
     updateIfAbsent(conf: Config) {
-        if (!conf) return;
-        const next: Config = this.get();
-
-        // set the values of c2 in c1 if they are missing in c1
-        const sync = (c1: Config, c2: Config) => {
-            let needsUpdate = false;
-            for (const key of Object.keys(c2)) {
-                if (key === "scopes") continue;
-                if (!c1[key]) {
-                    c1[key] = c2[key];
-                    needsUpdate = true;
-                }
-            }
-            if (!c2.scopes) {
-                return needsUpdate;
-            }
-            if (!c1.scopes) {
-                c1.scopes = { ...c2.scopes };
-                return true;
-            }
-            // sync scope configs recursively
-            for (const scope of Object.keys(c2.scopes)) {
-                const cc1 = c1.scopes[scope];
-                const cc2 = c2.scopes[scope];
-                if (!cc2) {
-                    continue;
-                }
-                if (!cc1) {
-                    c1.scopes[scope] = { ...cc2 };
-                    needsUpdate = true;
-                    continue;
-                }
-                if (sync(cc1, cc2)) {
-                    needsUpdate = true;
-                }
-            }
-            return needsUpdate;
-        };
-
-        if (sync(next, conf)) {
-            this.update(next);
+        if (!conf) {
+            return;
         }
+
+        let shouldUpdate = false;
+        const current: Config = this.get();
+        for (const key of Object.keys(conf)) {
+            const updateValue = conf[key];
+            if (isNone(updateValue)) {
+                continue;
+            }
+            const currentValue = current[key];
+            if (isNone(currentValue)) {
+                current[key] = updateValue;
+                shouldUpdate = true;
+            }
+        }
+
+        if (shouldUpdate) {
+            this.update(current);
+        }
+    }
+}
+
+/**
+ * A simple `ConfigTransmitter` implementation that shares configuration
+ * updates with the joined widgtes.
+ */
+export class EventBus extends AbstractTransmitter {
+}
+
+/**
+ * A `ConfigTransmitter` implementation that reads and serializes
+ * its configuration state from and to the hash part of the current
+ * URL.
+ */
+export class UrlConfigTransmitter extends AbstractTransmitter {
+
+    constructor() {
+        super();
+        this.config = this.parseUrlConfig({ withScripts: true });
+        window.onhashchange = () => this.onHashChanged();
+        window.addEventListener("popstate", () => this.onHashChanged());
+        document.addEventListener("hashChangeEvent", () => this.onHashChanged());
     }
 
     private onHashChanged() {
@@ -131,22 +117,8 @@ import { Config, updateConfig } from "./config";
         window.location.hash = "";
     }
 
-    /**
-     * Let the given widget join this configuration transmitter. The widget
-     * will be initialized with the current configuration of this transmitter.
-     */
-    join(widget: Widget) {
-        this.widgets.push(widget);
-        widget.update(this.get());
-        widget.onChanged((config) => {
-            this.update(config);
-        });
-    }
-
     update(config: Config) {
-        const next: Config = this.get();
-        updateConfig(next, config);
-        this.config = next;
+        super.update(config);
         this.updateHash();
     }
 
@@ -223,7 +195,7 @@ import { Config, updateConfig } from "./config";
      * configuration attributes can be dropped intentionally from the hash part
      * (indicating that something is not set). Also, configuration attributes
      * can have scope prefixes. Thus, it is not enough to just keep the current
-     * attributes in the has; we need to check for each current attribute if it
+     * attributes in the hash; we need to check for each current attribute if it
      * is a configuration attribute instead.
      */
     private patchHash(configHash: string) {
