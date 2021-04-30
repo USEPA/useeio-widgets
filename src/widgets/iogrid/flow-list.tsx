@@ -13,10 +13,10 @@ import {
 import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
 
-import { Config } from "../../config";
+import { Config } from "../..";
 import { IOFlow, IOGrid } from "./iogrid";
 import * as strings from "../../util/strings";
-import { ifNone } from "../../util/util";
+import { ifNone } from "../../util";
 
 
 const Currency = new Intl.NumberFormat("en-US", {

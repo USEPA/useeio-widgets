@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import * as ReactDOM from "react-dom";
+import { createStyles, makeStyles, Theme, withStyles, Tooltip } from "@material-ui/core";
+
 import { Widget } from "../widget";
 import { Indicator, Sector, Model, DemandInfo } from "../webapi";
 import * as colors from "../util/colors";
 import * as constants from "../constants";
-import { SectorAnalysis } from "../calc/sector-analysis";
-import { zeros } from "../calc/calc";
-import { createStyles, makeStyles, Theme, withStyles, Tooltip } from "@material-ui/core";
+import { SectorAnalysis, zeros } from "../calc";
 import { LoadingComponent } from "../util/components";
 import { Config } from "../config";
 

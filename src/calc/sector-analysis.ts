@@ -1,5 +1,5 @@
 import { Sector, Model, Indicator } from "../webapi";
-import { zeros } from "./calc";
+import { zeros } from ".";
 
 export class SectorAnalysis {
 

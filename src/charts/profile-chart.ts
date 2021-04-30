@@ -1,8 +1,7 @@
 import * as apex from "apexcharts";
 import { Config, Widget } from "../";
 import { Model, Sector, Indicator } from "./../webapi";
-import { SectorAnalysis } from "../calc/sector-analysis";
-import { max, zeros } from "../calc/calc";
+import { max, SectorAnalysis, zeros } from "../calc";
 
 export interface ProfileChartConfig {
     model: Model;
