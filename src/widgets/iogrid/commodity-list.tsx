@@ -306,7 +306,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={25 + 27 * clamp(sortOpts.indicators.length, 0, 4)}
+                    rowHeight={25 + 27 * clamp(sortOpts.indicators.length, 1, 4)}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -474,7 +474,7 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
     if (sortOpts.hasSingleIndicator) {
         const result = sortOpts.indicatorResult(commodity);
         subTitles.push(
-            <Typography color='textSecondary'>
+            <Typography color='textSecondary' key={sortOpts.indicators[0].id}>
                 {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
             </Typography>);
     } else {
@@ -497,7 +497,7 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
             };
 
             return (
-                <div style={containerStyles}>
+                <div style={containerStyles} key={indicator.id}>
                     <div style={fillerStyles}>
                     <Tooltip
                     enterTouchDelay={0}
