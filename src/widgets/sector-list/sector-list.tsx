@@ -225,20 +225,20 @@ const Component = (props: { widget: SectorList }) => {
         });
 
         ranking.sort(([_s1, rank1], [_s2, rank2]) => rank2 - rank1);
-        if (config.showvalues) {
-            if (demandSorter)
-                ranking.sort(([s1], [s2]) => {
-                    const d1 = props.widget.demand[s1.code];
-                    const d2 = props.widget.demand[s2.code];
-                    if (!d1 && !d2)
-                        return 0;
-                    if (!d1 && d2)
-                        return 1;
-                    if (d1 && !d2)
-                        return -1;
-                    else
-                        return d2 - d1;
-                });
+        if (config.showvalues && demandSorter) {
+                // Sort by demand
+            ranking.sort(([s1], [s2]) => {
+            const d1 = props.widget.demand[s1.code];
+            const d2 = props.widget.demand[s2.code];
+            if (!d1 && !d2)
+                return 0;
+            if (!d1 && d2)
+                return 1;
+            if (d1 && !d2)
+                return -1;
+            else
+                return d2 - d1;
+        });
         }
     }
 

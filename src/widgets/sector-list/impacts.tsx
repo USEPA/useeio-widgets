@@ -203,18 +203,18 @@ export const ImpactResult = (props: RowProps) => {
  * Increases the number of decimal digits until the number has the right number of digits
  */
 function getValueWithVariableDecimalNumber(r: number) {
-    let valueFixed: string;
+    let value: string;
     let decimal = 3; // 3 digits by default
     if (r === 0.0)
         return r.toFixed(decimal);
 
     let n;
     do {
-        valueFixed = r.toFixed(decimal);
-        n = parseFloat(valueFixed);
+        value = r.toFixed(decimal);
+        n = parseFloat(value);
         decimal++;
     } while (n === 0.0);
 
-    return valueFixed;
+    return value;
 }
 
