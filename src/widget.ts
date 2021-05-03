@@ -79,6 +79,9 @@ export abstract class Widget {
 }
 
 /**
+ * With a `ConfigTransmitter` it is possible to share configuration updates
+ * between multiple widgets. 
+ * 
  * A widget can join a `ConfigTransmitter` to share configration changes with
  * other widgets and/or to listen to configuration updates.
  */

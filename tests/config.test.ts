@@ -4,9 +4,7 @@ describe("Serialize and parse configurations", () => {
 
     const configOf = (s: string) => {
         const parsed = parseConfig(s);
-        console.log(parsed);
         const serialized = serializeConfig(parsed);
-        console.log(serialized);
         return parseConfig(serialized);
     };
 
