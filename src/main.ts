@@ -7,20 +7,20 @@
  * @packageDocumentation
  */
 
+import { EventBus, UrlConfigTransmitter, WidgetArgs } from ".";
+
 import { FilterWidget } from "./widgets/filter";
-import { WidgetArgs } from "./widget";
 import { SectorList } from "./widgets/sector-list/sector-list";
-import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
+import { IOList } from "./widgets/sector-list/io-list";
 import { SectorDelete } from "./widgets/sector-list";
+import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
-import { IOList } from "./widgets/sector-list/io-list";
 import { IOGrid } from "./widgets/iogrid/iogrid";
-import { EventBus, UrlConfigTransmitter } from "./transmitters";
 
 export * from "./naics";
 export * from "./webapi";

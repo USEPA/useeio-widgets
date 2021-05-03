@@ -63,5 +63,4 @@ describe("Test the event bus", () => {
         expect(w.config.page).toBe(21);
         expect(w.config.count).toBe(5);
     });
-
 });

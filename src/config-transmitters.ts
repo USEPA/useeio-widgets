@@ -1,8 +1,15 @@
-import { ConfigTransmitter, Widget } from "./widget";
+import { Widget } from "./widget";
 import { isNone } from "./util/util";
 import { Config, parseConfig, serializeConfig } from "./config";
 
-abstract class AbstractTransmitter implements ConfigTransmitter {
+/**
+ * With a `ConfigTransmitter` it is possible to share configuration updates
+ * between multiple widgets. When a widget joins a transmitter, it receives
+ * configuration updates of the transmitter. Also, a transmitter listens to
+ * configuration updates of a widget and shares these updates with the other
+ * widgets that joined the transmitter.
+ */
+abstract class ConfigTransmitter {
 
     protected readonly widgets = new Array<Widget>();
     protected config: Config = {};
@@ -48,6 +55,10 @@ abstract class AbstractTransmitter implements ConfigTransmitter {
         });
     }
 
+    /**
+     * Updates all widgets that joined this transmitter with the given
+     * configuration.
+     */
     update(input: Config | string) {
         if (!input)
             return;
@@ -114,9 +125,12 @@ abstract class AbstractTransmitter implements ConfigTransmitter {
                 return true;
             }
             if (Array.isArray(v1) && Array.isArray(v2)) {
-                let arraysEqual = true;
-                for (const e1 of v1) {
-                    if (!v2.includes(v1)) {
+                let arraysEqual = v1.length === v2.length;
+                if (!arraysEqual) {
+                    return false;
+                }
+                for (const elem of v1) {
+                    if (!v2.includes(elem)) {
                         arraysEqual = false;
                         break;
                     }
@@ -143,7 +157,7 @@ abstract class AbstractTransmitter implements ConfigTransmitter {
  * A simple `ConfigTransmitter` implementation that shares configuration
  * updates with the joined widgtes.
  */
-export class EventBus extends AbstractTransmitter {
+export class EventBus extends ConfigTransmitter {
 }
 
 /**
@@ -151,7 +165,7 @@ export class EventBus extends AbstractTransmitter {
  * its configuration state from and to the hash part of the current
  * URL.
  */
-export class UrlConfigTransmitter extends AbstractTransmitter {
+export class UrlConfigTransmitter extends ConfigTransmitter {
 
     constructor() {
         super();
@@ -173,8 +187,8 @@ export class UrlConfigTransmitter extends AbstractTransmitter {
         window.location.hash = "";
     }
 
-    update(config: Config) {
-        super.update(config);
+    update(input: Config | string) {
+        super.update(input);
         window.location.hash = "#" + this.serialize();
     }
 
@@ -264,4 +278,56 @@ export class UrlConfigTransmitter extends AbstractTransmitter {
             ? null
             : parts[1];
     }
+}
+
+export class HtmlAttributeConfigTransmitter extends ConfigTransmitter {
+
+    private readonly element: HTMLElement;
+    private readonly attribute: string;
+
+    constructor(elementSelector: string, attribute: string) {
+        super();
+        this.element = document.querySelector(elementSelector);
+        this.attribute = attribute;
+        if (this.element) {
+
+            // initialize the configuration of this transmitter with
+            // the current attribute value
+            const attributeValue = this.element.getAttribute(attribute);
+            if (attributeValue) {
+                this.config = parseConfig(attributeValue);
+            }
+
+            // observe attribute changes
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    if (mutation.attributeName === attribute) {
+                        const value = this.element.getAttribute(attribute);
+                        this.config = parseConfig(value);
+                        const updated = this.get();  // include defaults
+                        for (const widget of this.widgets) {
+                            widget.update(updated);
+                        }
+                    }
+                });
+            });
+            observer.observe(this.element, {
+                attributeFilter: [attribute],
+            });
+
+        }
+    }
+
+    update(input: Config | string) {
+        super.update(input);
+        if (!this.element) {
+            return;
+        }
+        const currentVal = this.element.getAttribute(this.attribute);
+        const nextVal = serializeConfig(input);
+        if (currentVal != nextVal) {
+            this.element.setAttribute(this.attribute, nextVal);
+        }
+    }
+
 }

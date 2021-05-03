@@ -1,3 +1,3 @@
 export * from "./config";
-export * from "./transmitters";
+export * from "./config-transmitters";
 export * from "./widget";

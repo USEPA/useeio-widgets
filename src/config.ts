@@ -224,7 +224,7 @@ function perspectiveOf(val: string): ResultPerspective | null {
     }
 }
 
-export function serializeConfig(config: Config): string {
+export function serializeConfig(config: Config | string): string {
     if (!config) {
         return "";
     }

@@ -77,24 +77,3 @@ export abstract class Widget {
         return _conf;
     }
 }
-
-/**
- * With a `ConfigTransmitter` it is possible to share configuration updates
- * between multiple widgets. 
- * 
- * A widget can join a `ConfigTransmitter` to share configration changes with
- * other widgets and/or to listen to configuration updates.
- */
-export interface ConfigTransmitter {
-
-    /**
-     * Let the given widget join this transmitter.
-     */
-    join(widget: Widget): void;
-
-    /**
-     * Updates all widgets that joined this transmitter with the given
-     * configuration.
-     */
-    update(config: Config): void;
-}
