@@ -141,7 +141,9 @@ abstract class ConfigTransmitter {
         };
 
         const nonDefaults: Config = {};
-        for (const key of Object.keys(this.defaultConfig)) {
+        const keys = Object.keys(this.defaultConfig)
+            .concat(Object.keys(this.config));
+        for (const key of keys) {
             const defaultVal = this.defaultConfig[key];
             const configVal = this.config[key];
             if (isEqual(defaultVal, configVal)) {
@@ -192,7 +194,7 @@ export class UrlConfigTransmitter extends ConfigTransmitter {
         window.location.hash = "#" + this.serialize();
     }
 
-    
+
     /**
      * Parses the URL configuration from the browser URL (window.location) and
      * optionally from the URLs of included JavaScript files. It also checks for
@@ -202,7 +204,7 @@ export class UrlConfigTransmitter extends ConfigTransmitter {
      * included JavaScript files.
      */
     private parseUrlConfig(what?: { withScripts?: boolean }): Config {
-       
+
         // collect the URLs
         const urls: string[] = [
             window.location.href,
@@ -225,9 +227,9 @@ export class UrlConfigTransmitter extends ConfigTransmitter {
         let config: Config = {};
         for (const url of urls) {
             const hashParams = parseConfig(this.getHashPart(url));
-            config = {...hashParams, ...config};
+            config = { ...hashParams, ...config };
             const otherParams = parseConfig(this.getParameterPart(url));
-            config = {...otherParams, ...config};
+            config = { ...otherParams, ...config };
         }
         return config;
     }
@@ -319,13 +321,17 @@ export class HtmlAttributeConfigTransmitter extends ConfigTransmitter {
     }
 
     update(input: Config | string) {
-        super.update(input);
         if (!this.element) {
+            super.update(input);
             return;
         }
+        const patch = typeof input === "string"
+            ? parseConfig(input)
+            : input;
+        this.config = { ...this.config, ...patch };
         const currentVal = this.element.getAttribute(this.attribute);
-        const nextVal = serializeConfig(input);
-        if (currentVal != nextVal) {
+        const nextVal = this.serialize();
+        if (currentVal !== nextVal) {
             this.element.setAttribute(this.attribute, nextVal);
         }
     }
