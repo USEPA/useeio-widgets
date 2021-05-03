@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Config } from "../../widget";
+import { Config } from "../../";
 
 /**
  * The ListHeader is the top left header cell of an industry list. It contains

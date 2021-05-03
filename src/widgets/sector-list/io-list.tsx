@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../../widget";
+import { Widget, Config } from "../../";
 import { Model, Matrix, Sector } from "../../webapi";
 import { ListHeader } from "./list-header";
 import * as strings from "../../util/strings";
@@ -18,10 +18,9 @@ export class IOList extends Widget {
         private direction: "inputs" | "outputs",
         private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         if (!this.A) {
             await this.initFields();
         }

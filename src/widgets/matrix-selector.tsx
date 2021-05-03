@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Widget, Config } from "../widget";
+
+import { Widget, Config } from "../";
 
 /**
  * Mnemonics for the different matrices:
@@ -19,10 +20,9 @@ export class MatrixSelector extends Widget {
 
     constructor(private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         ReactDOM.render(
             <MatrixCombo
                 config={config}

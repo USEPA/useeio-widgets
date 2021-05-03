@@ -4,15 +4,15 @@ import * as ReactDOM from "react-dom";
 import { Grid } from "@material-ui/core";
 
 import { Indicator, Matrix, Model, Sector } from "../../webapi";
-import { Config, Widget } from "../../widget";
-import { isNotNone, isNone, TMap } from "../../util/util";
-import { zeros } from "../../calc/calc";
+import { Config, Widget } from "../../";
+import { isNotNone, isNone, TMap } from "../../util";
+import { zeros } from "../../calc";
 import * as strings from "../../util/strings";
 import * as naics from "../../naics";
-import * as selection from "./selection";
 
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
+import * as selection from "./selection";
 
 
 /**
@@ -43,10 +43,9 @@ export class IOGrid extends Widget {
         private model: Model,
         private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         if (!this.techMatrix) {
             await this.initialize();
         }

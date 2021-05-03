@@ -2,11 +2,11 @@ import * as React from "react";
 
 import { Indicator, IndicatorGroup, Model } from "../../webapi";
 import { RowProps } from "./sector-list";
-import { Config } from "../../widget";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
-import * as conf from "../../config";
+import * as constants from "../../constants";
 import { isNotNone } from "../../util/util";
+import { Config } from "../../config";
 
 const INDICATOR_GROUPS = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -35,7 +35,7 @@ export async function selectIndicators(
     // filter indicators by configuration codes
     let codes = config.view_indicators;
     if (!codes || codes.length === 0) {
-        codes = conf.DEFAULT_INDICATORS;
+        codes = constants.DEFAULT_INDICATORS;
     }
     const indicators = all.filter(i => codes.indexOf(i.code) >= 0);
     if (indicators.length <= 1) {

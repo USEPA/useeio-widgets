@@ -21,9 +21,9 @@ import {
 } from "@material-ui/icons";
 
 import { Indicator, Sector } from "../../webapi";
-import { Config } from "../../widget";
+import { Config } from "../../";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNone, isNoneOrEmpty, TMap } from "../../util/util";
+import { ifNone, isNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
 import * as selection from "./selection";
 

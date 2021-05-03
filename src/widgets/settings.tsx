@@ -1,5 +1,5 @@
 import * as strings from "../util/strings";
-import { Widget, Config } from "../widget";
+import { Widget, Config } from "../";
 import {
     DemandType,
     Model,
@@ -40,7 +40,6 @@ export class SettingsWidget extends Widget {
 
     async init() {
         if (!this.settingsConfig || !this.settingsConfig.model) {
-            this.ready();
             return;
         }
 
@@ -74,18 +73,15 @@ export class SettingsWidget extends Widget {
         this.demandTypes.sort(strings.compare);
         this.years.sort();
 
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         this.config = config;
         ReactDOM.render(
             <SettingsComponent widget={this} />,
             document.querySelector(this.settingsConfig.selector)
         );
     }
-
-
 }
 
 const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {

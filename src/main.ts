@@ -7,18 +7,24 @@
  * @packageDocumentation
  */
 
+import {
+    SimpleConfigTransmitter,
+    HtmlAttributeConfigTransmitter,
+    UrlConfigTransmitter,
+    WidgetArgs
+} from ".";
+
 import { FilterWidget } from "./widgets/filter";
-import { EventBus, UrlConfigTransmitter, WidgetArgs } from "./widget";
 import { SectorList } from "./widgets/sector-list/sector-list";
-import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
+import { IOList } from "./widgets/sector-list/io-list";
 import { SectorDelete } from "./widgets/sector-list";
+import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
 import { WebApiConfig, Model } from "./webapi";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
-import { IOList } from "./widgets/sector-list/io-list";
 import { IOGrid } from "./widgets/iogrid/iogrid";
 
 export * from "./naics";
@@ -51,8 +57,13 @@ export function urlConfig(): UrlConfigTransmitter {
     return new UrlConfigTransmitter();
 }
 
-export function eventBus(): EventBus {
-    return new EventBus();
+export function htmlAttributeConfig(
+    elementSelector: string, attribute: string): HtmlAttributeConfigTransmitter {
+    return new HtmlAttributeConfigTransmitter(elementSelector, attribute);
+}
+
+export function simpleConfig(): SimpleConfigTransmitter {
+    return new SimpleConfigTransmitter();
 }
 
 export function impactChart(config: ImpactChartConfig): ImpactChart {
@@ -62,33 +73,23 @@ export function impactChart(config: ImpactChartConfig): ImpactChart {
 }
 
 export function sectorList(args: WidgetArgs): SectorList {
-    const widget = new SectorList(args.model, args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new SectorList(args.model, args.selector);
 }
 
 export function inputList(args: WidgetArgs): IOList {
-    const widget = new IOList(args.model, "inputs", args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new IOList(args.model, "inputs", args.selector);
 }
 
 export function outputList(args: WidgetArgs): IOList {
-    const widget = new IOList(args.model, "outputs", args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new IOList(args.model, "outputs", args.selector);
 }
 
 export function ioGrid(args: WidgetArgs): IOGrid {
-    const widget = new IOGrid(args.model, args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new IOGrid(args.model, args.selector);
 }
 
 export function sectorDelete(args: WidgetArgs): SectorDelete {
-    const widget = new SectorDelete(args.model, args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new SectorDelete(args.model, args.selector);
 }
 
 export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
@@ -98,24 +99,17 @@ export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
 }
 
 export function profileChart(config: ProfileChartConfig): ProfileChart {
-    const widget = new ProfileChart(config);
-    return widget;
+    return new ProfileChart(config);
 }
 
 export function paginator(args: WidgetArgs): Paginator {
-    const widget = new Paginator(args.model, args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new Paginator(args.model, args.selector);
 }
 
 export function countCombo(args: WidgetArgs): CountCombo {
-    const widget = new CountCombo(args.model, args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new CountCombo(args.model, args.selector);
 }
 
 export function matrixSelector(args: Partial<WidgetArgs>): MatrixSelector {
-    const widget = new MatrixSelector(args.selector);
-    widget.scope = args.scope;
-    return widget;
+    return new MatrixSelector(args.selector);
 }

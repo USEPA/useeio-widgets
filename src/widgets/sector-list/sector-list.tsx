@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../../widget";
+import { Config } from "../../config";
+import { Widget } from "../../widget";
 import { Indicator, Model, Sector, Matrix } from "../../webapi";
 import { HeatmapResult } from "../../calc/heatmap-result";
 import { MatrixCombo } from "../matrix-selector";
@@ -48,7 +49,6 @@ export class SectorList extends Widget {
 
     constructor(private model: Model, private selector: string) {
         super();
-        this.ready();
         const parent = document.querySelector(selector);
         if (parent) {
             const naics = parent.getAttribute("data-naics");
@@ -62,7 +62,7 @@ export class SectorList extends Widget {
                         this._naicsCodes = naics.split(",");
                         const config: Config = this.config ? { ...this.config } : {};
                         config.naics = this._naicsCodes;
-                        this.handleUpdate(config);
+                        this.update(config);
                     }
                 });
             });
@@ -72,7 +72,7 @@ export class SectorList extends Widget {
         }
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         // run a new calculation if necessary
         const needsCalc = this.needsCalculation(this.config, config);
         if (needsCalc) {
