@@ -8,7 +8,7 @@
  */
 
 import {
-    EventBus,
+    SimpleConfigTransmitter,
     HtmlAttributeConfigTransmitter,
     UrlConfigTransmitter,
     WidgetArgs
@@ -62,8 +62,8 @@ export function htmlAttributeConfig(
     return new HtmlAttributeConfigTransmitter(elementSelector, attribute);
 }
 
-export function eventBus(): EventBus {
-    return new EventBus();
+export function simpleConfig(): SimpleConfigTransmitter {
+    return new SimpleConfigTransmitter();
 }
 
 export function impactChart(config: ImpactChartConfig): ImpactChart {

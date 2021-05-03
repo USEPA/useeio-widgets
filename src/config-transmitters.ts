@@ -159,7 +159,7 @@ abstract class ConfigTransmitter {
  * A simple `ConfigTransmitter` implementation that shares configuration
  * updates with the joined widgtes.
  */
-export class EventBus extends ConfigTransmitter {
+export class SimpleConfigTransmitter extends ConfigTransmitter {
 }
 
 /**
