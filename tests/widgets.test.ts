@@ -20,12 +20,7 @@ class MockWidget extends Widget {
 
     config: Config;
 
-    constructor() {
-        super();
-        this.ready();
-    }
-
-    async handleUpdate(config: Config) {
+    async update(config: Config) {
         this.config = config;
     }
 }

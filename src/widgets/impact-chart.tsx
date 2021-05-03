@@ -35,10 +35,9 @@ export class ImpactChart extends Widget {
         this.columns = config.columns || 2;
         this.selector = config.selector;
         ReactDOM.render(<LoadingComponent key={" "} />, document.querySelector(this.selector));
-        this.ready();
     }
 
-    async handleUpdate(config: Config) {
+    async update(config: Config) {
         ReactDOM.render(<LoadingComponent key={" "} />, document.querySelector(this.selector));
         // get the data
         const indicators = await selectIndicators(this.model, config);
@@ -49,7 +48,6 @@ export class ImpactChart extends Widget {
                 height={this.height}
                 childrens={[<text key={" "} x={40} y={40}>empty indicator selection</text>]}
             />, document.querySelector(this.selector));
-            this.ready();
             return;
         }
         const results = await getSectorResults(this.model, config);
@@ -129,7 +127,6 @@ export class ImpactChart extends Widget {
             height={this.height}
             childrens={chartList}
         />, document.querySelector(this.selector));
-        this.ready();
     }
 
 }

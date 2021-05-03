@@ -13,14 +13,12 @@ export class FilterWidget extends Widget {
     constructor(selector: string) {
         super();
         this.selector = selector;
-        this.ready();
     }
 
-    async handleUpdate(config: Config) {
+    async update(config: Config) {
         this.config = config;
         render(<FilterComponent widget={this} />,
             document.querySelector(this.selector));
-        this.ready();
     }
 }
 

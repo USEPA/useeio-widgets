@@ -4,76 +4,48 @@ import { Model } from "./webapi";
 export interface WidgetArgs {
     model: Model;
     selector: string;
-    scope?: string;
 }
 
+/**
+ * A widget is a user interface component that displays data or configuration
+ * options of an input-output model. Widgets can be configured and updated via
+ * `Config` objects. Also, some widgets can change such configurations and
+ * listeners can be attached to widgets to listen to such `Config` changes (e.g.
+ * for updating other widgets.)
+ */
 export abstract class Widget {
 
-    public scope: string;
-
-    private isReady = false;
-    private listeners = new Array<(config: Config) => void>();
-    private queue = new Array<() => void>();
-
-    update(config: Config) {
-        if (!config) {
-            return;
-        }
-        if (!this.isReady) {
-            this.queue.push(() => this.handleUpdate(this.flatten(config)));
-        } else {
-            this.handleUpdate(this.flatten(config));
-        }
-    }
-
-    protected ready() {
-        this.isReady = true;
-        if (this.queue.length === 0) {
-            return;
-        }
-        const fn = this.queue.pop();
-        fn();
-    }
-
-    onChanged(fn: (config: Config) => void) {
-        this.listeners.push(fn);
-    }
-
-    fireChange(config: Config) {
-        let _conf: Config = config;
-        if (this.scope) {
-            _conf = { scopes: {} };
-            _conf.scopes[this.scope] = config;
-        }
-        for (const fn of this.listeners) {
-            fn(_conf);
-        }
-    }
-
-    protected abstract handleUpdate(_: Config): Promise<void>;
+    private _listeners = new Array<(config: Config) => void>();
 
     /**
-     * If this widget is associated with a scope, this function creates a new
-     * flat configuration object that combines the global configuration with
-     * the respective configuration of the widgets scope. Global configuration
-     * options are replaced by local, scoped configurations if available.
+     * Updates this widget based on the given configuration options.
+     * 
+     * @param config the new configuration options of this widget.
      */
-    private flatten(config: Config): Config {
-        if (!config) {
-            return {};
+    abstract update(config: Config): Promise<void>;
+
+    /**
+     * Registers a callback function for listening to configuration changes of
+     * this widget.
+     *
+     * @param fn the function that is called when the configuration of this
+     *           widget changed.
+     */
+    onChanged(fn: (config: Config) => void) {
+        if (typeof fn !== "function") {
+            return;
         }
-        const _conf: Config = { ...config };
-        delete _conf.scopes;
-        if (!this.scope || !config.scopes) {
-            return _conf;
+        this._listeners.push(fn);
+    }
+
+    /**
+     * Fires a configuration change to the attached listeners.
+     * 
+     * @param config the updated configuration
+     */
+    fireChange(config: Config) {
+        for (const fn of this._listeners) {
+            fn(config);
         }
-        const scopeConf = config.scopes[this.scope];
-        if (!scopeConf) {
-            return _conf;
-        }
-        for (const key of Object.keys(scopeConf)) {
-            _conf[key] = scopeConf[key];
-        }
-        return _conf;
     }
 }

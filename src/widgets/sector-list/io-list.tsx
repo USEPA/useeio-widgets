@@ -18,10 +18,9 @@ export class IOList extends Widget {
         private direction: "inputs" | "outputs",
         private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         if (!this.A) {
             await this.initFields();
         }

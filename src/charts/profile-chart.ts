@@ -12,10 +12,9 @@ export class ProfileChart extends Widget {
 
     constructor(private _chartConfig: ProfileChartConfig) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         const options = await this.calculate(config);
         const chart = new ApexCharts(
             document.querySelector(this._chartConfig.selector),

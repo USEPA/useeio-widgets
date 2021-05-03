@@ -49,7 +49,6 @@ export class SectorList extends Widget {
 
     constructor(private model: Model, private selector: string) {
         super();
-        this.ready();
         const parent = document.querySelector(selector);
         if (parent) {
             const naics = parent.getAttribute("data-naics");
@@ -63,7 +62,7 @@ export class SectorList extends Widget {
                         this._naicsCodes = naics.split(",");
                         const config: Config = this.config ? { ...this.config } : {};
                         config.naics = this._naicsCodes;
-                        this.handleUpdate(config);
+                        this.update(config);
                     }
                 });
             });
@@ -73,7 +72,7 @@ export class SectorList extends Widget {
         }
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         // Hardcoded default value for count
         if (isNone(config.count)) {
             config.count = 10;

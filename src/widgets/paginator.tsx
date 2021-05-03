@@ -11,11 +11,10 @@ export class Paginator extends Widget {
 
     constructor(private model: Model, private selector: string) {
         super();
-        this.ready();
-        this.handleUpdate({});
+        this.update({});
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
 
         // calculate the number of pages
         const total = await this.totalCount();

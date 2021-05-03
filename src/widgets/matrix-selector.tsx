@@ -20,10 +20,9 @@ export class MatrixSelector extends Widget {
 
     constructor(private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         ReactDOM.render(
             <MatrixCombo
                 config={config}

@@ -43,10 +43,9 @@ export class IOGrid extends Widget {
         private model: Model,
         private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         if (!this.techMatrix) {
             await this.initialize();
         }
