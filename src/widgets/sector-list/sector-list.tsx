@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as ReactDOM from "react-dom";
 
 import { Widget, Config } from "../../widget";
@@ -208,8 +208,8 @@ const Component = (props: { widget: SectorList }) => {
         });
     }
     const [sorter, setSorter] = React.useState<Indicator[]>(indicatorsConfig);
+    const [demandSorter, setDemandSorter] = useState(false);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
-
     let sectors = props.widget.sectors;
     if (searchTerm) {
         sectors = sectors.filter((s) => strings.search(s.name, searchTerm) >= 0);
@@ -231,7 +231,23 @@ const Component = (props: { widget: SectorList }) => {
             const value = ranks[sector.code];
             return [sector, value ? value : 0];
         });
+
         ranking.sort(([_s1, rank1], [_s2, rank2]) => rank2 - rank1);
+        if (config.showvalues) {
+            if (demandSorter)
+                ranking.sort(([s1], [s2]) => {
+                    const d1 = props.widget.demand[s1.code];
+                    const d2 = props.widget.demand[s2.code];
+                    if (!d1 && !d2)
+                        return 0;
+                    if (!d1 && d2)
+                        return 1;
+                    if (d1 && !d2)
+                        return -1;
+                    else
+                        return d2 - d1;
+                });
+        }
     }
 
     // select the page
@@ -280,7 +296,10 @@ const Component = (props: { widget: SectorList }) => {
                                 ? (
                                     <th>
                                         <div>
-                                            <span>Demand [billions]</span>
+                                            <span onClick={(_) => {
+                                                setSorter([]);
+                                                setDemandSorter(!demandSorter);
+                                            }}><a>Demand [billions]</a></span>
                                         </div>
                                     </th>
                                 )
@@ -294,6 +313,7 @@ const Component = (props: { widget: SectorList }) => {
                                 if (!sorter.includes(i)) {
                                     s.push(i);
                                 }
+                                setDemandSorter(false);
                                 setSorter(s);
                             }}
                         />
