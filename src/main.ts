@@ -7,7 +7,12 @@
  * @packageDocumentation
  */
 
-import { EventBus, UrlConfigTransmitter, WidgetArgs } from ".";
+import {
+    EventBus,
+    HtmlAttributeConfigTransmitter,
+    UrlConfigTransmitter,
+    WidgetArgs
+} from ".";
 
 import { FilterWidget } from "./widgets/filter";
 import { SectorList } from "./widgets/sector-list/sector-list";
@@ -50,6 +55,11 @@ export function filterWidget(conf: { selector: string }): FilterWidget {
 
 export function urlConfig(): UrlConfigTransmitter {
     return new UrlConfigTransmitter();
+}
+
+export function htmlAttributeConfig(
+    elementSelector: string, attribute: string): HtmlAttributeConfigTransmitter {
+    return new HtmlAttributeConfigTransmitter(elementSelector, attribute);
 }
 
 export function eventBus(): EventBus {
