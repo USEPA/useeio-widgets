@@ -73,14 +73,6 @@ export class SectorList extends Widget {
     }
 
     protected async handleUpdate(config: Config) {
-        // Hardcoded default value for count
-        if (isNone(config.count)) {
-            config.count = 10;
-        }
-        // Hardcoded default value for view
-        if (isNone(config.view)) {
-            config.view = ["mosaic"];
-        }
         // run a new calculation if necessary
         const needsCalc = this.needsCalculation(this.config, config);
         if (needsCalc) {

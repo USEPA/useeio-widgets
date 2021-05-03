@@ -93,20 +93,24 @@ export const CommodityList = (props: {
 
     commodities = sortOpts.apply(commodities);
 
-    // If no sectors are selected initially, we select the top 10 by default
-    if (isNone(config.sectors)) {
-        const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
-        let i = 0;
-        for (const commodity of commodities) {
-            commodity.selected = true;
-            selected[commodity.code] = 100;
-            i++;
-            if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
-                break;
+    useEffect(() => {
+        // If no sectors are selected initially, we select the top 10 by default
+        if (isNone(config.sectors)) {
+            config.sectors = [];
+            const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
+            let i = 0;
+            for (const commodity of commodities) {
+                commodity.selected = true;
+                selected[commodity.code] = 100;
+                config.sectors.push(commodity.code);
+                i++;
+                if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
+                    break;
+                }
             }
+            grid.update(config);
         }
-        fireSelectionChange(selected);
-    }
+    }, [config.sectors]);
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
