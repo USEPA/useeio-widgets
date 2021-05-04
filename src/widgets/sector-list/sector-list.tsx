@@ -258,11 +258,14 @@ const Component = (props: { widget: SectorList }) => {
             index={i}
         />
     ));
-
-
-
+    let marginTop = 0;
+    if (config.view && config.view.includes("mosaic") && config.showvalues)
+        marginTop = 30;
+    if (config.view && config.view.includes("mosaic") && !config.showvalues)
+        marginTop = 130;
+        
     return (
-        <div style={{ marginTop: config.showvalues ? 30 : 100 }}>
+        <div style={{ marginTop: marginTop }}>
             {
                 config.showvalues ? (
                     <DemandExplanation />
