@@ -16,6 +16,7 @@ import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
 import { isNone, isNoneOrEmpty } from "../../util/util";
+import { Card, CardContent, makeStyles, Typography } from "@material-ui/core";
 
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -258,8 +259,17 @@ const Component = (props: { widget: SectorList }) => {
         />
     ));
 
+
+
     return (
-        <>
+        <div style={{ marginTop: config.showvalues ? 30 : 100 }}>
+            {
+                config.showvalues ? (
+                    <DemandExplanation />
+                ) : (
+                    <></>
+                )
+            }
             {
                 // display the matrix selector if we display a result
                 config.selectmatrix && props.widget.result ? (
@@ -333,7 +343,36 @@ const Component = (props: { widget: SectorList }) => {
                 </thead>
                 <tbody className="sector-list-body">{rows}</tbody>
             </table>
-        </>
+        </div>
+    );
+};
+
+const DemandExplanation = () => {
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16
+            }
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography> For the demand column, there is 3 types of values: </Typography>
+                <ul>
+                    <li><b>---</b> : For a commodity that has no demand value</li>
+                    <li><b>0.000</b> : For a commodity which demand value is less than 0.0005 billions</li>
+                    <li><b>1.234</b> : For any other commodity, this is the demand value in billions</li>
+                </ul>
+            </CardContent>
+        </Card>
     );
 };
 
