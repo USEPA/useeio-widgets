@@ -23,17 +23,12 @@ import {
 import { Indicator, Sector } from "../../webapi";
 import { Config } from "../../";
 import { IOGrid } from "./iogrid";
-import { ifNone, isNone, isNoneOrEmpty, TMap } from "../../util";
+import { ifNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
 import * as selection from "./selection";
 
 import { Commodity, SortOptions } from "./commodity-model";
 import { CSSProperties } from "@material-ui/styles";
-
-const IndicatorValue = new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-});
 
 /**
  * Creates the list with the commodities for which the inputs and outputs
@@ -95,7 +90,7 @@ export const CommodityList = (props: {
 
     useEffect(() => {
         // If no sectors are selected initially, we select the top 10 by default
-        if (isNone(config.sectors)) {
+        if (config.sectors === undefined) {
             config.sectors = [];
             const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
             let i = 0;
@@ -188,7 +183,7 @@ export const CommodityList = (props: {
                 let title: JSX.Element = null;
                 if (sortOpts.hasSingleIndicator) {
                     title = <title>
-                        {IndicatorValue.format(result)} {
+                        {formatNumber(result)} {
                             sortOpts.indicatorUnit
                         } per $1.000
                         </title>;
@@ -479,7 +474,7 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
         const result = sortOpts.indicatorResult(commodity);
         subTitles.push(
             <Typography color='textSecondary' key={sortOpts.indicators[0].id}>
-                {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
+                {formatNumber(result)} {sortOpts.indicatorUnit}
             </Typography>);
     } else {
         subTitles = sortOpts.indicators.slice(0, 4).map(indicator => {
@@ -508,7 +503,7 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
                     placement="top"
                     title={toolTip.length > 32 ? toolTip : ""}>
                             {<Typography color='textSecondary'>
-                                {IndicatorValue.format(values.result)} {toolTip}
+                                {formatNumber(values.result)} {toolTip}
                     </Typography>}
                 </Tooltip>
                     </div>
@@ -544,3 +539,22 @@ const CheckBox = (props: { checked: boolean }) =>
             ? <CheckBoxOutlined fontSize="small" color="secondary" />
             : <CheckBoxOutlineBlankOutlined fontSize="small" />}
     </ListItemIcon>;
+
+/**
+* Increases the number of decimal digits until the number has the right number of digits
+*/
+function formatNumber(r: number) {
+    let value: string;
+    let decimal = 3; // 3 digits by default
+    if (r === 0.0)
+        return r.toFixed(decimal);
+
+    let n;
+    do {
+        value = r.toFixed(decimal);
+        n = parseFloat(value);
+        decimal++;
+    } while (n === 0.0);
+
+    return value;
+}
