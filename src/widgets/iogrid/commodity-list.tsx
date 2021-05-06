@@ -6,6 +6,7 @@ import {
     Grid,
     IconButton,
     ListItemIcon,
+    makeStyles,
     Menu,
     MenuItem,
     Slider,
@@ -137,69 +138,18 @@ export const CommodityList = (props: {
             // sector name
             field: "name",
             headerName: "Sector",
-            width: 300,
+            width: 450,
             cellClassName: "commodityGridCell",
             renderCell: (params) =>
                 <NameCell
                     commodity={params.data as Commodity}
                     sortOpts={sortOpts}
                     grid={grid}
+                    selected={selected}
+                    fireSelectionChange={fireSelectionChange}
                 />,
         },
-        {
-            // the slider for the scaling factor
-            field: "value",
-            headerName: " ",
-            width: 100,
-            renderCell: (params) => {
-                const commodity = params.data as Commodity;
-                return (
-                    <Slider
-                        value={commodity.value}
-                        disabled={!commodity.selected}
-                        onChange={(_, value) => {
-                            selected[commodity.code] = value as number;
-                            fireSelectionChange(selected);
-                        }}
-                        min={0}
-                        max={500}
-                        ValueLabelComponent={SliderTooltip} />
-                );
-            }
-        }
     ];
-
-    // add a result indicator when the list is sorted
-    // by indicator results
-    if (sortOpts.isByIndicators) {
-        columns.push({
-            field: "code",
-            width: 150,
-            renderCell: (params) => {
-                const c = params.data as Commodity;
-                const result = sortOpts.indicatorResult(c);
-                const share = sortOpts.relativeIndicatorResult(c);
-
-                let title: JSX.Element = null;
-                if (sortOpts.hasSingleIndicator) {
-                    title = <title>
-                        {formatNumber(result)} {
-                            sortOpts.indicatorUnit
-                        } per $1.000
-                        </title>;
-                }
-
-                return (
-                    <svg height="25" width="25">
-                        {title}
-                        <rect x="0" y="2.5"
-                            height="10" fill="#f50057"
-                            width={50 * (0.05 + 0.95 * share)} />
-                    </svg>
-                );
-            },
-        });
-    }
 
     const onPageChange = (p: PageChangeParams) => {
         if (!p) {
@@ -305,7 +255,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={25 + 27 * clamp(sortOpts.indicators.length, 1, 4)}
+                    rowHeight={27 + 25 * sortOpts.indicators.length}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -321,10 +271,6 @@ export const CommodityList = (props: {
             </Grid>
         </Grid>
     );
-};
-
-const clamp = (n: number, min: number, max: number) => {
-    return Math.min(Math.max(n, min), max);
 };
 
 /**
@@ -467,43 +413,89 @@ const SortMenu = React.forwardRef((props: {
 });
 
 
-const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IOGrid }) => {
+const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IOGrid, selected: TMap<number>, fireSelectionChange: (selected: TMap<number>) => void }) => {
+
+    const useStyles = makeStyles({
+        firstRow: {
+            display: "inline-block"
+        },
+        container: {
+            display: "flex"
+        },
+        row: {
+            display: "flex",
+            flexDirection: "row",
+        },
+        col: {
+            display: "flex",
+            flexDirection: "column"
+        },
+        rightItem: {
+            marginLeft: "auto"
+        },
+        grid: {
+        },
+        share: {
+            paddingTop: 7,
+            paddingLeft: 50
+        },
+        slider: {
+            paddingLeft: 15
+        },
+        subRow: {
+            fontSize: 14
+        }
+    });
+    const classes = useStyles();
+
+
     const { commodity, sortOpts } = props;
     let subTitles: JSX.Element[] = [];
     if (sortOpts.hasSingleIndicator) {
         const result = sortOpts.indicatorResult(commodity);
         subTitles.push(
-            <Typography color='textSecondary' key={sortOpts.indicators[0].id}>
-                {formatNumber(result)} {sortOpts.indicatorUnit}
+            <Typography color='textSecondary' key={sortOpts.indicators[0].id} className={classes.subRow}>
+                {sortOpts.indicators[0].name || sortOpts.indicators[0].simplename} : {formatNumber(result)} {sortOpts.indicatorUnit} {sortOpts.indicators[0].code === "VADD" ? " per $ spent" : ""}
             </Typography>);
     } else {
-        subTitles = sortOpts.indicators.slice(0, 4).map(indicator => {
+        subTitles = sortOpts.indicators.map((indicator, idx) => {
             const values = sortOpts.getCommodityValues(indicator, commodity);
-            const toolTip = indicator.simpleunit || indicator.unit;
+            let toolTip = indicator.simpleunit || indicator.unit;
+            if (indicator.code === "VADD") {
+                toolTip += " " + "per $ spent";
+            }
             const containerStyles: CSSProperties = {
-                height: 20,
+                height: 17,
                 width: '100%',
-                margin: 7,
+                marginTop: 7,
+                marginBottom: 7,
+                display: 'block'
+            };
+            const firstContainerStyles: CSSProperties = {
+                height: 17,
+                width: '100%',
+                marginBottom: 7,
+                marginTop: 0,
                 display: 'block'
             };
 
             const fillerStyles: CSSProperties = {
                 height: '100%',
                 width: `${values.share * 100}%`,
-                backgroundColor: '#e0e0de',
+                backgroundColor: '#ffb347',
                 textAlign: 'left',
                 paddingBottom: '22px'
             };
 
             return (
-                <div style={containerStyles} key={indicator.id}>
+                <div style={idx == 0 ? firstContainerStyles : containerStyles} key={indicator.id} className={classes.row}>
                     <div style={fillerStyles}>
                     <Tooltip
                     enterTouchDelay={0}
                     placement="top"
                     title={toolTip.length > 32 ? toolTip : ""}>
-                            {<Typography color='textSecondary'>
-                                {formatNumber(values.result)} {toolTip}
+                            {<Typography color='textSecondary' className={classes.subRow}>
+                                {indicator.name || indicator.simplename} : {formatNumber(values.result)} {toolTip}
                     </Typography>}
                 </Tooltip>
                     </div>
@@ -514,19 +506,67 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
         });
     }
 
-    const items = <div>
-        <Tooltip
-            enterTouchDelay={0}
-            placement="top"
-            title={commodity.name.length > 35 ? commodity.name : ""}
+    const result = sortOpts.indicatorResult(commodity);
+    const share = sortOpts.relativeIndicatorResult(commodity);
+
+    let title: JSX.Element = null;
+    if (sortOpts.hasSingleIndicator) {
+        title = <title>
+            {formatNumber(result)} {
+                sortOpts.indicatorUnit
+            } per $1.000
+            </title>;
+    }
+
+    const items = <div className={classes.grid}>
+        <Grid
+            container
+            direction="row"
         >
-            {<Typography>{commodity.name}</Typography>}
-        </Tooltip>
-        <div>
+
+            <Grid item xs={8} style={{ overflowX: "hidden" }} >
+                <Tooltip
+                    className={classes.col}
+                    enterTouchDelay={0}
+                    placement="top"
+                    title={commodity.name.length > 35 ? commodity.name : ""}
+                >
+                    {<Typography>{commodity.name}</Typography>}
+                </Tooltip>
+            </Grid>
+            <Grid container xs={3} justify="flex-end">
+                <Grid item xs={6} className={classes.slider}>
+                    <Slider
+                        className={`${classes.col} ${classes.rightItem}`}
+                        value={commodity.value}
+                        style={{ width: 70 }}
+                        disabled={!commodity.selected}
+                        onChange={(_, value) => {
+                            const s = props.selected;
+                            s[commodity.code] = value as number;
+                            props.fireSelectionChange(s);
+                        }}
+                        min={0}
+                        max={500}
+                        ValueLabelComponent={SliderTooltip} />
+                </Grid>
+                {sortOpts.isByIndicators &&
+                    <Grid item xs={6} className={classes.share}>
+                        <svg className={`${classes.col} ${classes.rightItem}`}
+                            height="25" width="25">
+                            {title}
+                            <rect x="0" y="2.5"
+                                height="10" fill="#f50057"
+                                width={50 * (0.05 + 0.95 * share)} />
+                        </svg>
+                    </Grid>}
+            </Grid>
+        </Grid>
+
             {subTitles.map(subtitle => (
                 subtitle
             ))}
-        </div>
+
     </div>;
 
     return items;
