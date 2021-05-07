@@ -255,7 +255,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={27 + 25 * sortOpts.indicators.length}
+                    rowHeight={23 + 29 * sortOpts.indicators.length}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -443,8 +443,9 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
             paddingLeft: 15
         },
         subRow: {
-            fontSize: 14
-        }
+            fontSize: 14,
+            marginTop: -4
+        },
     });
     const classes = useStyles();
 
@@ -475,21 +476,19 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
                 height: 17,
                 width: '100%',
                 marginBottom: 7,
-                marginTop: 0,
-                display: 'block'
+                marginTop: -4,
+                display: 'block',
             };
 
             const fillerStyles: CSSProperties = {
-                height: '100%',
+                height: '3px',
                 width: `${values.share * 100}%`,
                 backgroundColor: '#ffb347',
-                textAlign: 'left',
-                paddingBottom: '22px'
+                marginTop: -4
             };
 
             return (
                 <div style={idx == 0 ? firstContainerStyles : containerStyles} key={indicator.id} className={classes.row}>
-                    <div style={fillerStyles}>
                     <Tooltip
                     enterTouchDelay={0}
                     placement="top"
@@ -498,6 +497,7 @@ const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IO
                                 {indicator.name || indicator.simplename} : {formatNumber(values.result)} {toolTip}
                     </Typography>}
                 </Tooltip>
+                    <div style={fillerStyles}>
                     </div>
                 </div>
 
