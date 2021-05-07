@@ -308,7 +308,7 @@ const SortMenu = React.forwardRef((props: {
  // Choose all commodities
         items.push(
             <MenuItem
-                key="sort-all-selected"
+                key="choose-all-selected"
                 onClick={() => {
                     const selected: TMap<number> = {};
                     if (!opts.isAllSelected) {
@@ -328,9 +328,9 @@ const SortMenu = React.forwardRef((props: {
                 Choose All Commodities
             </MenuItem>
         );
-    // Choose all commodities
+
     items.push(
-         <MenuItem
+        <MenuItem
             key="sort-all-visible-selected"
             onClick={() => {
                 const selected: TMap<number> = {};
@@ -354,10 +354,23 @@ const SortMenu = React.forwardRef((props: {
                 props.fireSelectionChange(selected);
             }}>
             <CheckBox checked={opts.isAllVisibleSelected} />
-            Choose All Visible
-        </MenuItem>
+           Choose All Visible
+       </MenuItem>
     );
-    if (props.withSelection) {
+
+    // Choose visible commodities
+    items.push(
+        <MenuItem
+            key="choose-all-visible-selected"
+            onClick={() => {
+                props.onChange(opts.swapUnselectAll());
+                props.fireSelectionChange({});
+            }}>
+            <CheckBox checked={opts.isAllUnselected} />
+                Unselect All
+            </MenuItem>
+    );
+
         // check box to filter only selected commodities
         items.push(
             <MenuItem
@@ -377,7 +390,6 @@ const SortMenu = React.forwardRef((props: {
                 Selected First
             </MenuItem>
         );
-    }
 
     // alphabetical sorting
     items.push(
