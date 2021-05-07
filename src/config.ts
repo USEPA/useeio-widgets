@@ -43,6 +43,14 @@ export interface Config {
     view_indicators?: string[];
 
     /**
+     * It allows to choose the order of the indicators. There is 2 different choices:
+     * policy: this is the default order, which is environmental protection focused. The order is the following : 
+     * Impact Potential, Resource Use, Chemical Releases, Waste Generated, Economic & Social
+     * planning: this is an economic development focused order, which is:
+     * Economic & Social, Resource Use, Impact Potential, Chemical Releases, Waste Generated
+     */
+    indicators_order?: string;
+    /**
      * The result perspective.
      */
     perspective?: ResultPerspective;

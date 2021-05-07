@@ -8,12 +8,20 @@ import * as constants from "../../constants";
 import { isNotNone } from "../../util/util";
 import { Config } from "../../config";
 
-const INDICATOR_GROUPS = [
+const INDICATOR_GROUPS_POLICY = [
     IndicatorGroup.IMPACT_POTENTIAL,
     IndicatorGroup.RESOURCE_USE,
     IndicatorGroup.CHEMICAL_RELEASES,
     IndicatorGroup.WASTE_GENERATED,
     IndicatorGroup.ECONOMIC_SOCIAL,
+];
+
+const INDICATOR_GROUPS_PLANNING = [
+    IndicatorGroup.ECONOMIC_SOCIAL,
+    IndicatorGroup.RESOURCE_USE,
+    IndicatorGroup.IMPACT_POTENTIAL,
+    IndicatorGroup.CHEMICAL_RELEASES,
+    IndicatorGroup.WASTE_GENERATED,
 ];
 
 /**
@@ -41,7 +49,7 @@ export async function selectIndicators(
     if (indicators.length <= 1) {
         return indicators;
     }
-
+    const INDICATOR_GROUPS: IndicatorGroup[] = getIndicatorOrder(config);
     // sort indicators by groups and names
     indicators.sort((i1, i2) => {
         if (i1.group === i2.group) {
@@ -60,7 +68,8 @@ export async function selectIndicators(
  */
 export const ImpactHeader = (props: {
     indicators: Indicator[],
-    onClick: (i: Indicator) => void
+    onClick: (i: Indicator) => void,
+    config: Config
 }) => {
 
     // no indicators
@@ -87,7 +96,7 @@ export const ImpactHeader = (props: {
         // group header
         if (indicator.group !== g) {
             g = indicator.group;
-            const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
+            const gkey = g ? `group-${getIndicatorOrder(props.config).indexOf(g)}` : "null";
             items.push(
                 <th key={gkey} className="indicator">
                     <div className="indicator-group-parent">
@@ -158,7 +167,7 @@ export const ImpactResult = (props: RowProps) => {
     for (const ind of indicators) {
         if (ind.group !== g) {
             // add an empty grey cell for the group
-            const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
+            const gkey = g ? `group-${getIndicatorOrder(config).indexOf(g)}` : "null";
             g = ind.group;
             items.push(<td key={gkey} className="noborder" />);
         }
@@ -198,6 +207,18 @@ export const ImpactResult = (props: RowProps) => {
     }
     return <>{items}</>;
 };
+
+/**
+ * Get the right indicators order, according to the config
+ */
+function getIndicatorOrder(config: Config) {
+    switch (config.indicators_order) {
+        case "planning":
+            return INDICATOR_GROUPS_PLANNING;
+        default: // "policy"
+            return INDICATOR_GROUPS_POLICY;
+    }
+}
 
 /**
  * Increases the number of decimal digits until the number has the right number of digits

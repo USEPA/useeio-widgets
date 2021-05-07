@@ -256,6 +256,7 @@ const Component = (props: { widget: SectorList }) => {
             widget={props.widget}
             rank={rank}
             index={i}
+            config={config}
         />
     ));
     let marginTop = 0;
@@ -321,6 +322,7 @@ const Component = (props: { widget: SectorList }) => {
                                 setDemandSorter(false);
                                 setSorter(s);
                             }}
+                            config={config}
                         />
 
                         {
@@ -385,6 +387,7 @@ export type RowProps = {
     widget: SectorList;
     rank?: number;
     index: number;
+    config: Config;
 };
 
 const Row = (props: RowProps) => {
