@@ -255,7 +255,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={23 + 29 * sortOpts.indicators.length}
+                    rowHeight={32 + 20 * sortOpts.indicators.length}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
