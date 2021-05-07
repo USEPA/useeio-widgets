@@ -144,11 +144,16 @@ export const ImpactResult = (props: RowProps) => {
         const color = colors.forIndicatorGroup(ind.group);
         const r = result.getResult(ind, props.sector);
         const share = result.getShare(ind, props.sector);
+        let formatedResult = config.showscientific ? r.toExponential(2) : r.toFixed(3);
+        if (ind.unit === "$")
+            formatedResult = ind.unit + formatedResult;
+        else
+            formatedResult + ind.unit;
         return (
             <td key={ind.id}>
                 <div>
                     <span style={{ float: "left" }}>
-                        {`${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`}
+                        {formatedResult}
                     </span>
                     <svg height="15" width="210"
                         style={{ float: "left", clear: "both" }}>
@@ -179,11 +184,11 @@ export const ImpactResult = (props: RowProps) => {
         //     alpha *= 0.25;
         // }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        let valueFixed: string;
-        if (!config.showscientific) {
-            valueFixed = getValueWithVariableDecimalNumber(r);
-        }
-        const value = `${config.showscientific ? r.toExponential(2) : valueFixed} ${ind.unit}`;
+        let value = config.showscientific ? r.toExponential(2) : formatResult(r);
+        if (ind.unit === "$")
+            value = ind.unit + value;
+        else
+            value + ind.unit;
         let isIndicatorSelected = "";
         // We box the sorted column
         if (isNotNone(props.sortIndicator) && props.sortIndicator.includes(ind)) {
@@ -223,7 +228,7 @@ function getIndicatorOrder(config: Config) {
 /**
  * Increases the number of decimal digits until the number has the right number of digits
  */
-function getValueWithVariableDecimalNumber(r: number) {
+function formatResult(r: number) {
     let value: string;
     let decimal = 3; // 3 digits by default
     if (r === 0.0)
