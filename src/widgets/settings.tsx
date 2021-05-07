@@ -72,7 +72,7 @@ export class SettingsWidget extends Widget {
 
         this.demandTypes.sort(strings.compare);
         this.years.sort();
-
+        this.update(this.config);
     }
 
     async update(config: Config) {
