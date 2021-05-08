@@ -213,8 +213,15 @@ const Component = (props: { widget: SectorList }) => {
     if (!result) {
         ranking = sectors.map((s) => [s, 0]);
     } else {
-        const ranks: { [code: string]: number } = {};
-        result.getRanking(!isNoneOrEmpty(sorter) ? sorter : indicators).reduce((r, rank) => {
+        const ranks: {
+            [code: string]: number;
+        } = {};
+        let ind: Indicator[];
+        if (config.indicators === undefined) {
+            // Exlude JOBS and VADD frome default combined sort
+            ind = indicators.filter(i => (i.code !== "JOBS" && i.code !== "VADD"));
+        }
+        result.getRanking(!isNoneOrEmpty(sorter) ? sorter : ind).reduce((r, rank) => {
             const sector = rank[0];
             const value = rank[1];
             r[sector.code] = value;
@@ -225,21 +232,23 @@ const Component = (props: { widget: SectorList }) => {
             return [sector, value ? value : 0];
         });
 
-        ranking.sort(([_s1, rank1], [_s2, rank2]) => rank2 - rank1);
         if (config.showvalues && demandSorter) {
                 // Sort by demand
             ranking.sort(([s1], [s2]) => {
-            const d1 = props.widget.demand[s1.code];
-            const d2 = props.widget.demand[s2.code];
-            if (!d1 && !d2)
-                return 0;
-            if (!d1 && d2)
-                return 1;
-            if (d1 && !d2)
-                return -1;
-            else
-                return d2 - d1;
-        });
+                const d1 = props.widget.demand[s1.code];
+                const d2 = props.widget.demand[s2.code];
+                if (!d1 && !d2)
+                    return 0;
+                if (!d1 && d2)
+                    return 1;
+                if (d1 && !d2)
+                    return -1;
+                else
+                    return d2 - d1;
+            });
+        } else {
+            // Sort by rank
+            ranking.sort(([_s1, rank1], [_s2, rank2]) => rank2 - rank1);
         }
     }
 
@@ -348,6 +357,9 @@ const Component = (props: { widget: SectorList }) => {
                 </thead>
                 <tbody className="sector-list-body">{rows}</tbody>
             </table>
+            {config.indicators === undefined &&
+                <ExclusionOfIndicators />
+            }
         </div>
     );
 };
@@ -358,11 +370,11 @@ const DemandExplanation = () => {
             minWidth: 275,
             maxWidth: 500,
             fontSize: 12,
-            marginBottom: 20
+            marginBottom: 20,
         },
         content: {
             "&:last-child": {
-                paddingBottom: 16
+                paddingBottom: 16,
             }
         },
     });
@@ -376,6 +388,31 @@ const DemandExplanation = () => {
                     <li><b>0.000</b> : For a commodity which demand value is less than 0.0005 billions</li>
                     <li><b>1.234</b> : For any other commodity, this is the demand value in billions</li>
                 </ul>
+            </CardContent>
+        </Card>
+    );
+};
+
+const ExclusionOfIndicators = () => {
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20,
+            marginTop: 50
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16
+            }
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>The positive indicators JOBS and VADD are excluded from the combined sort. This allows the most adverse overall impacts to appear first.</Typography>
             </CardContent>
         </Card>
     );
