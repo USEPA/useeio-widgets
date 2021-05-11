@@ -425,164 +425,174 @@ const SortMenu = React.forwardRef((props: {
 });
 
 
-const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IOGrid, selected: TMap<number>, fireSelectionChange: (selected: TMap<number>) => void }) => {
+const NameCell = (props: {
+  commodity: Commodity;
+  sortOpts: SortOptions;
+  grid: IOGrid;
+  selected: TMap<number>;
+  fireSelectionChange: (selected: TMap<number>) => void;
+}) => {
+  const useStyles = makeStyles({
+    firstRow: {
+      display: "inline-block",
+    },
+    container: {
+      display: "flex",
+    },
+    row: {
+      display: "flex",
+      flexDirection: "row",
+    },
+    col: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    rightItem: {
+      marginLeft: "auto",
+    },
+    share: {
+      paddingTop: 7,
+      paddingLeft: 50,
+    },
+    slider: {
+      paddingLeft: 15,
+    },
+    subRow: {
+      fontSize: 14,
+      marginTop: -4,
+    },
+  });
+  const classes = useStyles();
 
-    const useStyles = makeStyles({
-        firstRow: {
-            display: "inline-block"
-        },
-        container: {
-            display: "flex"
-        },
-        row: {
-            display: "flex",
-            flexDirection: "row",
-        },
-        col: {
-            display: "flex",
-            flexDirection: "column"
-        },
-        rightItem: {
-            marginLeft: "auto"
-        },
-        grid: {
-        },
-        share: {
-            paddingTop: 7,
-            paddingLeft: 50
-        },
-        slider: {
-            paddingLeft: 15
-        },
-        subRow: {
-            fontSize: 14,
-            marginTop: -4
-        },
-    });
-    const classes = useStyles();
-
-
-    const { commodity, sortOpts } = props;
-    let subTitles: JSX.Element[] = [];
-    if (sortOpts.hasSingleIndicator) {
-        const result = sortOpts.indicatorResult(commodity);
-        subTitles.push(
-            <Typography color='textSecondary' key={sortOpts.indicators[0].id} className={classes.subRow}>
-                {sortOpts.indicators[0].name || sortOpts.indicators[0].simplename} : {formatNumber(result)} {sortOpts.indicatorUnit} {sortOpts.indicators[0].code === "VADD" ? " per $ spent" : ""}
-            </Typography>);
-    } else {
-        subTitles = sortOpts.indicators.map((indicator, idx) => {
-            const values = sortOpts.getCommodityValues(indicator, commodity);
-            let toolTip = indicator.simpleunit || indicator.unit;
-            if (indicator.code === "VADD") {
-                toolTip += " " + "per $ spent";
-            }
-            const containerStyles: CSSProperties = {
-                height: 17,
-                width: '100%',
-                marginTop: 7,
-                marginBottom: 7,
-                display: 'block'
-            };
-            const firstContainerStyles: CSSProperties = {
-                height: 17,
-                width: '100%',
-                marginBottom: 7,
-                marginTop: -4,
-                display: 'block',
-            };
-
-            const fillerStyles: CSSProperties = {
-                height: '3px',
-                width: `${values.share * 100}%`,
-                backgroundColor: '#ffb347',
-                marginTop: -4
-            };
-
-            return (
-                <div style={idx == 0 ? firstContainerStyles : containerStyles} key={indicator.id} className={classes.row}>
-                    <Tooltip
-                    enterTouchDelay={0}
-                    placement="top"
-                    title={toolTip.length > 32 ? toolTip : ""}>
-                            {<Typography color='textSecondary' className={classes.subRow}>
-                                {indicator.name || indicator.simplename} : {formatNumber(values.result)} {toolTip}
-                    </Typography>}
-                </Tooltip>
-                    <div style={fillerStyles}>
-                    </div>
-                </div>
-
-
-            );
-        });
-    }
-
+  const { commodity, sortOpts } = props;
+  let subTitles: JSX.Element[] = [];
+  if (sortOpts.hasSingleIndicator) {
     const result = sortOpts.indicatorResult(commodity);
-    const share = sortOpts.relativeIndicatorResult(commodity);
+    subTitles.push(
+      <Typography
+        color="textSecondary"
+        key={sortOpts.indicators[0].id}
+        className={classes.subRow}
+      >
+        {sortOpts.indicators[0].name || sortOpts.indicators[0].simplename} :{" "}
+        {formatNumber(result)} {sortOpts.indicatorUnit}{" "}
+        {sortOpts.indicators[0].code === "VADD" ? " per $ spent" : ""}
+      </Typography>
+    );
+  } else {
+    subTitles = sortOpts.indicators.map((indicator, idx) => {
+      const values = sortOpts.getCommodityValues(indicator, commodity);
+      let toolTip = indicator.simpleunit || indicator.unit;
+      if (indicator.code === "VADD") {
+        toolTip += " " + "per $ spent";
+      }
+      const containerStyles: CSSProperties = {
+        height: 17,
+        width: "100%",
+        marginTop: 7,
+        marginBottom: 7,
+        display: "block",
+      };
+      const firstContainerStyles: CSSProperties = {
+        height: 17,
+        width: "100%",
+        marginBottom: 7,
+        marginTop: -4,
+        display: "block",
+      };
 
-    let title: JSX.Element = null;
-    if (sortOpts.hasSingleIndicator) {
-        title = <title>
-            {formatNumber(result)} {
-                sortOpts.indicatorUnit
-            } per $1.000
-            </title>;
-    }
+      const fillerStyles: CSSProperties = {
+        height: "3px",
+        width: `${values.share * 100}%`,
+        backgroundColor: "#ffb347",
+        marginTop: -4,
+      };
 
-    const items = <div className={classes.grid}>
-        <Grid
-            container
-            direction="row"
+      return (
+        <div
+          style={idx == 0 ? firstContainerStyles : containerStyles}
+          key={indicator.id}
+          className={classes.row}
         >
+          <Tooltip
+            enterTouchDelay={0}
+            placement="top"
+            title={toolTip.length > 32 ? toolTip : ""}
+          >
+            {
+              <Typography color="textSecondary" className={classes.subRow}>
+                {indicator.name || indicator.simplename} :{" "}
+                {formatNumber(values.result)} {toolTip}
+              </Typography>
+            }
+          </Tooltip>
+          <div style={fillerStyles}></div>
+        </div>
+      );
+    });
+  }
 
-            <Grid item xs={8} style={{ overflowX: "hidden" }} >
-                <Tooltip
-                    className={classes.col}
-                    enterTouchDelay={0}
-                    placement="top"
-                    title={commodity.name.length > 35 ? commodity.name : ""}
-                >
-                    {<Typography>{commodity.name}</Typography>}
-                </Tooltip>
-            </Grid>
-            <Grid container xs={3} justify="flex-end">
-                <Grid item xs={6} className={classes.slider}>
-                    <Slider
-                        className={`${classes.col} ${classes.rightItem}`}
-                        value={commodity.value}
-                        style={{ width: 70 }}
-                        disabled={!commodity.selected}
-                        onChange={(_, value) => {
-                            const s = props.selected;
-                            s[commodity.code] = value as number;
-                            props.fireSelectionChange(s);
-                        }}
-                        min={0}
-                        max={500}
-                        ValueLabelComponent={SliderTooltip} />
-                </Grid>
-                {sortOpts.isByIndicators &&
-                    <Grid item xs={6} className={classes.share}>
-                        <svg className={`${classes.col} ${classes.rightItem}`}
-                            height="25" width="25">
-                            {title}
-                            <rect x="0" y="2.5"
-                                height="10" fill="#f50057"
-                                width={50 * (0.05 + 0.95 * share)} />
-                        </svg>
-                    </Grid>}
-            </Grid>
+  const share = sortOpts.relativeIndicatorResult(commodity);
+
+  const title: JSX.Element = <title>{share === 1?100:formatNumber(share  *  100)}</title>;
+
+  const items = (
+    <div>
+      <Grid container direction="row">
+        <Grid item xs={8} style={{ overflowX: "hidden" }}>
+          <Tooltip
+            className={classes.col}
+            enterTouchDelay={0}
+            placement="top"
+            title={commodity.name.length > 35 ? commodity.name : ""}
+          >
+            {<Typography>{commodity.name}</Typography>}
+          </Tooltip>
         </Grid>
+        <Grid container xs={3} justify="flex-end">
+          <Grid item xs={6} className={classes.slider}>
+            <Slider
+              className={`${classes.col} ${classes.rightItem}`}
+              value={commodity.value}
+              style={{ width: 70 }}
+              disabled={!commodity.selected}
+              onChange={(_, value) => {
+                const s = props.selected;
+                s[commodity.code] = value as number;
+                props.fireSelectionChange(s);
+              }}
+              min={0}
+              max={500}
+              ValueLabelComponent={SliderTooltip}
+            />
+          </Grid>
+          {sortOpts.isByIndicators && (
+            <Grid item xs={6} className={classes.share}>
+              <svg
+                className={`${classes.col} ${classes.rightItem}`}
+                height="25"
+                width="50"
+              >
+                {title}
+                <rect
+                  x="0"
+                  y="2.5"
+                  height="10"
+                  fill="#f50057"
+                  width={50 * (0.05 + 0.95 * share)}
+                />
+              </svg>
+            </Grid>
+          )}
+        </Grid>
+      </Grid>
 
-            {subTitles.map(subtitle => (
-                subtitle
-            ))}
+      {subTitles.map((subtitle) => subtitle)}
+    </div>
+  );
 
-    </div>;
-
-    return items;
-    };
+  return items;
+};
 
 
 const CheckBox = (props: { checked: boolean }) =>
