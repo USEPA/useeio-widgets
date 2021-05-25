@@ -534,7 +534,7 @@ const NameCell = (props: {
 
   const share = sortOpts.relativeIndicatorResult(commodity);
 
-  const title: JSX.Element = <title>{share === 1?100:formatNumber(share  *  100)}</title>;
+  const title: JSX.Element = <title>{share === 1?100:formatNumber(share  *  100)} %</title>;
 
   const items = (
     <div>
