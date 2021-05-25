@@ -71,9 +71,13 @@ export const FlowList = (props: {
             renderCell: (params) => {
                 const name = params.data.name;
                 const flow = params.data as IOFlow;
-                const title = Currency.format(flow.value)
-                    + " " + props.direction
-                    + " per " + Currency.format(1).split('.')[0];
+                const title =
+                  Currency.format(flow.value) +
+                  " " +
+                  props.direction +
+                  " per " +
+                  Currency.format(1).split(".")[0] +
+                  " spent";
                 return (
                     <div>
                         <Typography>{name}</Typography>

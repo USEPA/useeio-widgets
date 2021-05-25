@@ -424,11 +424,28 @@ const SortMenu = React.forwardRef((props: {
     return <>{items}</>;
 });
 
-
+// Green color for JOBS and VADD, orange color for other indicators
 const getIndicatorColor = (indicator: Indicator) => {
   return indicator.code != "JOBS" && indicator.code != "VADD"
     ? "#ffb347"
     : "#a9c4ac";
+};
+
+// Format the result value with the appropriate unit, prefixed with the indicator name
+const formatResultLabel = (indicator: Indicator, result: number) => {
+  const indicatorName = indicator.name || indicator.simplename;
+  let label = indicatorName + ": ";
+  let formatedResult = formatNumber(result);
+  if (indicator.unit === "$") {
+    formatedResult = "$" + formatedResult;
+  } else {
+    formatedResult += indicator.simpleunit || indicator.unit;
+  }
+  label += formatedResult;
+  if (indicator.code === "VADD") {
+    label += " per $1 spent";
+  }
+  return label;
 };
 
 const NameCell = (props: {
@@ -480,9 +497,7 @@ const NameCell = (props: {
         key={sortOpts.indicators[0].id}
         className={classes.subRow}
       >
-        {sortOpts.indicators[0].name || sortOpts.indicators[0].simplename} :{" "}
-        {formatNumber(result)} {sortOpts.indicatorUnit}{" "}
-        {sortOpts.indicators[0].code === "VADD" ? " per $ spent" : ""}
+        {formatResultLabel(sortOpts.indicators[0], result)}
       </Typography>
     );
   } else {
@@ -527,8 +542,7 @@ const NameCell = (props: {
           >
             {
               <Typography color="textSecondary" className={classes.subRow}>
-                {indicator.name || indicator.simplename} :{" "}
-                {formatNumber(values.result)} {toolTip}
+                {formatResultLabel(indicator, values.result)}
               </Typography>
             }
           </Tooltip>
