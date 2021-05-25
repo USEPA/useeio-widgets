@@ -425,6 +425,12 @@ const SortMenu = React.forwardRef((props: {
 });
 
 
+const getIndicatorColor = (indicator: Indicator) => {
+  return indicator.code != "JOBS" && indicator.code != "VADD"
+    ? "#ffb347"
+    : "#a9c4ac";
+};
+
 const NameCell = (props: {
   commodity: Commodity;
   sortOpts: SortOptions;
@@ -504,7 +510,7 @@ const NameCell = (props: {
       const fillerStyles: CSSProperties = {
         height: "3px",
         width: `${values.share * 100}%`,
-        backgroundColor: "#ffb347",
+        backgroundColor: getIndicatorColor(indicator),
         marginTop: -4,
       };
 

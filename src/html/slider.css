@@ -7,9 +7,9 @@
 .MuiDataGrid-root .MuiDataGrid-cellWithRenderer {
     position: relative;
 }
-.MuiCheckbox-colorSecondary.Mui-checked {
+.MuiCheckbox-root {
     top: 0px;
-    position: absolute;
+    position: absolute !important;
 }
 .MuiDataGrid-root .MuiDataGrid-colCell, .MuiDataGrid-root .MuiDataGrid-cell {
     padding: 0px;
