@@ -1,3 +1,5 @@
+import { TextField } from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import * as React from "react";
 import { Config } from "../../";
 
@@ -21,18 +23,23 @@ export const ListHeader = (props: {
         props.onSearch(term.length === 0 ? null : term);
     };
 
+    const useStyles = makeStyles((theme: Theme) =>
+        createStyles({
+            root: {
+                '& > *': {
+                    margin: theme.spacing(1),
+                    width: 400,
+                },
+            },
+        }),
+    );
+
+    const classes = useStyles();
+
     return (
-        <th>
-            <div>
-                <Paginator
-                    total={props.sectorCount}
-                    config={props.config}
-                    onChange={config => props.onConfigChange(config)} />
-                <input className="matrix-search" type="search" placeholder="Search"
-                    onChange={e => onSearch(e.target.value)}>
-                </input>
-            </div>
-        </th>
+        <form className={classes.root} noValidate autoComplete="off">
+            <TextField id="outlined-basic" label="Search" variant="outlined" onChange={e => onSearch(e.target.value)} />
+        </form>
     );
 };
 

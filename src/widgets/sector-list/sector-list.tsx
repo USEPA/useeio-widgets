@@ -16,7 +16,8 @@ import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
 import { isNone, isNoneOrEmpty } from "../../util/util";
-import { Card, CardContent, Grid, makeStyles, Typography } from "@material-ui/core";
+import { Card, CardContent, Grid, makeStyles, TablePagination, Typography } from "@material-ui/core";
+import { PageChangeParams } from "@material-ui/data-grid";
 
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
@@ -274,6 +275,21 @@ const Component = (props: { widget: SectorList }) => {
     if (config.view && config.view.includes("mosaic") && !config.showvalues)
         marginTop = 130;
         
+
+    const onChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+        props.widget.fireChange({
+            page: page + 1
+        });
+    };
+
+    const onChangeRow = (e: any) => {
+        const count = e.target.value;
+        props.widget.fireChange({
+            page: 1,
+            count: (count === -1) ? sectors.length : count
+        });
+    };
+
     return (
         <div style={{ marginTop: marginTop }}>
             {
@@ -288,16 +304,17 @@ const Component = (props: { widget: SectorList }) => {
                 // display download links if this is configured
                 config.showdownload ? <DownloadSection widget={props.widget} /> : <></>
             }
+            <ListHeader
+                config={config}
+                sectorCount={sectors.length}
+                onConfigChange={(conf) => props.widget.fireChange(conf)}
+                onSearch={(term) => setSearchTerm(term)}
+            />
             <table className="sector-list-table">
                 <thead>
                     <tr className="indicator-row">
-                        <ListHeader
-                            config={config}
-                            sectorCount={sectors.length}
-                            onConfigChange={(conf) => props.widget.fireChange(conf)}
-                            onSearch={(term) => setSearchTerm(term)}
-                        />
 
+                        <th style={{ width: 400 }}></th>
                         {
                             // optional demand column
                             config.showvalues
@@ -350,6 +367,16 @@ const Component = (props: { widget: SectorList }) => {
                 </thead>
                 <tbody className="sector-list-body">{rows}</tbody>
             </table>
+            <TablePagination
+                style={{ position: "relative", float: "left" }}
+                component="div"
+                count={sectors.length}
+                page={config.page ? config.page - 1 : 0}
+                rowsPerPage={config.count ? config.count : 10}
+                rowsPerPageOptions={[{ label: "All", value: sectors.length }, 10, 20, 30, 40, 50, 100]}
+                onChangePage={onChangePage}
+                onChangeRowsPerPage={(p) => onChangeRow(p)}
+            />
             {(config.indicators === undefined || config.showvalues) && (
                 <Grid container spacing={5} style={{ marginTop: 50 }}>
             {config.indicators === undefined && (
@@ -367,6 +394,8 @@ const Component = (props: { widget: SectorList }) => {
         </div>
     );
 };
+
+
 
 const DemandExplanation = () => {
   const useStyles = makeStyles({

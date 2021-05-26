@@ -68,7 +68,7 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
+/* 
 .io input[type="text"], .io input[type="search"], .io select {
     height: 30px;
     font-size: 18px;
@@ -76,11 +76,11 @@ a:hover {
     border-radius: 5px;
     margin-right: 15px;
     padding: 0 5px 0 10px;
-}
+} */
 
-.io label {
+/* .io label {
     line-height: 25px;
-}
+} */
 
 .text-center {
     text-align: center;
