@@ -225,6 +225,9 @@ export const CommodityList = (props: {
                         keepMounted
                         open={menuElem ? true : false}
                         onClose={() => setMenuElem(null)}
+                        style={{
+                            zIndex: 10002,
+                        }}
                         PaperProps={{
                             style: {
                                 maxHeight: "85vh",
@@ -382,7 +385,7 @@ const SortMenu = React.forwardRef((props: {
                 key="filter-selected-only"
                 onClick={() => props.onChange(opts.swapSelectedOnly())}>
                 <CheckBox checked={opts.isSelectedOnly} />
-                Selected Only
+                Show Selected Only
             </MenuItem>
         );
 
@@ -392,7 +395,7 @@ const SortMenu = React.forwardRef((props: {
                 key="sort-selected-first"
                 onClick={() => props.onChange(opts.swapSelectedFirst())}>
                 <CheckBox checked={opts.isSelectedFirst} />
-                Selected First
+                Show Selected First
             </MenuItem>
         );
 
@@ -400,6 +403,7 @@ const SortMenu = React.forwardRef((props: {
     items.push(
         <MenuItem
             key="sort-alphabetically"
+            style={{ borderTop: "#e3e0e0 solid 1px" }}
             onClick={() => {
                 if (!opts.isAlphabetical) {
                     props.onChange(opts.setAlphabetical());
