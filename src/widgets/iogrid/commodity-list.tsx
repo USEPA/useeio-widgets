@@ -444,7 +444,7 @@ const formatResultLabel = (indicator: Indicator, result: number) => {
   if (indicator.unit === "$") {
     formatedResult = "$" + formatedResult;
   } else {
-    formatedResult += indicator.simpleunit || indicator.unit;
+    formatedResult += " " + indicator.simpleunit || indicator.unit;
   }
   label += formatedResult;
   if (indicator.code === "VADD") {
