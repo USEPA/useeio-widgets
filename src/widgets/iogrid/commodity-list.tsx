@@ -89,24 +89,22 @@ export const CommodityList = (props: {
 
     commodities = sortOpts.apply(commodities);
 
-    useEffect(() => {
         // If no sectors are selected initially, we select the top 10 by default
         if (config.sectors === undefined) {
-            config.sectors = [];
-            const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
-            let i = 0;
-            for (const commodity of commodities) {
-                commodity.selected = true;
-                selected[commodity.code] = 100;
-                config.sectors.push(commodity.code);
-                i++;
-                if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
-                    break;
-                }
+          config.sectors = [];
+          const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
+          let i = 0;
+          for (const commodity of commodities) {
+            commodity.selected = true;
+            selected[commodity.code] = 100;
+            config.sectors.push(commodity.code);
+            i++;
+            if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
+              break;
             }
-            grid.update(config);
+          }
+          grid.update(config);
         }
-    }, [config.sectors]);
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
@@ -152,31 +150,38 @@ export const CommodityList = (props: {
     ];
 
     const onPageChange = (p: PageChangeParams) => {
-        if (!p) {
-            return;
-        }
+      if (!p) {
+        return;
+      }
 
-        // avoid unnecessary change events
-        const currentPage = config.page || 1;
-        const currentSize = config.count || 10;
-        if (p.page === currentPage
-            && p.pageSize === currentSize) {
-            return;
+      // avoid unnecessary change events
+      const currentPage = config.page || 1;
+      const currentSize = config.count || 10;
+      if (p.page === currentPage && p.pageSize === currentSize) {
+        return;
+      }
+      const sectors = selection.toConfig(config, props.sectors, selected);
+      if (p.pageSize !== currentSize) {
+        // jump back to page 1 when the page size changes
+        const changes: any = {
+          page: 1,
+          count: p.pageSize !== -1 ? p.pageSize : commodities.length,
+        };
+        if (config.sectors != sectors) {
+          changes.sectors = sectors;
         }
-
-        if (p.pageSize !== currentSize) {
-            // jump back to page 1 when the page size changes
-            grid.fireChange({
-                page: 1,
-                count: (p.pageSize !== -1) ? p.pageSize : commodities.length,
-            });
-            return;
-        }
-
-        grid.fireChange({
-            page: p.page,
-            count: (p.pageSize !== -1) ? p.pageSize : commodities.length
-        });
+        grid.fireChange(changes);
+        return;
+      }
+      const changes = {
+        page: p.page,
+        count: p.pageSize !== -1 ? p.pageSize : commodities.length,
+        sectors: sectors,
+      };
+      if (config.sectors != sectors) {
+        changes.sectors = sectors;
+      }
+      grid.fireChange(changes);
     };
 
     // makes the selected value of what commodity is clicked to true
