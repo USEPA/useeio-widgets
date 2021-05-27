@@ -50,6 +50,11 @@ export interface Config {
      * Economic & Social, Resource Use, Impact Potential, Chemical Releases, Waste Generated
      */
     indicators_order?: string;
+
+    /**
+     * Indicate if we have to check all the sectors in the widget
+     */
+    all_sectors?: boolean;
     /**
      * The result perspective.
      */

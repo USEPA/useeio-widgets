@@ -215,6 +215,11 @@ const Component = (props: { widget: SectorList }) => {
     const [otherSorter, setOtherSorter] = useState<otherSorter>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
     let sectors = props.widget.sectors;
+    if (config.all_sectors) {
+        const codes = sectors.map(s => s.code);
+        if (!config.sectors || config.sectors.length !== codes.length)
+            props.widget.fireChange({ sectors: sectors.map(s => s.code) });
+    }
     if (searchTerm) {
         sectors = sectors.filter((s) => strings.search(s.name, searchTerm) >= 0);
     }
