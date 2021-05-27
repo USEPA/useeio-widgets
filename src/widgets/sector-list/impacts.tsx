@@ -1,12 +1,15 @@
 import * as React from "react";
 
 import { Indicator, IndicatorGroup, Model } from "../../webapi";
-import { RowProps } from "./sector-list";
+import { indicatorSorter, RowProps } from "./sector-list";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
 import * as constants from "../../constants";
 import { isNotNone } from "../../util/util";
 import { Config } from "../../config";
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { makeStyles } from "@material-ui/core/styles";
 
 const INDICATOR_GROUPS_POLICY = [
     IndicatorGroup.IMPACT_POTENTIAL,
@@ -69,7 +72,8 @@ export async function selectIndicators(
 export const ImpactHeader = (props: {
     indicators: Indicator[],
     onClick: (i: Indicator) => void,
-    config: Config
+    config: Config,
+    sorter: indicatorSorter
 }) => {
 
     // no indicators
@@ -107,13 +111,34 @@ export const ImpactHeader = (props: {
                 </th>
             );
         }
-
+        const useStyles = makeStyles({
+            arrow: {
+                width: "0.6em",
+                position: "relative",
+                float: "left"
+            },
+            indicatorSorted: {
+                position: "relative",
+                bottom: 3,
+                left: 5
+            }
+        });
+        const classes = useStyles();
         // indicator header
         const key = `<indicator-${indicator.code}`;
+        let arrow = <></>;
+        const sorted = props.sorter && props.sorter.indicators.includes(indicator);
+        if (sorted) {
+            if (props.sorter.state === "desc")
+                arrow = <ArrowDownwardIcon className={classes.arrow} />;
+            else
+                arrow = <ArrowUpwardIcon className={classes.arrow} />;
+        }
         items.push(
             <th key={key} className="indicator">
+                {arrow}
                 <div>
-                    <a onClick={() => props.onClick(indicator)}>
+                    <a onClick={() => props.onClick(indicator)} className={sorted ? classes.indicatorSorted : ""}>
                         {indicator.name} ({indicator.code})
                     </a>
                 </div>
