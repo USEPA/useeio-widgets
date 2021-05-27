@@ -184,7 +184,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     return HeatmapResult.from(model, result);
 }
 
-type otherSorter = {
+export type otherSorter = {
     name: string;
     state: string;
 };
@@ -247,39 +247,39 @@ const Component = (props: { widget: SectorList }) => {
             const value = ranks[sector.code];
             return [sector, value ? value : 0];
         });
-        // Sort by sector code, name or demand
-        if (otherSorter) {
-            let factor = 1;
-            if (otherSorter.state === "asc") {
-                factor = -1;
-            }
-            if (otherSorter.name === "demand") {
-                // Sort by demand
-                ranking.sort(([s1], [s2]) => {
-                    const d1 = props.widget.demand[s1.code];
-                    const d2 = props.widget.demand[s2.code];
-                    if (!d1 && !d2)
-                        return 0;
-                    if (!d1 && d2)
-                        return 1 * factor;
-                    if (d1 && !d2)
-                        return -1 * factor;
-                    else
-                        return (d2 - d1) * factor;
-                });
-            } else if (otherSorter.name === "name") {
-                ranking.sort(([s1], [s2]) => s2.name.localeCompare(s1.name) * factor);
-            } else if (otherSorter.name === "id") {
-                ranking.sort(([s1], [s2]) => s2.code.localeCompare(s1.code) * factor);
-            }
-        } else {
-            // By default, sort by rank
-            let factor = 1;
-            if (sorter.state === "asc")
-                factor = -1;
-            // Sort by rank
-            ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1) * factor);
+    }
+    // Sort by sector code, name or demand
+    if (otherSorter) {
+        let factor = 1;
+        if (otherSorter.state === "asc") {
+            factor = -1;
         }
+        if (otherSorter.name === "demand") {
+            // Sort by demand
+            ranking.sort(([s1], [s2]) => {
+                const d1 = props.widget.demand[s1.code];
+                const d2 = props.widget.demand[s2.code];
+                if (!d1 && !d2)
+                    return 0;
+                if (!d1 && d2)
+                    return 1 * factor;
+                if (d1 && !d2)
+                    return -1 * factor;
+                else
+                    return (d2 - d1) * factor;
+            });
+        } else if (otherSorter.name === "name") {
+            ranking.sort(([s1], [s2]) => s2.name.localeCompare(s1.name) * factor);
+        } else if (otherSorter.name === "id") {
+            ranking.sort(([s1], [s2]) => s2.code.localeCompare(s1.code) * factor);
+        }
+    } else {
+        // By default, sort by rank
+        let factor = 1;
+        if (sorter.state === "asc")
+            factor = -1;
+        // Sort by rank
+        ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1) * factor);
     }
 
     // select the page
@@ -368,9 +368,6 @@ const Component = (props: { widget: SectorList }) => {
                 config.showdownload ? <DownloadSection widget={props.widget} /> : <></>
             }
             <ListHeader
-                config={config}
-                sectorCount={sectors.length}
-                onConfigChange={(conf) => props.widget.fireChange(conf)}
                 onSearch={(term) => setSearchTerm(term)}
             />
             <table className="sector-list-table">
@@ -429,7 +426,7 @@ const Component = (props: { widget: SectorList }) => {
                 onChangePage={onChangePage}
                 onChangeRowsPerPage={(p) => onChangeRow(p)}
             />
-            {(config.indicators === undefined || config.showvalues) && (
+            {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues)) && (
                 <Grid container spacing={5} style={{ marginTop: 50 }}>
             {config.indicators === undefined && (
                 <Grid item>
@@ -448,7 +445,7 @@ const Component = (props: { widget: SectorList }) => {
 };
 
 // Contains a clickable th : either ID, name or demand. Allow to sort the table with descendant,ascendant or with no order
-const TableHeader = ({ code, label, sorter, updateOtherSorter }: { code: string, label: string, sorter: otherSorter, updateOtherSorter: (_: string) => void }) => {
+export const TableHeader = ({ code, label, sorter, updateOtherSorter }: { code: string, label: string, sorter: otherSorter, updateOtherSorter: (_: string) => void }) => {
     const useStyles = makeStyles({
         arrow: {
             width: "0.6em",

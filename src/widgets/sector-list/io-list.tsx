@@ -6,6 +6,10 @@ import { Model, Matrix, Sector } from "../../webapi";
 import { ListHeader } from "./list-header";
 import * as strings from "../../util/strings";
 import * as paging from "../../util/paging";
+import { TablePagination } from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { ifNone } from "../../util";
+import { otherSorter, TableHeader } from "./sector-list";
 
 export class IOList extends Widget {
 
@@ -125,32 +129,79 @@ const Component = (props: {
     config: Config,
     ranking: [Sector, number][],
 }) => {
+    const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
+    const [page, setPage] = useState<number>(0);
+    const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
+    const [sorter, setSorter] = useState<otherSorter>(null);
 
-    const [config, setConfig] = React.useState<Config>({
-        page: 1,
-        count: props.config.count,
-    });
+    const onChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+        setPage(page);
+    };
 
-    const count = config.count ?
-        config.count
-        : -1;
-    const page = config.page ?
-        config.page
-        : 1;
-    const ranking = paging.select(props.ranking, { page, count });
+    // Update the pagination settings on config count changes
+    useEffect(() => {
+        if (props.config.count !== undefined && props.config.count != pageSize) {
+            setPageSize(props.config.count);
+            setPage(0);
+        }
+    }, [props.config.count]);
 
+    // Update the sort order for sector name, id or demand
+    const updateSorter = (name: string) => {
+        if (!sorter || sorter.name != name) {
+            setSorter({ name: name, state: "desc" });
+        } else {
+            let state;
+            if (sorter.state === "desc") {
+                state = "asc";
+                setSorter({ ...sorter, state: state });
+            } else if (sorter.state === "asc") {
+                setSorter(null);
+            }
+        }
+    };
+
+    let ranking = props.ranking;
+
+    if (sorter) {
+        let factor = 1;
+        if (sorter.state === "asc") {
+            factor = -1;
+        }
+        if (sorter.name === "name") {
+            ranking.sort(([s1], [s2]) => s2.name.localeCompare(s1.name) * factor);
+        } else if (sorter.name === "id") {
+            ranking.sort(([s1], [s2]) => s2.code.localeCompare(s1.code) * factor);
+        }
+    } else {
+        // Sort by rank
+        ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1));
+    }
+
+    ranking = paging.select(ranking, { page: page + 1, count: pageSize });
+
+    if (searchTerm) {
+        ranking = ranking.filter(([s]) => strings.search(s.name, searchTerm) >= 0);
+    }
     const rows = ranking.map(elem => {
         const sector = elem[0];
-        const label = `${sector.code} - ${sector.name}`;
         return (
-            <tr key={sector.code}>
-                <td title={label}
+            <tr key={sector.code} style={{ height: 30 }}>
+                <td
                     style={{
                         borderTop: "lightgray solid 1px",
                         padding: "5px 0px",
                         whiteSpace: "nowrap",
                     }}>
-                    {strings.cut(label, 50)}
+                    {sector.code}
+                </td>
+                <td title={sector.name}
+                    style={{
+                        borderTop: "lightgray solid 1px",
+                        padding: "5px 0px",
+                        whiteSpace: "nowrap",
+                    }}>
+                    {strings.cut(sector.name, 50)}
                 </td>
                 <td>
                     <svg height="15" width="50"
@@ -166,23 +217,29 @@ const Component = (props: {
 
     return (
         <>
+            <ListHeader
+                onSearch={(term) => setSearchTerm(term)}
+            />
             <table>
                 <thead>
                     <tr className="indicator-row">
-                        <ListHeader
-                            config={config}
-                            sectorCount={props.ranking.length}
-                            onConfigChange={newConfig => setConfig(
-                                { ...config, ...newConfig })}
-                            onSearch={_term => { }}
-                        />
-                        <th></th>
+                        <TableHeader code={"id"} label="ID" sorter={sorter} updateOtherSorter={updateSorter} />
+                        <TableHeader code={"name"} label="Name" sorter={sorter} updateOtherSorter={updateSorter} />
                     </tr>
                 </thead>
                 <tbody className="sector-list-body">
                     {rows}
                 </tbody>
             </table>
+            <TablePagination
+                style={{ position: "relative", float: "left" }}
+                component="div"
+                count={props.ranking.length}
+                page={page}
+                rowsPerPage={pageSize}
+                rowsPerPageOptions={[]}
+                onChangePage={onChangePage}
+            />
         </>
     );
 };

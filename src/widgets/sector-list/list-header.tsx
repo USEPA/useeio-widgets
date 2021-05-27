@@ -8,10 +8,7 @@ import { Config } from "../../";
  * a paginator and a search field.
  */
 export const ListHeader = (props: {
-    sectorCount: number,
-    config: Config,
     onSearch: (term: string | null) => void,
-    onConfigChange: (config: Config) => void
 }) => {
 
     const onSearch = (value: string) => {
@@ -38,7 +35,7 @@ export const ListHeader = (props: {
 
     return (
         <form className={classes.root} noValidate autoComplete="off">
-            <TextField id="outlined-basic" label="Search" variant="outlined" onChange={e => onSearch(e.target.value)} />
+            <TextField id="outlined-basic" label="Search" variant="outlined" size="small" onChange={e => onSearch(e.target.value)} />
         </form>
     );
 };

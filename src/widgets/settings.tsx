@@ -45,11 +45,11 @@ export class SettingsWidget extends Widget {
 
         // start request
         const model = this.settingsConfig.model;
-        const sectors = model.sectors();
-        const demands = model.demands();
+        const sectors = await model.sectors();
+        const demands = await model.demands();
 
         // get possible locations from sectors
-        (await sectors).forEach(sector => {
+        sectors.forEach(sector => {
             if (!sector.location) {
                 return;
             }
@@ -61,7 +61,7 @@ export class SettingsWidget extends Widget {
         this.locations.sort(strings.compare);
 
         // get demand types and years from demand infos
-        (await demands).forEach(d => {
+        demands.forEach(d => {
             if (d.type && this.demandTypes.indexOf(d.type) < 0) {
                 this.demandTypes.push(d.type);
             }
@@ -157,10 +157,15 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             year: parseInt(e.target.value, 10)
         });
     };
-    let firstYear: number;
+    let maxYear: number;
+    if (!widget.years || widget.years.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.years.map((year) => {
-        if (!firstYear) {
-            firstYear = year;
+        if (!maxYear) {
+            maxYear = year;
+        } else if (year > maxYear) {
+            maxYear = year;
         }
         return <MenuItem key={year} value={year}>{year}</MenuItem>;
     });
@@ -170,7 +175,7 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             <Select
                 labelId="yearLabel"
                 id="yearId"
-                value={firstYear}
+                value={maxYear}
                 onChange={handleChange}
                 label="Year"
             >
@@ -189,6 +194,9 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
         widget.fireChange({ location: e.target.value as DemandType });
     };
     let firstLocation: string;
+    if (!widget.locations || widget.locations.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.locations.map((location) => {
         if (!firstLocation) {
             firstLocation = location;
