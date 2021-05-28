@@ -19,6 +19,7 @@ import { isNone, isNoneOrEmpty } from "../../util/util";
 import { Card, CardContent, Grid, makeStyles, TablePagination, Typography } from "@material-ui/core";
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { CSSProperties } from "@material-ui/core/styles/withStyles";
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
@@ -136,7 +137,7 @@ export class SectorList extends Widget {
     }
 
     private needsCalculation(oldConfig: Config, newConfig: Config) {
-        if (!newConfig || !strings.isMember("mosaic", newConfig.view)) return false;
+        if (!newConfig) return false;
 
         if (!oldConfig || !this.result) {
             return true;
@@ -375,7 +376,7 @@ const Component = (props: { widget: SectorList }) => {
                     <tr className="indicator-row">
 
                         <TableHeader code={"id"} label="ID" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
-                        <TableHeader code={"name"} label="Name" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
+                        <TableHeader code={"name"} label="Name" sorter={otherSorter} updateOtherSorter={updateOtherSorter} style={{ minWidth: 370, maxWidth: 370 }} />
                         {
                             // optional demand column
                             config.showvalues
@@ -444,14 +445,25 @@ const Component = (props: { widget: SectorList }) => {
     );
 };
 
+type TableHeaderProps = {
+    code: string;
+    label: string;
+    sorter: otherSorter;
+    updateOtherSorter: (_: string) => void;
+    style?: CSSProperties
+};
 // Contains a clickable th : either ID, name or demand. Allow to sort the table with descendant,ascendant or with no order
-export const TableHeader = ({ code, label, sorter, updateOtherSorter }: { code: string, label: string, sorter: otherSorter, updateOtherSorter: (_: string) => void }) => {
+export const TableHeader = ({ code, label, sorter, updateOtherSorter, style = {} }: TableHeaderProps) => {
     const useStyles = makeStyles({
         arrow: {
-            width: "0.6em",
+            // width: "0.6em",
+            height: "0.6em",
             position: "relative",
-            top: "6px"
+            top: "2px"
         },
+        margin: {
+            marginLeft: 15
+        }
     });
     const classes = useStyles();
     let arrow = <></>;
@@ -462,7 +474,7 @@ export const TableHeader = ({ code, label, sorter, updateOtherSorter }: { code: 
             arrow = <ArrowUpwardIcon className={classes.arrow} />;
     }
 
-    return <th><a onClick={() => { updateOtherSorter(code); }}>{label} {arrow}</a> </th>;
+    return <th style={style}><Grid container className={classes.margin}><Grid item ><a onClick={() => { updateOtherSorter(code); }}>{label} {arrow}</a></Grid></Grid> </th>;
 
 };
 

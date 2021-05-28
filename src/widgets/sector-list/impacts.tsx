@@ -35,9 +35,6 @@ const INDICATOR_GROUPS_PLANNING = [
 export async function selectIndicators(
     config: Config, model: Model): Promise<Indicator[]> {
 
-    if (!strings.isMember("mosaic", config.view)) {
-        return [];
-    }
     const all = await model.indicators();
     if (!all || all.length === 0) {
         return [];
@@ -77,7 +74,7 @@ export const ImpactHeader = (props: {
 }) => {
 
     // no indicators
-    if (!props.indicators || props.indicators.length === 0) {
+    if (!strings.isMember("mosaic", props.config.view) || !props.indicators || props.indicators.length === 0) {
         return <></>;
     }
 
@@ -159,7 +156,7 @@ export const ImpactResult = (props: RowProps) => {
     const config = props.widget.config;
     const indicators = props.widget.indicators;
     const result = props.widget.result;
-    if (!indicators || indicators.length === 0 || !result) {
+    if (!strings.isMember("mosaic", config.view) || !indicators || indicators.length === 0 || !result) {
         return <></>;
     }
 
