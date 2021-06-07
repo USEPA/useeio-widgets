@@ -252,9 +252,9 @@ function getIndicatorOrder(config: Config) {
  */
 function formatResult(r: number) {
     let value: string;
-    let decimal = 3; // 3 digits by default
+    let decimal = 0; // default digits number
     if (r === 0.0)
-        return r.toFixed(decimal);
+        return r.toFixed(0);
 
     let n;
     do {
