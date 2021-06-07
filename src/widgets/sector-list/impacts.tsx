@@ -200,7 +200,7 @@ export const ImpactResult = (props: RowProps) => {
         }
         const r = result.getResult(ind, props.sector);
         const share = result.getShare(ind, props.sector);
-        const alpha = 0.1 + 1.2 * Math.sqrt(share);
+        const alpha = 0.1 + 1.2 * Math.sqrt(Math.abs(share));
         // Extra transparency on non sorted columns
         // if (props.sortIndicator && props.sortIndicator !== ind) {
         //     alpha *= 0.25;
