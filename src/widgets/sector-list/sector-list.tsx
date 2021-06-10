@@ -334,6 +334,9 @@ const Component = (props: { widget: SectorList }) => {
             }
         }
         setSorter({ indicators: [], state: null });
+        if (page !== 1) {
+            props.widget.fireChange({ page: 1 });
+        }
     };
 
     // Update the sort order for an indicator
@@ -351,6 +354,9 @@ const Component = (props: { widget: SectorList }) => {
         }
         setSorter({ indicators: s, state: state });
         setOtherSorter(null);
+        if (page !== 1) {
+            props.widget.fireChange({ page: 1 });
+        }
     };
 
 

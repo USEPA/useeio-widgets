@@ -322,6 +322,7 @@ a:hover {
 
 .indicator-value {
     font-size: .9em;
+    text-align: right;
 }
 
 /*

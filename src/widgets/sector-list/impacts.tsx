@@ -206,11 +206,11 @@ export const ImpactResult = (props: RowProps) => {
         //     alpha *= 0.25;
         // }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        let value = config.showscientific ? r.toExponential(2) : formatResult(r);
+        let value = config.showscientific ? r.toExponential(2) : abbreviateNumberWithSI(r);
         if (ind.unit === "$")
             value = ind.unit + value;
         else
-            value + ind.unit;
+            value = value + " " + ind.unit;
         let isIndicatorSelected = "";
         // We box the sorted column
         if (isNotNone(props.sortIndicator) && props.sortIndicator.includes(ind)) {
@@ -250,9 +250,9 @@ function getIndicatorOrder(config: Config) {
 /**
  * Increases the number of decimal digits until the number has the right number of digits
  */
-function formatResult(r: number) {
+function formatDecimalNumber(r: number) {
     let value: string;
-    let decimal = 0; // default digits number
+    let decimal = 3; // default digits number
     if (r === 0.0)
         return r.toFixed(0);
 
@@ -264,5 +264,26 @@ function formatResult(r: number) {
     } while (n === 0.0);
 
     return value;
+}
+
+
+/**
+ * Add a suffix to the number if it is too big, like "k" for 1e3, "M" for 1e6, etc
+ * The suffix come from the SI :
+ * https://en.wikipedia.org/wiki/International_System_of_Units#Prefixes
+ * 
+ * @param number The number to abbreviate
+ * @returns The abbreviated number, followed by the appropriate suffix
+ */
+function abbreviateNumberWithSI(number: number) {
+    const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
+
+    const tier = Math.log10(Math.abs(number)) / 3 | 0;
+    if (tier == 0) return number;
+    const suffix = SI_SYMBOL[tier];
+    const scale = Math.pow(10, tier * 3);
+    const scaled = number / scale;
+
+    return formatDecimalNumber(scaled) + suffix;
 }
 
