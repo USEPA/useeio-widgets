@@ -118,6 +118,11 @@ export interface Config {
      * Indicates whether code examples should be displayed.
      */
     showcode?: boolean;
+
+    /**
+     * By default, the matrices gives us the results per $1 spent. We can set the scale factor to an other value, to multiply the result by this scale factor, in order to change the scale
+     */
+    scale_factor?: number;
 }
 
 /**

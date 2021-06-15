@@ -163,9 +163,12 @@ export class SectorList extends Widget {
 async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     // for plain matrices => wrap the matrix into a result
     if (!config.analysis) {
-        const M = config.perspective === "direct"
+        let M = config.perspective === "direct"
             ? await model.matrix("D")
             : await model.matrix("N");
+        if(config.scale_factor){
+            M = M.scaleMatrix(config.scale_factor);
+        }
         const indicators = await model.indicators();
         const sectors = await model.sectors();
         return HeatmapResult.from(model, {
@@ -445,6 +448,11 @@ const Component = (props: { widget: SectorList }) => {
                     <DemandExplanation />
                 </Grid>
             )}
+            {config.scale_factor && (
+                <Grid item>
+                    <ScaleFactor />
+                </Grid>
+            )}
             </Grid>
             )}
         </div>
@@ -549,6 +557,32 @@ const ExclusionOfIndicators = () => {
       </CardContent>
     </Card>
   );
+};
+
+const ScaleFactor = () => {
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20,
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16,
+            },
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>
+                    By default, the results are compute per $1 spent. You can however change this scale, by setting an other scale factor, which will be multiplied with the result.
+                </Typography>
+            </CardContent>
+        </Card>
+    );
 };
 
 export type RowProps = {

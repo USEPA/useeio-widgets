@@ -91,6 +91,7 @@ const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
             <AnalyseComponent widget={widget} />
             <YearComponent widget={widget} />
             <LocationComponent widget={widget} />
+            <ScaleFactorComponent widget={widget} />
         </Grid>
     );
 };
@@ -219,4 +220,37 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
             </Select>
         </FormControl>
     );
+};
+
+const ScaleFactorComponent = ({ widget }: { widget: SettingsWidget }) => {
+
+    const classes = useStyles();
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        widget.fireChange({ scale_factor: parseInt(e.target.value) });
+    };
+
+    const values = [1, 1000, 1000000, 1000000000];
+
+    const menuItem = values.map(v => (
+        <MenuItem key={v} value={v}>{v}</MenuItem>
+    ));
+
+    return (
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="locationLabel">Scale factor</InputLabel>
+            <Select
+                labelId="scaleFactorLabel"
+                id="scaleFactorId"
+                value={widget.config.scale_factor ? widget.config.scale_factor : 1000000}
+                onChange={handleChange}
+                label="Scale factor"
+            >
+                {
+                    menuItem
+                }
+            </Select>
+        </FormControl>
+    );
+
 };

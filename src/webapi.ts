@@ -477,6 +477,19 @@ export class Matrix {
         return m;
     }
 
+	/**
+	 * Scale the matrix withe given number `f`: `f * A`.
+	 */
+    public scaleMatrix (f: number) :Matrix {
+        const m = Matrix.zeros(this.rows, this.cols);
+         for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                m.set(row, col, this.get(row,col) * f);
+            }
+        }
+        return m;
+    }
+
     /**
      * Performs a matrix-vector-multiplication with the given `v`: `A * v`.
      */
