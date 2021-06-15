@@ -14,8 +14,8 @@ export class SectorAnalysis {
 
     async getEnvironmentalProfile(directOnly = false): Promise<number[]> {
         const matrix = directOnly
-            ? this.model.matrix("D")
-            : this.model.matrix("U");
+          ? this.model.matrix("D")
+          : this.model.matrix("N");
         const profile = (await matrix).getCol(this.sector.index);
         return profile.map((x, i) => {
             const total = this.normalizationTotals[i];
@@ -35,9 +35,9 @@ export class SectorAnalysis {
         totals: number[], direct: number[], upstream: number[],
     }> {
         const D = this.model.matrix("D");
-        const U = this.model.matrix("U");
+        const N = this.model.matrix("N");
         const direct = (await D).getCol(this.sector.index);
-        const totals = (await U).getCol(this.sector.index);
+        const totals = (await N).getCol(this.sector.index);
         const upstream = totals.map((total, i) => total - direct[i]);
         return { totals, direct, upstream };
     }
@@ -108,16 +108,16 @@ export class SectorAnalysis {
 
     async getPurchaseContributions(indicators: Indicator | Indicator[]):
         Promise<number[]> {
-        const U = await this.model.matrix("U");
+        const N = await this.model.matrix("N");
         const purchases = await this.purchaseVector();
 
         if (!Array.isArray(indicators)) {
-            const impacts = U.getRow(indicators.index);
+            const impacts = N.getRow(indicators.index);
             return purchases.map((x, i) => x * impacts[i]);
         }
 
         const nfactors = this.normalizationTotals.map(t => !t ? 0 : 1 / t);
-        const R = U.scaleColumns(purchases).scaleRows(nfactors);
+        const R = N.scaleColumns(purchases).scaleRows(nfactors);
         const r = zeros(R.cols);
         for (const indicator of indicators) {
             for (let col = 0; col < r.length; col++) {

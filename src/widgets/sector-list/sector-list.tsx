@@ -165,7 +165,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     if (!config.analysis) {
         const M = config.perspective === "direct"
             ? await model.matrix("D")
-            : await model.matrix("U");
+            : await model.matrix("N");
         const indicators = await model.indicators();
         const sectors = await model.sectors();
         return HeatmapResult.from(model, {
