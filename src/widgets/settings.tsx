@@ -85,6 +85,9 @@ export class SettingsWidget extends Widget {
 }
 
 const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
+    if(widget.config.showsettings === false){
+        return (<></>);
+    }
     return (
         <Grid container justify="center" >
             <PerspectiveComponent widget={widget} />

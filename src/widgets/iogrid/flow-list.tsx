@@ -92,8 +92,10 @@ export const FlowList = (props: {
             width: 150,
             renderCell: (params) => {
                 const flow = params.data as IOFlow;
-                const title =
+                let title =
                   flow.share === 1 ? 100 : formatNumber(flow.share * 100);
+                  title+= " %";
+
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>

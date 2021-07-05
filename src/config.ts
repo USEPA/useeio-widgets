@@ -120,6 +120,16 @@ export interface Config {
     showcode?: boolean;
 
     /**
+     * Indicates wheter the settings widget should be displayed or not.
+     */
+    showsettings?:boolean
+
+    /**
+     * Indicates wheter the widget should displayed or not an about section that describe it.
+     */
+     showabout?:boolean
+
+    /**
      * By default, the matrices gives us the results per $1 spent. We can set the scale factor to an other value, to multiply the result by this scale factor, in order to change the scale
      */
     scale_factor?: number;
@@ -174,6 +184,8 @@ export function parseConfig(s: string): Config {
             case "selectmatrix":
             case "showdownload":
             case "showscientific":
+            case "showsettings":
+            case "showabout":
                 config[key] = strings.eq(val, "true", "1", "yes");
                 break;
 

@@ -199,7 +199,11 @@ export type indicatorSorter = {
 };
 
 const Component = (props: { widget: SectorList }) => {
+
     const config = props.widget.config;
+    if(!config.scale_factor){
+        props.widget.fireChange({...config, scale_factor:1000000});
+    }
     const indicators = props.widget.indicators;
     const result = props.widget.result;
     let indicatorsConfig = [];
