@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as ReactDOM from "react-dom";
 
 import { Config } from "../../config";
@@ -16,7 +16,10 @@ import { DownloadSection } from "./download";
 import { ListHeader } from "./list-header";
 import { SectorHeader, InputOutputCells } from "./iotable";
 import { isNone, isNoneOrEmpty } from "../../util/util";
-
+import { Card, CardContent, Grid, makeStyles, TablePagination, Typography } from "@material-ui/core";
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import { CSSProperties } from "@material-ui/core/styles/withStyles";
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
@@ -73,14 +76,6 @@ export class SectorList extends Widget {
     }
 
     async update(config: Config) {
-        // Hardcoded default value for count
-        if (isNone(config.count)) {
-            config.count = 10;
-        }
-        // Hardcoded default value for view
-        if (isNone(config.view)) {
-            config.view = ["mosaic"];
-        }
         // run a new calculation if necessary
         const needsCalc = this.needsCalculation(this.config, config);
         if (needsCalc) {
@@ -142,7 +137,7 @@ export class SectorList extends Widget {
     }
 
     private needsCalculation(oldConfig: Config, newConfig: Config) {
-        if (!newConfig || !strings.isMember("mosaic", newConfig.view)) return false;
+        if (!newConfig) return false;
 
         if (!oldConfig || !this.result) {
             return true;
@@ -168,9 +163,12 @@ export class SectorList extends Widget {
 async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     // for plain matrices => wrap the matrix into a result
     if (!config.analysis) {
-        const M = config.perspective === "direct"
+        let M = config.perspective === "direct"
             ? await model.matrix("D")
-            : await model.matrix("U");
+            : await model.matrix("N");
+        if(config.scale_factor){
+            M = M.scaleMatrix(config.scale_factor);
+        }
         const indicators = await model.indicators();
         const sectors = await model.sectors();
         return HeatmapResult.from(model, {
@@ -190,8 +188,22 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     return HeatmapResult.from(model, result);
 }
 
+export type otherSorter = {
+    name: string;
+    state: string;
+};
+
+export type indicatorSorter = {
+    indicators: Indicator[];
+    state: string;
+};
+
 const Component = (props: { widget: SectorList }) => {
+
     const config = props.widget.config;
+    if(!config.scale_factor){
+        props.widget.fireChange({...config, scale_factor:1000000});
+    }
     const indicators = props.widget.indicators;
     const result = props.widget.result;
     let indicatorsConfig = [];
@@ -207,10 +219,15 @@ const Component = (props: { widget: SectorList }) => {
             return result;
         });
     }
-    const [sorter, setSorter] = React.useState<Indicator[]>(indicatorsConfig);
+    const [sorter, setSorter] = React.useState<indicatorSorter>({ indicators: indicatorsConfig, state: "desc" });
+    const [otherSorter, setOtherSorter] = useState<otherSorter>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
-
     let sectors = props.widget.sectors;
+    if (config.all_sectors) {
+        const codes = sectors.map(s => s.code);
+        if (!config.sectors || config.sectors.length !== codes.length)
+            props.widget.fireChange({ sectors: sectors.map(s => s.code) });
+    }
     if (searchTerm) {
         sectors = sectors.filter((s) => strings.search(s.name, searchTerm) >= 0);
     }
@@ -220,8 +237,15 @@ const Component = (props: { widget: SectorList }) => {
     if (!result) {
         ranking = sectors.map((s) => [s, 0]);
     } else {
-        const ranks: { [code: string]: number } = {};
-        result.getRanking(!isNoneOrEmpty(sorter) ? sorter : indicators).reduce((r, rank) => {
+        const ranks: {
+            [code: string]: number;
+        } = {};
+        let ind: Indicator[];
+        if (config.indicators === undefined) {
+            // Exlude JOBS and VADD frome default combined sort
+            ind = indicators.filter(i => (i.code !== "JOBS" && i.code !== "VADD"));
+        }
+        result.getRanking(!isNoneOrEmpty(sorter.indicators) ? sorter.indicators : ind).reduce((r, rank) => {
             const sector = rank[0];
             const value = rank[1];
             r[sector.code] = value;
@@ -231,7 +255,39 @@ const Component = (props: { widget: SectorList }) => {
             const value = ranks[sector.code];
             return [sector, value ? value : 0];
         });
-        ranking.sort(([_s1, rank1], [_s2, rank2]) => rank2 - rank1);
+    }
+    // Sort by sector code, name or demand
+    if (otherSorter) {
+        let factor = 1;
+        if (otherSorter.state === "asc") {
+            factor = -1;
+        }
+        if (otherSorter.name === "demand") {
+            // Sort by demand
+            ranking.sort(([s1], [s2]) => {
+                const d1 = props.widget.demand[s1.code];
+                const d2 = props.widget.demand[s2.code];
+                if (!d1 && !d2)
+                    return 0;
+                if (!d1 && d2)
+                    return 1 * factor;
+                if (d1 && !d2)
+                    return -1 * factor;
+                else
+                    return (d2 - d1) * factor;
+            });
+        } else if (otherSorter.name === "name") {
+            ranking.sort(([s1], [s2]) => s2.name.localeCompare(s1.name) * factor);
+        } else if (otherSorter.name === "id") {
+            ranking.sort(([s1], [s2]) => s2.code.localeCompare(s1.code) * factor);
+        }
+    } else {
+        // By default, sort by rank
+        let factor = 1;
+        if (sorter.state === "asc")
+            factor = -1;
+        // Sort by rank
+        ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1) * factor);
     }
 
     // select the page
@@ -243,15 +299,76 @@ const Component = (props: { widget: SectorList }) => {
         <Row
             key={sector.code}
             sector={sector}
-            sortIndicator={sorter}
+            sortIndicator={sorter.indicators}
             widget={props.widget}
             rank={rank}
             index={i}
+            config={config}
         />
     ));
+    let marginTop = 0;
+    if (config.view && config.view.includes("mosaic") && config.showvalues)
+        marginTop = 80;
+    if (config.view && config.view.includes("mosaic") && !config.showvalues)
+        marginTop = 100;
+        
+
+    const onChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+        props.widget.fireChange({
+            page: page + 1
+        });
+    };
+
+    const onChangeRow = (e: any) => {
+        const count = e.target.value;
+        props.widget.fireChange({
+            page: 1,
+            count: (count === -1) ? sectors.length : count
+        });
+    };
+
+    // Update the sort order for sector name, id or demand
+    const updateOtherSorter = (name: string) => {
+        if (!otherSorter || otherSorter.name != name) {
+            setOtherSorter({ name: name, state: "desc" });
+        } else {
+            let state;
+            if (otherSorter.state === "desc") {
+                state = "asc";
+                setOtherSorter({ ...otherSorter, state: state });
+            } else if (otherSorter.state === "asc") {
+                setOtherSorter(null);
+            }
+        }
+        setSorter({ indicators: [], state: null });
+        if (page !== 1) {
+            props.widget.fireChange({ page: 1 });
+        }
+    };
+
+    // Update the sort order for an indicator
+    const updateIndicatorSorter = (indicator: Indicator) => {
+        const s: Indicator[] = [];
+        let state: string = null;
+        if (!sorter.indicators.includes(indicator)) {
+            s.push(indicator);
+            state = "desc";
+        } else {
+            if (sorter.state === "desc") {
+                s.push(indicator);
+                state = "asc";
+            }
+        }
+        setSorter({ indicators: s, state: state });
+        setOtherSorter(null);
+        if (page !== 1) {
+            props.widget.fireChange({ page: 1 });
+        }
+    };
+
 
     return (
-        <>
+        <div style={{ marginTop: marginTop }}>
             {
                 // display the matrix selector if we display a result
                 config.selectmatrix && props.widget.result ? (
@@ -264,38 +381,30 @@ const Component = (props: { widget: SectorList }) => {
                 // display download links if this is configured
                 config.showdownload ? <DownloadSection widget={props.widget} /> : <></>
             }
+            <ListHeader
+                onSearch={(term) => setSearchTerm(term)}
+            />
             <table className="sector-list-table">
                 <thead>
                     <tr className="indicator-row">
-                        <ListHeader
-                            config={config}
-                            sectorCount={sectors.length}
-                            onConfigChange={(conf) => props.widget.fireChange(conf)}
-                            onSearch={(term) => setSearchTerm(term)}
-                        />
 
+                        <TableHeader code={"id"} label="ID" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
+                        <TableHeader code={"name"} label="Name" sorter={otherSorter} updateOtherSorter={updateOtherSorter} style={{ minWidth: 370, maxWidth: 370 }} />
                         {
                             // optional demand column
                             config.showvalues
                                 ? (
-                                    <th>
-                                        <div>
-                                            <span>Demand [billions]</span>
-                                        </div>
-                                    </th>
+                                    <TableHeader code={"demand"} label="Demand [billions]" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
+
                                 )
                                 : <></>
                         }
 
                         <ImpactHeader
                             indicators={indicators}
-                            onClick={(i) => {
-                                const s = [];
-                                if (!sorter.includes(i)) {
-                                    s.push(i);
-                                }
-                                setSorter(s);
-                            }}
+                            onClick={(i) => updateIndicatorSorter(i)}
+                            config={config}
+                            sorter={sorter}
                         />
 
                         {
@@ -321,7 +430,162 @@ const Component = (props: { widget: SectorList }) => {
                 </thead>
                 <tbody className="sector-list-body">{rows}</tbody>
             </table>
-        </>
+            <TablePagination
+                style={{ position: "relative", float: "left" }}
+                component="div"
+                count={sectors.length}
+                page={config.page ? config.page - 1 : 0}
+                rowsPerPage={config.count ? config.count : 10}
+                rowsPerPageOptions={[{ label: "All", value: sectors.length }, 10, 20, 30, 40, 50, 100]}
+                onChangePage={onChangePage}
+                onChangeRowsPerPage={(p) => onChangeRow(p)}
+            />
+            {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues)) && (
+                <Grid container spacing={5} style={{ marginTop: 50 }}>
+            {config.indicators === undefined && (
+                <Grid item>
+                    <ExclusionOfIndicators />
+                 </Grid>
+            )}
+            {config.showvalues && (
+                <Grid item>
+                    <DemandExplanation />
+                </Grid>
+            )}
+            {config.scale_factor && (
+                <Grid item>
+                    <ScaleFactor />
+                </Grid>
+            )}
+            </Grid>
+            )}
+        </div>
+    );
+};
+
+type TableHeaderProps = {
+    code: string;
+    label: string;
+    sorter: otherSorter;
+    updateOtherSorter: (_: string) => void;
+    style?: CSSProperties
+};
+// Contains a clickable th : either ID, name or demand. Allow to sort the table with descendant,ascendant or with no order
+export const TableHeader = ({ code, label, sorter, updateOtherSorter, style = {} }: TableHeaderProps) => {
+    const useStyles = makeStyles({
+        arrow: {
+            // width: "0.6em",
+            height: "0.6em",
+            position: "relative",
+            top: "2px"
+        },
+        margin: {
+            marginLeft: 15
+        }
+    });
+    const classes = useStyles();
+    let arrow = <></>;
+    if (sorter && sorter.name === code) {
+        if (sorter.state === "desc")
+            arrow = <ArrowDownwardIcon className={classes.arrow} />;
+        else
+            arrow = <ArrowUpwardIcon className={classes.arrow} />;
+    }
+
+    return <th style={style}><Grid container className={classes.margin}><Grid item ><a onClick={() => { updateOtherSorter(code); }}>{label} {arrow}</a></Grid></Grid> </th>;
+
+};
+
+const DemandExplanation = () => {
+  const useStyles = makeStyles({
+    root: {
+      minWidth: 275,
+      maxWidth: 600,
+      fontSize: 12,
+      marginBottom: 20,
+    },
+    content: {
+      "&:last-child": {
+        paddingBottom: 16,
+      },
+    },
+  });
+  const classes = useStyles();
+  return (
+    <Card className={classes.root}>
+      <CardContent className={classes.content}>
+        <Typography>
+          {" "}
+          For the demand column, there is 3 types of values:{" "}
+        </Typography>
+        <ul>
+          <li>
+            <b>---</b> : Commodities with no demand values. Other commodities
+            provide their demand.
+          </li>
+          <li>
+            <b>0.000</b> : Commodities with demand values less than 0.0005
+            billion.
+          </li>
+          <li>
+            <b>1.234</b> : Commodities with demand values in billions.
+          </li>
+        </ul>
+      </CardContent>
+    </Card>
+  );
+};
+
+const ExclusionOfIndicators = () => {
+  const useStyles = makeStyles({
+    root: {
+      minWidth: 275,
+      maxWidth: 500,
+      fontSize: 12,
+      marginBottom: 20,
+    },
+    content: {
+      "&:last-child": {
+        paddingBottom: 16,
+      },
+    },
+  });
+  const classes = useStyles();
+  return (
+    <Card className={classes.root}>
+      <CardContent className={classes.content}>
+        <Typography>
+          The positive indicators JOBS and VADD are excluded from the combined
+          sort by default. This allows the most adverse overall impacts to appear first.
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+};
+
+const ScaleFactor = () => {
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20,
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16,
+            },
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>
+                    By default, the results are compute per $1 spent. You can however change this scale, by setting an other scale factor, which will be multiplied with the result.
+                </Typography>
+            </CardContent>
+        </Card>
     );
 };
 
@@ -331,6 +595,7 @@ export type RowProps = {
     widget: SectorList;
     rank?: number;
     index: number;
+    config: Config;
 };
 
 const Row = (props: RowProps) => {
@@ -384,41 +649,47 @@ const Row = (props: RowProps) => {
             </td>
         );
     }
+    const useStyles = makeStyles({
+        rank: {
+            borderTop: "lightgray solid 1px",
+            padding: "5px 0px",
+            whiteSpace: "nowrap",
+        },
+        td: {
+            borderTop: "lightgray solid 1px",
+            padding: "5px 0px",
+            whiteSpace: "nowrap",
+            fontSize: 12
+        }
+    });
+    const classes = useStyles();
 
     // display the ranking value if view=ranking
     let rank;
     if (strings.isMember("ranking", config.view)) {
         rank = (
-            <td
-                style={{
-                    borderTop: "lightgray solid 1px",
-                    padding: "5px 0px",
-                    whiteSpace: "nowrap",
-                }}
-            >
+            <td className={classes.td}>
                 {props.rank ? props.rank.toFixed(3) : null}
             </td>
         );
     }
-
-    const sectorLabel = `${sector.code} - ${sector.name}`;
     return (
         <tr>
             <td
                 key={props.sector.code}
-                style={{
-                    borderTop: "lightgray solid 1px",
-                    padding: "5px 0px",
-                    whiteSpace: "nowrap",
-                }}
+                className={classes.td}
             >
                 <div style={{ cursor: "pointer" }}>
                     <input type="checkbox" checked={selected} onChange={onSelect}></input>
-
-                    <a title={sectorLabel} onClick={onSelect}>
-                        {strings.cut(sectorLabel, 80)}
+                    <a style={{ cursor: "pointer" }} title={sector.code} onClick={onSelect}>
+                        {sector.code}
                     </a>
                 </div>
+            </td>
+            <td className={classes.td}>
+                <a style={{ cursor: "pointer" }} title={sector.name} onClick={onSelect}>
+                    {strings.cut(sector.name, 80)}
+                </a>
             </td>
             {config.showvalues ? demand : <></>}
             <ImpactResult {...props} />

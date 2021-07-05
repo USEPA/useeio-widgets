@@ -21,7 +21,7 @@
     <script>
 
         var config = useeio.urlConfig();
-        var modelID = config.get().model || 'USEEIOv1.2';
+        var modelID = config.get().model || 'USEEIOv2.0';
 
         var model = useeio.model({
             endpoint: './api',
@@ -33,6 +33,9 @@
             model: model,
             selector: '.sector-list',
         });
+        config.withDefaults({
+            count: 10,
+        })
         config.join(sectorList);
 
     </script>

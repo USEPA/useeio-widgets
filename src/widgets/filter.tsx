@@ -65,6 +65,9 @@ const FilterComponent = ({ widget: { config } }: { widget: FilterWidget }) => {
                 <ListItem >
                     <b>Location: </b>&nbsp;{config.location ? config.location : "Nothing selected"}
                 </ListItem>
+                <ListItem >
+                    <b>Scale factor: </b>&nbsp;{config.scale_factor ? config.scale_factor : "Nothing selected"}
+                </ListItem>
             </List>
         </div>
     );

@@ -45,11 +45,11 @@ export class SettingsWidget extends Widget {
 
         // start request
         const model = this.settingsConfig.model;
-        const sectors = model.sectors();
-        const demands = model.demands();
+        const sectors = await model.sectors();
+        const demands = await model.demands();
 
         // get possible locations from sectors
-        (await sectors).forEach(sector => {
+        sectors.forEach(sector => {
             if (!sector.location) {
                 return;
             }
@@ -61,7 +61,7 @@ export class SettingsWidget extends Widget {
         this.locations.sort(strings.compare);
 
         // get demand types and years from demand infos
-        (await demands).forEach(d => {
+        demands.forEach(d => {
             if (d.type && this.demandTypes.indexOf(d.type) < 0) {
                 this.demandTypes.push(d.type);
             }
@@ -72,7 +72,7 @@ export class SettingsWidget extends Widget {
 
         this.demandTypes.sort(strings.compare);
         this.years.sort();
-
+        this.update(this.config);
     }
 
     async update(config: Config) {
@@ -85,12 +85,16 @@ export class SettingsWidget extends Widget {
 }
 
 const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
+    if(widget.config.showsettings === false){
+        return (<></>);
+    }
     return (
         <Grid container justify="center" >
             <PerspectiveComponent widget={widget} />
             <AnalyseComponent widget={widget} />
             <YearComponent widget={widget} />
             <LocationComponent widget={widget} />
+            <ScaleFactorComponent widget={widget} />
         </Grid>
     );
 };
@@ -157,10 +161,15 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             year: parseInt(e.target.value, 10)
         });
     };
-    let firstYear: number;
+    let maxYear: number;
+    if (!widget.years || widget.years.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.years.map((year) => {
-        if (!firstYear) {
-            firstYear = year;
+        if (!maxYear) {
+            maxYear = year;
+        } else if (year > maxYear) {
+            maxYear = year;
         }
         return <MenuItem key={year} value={year}>{year}</MenuItem>;
     });
@@ -170,7 +179,7 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             <Select
                 labelId="yearLabel"
                 id="yearId"
-                value={firstYear}
+                value={maxYear}
                 onChange={handleChange}
                 label="Year"
             >
@@ -189,6 +198,9 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
         widget.fireChange({ location: e.target.value as DemandType });
     };
     let firstLocation: string;
+    if (!widget.locations || widget.locations.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.locations.map((location) => {
         if (!firstLocation) {
             firstLocation = location;
@@ -211,4 +223,37 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
             </Select>
         </FormControl>
     );
+};
+
+const ScaleFactorComponent = ({ widget }: { widget: SettingsWidget }) => {
+
+    const classes = useStyles();
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        widget.fireChange({ scale_factor: parseInt(e.target.value) });
+    };
+
+    const values = [1, 1000, 1000000, 1000000000];
+
+    const menuItem = values.map(v => (
+        <MenuItem key={v} value={v}>{v}</MenuItem>
+    ));
+
+    return (
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="locationLabel">Scale factor</InputLabel>
+            <Select
+                labelId="scaleFactorLabel"
+                id="scaleFactorId"
+                value={widget.config.scale_factor ? widget.config.scale_factor : 1000000}
+                onChange={handleChange}
+                label="Scale factor"
+            >
+                {
+                    menuItem
+                }
+            </Select>
+        </FormControl>
+    );
+
 };

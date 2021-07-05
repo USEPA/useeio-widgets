@@ -26,6 +26,7 @@ import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
 import { MatrixSelector } from "./widgets/matrix-selector";
 import { IOGrid } from "./widgets/iogrid/iogrid";
+import { DotsMenu } from "./widgets/dotsMenu";
 
 export * from "./naics";
 export * from "./webapi";
@@ -96,6 +97,10 @@ export function settingsWidget(config: SettingsWidgetConfig): SettingsWidget {
     const widget = new SettingsWidget(config);
     widget.init();
     return widget;
+}
+
+export function dotsMenu(args: WidgetArgs): DotsMenu {
+    return new DotsMenu(args.model, args.selector);
 }
 
 export function profileChart(config: ProfileChartConfig): ProfileChart {
