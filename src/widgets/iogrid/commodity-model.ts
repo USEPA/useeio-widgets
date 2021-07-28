@@ -1,8 +1,8 @@
-import { isNone, isNoneOrEmpty } from "../../util/util";
+import { isNone, isNoneOrEmpty } from "../../util";
 import { Indicator } from "../../webapi";
 import * as strings from "../../util/strings";
 import { IOGrid } from "./iogrid";
-import { Config } from "../../widget";
+import { Config } from "../../";
 
 /**
  * The row type of the commodity list.
@@ -25,6 +25,7 @@ export class SortOptions {
 
     private _selectAll: boolean;
     private _selectAllVisible: boolean;
+    private _unselectAll: boolean;
     private _selectedOnly: boolean;
     private _selectedFirst: boolean;
     private _indicators: Indicator[];
@@ -34,6 +35,7 @@ export class SortOptions {
     constructor(readonly grid: IOGrid, other?: SortOptions) {
         this._selectAll = false;
         this._selectAllVisible = false;
+        this._unselectAll = false;
         if (!other) {
             // default values
             this._selectedOnly = false;
@@ -62,6 +64,10 @@ export class SortOptions {
 
     get isAllSelected(): boolean {
         return this._selectAll;
+    }
+
+    get isAllUnselected(): boolean {
+        return this._unselectAll;
     }
 
     get isSelectedOnly(): boolean {
@@ -132,6 +138,12 @@ export class SortOptions {
     swapSelectAll(): SortOptions {
         return this._copy(n => {
             n._selectAll = !this._selectAll;
+        });
+    }
+
+    swapUnselectAll(): SortOptions {
+        return this._copy(n => {
+            n._unselectAll = !this._unselectAll;
         });
     }
 
@@ -252,6 +264,8 @@ export class SortOptions {
             
         if (this._selectAllVisible)
             this._selectAllVisible = false;
+        if (this._unselectAll)
+            this._unselectAll = false;
         list = list.sort((c1, c2) => {
 
             // if selected first and if the selection

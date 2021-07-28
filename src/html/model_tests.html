@@ -49,12 +49,11 @@
         <div id="tests"></div>
 
     </div>
-    <script src="lib/d3.min.js"></script>
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
         var config = useeio.urlConfig();
-        var modelID = config.get().model || 'USEEIOv1.2';
+        var modelID = config.get().model || 'USEEIOv2.0';
         document.getElementById("model-id").textContent = "Run tests with model: " + modelID;
 
         const model = useeio.model({

@@ -13,11 +13,10 @@ import {
 import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
 
-
-import { Config } from "../../widget";
+import { Config } from "../..";
 import { IOFlow, IOGrid } from "./iogrid";
 import * as strings from "../../util/strings";
-import { ifNone } from "../../util/util";
+import { ifNone } from "../../util";
 
 
 const Currency = new Intl.NumberFormat("en-US", {
@@ -72,9 +71,13 @@ export const FlowList = (props: {
             renderCell: (params) => {
                 const name = params.data.name;
                 const flow = params.data as IOFlow;
-                const title = Currency.format(flow.value)
-                    + " " + props.direction
-                    + " per " + Currency.format(1).split('.')[0];
+                const title =
+                  Currency.format(flow.value) +
+                  " " +
+                  props.direction +
+                  " per " +
+                  Currency.format(1).split(".")[0] +
+                  " spent";
                 return (
                     <div>
                         <Typography>{name}</Typography>
@@ -89,9 +92,10 @@ export const FlowList = (props: {
             width: 150,
             renderCell: (params) => {
                 const flow = params.data as IOFlow;
-                const title = Currency.format(flow.value)
-                    + " " + props.direction
-                    + " per " + Currency.format(1).split('.')[0];
+                let title =
+                  flow.share === 1 ? 100 : formatNumber(flow.share * 100);
+                  title+= " %";
+
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
@@ -197,3 +201,22 @@ export const FlowList = (props: {
         </Grid>
     );
 };
+
+/**
+* Increases the number of decimal digits until the number has the right number of digits
+*/
+function formatNumber(r: number) {
+    let value: string;
+    let decimal = 3; // 3 digits by default
+    if (r === 0.0)
+        return r.toFixed(decimal);
+
+    let n;
+    do {
+        value = r.toFixed(decimal);
+        n = parseFloat(value);
+        decimal++;
+    } while (n === 0.0);
+
+    return value;
+}

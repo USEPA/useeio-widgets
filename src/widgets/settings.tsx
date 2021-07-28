@@ -1,14 +1,14 @@
+import { createStyles, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
+import React, { ChangeEvent, FC } from "react";
+import ReactDOM from "react-dom";
+import { Config, Widget } from "../";
 import * as strings from "../util/strings";
-import { Widget, Config } from "../widget";
 import {
     DemandType,
     Model,
-    ResultPerspective,
+    ResultPerspective
 } from "../webapi";
 
-import { createStyles, makeStyles, Theme, Select, FormControl, MenuItem, InputLabel, Grid } from "@material-ui/core";
-import ReactDOM from "react-dom";
-import React, { ChangeEvent } from "react";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,23 +34,24 @@ export class SettingsWidget extends Widget {
     years: number[] = [];
     locations: string[] = [];
     config: Config;
+    model: Model;
     constructor(private settingsConfig: SettingsWidgetConfig) {
         super();
     }
 
     async init() {
         if (!this.settingsConfig || !this.settingsConfig.model) {
-            this.ready();
             return;
         }
 
         // start request
         const model = this.settingsConfig.model;
-        const sectors = model.sectors();
-        const demands = model.demands();
+        this.model = model;
+        const sectors = await model.sectors();
+        const demands = await model.demands();
 
         // get possible locations from sectors
-        (await sectors).forEach(sector => {
+        sectors.forEach(sector => {
             if (!sector.location) {
                 return;
             }
@@ -62,7 +63,7 @@ export class SettingsWidget extends Widget {
         this.locations.sort(strings.compare);
 
         // get demand types and years from demand infos
-        (await demands).forEach(d => {
+        demands.forEach(d => {
             if (d.type && this.demandTypes.indexOf(d.type) < 0) {
                 this.demandTypes.push(d.type);
             }
@@ -73,29 +74,49 @@ export class SettingsWidget extends Widget {
 
         this.demandTypes.sort(strings.compare);
         this.years.sort();
-
-        this.ready();
+        this.update(this.config);
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         this.config = config;
         ReactDOM.render(
             <SettingsComponent widget={this} />,
             document.querySelector(this.settingsConfig.selector)
         );
     }
-
-
 }
 
 const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
+    if (!widget.config.showsettings) {
+        return (<></>);
+    }
     return (
         <Grid container justify="center" >
+            <ModelVersion widget={widget} />
             <PerspectiveComponent widget={widget} />
             <AnalyseComponent widget={widget} />
             <YearComponent widget={widget} />
             <LocationComponent widget={widget} />
+            <ScaleFactorComponent widget={widget} />
         </Grid>
+    );
+};
+
+const ModelVersion: FC<{ widget: SettingsWidget }> = ({ widget }) => {
+    const classes = useStyles();
+
+    return (
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="modelLabel">Model version</InputLabel>
+            <Select
+                labelId="modelLabel"
+                id="modelSelect"
+                value={"modelId"}
+                label="Model version"
+            >
+                <MenuItem value={"modelId"}>{widget.model.getConf().model}</MenuItem>
+            </Select>
+        </FormControl>
     );
 };
 
@@ -161,10 +182,15 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             year: parseInt(e.target.value, 10)
         });
     };
-    let firstYear: number;
+    let maxYear: number;
+    if (!widget.years || widget.years.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.years.map((year) => {
-        if (!firstYear) {
-            firstYear = year;
+        if (!maxYear) {
+            maxYear = year;
+        } else if (year > maxYear) {
+            maxYear = year;
         }
         return <MenuItem key={year} value={year}>{year}</MenuItem>;
     });
@@ -174,7 +200,7 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             <Select
                 labelId="yearLabel"
                 id="yearId"
-                value={firstYear}
+                value={maxYear}
                 onChange={handleChange}
                 label="Year"
             >
@@ -193,6 +219,9 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
         widget.fireChange({ location: e.target.value as DemandType });
     };
     let firstLocation: string;
+    if (!widget.locations || widget.locations.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.locations.map((location) => {
         if (!firstLocation) {
             firstLocation = location;
@@ -215,4 +244,37 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
             </Select>
         </FormControl>
     );
+};
+
+const ScaleFactorComponent = ({ widget }: { widget: SettingsWidget }) => {
+
+    const classes = useStyles();
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        widget.fireChange({ scale_factor: parseInt(e.target.value) });
+    };
+
+    const values = [1, 1000, 1000000, 1000000000];
+
+    const menuItem = values.map(v => (
+        <MenuItem key={v} value={v}>{v}</MenuItem>
+    ));
+
+    return (
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="locationLabel">Scale factor</InputLabel>
+            <Select
+                labelId="scaleFactorLabel"
+                id="scaleFactorId"
+                value={widget.config.scale_factor ? widget.config.scale_factor : 1000000}
+                onChange={handleChange}
+                label="Scale factor"
+            >
+                {
+                    menuItem
+                }
+            </Select>
+        </FormControl>
+    );
+
 };

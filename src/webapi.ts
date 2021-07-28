@@ -374,13 +374,7 @@ export interface Result {
  * The currently supported matrices, see:
  * https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md
  */
-type MatrixName =
-    "A"
-    | "B"
-    | "C"
-    | "D"
-    | "L"
-    | "U";
+type MatrixName = "A" | "B" | "C" | "D" | "L" | "N";
 
 /**
  * Provides utility functions for working with matrix data.
@@ -483,6 +477,19 @@ export class Matrix {
         return m;
     }
 
+	/**
+	 * Scale the matrix withe given number `f`: `f * A`.
+	 */
+    public scaleMatrix (f: number) :Matrix {
+        const m = Matrix.zeros(this.rows, this.cols);
+         for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                m.set(row, col, this.get(row,col) * f);
+            }
+        }
+        return m;
+    }
+
     /**
      * Performs a matrix-vector-multiplication with the given `v`: `A * v`.
      */
@@ -543,6 +550,10 @@ export class Model {
         this._matrices = {};
         this._demands = {};
         this._totalResults = {};
+    }
+
+    getConf() {
+      return this._conf;
     }
 
     /**
@@ -676,7 +687,7 @@ export class Model {
      * on the calculation type this may needs quite some calculation time and
      * data.
      */
-    async calculate(setup: CalculationSetup): Promise<Result> {
+    async calculate(setup: CalculationSetup, scaleFactor = 1000000): Promise<Result> {
         if (!this._conf.asJsonFiles) {
             return this._api.post("/calculate", setup);
         }
@@ -700,7 +711,7 @@ export class Model {
         });
 
         // calculate the perspective result
-        const U = await this.matrix("U");
+        const N = await this.matrix("N");
         let data: number[][];
         let L: Matrix, s: number[];
         switch (setup.perspective) {
@@ -708,25 +719,25 @@ export class Model {
                 L = await this.matrix("L");
                 s = L.multiplyVector(demand);
                 const D = await this.matrix("D");
-                data = D.scaleColumns(s).data;
+                data = D.scaleColumns(s).scaleMatrix(scaleFactor).data;
                 break;
             case "intermediate":
                 L = await this.matrix("L");
                 s = L.multiplyVector(demand);
-                data = U.scaleColumns(s).data;
+                data = N.scaleColumns(s).scaleMatrix(scaleFactor).data;
                 break;
             case "final":
-                data = U.scaleColumns(demand).data;
+                data = N.scaleColumns(demand).scaleMatrix(scaleFactor).data;
                 break;
             default:
                 throw new Error(`unknown perspective ${setup.perspective}`);
         }
 
         return {
-            data,
-            indicators: indicators.map(indicator => indicator.code),
-            sectors: sectors.map(sector => sector.id),
-            totals: U.multiplyVector(demand),
+          data,
+          indicators: indicators.map((indicator) => indicator.code),
+          sectors: sectors.map((sector) => sector.id),
+          totals: N.multiplyVector(demand),
         };
     }
 

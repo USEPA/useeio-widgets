@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Sector, Model } from "../webapi";
-import { Config, Widget } from "../widget";
+import { Config, Widget } from "../";
 import * as colors from "../util/colors";
 import * as strings from "../util/strings";
 
@@ -13,10 +13,9 @@ export class SectorDelete extends Widget {
 
     constructor(private model: Model, private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         if (!this.sectors) {
             const agg = await this.model.singleRegionSectors();
             this.sectors = agg.sectors;
