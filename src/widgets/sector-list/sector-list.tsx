@@ -168,7 +168,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
             ? await model.matrix("D")
             : await model.matrix("N");
 
-        
+
 
         if (scaleFactor !== 1) {
             M = M.scaleMatrix(scaleFactor);
@@ -188,7 +188,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     const result = await model.calculate({
         perspective: config.perspective,
         demand: await model.demand(demand),
-    },scaleFactor);
+    }, scaleFactor);
     return HeatmapResult.from(model, result);
 }
 
@@ -369,82 +369,86 @@ const Component = (props: { widget: SectorList }) => {
 
 
     return (
-        <div style={{ marginTop: marginTop }}>
-            {
-                // display the matrix selector if we display a result
-                config.selectmatrix && props.widget.result ? (
-                    <MatrixCombo config={config} widget={props.widget} />
-                ) : (
-                    <></>
-                )
-            }
-            {
-                // display download links if this is configured
-                config.showdownload ? <DownloadSection widget={props.widget} /> : <></>
-            }
-            <ListHeader
-                onSearch={(term) => setSearchTerm(term)}
-            />
-            <table className="sector-list-table">
-                <thead>
-                    <tr className="indicator-row">
+        <>
+            {config.showabout && <AboutSection />}
+            <div style={{ marginTop: marginTop }}>
 
-                        <TableHeader code={"id"} label="ID" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
-                        <TableHeader code={"name"} label="Name" sorter={otherSorter} updateOtherSorter={updateOtherSorter} style={{ minWidth: 370, maxWidth: 370 }} />
-                        {
-                            // optional demand column
-                            config.showvalues
-                                ? (
-                                    <TableHeader code={"demand"} label="Demand [billions]" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
+                {
+                    // display the matrix selector if we display a result
+                    config.selectmatrix && props.widget.result ? (
+                        <MatrixCombo config={config} widget={props.widget} />
+                    ) : (
+                        <></>
+                    )
+                }
+                {
+                    // display download links if this is configured
+                    config.showdownload ? <DownloadSection widget={props.widget} /> : <></>
+                }
+                <ListHeader
+                    onSearch={(term) => setSearchTerm(term)}
+                />
+                <table className="sector-list-table">
+                    <thead>
+                        <tr className="indicator-row">
 
-                                )
-                                : <></>
-                        }
+                            <TableHeader code={"id"} label="ID" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
+                            <TableHeader code={"name"} label="Name" sorter={otherSorter} updateOtherSorter={updateOtherSorter} style={{ minWidth: 370, maxWidth: 370 }} />
+                            {
+                                // optional demand column
+                                config.showvalues
+                                    ? (
+                                        <TableHeader code={"demand"} label="Demand [billions]" sorter={otherSorter} updateOtherSorter={updateOtherSorter} />
 
-                        <ImpactHeader
-                            indicators={indicators}
-                            onClick={(i) => updateIndicatorSorter(i)}
-                            config={config}
-                            sorter={sorter}
-                        />
+                                    )
+                                    : <></>
+                            }
 
-                        {
-                            // SectorHeader displays the corresponding sector
-                            // names in the table header if sector inputs or
-                            // outputs should be displayed
-                        }
-                        <SectorHeader widget={props.widget} />
+                            <ImpactHeader
+                                indicators={indicators}
+                                onClick={(i) => updateIndicatorSorter(i)}
+                                config={config}
+                                sorter={sorter}
+                            />
 
-                        {
-                            // optional column with ranking values
-                            strings.isMember("ranking", config.view)
-                                ? (
-                                    <th>
-                                        <div>
-                                            <span>Ranking</span>
-                                        </div>
-                                    </th>
-                                )
-                                : <></>
-                        }
-                    </tr>
-                </thead>
-                <tbody className="sector-list-body">{rows}</tbody>
-            </table>
-            <TablePagination
-                style={{ position: "relative", float: "left" }}
-                component="div"
-                count={sectors.length}
-                page={config.page ? config.page - 1 : 0}
-                rowsPerPage={config.count ? config.count : 10}
-                rowsPerPageOptions={[{ label: "All", value: sectors.length }, 10, 20, 30, 40, 50, 100]}
-                onChangePage={onChangePage}
-                onChangeRowsPerPage={(p) => onChangeRow(p)}
-            />
-            {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues || (!config.scale_factor || config.scale_factor === 1000000))) &&
-                <GlobalExplanation config={config} />
-            }
-        </div>
+                            {
+                                // SectorHeader displays the corresponding sector
+                                // names in the table header if sector inputs or
+                                // outputs should be displayed
+                            }
+                            <SectorHeader widget={props.widget} />
+
+                            {
+                                // optional column with ranking values
+                                strings.isMember("ranking", config.view)
+                                    ? (
+                                        <th>
+                                            <div>
+                                                <span>Ranking</span>
+                                            </div>
+                                        </th>
+                                    )
+                                    : <></>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody className="sector-list-body">{rows}</tbody>
+                </table>
+                <TablePagination
+                    style={{ position: "relative", float: "left" }}
+                    component="div"
+                    count={sectors.length}
+                    page={config.page ? config.page - 1 : 0}
+                    rowsPerPage={config.count ? config.count : 10}
+                    rowsPerPageOptions={[{ label: "All", value: sectors.length }, 10, 20, 30, 40, 50, 100]}
+                    onChangePage={onChangePage}
+                    onChangeRowsPerPage={(p) => onChangeRow(p)}
+                />
+                {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues || (!config.scale_factor || config.scale_factor === 1000000))) &&
+                    <GlobalExplanation config={config} />
+                }
+            </div>
+        </>
     );
 };
 
@@ -754,5 +758,32 @@ const Row = (props: RowProps) => {
             <InputOutputCells sector={props.sector} widget={props.widget} />
             {rank ? rank : <></>}
         </tr>
+    );
+};
+
+const AboutSection = () => {
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20,
+            marginTop: 20
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16,
+            },
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>
+                    A text which is about the following widget.
+                </Typography>
+            </CardContent>
+        </Card>
     );
 };

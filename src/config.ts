@@ -1,3 +1,4 @@
+
 import { isNone } from "./util";
 import * as strings from "./util/strings";
 import { DemandType, ResultPerspective } from "./webapi";
