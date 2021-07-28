@@ -1,15 +1,15 @@
-import * as React from "react";
-
-import { Indicator, IndicatorGroup, Model } from "../../webapi";
-import { indicatorSorter, RowProps } from "./sector-list";
-import * as colors from "../../util/colors";
-import * as strings from "../../util/strings";
-import * as constants from "../../constants";
-import { isNotNone } from "../../util/util";
-import { Config } from "../../config";
+import { makeStyles } from "@material-ui/core/styles";
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import { makeStyles } from "@material-ui/core/styles";
+import * as React from "react";
+import { Config } from "../../config";
+import * as constants from "../../constants";
+import * as colors from "../../util/colors";
+import * as strings from "../../util/strings";
+import { isNotNone } from "../../util/util";
+import { Indicator, IndicatorGroup, Model } from "../../webapi";
+import { indicatorSorter, RowProps } from "./sector-list";
+
 
 const INDICATOR_GROUPS_POLICY = [
     IndicatorGroup.IMPACT_POTENTIAL,

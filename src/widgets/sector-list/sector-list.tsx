@@ -1,25 +1,25 @@
-import React, { useState } from "react";
-import * as ReactDOM from "react-dom";
-
-import { Config } from "../../config";
-import { Widget } from "../../widget";
-import { Indicator, Model, Sector, Matrix } from "../../webapi";
-import { HeatmapResult } from "../../calc/heatmap-result";
-import { MatrixCombo } from "../matrix-selector";
-import { ones } from "../../calc/calc";
-import * as naics from "../../naics";
-import * as strings from "../../util/strings";
-import * as paging from "../../util/paging";
-
-import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
-import { DownloadSection } from "./download";
-import { ListHeader } from "./list-header";
-import { SectorHeader, InputOutputCells } from "./iotable";
-import { isNone, isNoneOrEmpty } from "../../util/util";
-import { Card, CardContent, Grid, makeStyles, TablePagination, Typography } from "@material-ui/core";
+import { Card, CardContent, Grid, makeStyles, Paper, Tab, TablePagination, Tabs, Typography } from "@material-ui/core";
+import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import { CSSProperties } from "@material-ui/core/styles/withStyles";
+import React, { FC, useState } from "react";
+import * as ReactDOM from "react-dom";
+import { ones } from "../../calc/calc";
+import { HeatmapResult } from "../../calc/heatmap-result";
+import { Config } from "../../config";
+import * as naics from "../../naics";
+import * as paging from "../../util/paging";
+import * as strings from "../../util/strings";
+import { isNone, isNoneOrEmpty } from "../../util/util";
+import { Indicator, Matrix, Model, Sector } from "../../webapi";
+import { Widget } from "../../widget";
+import { MatrixCombo } from "../matrix-selector";
+import { DownloadSection } from "./download";
+import { ImpactHeader, ImpactResult, selectIndicators } from "./impacts";
+import { InputOutputCells, SectorHeader } from "./iotable";
+import { ListHeader } from "./list-header";
+
+
 const Currency = new Intl.NumberFormat("en-US", {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
@@ -161,13 +161,17 @@ export class SectorList extends Widget {
 }
 
 async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
+    const scaleFactor = config.scale_factor ? config.scale_factor : 1000000;
     // for plain matrices => wrap the matrix into a result
     if (!config.analysis) {
         let M = config.perspective === "direct"
             ? await model.matrix("D")
             : await model.matrix("N");
-        if(config.scale_factor){
-            M = M.scaleMatrix(config.scale_factor);
+
+        
+
+        if (scaleFactor !== 1) {
+            M = M.scaleMatrix(scaleFactor);
         }
         const indicators = await model.indicators();
         const sectors = await model.sectors();
@@ -184,7 +188,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     const result = await model.calculate({
         perspective: config.perspective,
         demand: await model.demand(demand),
-    });
+    },scaleFactor);
     return HeatmapResult.from(model, result);
 }
 
@@ -201,9 +205,6 @@ export type indicatorSorter = {
 const Component = (props: { widget: SectorList }) => {
 
     const config = props.widget.config;
-    if(!config.scale_factor){
-        props.widget.fireChange({...config, scale_factor:1000000});
-    }
     const indicators = props.widget.indicators;
     const result = props.widget.result;
     let indicatorsConfig = [];
@@ -311,7 +312,7 @@ const Component = (props: { widget: SectorList }) => {
         marginTop = 80;
     if (config.view && config.view.includes("mosaic") && !config.showvalues)
         marginTop = 100;
-        
+
 
     const onChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
         props.widget.fireChange({
@@ -374,8 +375,8 @@ const Component = (props: { widget: SectorList }) => {
                 config.selectmatrix && props.widget.result ? (
                     <MatrixCombo config={config} widget={props.widget} />
                 ) : (
-                        <></>
-                    )
+                    <></>
+                )
             }
             {
                 // display download links if this is configured
@@ -440,27 +441,84 @@ const Component = (props: { widget: SectorList }) => {
                 onChangePage={onChangePage}
                 onChangeRowsPerPage={(p) => onChangeRow(p)}
             />
-            {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues)) && (
-                <Grid container spacing={5} style={{ marginTop: 50 }}>
-            {config.indicators === undefined && (
-                <Grid item>
-                    <ExclusionOfIndicators />
-                 </Grid>
-            )}
-            {config.showvalues && (
-                <Grid item>
-                    <DemandExplanation />
-                </Grid>
-            )}
-            {config.scale_factor && (
-                <Grid item>
-                    <ScaleFactor />
-                </Grid>
-            )}
-            </Grid>
-            )}
+            {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues || (!config.scale_factor || config.scale_factor === 1000000))) &&
+                <GlobalExplanation config={config} />
+            }
         </div>
     );
+};
+
+/**
+ * Display a tab panel, that allows to navigate through different explanations about the following widget
+ */
+const GlobalExplanation: FC<{ config: Config }> = ({ config }) => {
+    const [value, setValue] = useState(0);
+    let nbItem = 0;
+    let exclusionIdx = -1;
+    let demandIdx = -1;
+    let scaleIdx = -1;
+    if (config.indicators === undefined) {
+        exclusionIdx = nbItem++;
+    }
+    if (config.showvalues) {
+        demandIdx = nbItem++;
+    }
+    if ((!config.scale_factor || config.scale_factor === 1000000)) {
+        scaleIdx = nbItem++;
+    }
+    return (
+        <Grid container style={{ paddingTop: 25 }}>
+            <Paper square>
+                <Tabs
+                    value={value}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    aria-label="disabled tabs example"
+                    onChange={(e, v) => {
+                        setValue(v);
+                    }}
+                >
+                    {exclusionIdx !== -1 &&
+                        <Tab label="Exclusion" />
+                    }
+                    {demandIdx !== -1 &&
+                        <Tab label="Demand" />
+                    }
+                    {scaleIdx !== -1 &&
+                        <Tab label="Scale" />
+                    }
+                </Tabs>
+            </Paper>
+            <Grid container spacing={5} style={{ marginTop: 10 }}>
+                <TabItem value={value} index={exclusionIdx}>
+                    <Grid item>
+                        <ExclusionOfIndicators />
+                    </Grid>
+                </TabItem>
+                <TabItem value={value} index={demandIdx}>
+                    <Grid item>
+                        <DemandExplanation />
+                    </Grid>
+                </TabItem>
+                <TabItem value={value} index={scaleIdx}>
+                    <Grid item>
+                        <ScaleFactor />
+                    </Grid>
+                </TabItem>
+            </Grid>
+        </Grid>
+    );
+};
+
+const TabItem: FC<{ index: number, value: number }> = ({ index, value, children }) => {
+    if (index === value)
+        return (
+            <>
+                {children}
+            </>
+        );
+    else
+        return <></>;
 };
 
 type TableHeaderProps = {
@@ -497,70 +555,70 @@ export const TableHeader = ({ code, label, sorter, updateOtherSorter, style = {}
 };
 
 const DemandExplanation = () => {
-  const useStyles = makeStyles({
-    root: {
-      minWidth: 275,
-      maxWidth: 600,
-      fontSize: 12,
-      marginBottom: 20,
-    },
-    content: {
-      "&:last-child": {
-        paddingBottom: 16,
-      },
-    },
-  });
-  const classes = useStyles();
-  return (
-    <Card className={classes.root}>
-      <CardContent className={classes.content}>
-        <Typography>
-          {" "}
-          For the demand column, there is 3 types of values:{" "}
-        </Typography>
-        <ul>
-          <li>
-            <b>---</b> : Commodities with no demand values. Other commodities
-            provide their demand.
-          </li>
-          <li>
-            <b>0.000</b> : Commodities with demand values less than 0.0005
-            billion.
-          </li>
-          <li>
-            <b>1.234</b> : Commodities with demand values in billions.
-          </li>
-        </ul>
-      </CardContent>
-    </Card>
-  );
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 600,
+            fontSize: 12,
+            marginBottom: 20,
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16,
+            },
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>
+                    {" "}
+                    For the demand column, there is 3 types of values:{" "}
+                </Typography>
+                <ul>
+                    <li>
+                        <b>---</b> : Commodities with no demand values. Other commodities
+                        provide their demand.
+                    </li>
+                    <li>
+                        <b>0.000</b> : Commodities with demand values less than 0.0005
+                        billion.
+                    </li>
+                    <li>
+                        <b>1.234</b> : Commodities with demand values in billions.
+                    </li>
+                </ul>
+            </CardContent>
+        </Card>
+    );
 };
 
 const ExclusionOfIndicators = () => {
-  const useStyles = makeStyles({
-    root: {
-      minWidth: 275,
-      maxWidth: 500,
-      fontSize: 12,
-      marginBottom: 20,
-    },
-    content: {
-      "&:last-child": {
-        paddingBottom: 16,
-      },
-    },
-  });
-  const classes = useStyles();
-  return (
-    <Card className={classes.root}>
-      <CardContent className={classes.content}>
-        <Typography>
-          The positive indicators JOBS and VADD are excluded from the combined
-          sort by default. This allows the most adverse overall impacts to appear first.
-        </Typography>
-      </CardContent>
-    </Card>
-  );
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20,
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16,
+            },
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>
+                    The positive indicators JOBS and VADD are excluded from the combined
+                    sort by default. This allows the most adverse overall impacts to appear first.
+                </Typography>
+            </CardContent>
+        </Card>
+    );
 };
 
 const ScaleFactor = () => {
@@ -582,7 +640,7 @@ const ScaleFactor = () => {
         <Card className={classes.root}>
             <CardContent className={classes.content}>
                 <Typography>
-                    By default, the results are compute per $1 spent. You can however change this scale, by setting an other scale factor, which will be multiplied with the result.
+                    The displayed result are computed per $1000000 spent. You can however change this scale, by setting an other scale factor, with the url parameter <code>scale_fator</code>
                 </Typography>
             </CardContent>
         </Card>

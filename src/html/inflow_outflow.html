@@ -11,15 +11,14 @@
     <style>
       .flex-container {
         display: flex;
+        /* margin-bottom: 25px; */
       }
 
       .start {
-        flex: 1;
-        justify-content: start;
+        display:flex;
       }
       .end {
         flex: 1;
-        justify-content: end;
       }
     </style>
   </head>
@@ -59,8 +58,8 @@
         model: model,
         selector: "#useeio-settings-widget",
       });
-      config.join(settings);
       config.join(dotsMenu);
+      config.join(settings);
       config.join(ioGrid);
     </script>
   </body>

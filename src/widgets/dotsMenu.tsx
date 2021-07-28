@@ -1,12 +1,12 @@
+import { Box, Button, Menu, MenuItem } from "@material-ui/core";
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import * as React from "react";
+import { FC, useState } from "react";
 import * as ReactDOM from "react-dom";
-
 import { Config } from "../config";
 import { Model } from "../webapi";
 import { Widget } from "../widget";
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-import { Box, Button, Menu, MenuItem } from "@material-ui/core";
-import { useEffect, useState } from "react";
+
 
 export class DotsMenu extends Widget {
 
@@ -27,11 +27,10 @@ export class DotsMenu extends Widget {
 }
 
 
-const Component = (props: { widget: DotsMenu }) => {
+const Component: FC<{ widget: DotsMenu }> = ({ widget }) => {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [showSettingFilter, setShowSettingFilter] = useState(!(props.widget.config.showsettings === false));
-    const [showAboutSection, setShowAboutSection] = useState(!(props.widget.config.showabout === false));
-
+    const showSettingFilter = !!widget.config.showsettings;
+    const showAboutSection = !!widget.config.showabout;
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -41,28 +40,16 @@ const Component = (props: { widget: DotsMenu }) => {
         setAnchorEl(null);
     };
 
-    useEffect(() => {
-        props.widget.fireChange({ showsettings: showSettingFilter });
-    }, [showSettingFilter]);
-
-
-
     const handleClickSetting = () => {
         handleClose();
-        setShowSettingFilter((prevState) => {
-            const newState = !prevState;
-            props.widget.fireChange({ showsettings: newState });
-            return newState;
-        });
+        if (widget.config.showsettings === undefined || widget.config.showsettings === showSettingFilter)
+            widget.fireChange({ showsettings: !showSettingFilter });
     };
 
     const handleClickAbout = () => {
         handleClose();
-        setShowAboutSection((prevState) => {
-            const newState = !prevState;
-            props.widget.fireChange({ showabout: newState });
-            return newState;
-        });
+        if (widget.config.showabout === undefined || widget.config.showabout === showAboutSection)
+            widget.fireChange({ showabout: !showAboutSection });
     };
 
     return (

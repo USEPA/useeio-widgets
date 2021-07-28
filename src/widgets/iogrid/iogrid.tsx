@@ -1,18 +1,18 @@
+import { Card, CardContent, Grid, makeStyles, Typography } from "@material-ui/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
-import { Card, CardContent, Grid, makeStyles, Typography } from "@material-ui/core";
-
-import { Indicator, Matrix, Model, Sector } from "../../webapi";
 import { Config, Widget } from "../../";
-import { isNotNone, isNone, TMap } from "../../util";
 import { zeros } from "../../calc";
-import * as strings from "../../util/strings";
 import * as naics from "../../naics";
-
+import { isNone, isNotNone, TMap } from "../../util";
+import * as strings from "../../util/strings";
+import { Indicator, Matrix, Model, Sector } from "../../webapi";
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
 import * as selection from "./selection";
+
+
+
 
 
 /**
@@ -57,7 +57,7 @@ export class IOGrid extends Widget {
         // inputs | commodities | outputs
         ReactDOM.render(
             <>
-                {config.showabout !== false && <AboutSection />}
+                {config.showabout && <AboutSection />}
 
                 <Grid container spacing={3}>
                     <Grid item style={{ width: "30%" }}>

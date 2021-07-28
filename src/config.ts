@@ -1,6 +1,6 @@
-import { DemandType, ResultPerspective } from "./webapi";
-import * as strings from "./util/strings";
 import { isNone } from "./util";
+import * as strings from "./util/strings";
+import { DemandType, ResultPerspective } from "./webapi";
 
 /**
  * A common configuration object of our widgets. Often our widgets take the same
@@ -127,12 +127,13 @@ export interface Config {
     /**
      * Indicates wheter the widget should displayed or not an about section that describe it.
      */
-     showabout?:boolean
+    showabout?:boolean
 
     /**
-     * By default, the matrices gives us the results per $1 spent. We can set the scale factor to an other value, to multiply the result by this scale factor, in order to change the scale
+     * By default, the matrices gives us the results per $1 spent. We can set the scale factor to an other value, to multiply the result by this scale factor, in order to change the scale.
+     * This is used in the Heatmap
      */
-    scale_factor?: number;
+    scalefactor?: number;
 }
 
 /**
@@ -173,6 +174,7 @@ export function parseConfig(s: string): Config {
             case "year":
             case "count":
             case "page":
+            case "scalefactor":
                 try {
                     config[key] = parseInt(val, 10);
                 } catch (_) { }

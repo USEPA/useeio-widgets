@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Industry list</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="widgets.css">
+    <style>
+        .flex-container {
+          display: flex;
+          /* margin-bottom: 25px; */
+        }
+  
+        .start {
+          display:flex;
+        }
+        .end {
+          flex: 1;
+        }
+      </style>
+</head>
+
+<body>
+    <div class="flex-container">
+        <div id="useeio-settings-widget" class="start"></div>
+        <div id="dotsMenu" class="end"></div></div>
+      </div>
+    <div class="io">
+        <div style="margin: 0 auto;">
+            <div class="matrix-title">Goods & Services</div><br><br>
+            <div class="sector-list">
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/useeio_widgets.js"></script>
+    <script>
+
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'USEEIOv2.0';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '#useeio-settings-widget',
+        });
+        var dotsMenu = useeio.dotsMenu({
+            model: model,
+            selector: "#dotsMenu",
+        });
+        var sectorList = useeio.sectorList({
+            model: model,
+            selector: '.sector-list',
+        });
+        config.withDefaults({
+            count: 10,
+        })
+        config.join(sectorList);
+        config.join(settings);
+        config.join(dotsMenu);
+
+    </script>
+</body>
+
+</html>

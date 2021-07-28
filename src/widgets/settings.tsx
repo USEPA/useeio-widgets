@@ -1,14 +1,14 @@
+import { createStyles, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
+import React, { ChangeEvent, FC } from "react";
+import ReactDOM from "react-dom";
+import { Config, Widget } from "../";
 import * as strings from "../util/strings";
-import { Widget, Config } from "../";
 import {
     DemandType,
     Model,
-    ResultPerspective,
+    ResultPerspective
 } from "../webapi";
 
-import { createStyles, makeStyles, Theme, Select, FormControl, MenuItem, InputLabel, Grid } from "@material-ui/core";
-import ReactDOM from "react-dom";
-import React, { ChangeEvent } from "react";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,6 +34,7 @@ export class SettingsWidget extends Widget {
     years: number[] = [];
     locations: string[] = [];
     config: Config;
+    model: Model;
     constructor(private settingsConfig: SettingsWidgetConfig) {
         super();
     }
@@ -45,6 +46,7 @@ export class SettingsWidget extends Widget {
 
         // start request
         const model = this.settingsConfig.model;
+        this.model = model;
         const sectors = await model.sectors();
         const demands = await model.demands();
 
@@ -85,17 +87,36 @@ export class SettingsWidget extends Widget {
 }
 
 const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
-    if(widget.config.showsettings === false){
+    if (!widget.config.showsettings) {
         return (<></>);
     }
     return (
         <Grid container justify="center" >
+            <ModelVersion widget={widget} />
             <PerspectiveComponent widget={widget} />
             <AnalyseComponent widget={widget} />
             <YearComponent widget={widget} />
             <LocationComponent widget={widget} />
             <ScaleFactorComponent widget={widget} />
         </Grid>
+    );
+};
+
+const ModelVersion: FC<{ widget: SettingsWidget }> = ({ widget }) => {
+    const classes = useStyles();
+
+    return (
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="modelLabel">Model version</InputLabel>
+            <Select
+                labelId="modelLabel"
+                id="modelSelect"
+                value={"modelId"}
+                label="Model version"
+            >
+                <MenuItem value={"modelId"}>{widget.model.getConf().model}</MenuItem>
+            </Select>
+        </FormControl>
     );
 };
 
