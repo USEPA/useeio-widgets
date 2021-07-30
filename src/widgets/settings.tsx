@@ -94,7 +94,7 @@ const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
         <Grid container justify="center" >
             <ModelVersion widget={widget} />
             <PerspectiveComponent widget={widget} />
-            <AnalyseComponent widget={widget} />
+            {/* <AnalyseComponent widget={widget} /> */}
             <YearComponent widget={widget} />
             <LocationComponent widget={widget} />
             <ScaleFactorComponent widget={widget} />
@@ -126,7 +126,7 @@ const PerspectiveComponent = ({ widget }: { widget: SettingsWidget }) => {
     const config = widget.config;
     const perspective: ResultPerspective = config.perspective
         ? config.perspective
-        : "direct";
+        : "final";
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         widget.fireChange({ perspective: e.target.value as ResultPerspective });
     };

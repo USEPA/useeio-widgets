@@ -578,7 +578,7 @@ const DemandExplanation = () => {
             <CardContent className={classes.content}>
                 <Typography>
                     {" "}
-                    For the demand column, there is 3 types of values:{" "}
+                    For the demand column, there are 3 types of values:{" "}
                 </Typography>
                 <ul>
                     <li>
