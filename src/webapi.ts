@@ -374,7 +374,7 @@ export interface Result {
  * The currently supported matrices, see:
  * https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md
  */
-type MatrixName = "A" | "B" | "C" | "D" | "L" | "N";
+type MatrixName = "A" | "B" | "C" | "D" | "L" | "N" | "U";
 
 /**
  * Provides utility functions for working with matrix data.
@@ -660,6 +660,19 @@ export class Model {
      * Returns the matrix with the given name from the model.
      */
     async matrix(name: MatrixName): Promise<Matrix> {
+        // In the USEEIO model version >= 2.0, the matrix U is replaced with the N matrix
+        // So we check the model version, to decide wether we use the N or the U matrix
+        if (name === "N") {
+          try {
+            const modelVersion = parseInt(this._conf.model.split("v")[1]);
+            if (isNaN(modelVersion)) throw new Error();
+            if (modelVersion < 2.0) name = "U";
+          } catch {
+            throw new Error(
+              "InvalidArgumentExcpetion - The model id is not properly formated"
+            );
+          }
+        }
         let m = this._matrices[name];
         if (m) {
             return m;
