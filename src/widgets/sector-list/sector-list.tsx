@@ -291,6 +291,22 @@ const Component = (props: { widget: SectorList }) => {
         ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1) * factor);
     }
 
+    // If there is no sort by indicator or by other sorting criteria, we sort by selected rows
+    if (sorter.indicators.length === 0 && otherSorter === null) {
+        const sectors = config.sectors;
+        if (sectors) {
+            ranking.sort(([s1], [s2]) => {
+                if (sectors.includes(s1.code) && !sectors.includes(s2.code)) {
+                    return -1;
+                } else if (!sectors.includes(s1.code) && sectors.includes(s2.code)) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+        }
+    }
+
     // select the page
     const count = config.count ? config.count : -1;
     const page = config.page ? config.page : 1;
@@ -644,7 +660,7 @@ const ScaleFactor = () => {
         <Card className={classes.root}>
             <CardContent className={classes.content}>
                 <Typography>
-                    The displayed result are computed per $1000000 spent. You can however change this scale, by setting an other scale factor, with the url parameter <code>scale_fator</code>
+                    The displayed result are computed per $1000000 spent. You can however change this scale, by setting an other scale factor, with the url parameter <code>scale_factor</code>
                 </Typography>
             </CardContent>
         </Card>

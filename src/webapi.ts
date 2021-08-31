@@ -664,12 +664,13 @@ export class Model {
         // So we check the model version, to decide wether we use the N or the U matrix
         if (name === "N") {
           try {
-            const modelVersion = parseInt(this._conf.model.split("v")[1]);
+            const pattern = /v(\d*\.?\d*)/i; // Pattern match the Model ID, that contains a v, followed by the version number (which can be a decimal number)
+            const modelVersion = parseFloat(this._conf.model.match(pattern)[1]);
             if (isNaN(modelVersion)) throw new Error();
             if (modelVersion < 2.0) name = "U";
           } catch {
             throw new Error(
-              "InvalidArgumentExcpetion - The model id is not properly formated"
+              "InvalidArgumentExcpetion - The model id is not properly formated. It should contains the character v followed by the version number"
             );
           }
         }

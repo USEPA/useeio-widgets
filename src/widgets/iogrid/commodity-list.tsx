@@ -1,35 +1,35 @@
-import React, { useEffect } from "react";
-
+import {
+  Checkbox,
+  Grid,
+  IconButton,
+  ListItemIcon,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Slider,
+  TextField,
+  Tooltip,
+  Typography
+} from "@material-ui/core";
 import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
-    Checkbox,
-    Grid,
-    IconButton,
-    ListItemIcon,
-    makeStyles,
-    Menu,
-    MenuItem,
-    Slider,
-    TextField,
-    Tooltip,
-    Typography,
-} from "@material-ui/core";
-
-import {
-    CheckBoxOutlineBlankOutlined,
-    CheckBoxOutlined,
-    Sort,
+  CheckBoxOutlineBlankOutlined,
+  CheckBoxOutlined,
+  Sort
 } from "@material-ui/icons";
-
-import { Indicator, Sector } from "../../webapi";
+import { CSSProperties } from "@material-ui/styles";
+import React, { useEffect } from "react";
 import { Config } from "../../";
-import { IOGrid } from "./iogrid";
-import { ifNone, isNoneOrEmpty, TMap } from "../../util";
+import { formatNumber, ifNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
+import { Indicator, Sector } from "../../webapi";
+import { Commodity, SortOptions } from "./commodity-model";
+import { IOGrid } from "./iogrid";
 import * as selection from "./selection";
 
-import { Commodity, SortOptions } from "./commodity-model";
-import { CSSProperties } from "@material-ui/styles";
+
+
+
 
 /**
  * Creates the list with the commodities for which the inputs and outputs
@@ -629,22 +629,3 @@ const CheckBox = (props: { checked: boolean }) =>
             ? <CheckBoxOutlined fontSize="small" color="secondary" />
             : <CheckBoxOutlineBlankOutlined fontSize="small" />}
     </ListItemIcon>;
-
-/**
-* Increases the number of decimal digits until the number has the right number of digits
-*/
-function formatNumber(r: number) {
-    let value: string;
-    let decimal = 3; // 3 digits by default
-    if (r === 0.0)
-        return r.toFixed(decimal);
-
-    let n;
-    do {
-        value = r.toFixed(decimal);
-        n = parseFloat(value);
-        decimal++;
-    } while (n === 0.0);
-
-    return value;
-}

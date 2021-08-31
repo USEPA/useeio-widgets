@@ -6,7 +6,7 @@ import { Config } from "../../config";
 import * as constants from "../../constants";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
-import { isNotNone } from "../../util/util";
+import { formatNumber, isNotNone } from "../../util/util";
 import { Indicator, IndicatorGroup, Model } from "../../webapi";
 import { indicatorSorter, RowProps } from "./sector-list";
 
@@ -248,26 +248,6 @@ function getIndicatorOrder(config: Config) {
 }
 
 /**
- * Increases the number of decimal digits until the number has the right number of digits
- */
-function formatDecimalNumber(r: number) {
-    let value: string;
-    let decimal = 3; // default digits number
-    if (r === 0.0)
-        return r.toFixed(0);
-
-    let n;
-    do {
-        value = r.toFixed(decimal);
-        n = parseFloat(value);
-        decimal++;
-    } while (n === 0.0);
-
-    return value;
-}
-
-
-/**
  * Add a suffix to the number if it is too big, like "k" for 1e3, "M" for 1e6, etc
  * The suffix come from the SI :
  * https://en.wikipedia.org/wiki/International_System_of_Units#Prefixes
@@ -279,11 +259,11 @@ function abbreviateNumberWithSI(number: number) {
     const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
 
     const tier = Math.log10(Math.abs(number)) / 3 | 0;
-    if (tier <= 0) return formatDecimalNumber(number);
+    if (tier <= 0) return formatNumber(number);
     const suffix = SI_SYMBOL[tier];
     const scale = Math.pow(10, tier * 3);
     const scaled = number / scale;
 
-    return formatDecimalNumber(scaled) + suffix;
+    return formatNumber(scaled) + suffix;
 }
 

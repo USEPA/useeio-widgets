@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-
-
 import {
     Grid,
     IconButton,
@@ -8,15 +5,18 @@ import {
     Menu,
     MenuItem,
     TextField,
-    Typography,
+    Typography
 } from "@material-ui/core";
 import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
-
+import React, { useEffect, useState } from "react";
 import { Config } from "../..";
-import { IOFlow, IOGrid } from "./iogrid";
+import { formatNumber, ifNone } from "../../util";
 import * as strings from "../../util/strings";
-import { ifNone } from "../../util";
+import { IOFlow, IOGrid } from "./iogrid";
+
+
+
 
 
 const Currency = new Intl.NumberFormat("en-US", {
@@ -201,22 +201,3 @@ export const FlowList = (props: {
         </Grid>
     );
 };
-
-/**
-* Increases the number of decimal digits until the number has the right number of digits
-*/
-function formatNumber(r: number) {
-    let value: string;
-    let decimal = 3; // 3 digits by default
-    if (r === 0.0)
-        return r.toFixed(decimal);
-
-    let n;
-    do {
-        value = r.toFixed(decimal);
-        n = parseFloat(value);
-        decimal++;
-    } while (n === 0.0);
-
-    return value;
-}

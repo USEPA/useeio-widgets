@@ -61,3 +61,15 @@ export function ifNan<T>(
     }
     return defaultValue;
 }
+
+/**
+* Increases the number of decimal digits until the number has the right number of digits
+*/
+export function formatNumber(x: number): string {
+    if (!x)
+        return "0.000";
+    if (x > 1)
+        return x.toFixed(3);
+    const digits = Math.max(3, Math.ceil(Math.log10(1/x)));
+    return x.toFixed(digits);
+}
