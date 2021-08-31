@@ -291,20 +291,19 @@ const Component = (props: { widget: SectorList }) => {
         ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1) * factor);
     }
 
-    // If there is no sort by indicator or by other sorting criteria, we sort by selected rows
-    if (sorter.indicators.length === 0 && otherSorter === null) {
-        const sectors = config.sectors;
-        if (sectors) {
-            ranking.sort(([s1], [s2]) => {
-                if (sectors.includes(s1.code) && !sectors.includes(s2.code)) {
-                    return -1;
-                } else if (!sectors.includes(s1.code) && sectors.includes(s2.code)) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
-        }
+    
+    const configSectors = config.sectors;
+    // Put selected rows on top
+    if (configSectors) {
+        ranking.sort(([s1], [s2]) => {
+            if (configSectors.includes(s1.code) && !configSectors.includes(s2.code)) {
+                return -1;
+            } else if (!configSectors.includes(s1.code) && configSectors.includes(s2.code)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     // select the page
