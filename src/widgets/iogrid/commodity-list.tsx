@@ -11,14 +11,13 @@ import {
   Tooltip,
   Typography
 } from "@material-ui/core";
-import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
   CheckBoxOutlineBlankOutlined,
   CheckBoxOutlined,
   Sort
 } from "@material-ui/icons";
-import { CSSProperties } from "@material-ui/styles";
-import React, { useEffect } from "react";
+import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
+import React, { CSSProperties, useEffect } from "react";
 import { Config } from "../../";
 import { formatNumber, ifNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
@@ -26,10 +25,6 @@ import { Indicator, Sector } from "../../webapi";
 import { Commodity, SortOptions } from "./commodity-model";
 import { IOGrid } from "./iogrid";
 import * as selection from "./selection";
-
-
-
-
 
 /**
  * Creates the list with the commodities for which the inputs and outputs
@@ -111,14 +106,15 @@ export const CommodityList = (props: {
     }
 
     // create the column definitions of the data grid.
-    const columns: ColDef[] = [
+    const columns: GridColDef[] = [
         {
             // the check box with click handler
             field: "selected",
+            headerName:"",
             width: 50,
             renderCell: (params) => {
-                const commodity = params.data as Commodity;
-                return <Checkbox
+                const commodity = params.row as Commodity;
+                return <Checkbox id={commodity.id}
                     checked={commodity.selected}
                     title={commodity.description}
                     onClick={() => {
@@ -135,11 +131,11 @@ export const CommodityList = (props: {
             // sector name
             field: "name",
             headerName: "Sector",
-            width: 450,
+            flex:1,
             cellClassName: "commodityGridCell",
             renderCell: (params) =>
                 <NameCell
-                    commodity={params.data as Commodity}
+                    commodity={params.row as Commodity}
                     sortOpts={sortOpts}
                     grid={grid}
                     selected={selected}
@@ -148,23 +144,23 @@ export const CommodityList = (props: {
         },
     ];
 
-    const onPageChange = (p: PageChangeParams) => {
-      if (!p) {
+    const onPageChange = (page: number,pageSize:number) => {
+      if (!page && !pageSize) {
         return;
       }
 
       // avoid unnecessary change events
-      const currentPage = config.page || 1;
+      const currentPage = config.page - 1 || 0;
       const currentSize = config.count || 10;
-      if (p.page === currentPage && p.pageSize === currentSize) {
+      if (page === currentPage && pageSize === currentSize) {
         return;
       }
       const sectors = selection.toConfig(config, props.sectors, selected);
-      if (p.pageSize !== currentSize) {
+      if (pageSize !== currentSize) {
         // jump back to page 1 when the page size changes
         const changes: any = {
           page: 1,
-          count: p.pageSize !== -1 ? p.pageSize : commodities.length,
+          count: pageSize !== -1 ? pageSize : commodities.length,
         };
         if (config.sectors != sectors) {
           changes.sectors = sectors;
@@ -173,8 +169,8 @@ export const CommodityList = (props: {
         return;
       }
       const changes = {
-        page: p.page,
-        count: p.pageSize !== -1 ? p.pageSize : commodities.length,
+        page: page +1,
+        count: pageSize !== -1 ? pageSize : commodities.length,
         sectors: sectors,
       };
       if (config.sectors != sectors) {
@@ -185,11 +181,11 @@ export const CommodityList = (props: {
 
     // makes the selected value of what commodity is clicked to true
     // when its slider is clicked
-    const onSliderClicked = (e: CellParams) => {
+    const onSliderClicked = (e: GridCellParams) => {
         if (e.field !== "value") {
             return;
         }
-        const commodity = e.data as Commodity;
+        const commodity = e.value as Commodity;
         if (commodity.selected) {
             return;
         }
@@ -242,11 +238,11 @@ export const CommodityList = (props: {
                                 // close the menu
                                 setMenuElem(null);
                                 setSortOpts(nextOpts);
-                                // reset the page to 1 if the sorting type changes
-                                if ((config.page && config.page > 1)
+                                // reset the page to 0 if the sorting type changes
+                                if ((config.page && config.page > 0)
                                     || indicatorChange) {
                                     grid.fireChange({
-                                        page: 1,
+                                        page: 0,
                                         indicators: nextCodes,
                                     });
                                 }
@@ -266,14 +262,15 @@ export const CommodityList = (props: {
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
-                    page={ifNone(config.page, 1)}
-                    onPageChange={onPageChange}
-                    onPageSizeChange={onPageChange}
+                    page={ifNone(config.page-1, 1)}
+                    onPageChange={(page) => onPageChange(page,config.count)}
+                    onPageSizeChange={(pageSize) =>onPageChange(config.page,pageSize)}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
-                    onCellClick={e => onSliderClicked(e)}
+                    onCellClick={(e: any) => onSliderClicked(e)}
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}
+                    // checkboxSelection
                 />
             </Grid>
         </Grid>
@@ -483,7 +480,7 @@ const NameCell = (props: {
     },
     share: {
       paddingTop: 7,
-      paddingLeft: 50,
+      paddingLeft: 35,
     },
     slider: {
       paddingLeft: 15,
@@ -581,7 +578,7 @@ const NameCell = (props: {
             {<Typography>{commodity.name}</Typography>}
           </Tooltip>
         </Grid>
-        <Grid container item xs={3} justify="flex-end">
+        <Grid container item xs={3} justifyContent="flex-end">
           <Grid item xs={6} className={classes.slider}>
             <Slider
               className={`${classes.col} ${classes.rightItem}`}

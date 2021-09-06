@@ -7,8 +7,8 @@ import {
     TextField,
     Typography
 } from "@material-ui/core";
-import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import React, { useEffect, useState } from "react";
 import { Config } from "../..";
 import { formatNumber, ifNone } from "../../util";
@@ -40,7 +40,7 @@ export const FlowList = (props: {
     // initialize states
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [menuElem, setMenuElem] = useState<null | HTMLElement>(null);
-    const [page, setPage] = useState<number>(1);
+    const [page, setPage] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
     const [sortBy, setSortBy] = useState<SortBy>("contribution");
 
@@ -48,7 +48,7 @@ export const FlowList = (props: {
     useEffect(() => {
         if (props.config.count !== undefined && props.config.count != pageSize) {
             setPageSize(props.config.count);
-            setPage(1);
+            setPage(0);
         }
     }, [props.config.count]);
 
@@ -63,14 +63,14 @@ export const FlowList = (props: {
         flows.sort((f1, f2) => strings.compare(f1.name, f2.name));
     }
 
-    const columns: ColDef[] = [
+    const columns: GridColDef[] = [
         {
             field: "name",
             headerName: "Sector",
-            width: 300,
+            flex:5/10,
             renderCell: (params) => {
-                const name = params.data.name;
-                const flow = params.data as IOFlow;
+                const flow = params.row as IOFlow;
+                const name = flow.name;
                 const title =
                   Currency.format(flow.value) +
                   " " +
@@ -89,9 +89,10 @@ export const FlowList = (props: {
         {
             // the bar
             field: "ranking",
-            width: 150,
+            align:"right",
+            flex:2/10,
             renderCell: (params) => {
-                const flow = params.data as IOFlow;
+                const flow = params.row as IOFlow;
                 let title =
                   flow.share === 1 ? 100 : formatNumber(flow.share * 100);
                   title+= " %";
@@ -114,16 +115,12 @@ export const FlowList = (props: {
         }
     ];
 
-    const onPageChange = (p: PageChangeParams) => {
-        if (!p) {
+    const onPageChange = (p: number) => {
+        if (p === page) {
             return;
         }
 
-        if (p.page === page) {
-            return;
-        }
-
-        setPage(p.page);
+        setPage(p);
     };
 
     return (
@@ -200,7 +197,7 @@ export const FlowList = (props: {
                     hideFooterRowCount
                     headerHeight={0}
                     onPageChange={onPageChange}
-                    rowsPerPageOptions={[]}
+                    rowsPerPageOptions={[pageSize]}
                 />
             </Grid>
         </Grid>

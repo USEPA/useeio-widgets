@@ -8,7 +8,7 @@
     position: relative;
 }
 .MuiCheckbox-root {
-    top: 0px;
+    /* top: 0px; */
     position: absolute !important;
 }
 .MuiDataGrid-root .MuiDataGrid-colCell, .MuiDataGrid-root .MuiDataGrid-cell {

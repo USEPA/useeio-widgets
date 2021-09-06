@@ -1,15 +1,15 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-
-import { Widget, Config } from "../../";
-import { Model, Matrix, Sector } from "../../webapi";
-import { ListHeader } from "./list-header";
-import * as strings from "../../util/strings";
-import * as paging from "../../util/paging";
 import { TablePagination } from "@material-ui/core";
+import * as React from "react";
 import { useEffect, useState } from "react";
+import * as ReactDOM from "react-dom";
+import { Config, Widget } from "../../";
 import { ifNone } from "../../util";
+import * as paging from "../../util/paging";
+import * as strings from "../../util/strings";
+import { Matrix, Model, Sector } from "../../webapi";
+import { ListHeader } from "./list-header";
 import { otherSorter, TableHeader } from "./sector-list";
+
 
 export class IOList extends Widget {
 
@@ -134,7 +134,7 @@ const Component = (props: {
     const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
     const [sorter, setSorter] = useState<otherSorter>(null);
 
-    const onChangePage = (_: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+    const onChangePage = (event:React.MouseEvent<HTMLButtonElement, MouseEvent>,page: number) => {
         setPage(page);
     };
 
@@ -238,7 +238,7 @@ const Component = (props: {
                 page={page}
                 rowsPerPage={pageSize}
                 rowsPerPageOptions={[]}
-                onChangePage={onChangePage}
+                onPageChange={onChangePage}
             />
         </>
     );

@@ -456,7 +456,7 @@ const Component = (props: { widget: SectorList }) => {
                     page={config.page ? config.page - 1 : 0}
                     rowsPerPage={config.count ? config.count : 10}
                     rowsPerPageOptions={[{ label: "All", value: sectors.length }, 10, 20, 30, 40, 50, 100]}
-                    onChangePage={onChangePage}
+                    onPageChange={onChangePage}
                     onChangeRowsPerPage={(p) => onChangeRow(p)}
                 />
                 {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues || (!config.scale_factor || config.scale_factor === 1000000))) &&
