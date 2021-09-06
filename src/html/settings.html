@@ -55,6 +55,9 @@
             model: model,
             selector: '.useeio-settings-widget',
         });
+        config.withDefaults({
+            showsettings: true
+        })
 
         // link the settings with a hash config
         config.join(settings);

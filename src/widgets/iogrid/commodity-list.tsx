@@ -563,7 +563,11 @@ const NameCell = (props: {
   const share = sortOpts.relativeIndicatorResult(commodity);
 
   const title: JSX.Element = <title>{share === 1?100:formatNumber(share  *  100)} %</title>;
-
+  let color = "#90a4ae";
+  if (share < 0.333)
+    color = "#f50057";
+  else if (share > 0.666)
+    color = "#428e55";
   const items = (
     <div>
       <Grid container direction="row">
@@ -606,7 +610,7 @@ const NameCell = (props: {
                   x="0"
                   y="2.5"
                   height="10"
-                  fill="#f50057"
+                  fill={color}
                   width={50 * (0.05 + 0.95 * share)}
                 />
               </svg>

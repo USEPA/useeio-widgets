@@ -95,13 +95,18 @@ export const FlowList = (props: {
                 let title =
                   flow.share === 1 ? 100 : formatNumber(flow.share * 100);
                   title+= " %";
+                let color = "#90a4ae";
+                if (flow.share < 0.333)
+                    color = "#f50057";
+                else if (flow.share > 0.666)
+                    color = "#428e55";
 
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
                         <title>{title}</title>
                         <rect x="0" y="2.5"
-                            height="10" fill="#f50057"
+                            height="10" fill={color}
                             width={50 * (0.05 + 0.95 * flow.share)} />
                     </svg>
                 );
