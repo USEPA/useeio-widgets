@@ -112,6 +112,8 @@ export const CommodityList = (props: {
             field: "selected",
             headerName:"",
             width: 50,
+            cellClassName: "commodityCheckbox",
+            
             renderCell: (params) => {
                 const commodity = params.row as Commodity;
                 return <Checkbox id={commodity.id}
@@ -239,10 +241,10 @@ export const CommodityList = (props: {
                                 setMenuElem(null);
                                 setSortOpts(nextOpts);
                                 // reset the page to 0 if the sorting type changes
-                                if ((config.page && config.page > 0)
+                                if ((config.page && config.page > 1)
                                     || indicatorChange) {
                                     grid.fireChange({
-                                        page: 0,
+                                        page: 1,
                                         indicators: nextCodes,
                                     });
                                 }
@@ -258,7 +260,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={32 + 20 * sortOpts.indicators.length}
+                    rowHeight={37 + 15* sortOpts.indicators.length}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -270,7 +272,6 @@ export const CommodityList = (props: {
                     headerHeight={0}
                     onCellClick={(e: any) => onSliderClicked(e)}
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}
-                    // checkboxSelection
                 />
             </Grid>
         </Grid>

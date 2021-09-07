@@ -61,11 +61,13 @@
             model: model,
             selector: '.impact-chart',
         });
-
+        config.withDefaults({
+            showsettings: true,
+        });
         config.join(settings);
         config.join(sectorDelete);
         config.join(impactChart);
-
+        
         config.updateIfAbsent({
             perspective: 'direct',
             analysis: 'Consumption',

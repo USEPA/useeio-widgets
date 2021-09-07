@@ -1,22 +1,25 @@
-.MuiDataGrid-cell.commodityGridCell{
-    display:block !important;
-    padding-left: 16px !important;
-    padding-right:0px !important;
+.MuiDataGrid-cell.commodityGridCell {
+  display: block !important;
+  padding-left: 16px !important;
+  padding-right: 0px !important;
 }
 
 .MuiDataGrid-root .MuiDataGrid-cellWithRenderer {
-    position: relative;
+  position: relative;
 }
-.MuiCheckbox-root {
-    /* top: 0px; */
-    position: absolute !important;
+.commodityCheckbox span {
+  display: flex;
+  align-self: flex-start;
+  top:-2px;
 }
-.MuiDataGrid-root .MuiDataGrid-colCell, .MuiDataGrid-root .MuiDataGrid-cell {
-    padding: 0px;
+
+.MuiDataGrid-root .MuiDataGrid-colCell,
+.MuiDataGrid-root .MuiDataGrid-cell {
+  padding: 0px;
 }
 .MuiButtonBase-root {
-    align-items: normal;
+  align-items: normal;
 }
 .MuiGrid-grid-xs-8 {
-    padding-top: 6px;
+  padding-top: 6px;
 }
