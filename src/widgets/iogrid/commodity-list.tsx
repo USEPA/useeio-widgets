@@ -264,7 +264,7 @@ export const CommodityList = (props: {
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
-                    page={ifNone(config.page-1, 1)}
+                    page={ifNone(config.page, 1)-1} // Page will be at least 0
                     onPageChange={(page) => onPageChange(page,config.count)}
                     onPageSizeChange={(pageSize) =>onPageChange(config.page,pageSize)}
                     hideFooterSelectedRowCount
