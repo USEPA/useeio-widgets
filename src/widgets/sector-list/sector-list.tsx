@@ -161,18 +161,12 @@ export class SectorList extends Widget {
 }
 
 async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
-    const scaleFactor = config.scale_factor ? config.scale_factor : 1000000;
     // for plain matrices => wrap the matrix into a result
     if (!config.analysis) {
-        let M = config.perspective === "direct"
+        const M = config.perspective === "direct"
             ? await model.matrix("D")
             : await model.matrix("N");
 
-
-
-        if (scaleFactor !== 1) {
-            M = M.scaleMatrix(scaleFactor);
-        }
         const indicators = await model.indicators();
         const sectors = await model.sectors();
         return HeatmapResult.from(model, {
@@ -188,7 +182,7 @@ async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
     const result = await model.calculate({
         perspective: config.perspective,
         demand: await model.demand(demand),
-    }, scaleFactor);
+    });
     return HeatmapResult.from(model, result);
 }
 
@@ -459,7 +453,7 @@ const Component = (props: { widget: SectorList }) => {
                     onPageChange={onChangePage}
                     onChangeRowsPerPage={(p) => onChangeRow(p)}
                 />
-                {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues || (!config.scale_factor || config.scale_factor === 1000000))) &&
+                {(config.view && config.view.includes("mosaic") && (config.indicators === undefined || config.showvalues)) &&
                     <GlobalExplanation config={config} />
                 }
             </div>
@@ -475,16 +469,13 @@ const GlobalExplanation: FC<{ config: Config }> = ({ config }) => {
     let nbItem = 0;
     let exclusionIdx = -1;
     let demandIdx = -1;
-    let scaleIdx = -1;
     if (config.indicators === undefined) {
         exclusionIdx = nbItem++;
     }
     if (config.showvalues) {
         demandIdx = nbItem++;
     }
-    if ((!config.scale_factor || config.scale_factor === 1000000)) {
-        scaleIdx = nbItem++;
-    }
+
     return (
         <Grid container style={{ paddingTop: 25 }}>
             <Paper square>
@@ -503,9 +494,6 @@ const GlobalExplanation: FC<{ config: Config }> = ({ config }) => {
                     {demandIdx !== -1 &&
                         <Tab label="Demand" />
                     }
-                    {scaleIdx !== -1 &&
-                        <Tab label="Scale" />
-                    }
                 </Tabs>
             </Paper>
             <Grid container spacing={5} style={{ marginTop: 10 }}>
@@ -517,11 +505,6 @@ const GlobalExplanation: FC<{ config: Config }> = ({ config }) => {
                 <TabItem value={value} index={demandIdx}>
                     <Grid item>
                         <DemandExplanation />
-                    </Grid>
-                </TabItem>
-                <TabItem value={value} index={scaleIdx}>
-                    <Grid item>
-                        <ScaleFactor />
                     </Grid>
                 </TabItem>
             </Grid>
@@ -634,32 +617,6 @@ const ExclusionOfIndicators = () => {
                 <Typography>
                     The positive indicators JOBS and VADD are excluded from the combined
                     sort by default. This allows the most adverse overall impacts to appear first.
-                </Typography>
-            </CardContent>
-        </Card>
-    );
-};
-
-const ScaleFactor = () => {
-    const useStyles = makeStyles({
-        root: {
-            minWidth: 275,
-            maxWidth: 500,
-            fontSize: 12,
-            marginBottom: 20,
-        },
-        content: {
-            "&:last-child": {
-                paddingBottom: 16,
-            },
-        },
-    });
-    const classes = useStyles();
-    return (
-        <Card className={classes.root}>
-            <CardContent className={classes.content}>
-                <Typography>
-                    The displayed result are computed per $1000000 spent. You can however change this scale, by setting an other scale factor, with the url parameter <code>scale_factor</code>
                 </Typography>
             </CardContent>
         </Card>
@@ -796,7 +753,7 @@ const AboutSection = () => {
         <Card className={classes.root}>
             <CardContent className={classes.content}>
                 <Typography>
-                    A text which is about the following widget.
+                    This widget displays the output for the different sectors and impact categories. The darker the color, the higher the output.
                 </Typography>
             </CardContent>
         </Card>

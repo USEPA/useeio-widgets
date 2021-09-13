@@ -130,11 +130,6 @@ export interface Config {
      */
     showabout?:boolean
 
-    /**
-     * By default, the matrices gives us the results per $1 spent. We can set the scale factor to an other value, to multiply the result by this scale factor, in order to change the scale.
-     * This is used in the Heatmap
-     */
-    scalefactor?: number;
 }
 
 /**

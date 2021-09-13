@@ -284,7 +284,7 @@ const AboutSection = () => {
         <Card className={classes.root}>
             <CardContent className={classes.content}>
                 <Typography>
-                    A text which is about the following widget.
+                    This widget displays the output for each selected impact categories. Thanks to the slider, you can change the amount of the selected commodity, and you see the overall impact of this commodity thanks to the grey bar. You also see the upstream and downstream commodities, which are linked to the selected commodities.
                 </Typography>
             </CardContent>
         </Card>

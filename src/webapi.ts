@@ -701,7 +701,7 @@ export class Model {
      * on the calculation type this may needs quite some calculation time and
      * data.
      */
-    async calculate(setup: CalculationSetup, scaleFactor = 1000000): Promise<Result> {
+    async calculate(setup: CalculationSetup): Promise<Result> {
         if (!this._conf.asJsonFiles) {
             return this._api.post("/calculate", setup);
         }
@@ -733,15 +733,15 @@ export class Model {
                 L = await this.matrix("L");
                 s = L.multiplyVector(demand);
                 const D = await this.matrix("D");
-                data = D.scaleColumns(s).scaleMatrix(scaleFactor).data;
+                data = D.scaleColumns(s).data;
                 break;
             case "intermediate":
                 L = await this.matrix("L");
                 s = L.multiplyVector(demand);
-                data = N.scaleColumns(s).scaleMatrix(scaleFactor).data;
+                data = N.scaleColumns(s).data;
                 break;
             case "final":
-                data = N.scaleColumns(demand).scaleMatrix(scaleFactor).data;
+                data = N.scaleColumns(demand).data;
                 break;
             default:
                 throw new Error(`unknown perspective ${setup.perspective}`);
