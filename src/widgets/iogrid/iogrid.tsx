@@ -59,22 +59,22 @@ export class IOGrid extends Widget {
             <>
                 {config.showabout && <AboutSection />}
 
-                <Grid container spacing={2}>
-                    <Grid item xs={12} md={4}  >
+                <Grid container spacing={2} justifyContent="center">
+                    <Grid item xs={12} md  >
                         <FlowList
                             config={config}
                             widget={this}
                             direction="input"
                         />
                     </Grid>
-                    <Grid item xs={12} md={4} >
+                    <Grid item xs={12} md={5} >
                         <CommodityList
                             config={config}
                             sectors={this.commoditySectors}
                             widget={this}
                         />
                     </Grid>
-                    <Grid item xs={12} md={4} >
+                    <Grid item xs={12} md >
                         <FlowList
                             config={config}
                             widget={this}
