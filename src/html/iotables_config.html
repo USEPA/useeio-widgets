@@ -59,43 +59,6 @@
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
-        var config = useeio.urlConfig();
-        var modelID = config.get().model || 'USEEIOv1.2';
-
-        var model = useeio.model({
-            endpoint: './api',
-            model: modelID,
-            asJsonFiles: true,
-        });
-
-        var settings = useeio.settingsWidget({
-            model: model,
-            selector: '.useeio-settings-widget',
-        });
-
-        var inputs = useeio.inputList({
-            model: model,
-            selector: '#inputs',
-        });
-
-        var sectorList = useeio.sectorList({
-            model: model,
-            selector: '#sector-list',
-        });
-
-        var outputs = useeio.outputList({
-            model: model,
-            selector: '#outputs',
-        })
-
-        config.withDefaults({
-            count: 10,
-        });
-        config.join(settings);
-        config.join(inputs);
-        config.join(sectorList);
-        config.join(outputs);
-
         var naics = '11,45,62,211,314,331,425,452,488,521,561,721,925,1122,'
             + '1151,2213,2389,3121,3161,3251,3272,3322,3333,3346,'
             + '3366,4234,4245,4422,4482,4541,4851,4872,4922,5174,'
@@ -128,6 +91,46 @@
 
         document.querySelector('#sector-list')
             .setAttribute('data-naics', naics);
+
+        var config = useeio.urlConfig();
+        var modelID = config.get().model || 'USEEIOv1.2';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '.useeio-settings-widget',
+        });
+
+        var inputs = useeio.inputList({
+            model: model,
+            selector: '#inputs',
+        });
+
+        var sectorList = useeio.sectorList({
+            model: model,
+            selector: '#sector-list',
+        });
+
+        var outputs = useeio.outputList({
+            model: model,
+            selector: '#outputs',
+        })
+
+        config.withDefaults({
+            count: 10,
+            showsettings: true
+        });
+        config.join(settings);
+        config.join(inputs);
+        config.join(sectorList);
+        config.join(outputs);
+
+       
 
         config.updateIfAbsent({
             perspective: 'direct',

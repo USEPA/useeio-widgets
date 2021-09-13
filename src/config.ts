@@ -1,6 +1,7 @@
-import { DemandType, ResultPerspective } from "./webapi";
-import * as strings from "./util/strings";
+
 import { isNone } from "./util";
+import * as strings from "./util/strings";
+import { DemandType, ResultPerspective } from "./webapi";
 
 /**
  * A common configuration object of our widgets. Often our widgets take the same
@@ -42,6 +43,19 @@ export interface Config {
      */
     view_indicators?: string[];
 
+    /**
+     * It allows to choose the order of the indicators. There is 2 different choices:
+     * policy: this is the default order, which is environmental protection focused. The order is the following : 
+     * Impact Potential, Resource Use, Chemical Releases, Waste Generated, Economic & Social
+     * planning: this is an economic development focused order, which is:
+     * Economic & Social, Resource Use, Impact Potential, Chemical Releases, Waste Generated
+     */
+    indicators_order?: string;
+
+    /**
+     * Indicate if we have to check all the sectors in the widget
+     */
+    all_sectors?: boolean;
     /**
      * The result perspective.
      */
@@ -105,6 +119,17 @@ export interface Config {
      * Indicates whether code examples should be displayed.
      */
     showcode?: boolean;
+
+    /**
+     * Indicates wheter the settings widget should be displayed or not.
+     */
+    showsettings?:boolean
+
+    /**
+     * Indicates wheter the widget should displayed or not an about section that describe it.
+     */
+    showabout?:boolean
+
 }
 
 /**
@@ -145,6 +170,7 @@ export function parseConfig(s: string): Config {
             case "year":
             case "count":
             case "page":
+            case "scalefactor":
                 try {
                     config[key] = parseInt(val, 10);
                 } catch (_) { }
@@ -156,6 +182,8 @@ export function parseConfig(s: string): Config {
             case "selectmatrix":
             case "showdownload":
             case "showscientific":
+            case "showsettings":
+            case "showabout":
                 config[key] = strings.eq(val, "true", "1", "yes");
                 break;
 

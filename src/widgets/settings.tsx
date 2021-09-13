@@ -1,14 +1,14 @@
+import { createStyles, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
+import React, { ChangeEvent, FC } from "react";
+import ReactDOM from "react-dom";
+import { Config, Widget } from "../";
 import * as strings from "../util/strings";
-import { Widget, Config } from "../";
 import {
     DemandType,
     Model,
-    ResultPerspective,
+    ResultPerspective
 } from "../webapi";
 
-import { createStyles, makeStyles, Theme, Select, FormControl, MenuItem, InputLabel, Grid } from "@material-ui/core";
-import ReactDOM from "react-dom";
-import React, { ChangeEvent } from "react";
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,6 +34,7 @@ export class SettingsWidget extends Widget {
     years: number[] = [];
     locations: string[] = [];
     config: Config;
+    model: Model;
     constructor(private settingsConfig: SettingsWidgetConfig) {
         super();
     }
@@ -45,11 +46,12 @@ export class SettingsWidget extends Widget {
 
         // start request
         const model = this.settingsConfig.model;
-        const sectors = model.sectors();
-        const demands = model.demands();
+        this.model = model;
+        const sectors = await model.sectors();
+        const demands = await model.demands();
 
         // get possible locations from sectors
-        (await sectors).forEach(sector => {
+        sectors.forEach(sector => {
             if (!sector.location) {
                 return;
             }
@@ -61,7 +63,7 @@ export class SettingsWidget extends Widget {
         this.locations.sort(strings.compare);
 
         // get demand types and years from demand infos
-        (await demands).forEach(d => {
+        demands.forEach(d => {
             if (d.type && this.demandTypes.indexOf(d.type) < 0) {
                 this.demandTypes.push(d.type);
             }
@@ -72,7 +74,7 @@ export class SettingsWidget extends Widget {
 
         this.demandTypes.sort(strings.compare);
         this.years.sort();
-
+        this.update(this.config);
     }
 
     async update(config: Config) {
@@ -85,13 +87,35 @@ export class SettingsWidget extends Widget {
 }
 
 const SettingsComponent = ({ widget }: { widget: SettingsWidget }) => {
+    if (!widget.config.showsettings) {
+        return (<></>);
+    }
     return (
         <Grid container justify="center" >
+            <ModelVersion widget={widget} />
             <PerspectiveComponent widget={widget} />
-            <AnalyseComponent widget={widget} />
+            {/* <AnalyseComponent widget={widget} /> */}
             <YearComponent widget={widget} />
             <LocationComponent widget={widget} />
         </Grid>
+    );
+};
+
+const ModelVersion: FC<{ widget: SettingsWidget }> = ({ widget }) => {
+    const classes = useStyles();
+
+    return (
+        <FormControl variant="outlined" className={classes.formControl}>
+            <InputLabel id="modelLabel">Model version</InputLabel>
+            <Select
+                labelId="modelLabel"
+                id="modelSelect"
+                value={"modelId"}
+                label="Model version"
+            >
+                <MenuItem value={"modelId"}>{widget.model.getConf().model}</MenuItem>
+            </Select>
+        </FormControl>
     );
 };
 
@@ -101,7 +125,7 @@ const PerspectiveComponent = ({ widget }: { widget: SettingsWidget }) => {
     const config = widget.config;
     const perspective: ResultPerspective = config.perspective
         ? config.perspective
-        : "direct";
+        : "final";
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         widget.fireChange({ perspective: e.target.value as ResultPerspective });
     };
@@ -157,10 +181,15 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             year: parseInt(e.target.value, 10)
         });
     };
-    let firstYear: number;
+    let maxYear: number;
+    if (!widget.years || widget.years.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.years.map((year) => {
-        if (!firstYear) {
-            firstYear = year;
+        if (!maxYear) {
+            maxYear = year;
+        } else if (year > maxYear) {
+            maxYear = year;
         }
         return <MenuItem key={year} value={year}>{year}</MenuItem>;
     });
@@ -170,7 +199,7 @@ const YearComponent = ({ widget }: { widget: SettingsWidget }) => {
             <Select
                 labelId="yearLabel"
                 id="yearId"
-                value={firstYear}
+                value={maxYear}
                 onChange={handleChange}
                 label="Year"
             >
@@ -189,6 +218,9 @@ const LocationComponent = ({ widget }: { widget: SettingsWidget }) => {
         widget.fireChange({ location: e.target.value as DemandType });
     };
     let firstLocation: string;
+    if (!widget.locations || widget.locations.length === 0) {
+        return <></>;
+    }
     const menuItem = widget.locations.map((location) => {
         if (!firstLocation) {
             firstLocation = location;

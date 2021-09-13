@@ -1,0 +1,25 @@
+.MuiDataGrid-cell.commodityGridCell {
+  display: block !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.MuiDataGrid-root .MuiDataGrid-cellWithRenderer {
+  position: relative;
+}
+.commodityCheckbox span {
+  display: flex;
+  align-self: flex-start;
+  top:-2px;
+}
+
+.MuiDataGrid-root .MuiDataGrid-colCell,
+.MuiDataGrid-root .MuiDataGrid-cell {
+  padding: 0px;
+}
+.MuiButtonBase-root {
+  align-items: normal;
+}
+.MuiGrid-grid-xs-8 {
+  padding-top: 6px;
+}

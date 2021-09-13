@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-
-
 import {
     Grid,
     IconButton,
@@ -8,15 +5,18 @@ import {
     Menu,
     MenuItem,
     TextField,
-    Typography,
+    Typography
 } from "@material-ui/core";
-import { ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
-
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React, { useEffect, useState } from "react";
 import { Config } from "../..";
-import { IOFlow, IOGrid } from "./iogrid";
+import { formatNumber, ifNone } from "../../util";
 import * as strings from "../../util/strings";
-import { ifNone } from "../../util";
+import { IOFlow, IOGrid } from "./iogrid";
+
+
+
 
 
 const Currency = new Intl.NumberFormat("en-US", {
@@ -40,7 +40,7 @@ export const FlowList = (props: {
     // initialize states
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [menuElem, setMenuElem] = useState<null | HTMLElement>(null);
-    const [page, setPage] = useState<number>(1);
+    const [page, setPage] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
     const [sortBy, setSortBy] = useState<SortBy>("contribution");
 
@@ -48,7 +48,7 @@ export const FlowList = (props: {
     useEffect(() => {
         if (props.config.count !== undefined && props.config.count != pageSize) {
             setPageSize(props.config.count);
-            setPage(1);
+            setPage(0);
         }
     }, [props.config.count]);
 
@@ -63,17 +63,21 @@ export const FlowList = (props: {
         flows.sort((f1, f2) => strings.compare(f1.name, f2.name));
     }
 
-    const columns: ColDef[] = [
+    const columns: GridColDef[] = [
         {
             field: "name",
             headerName: "Sector",
-            width: 300,
+            flex:5/10,
             renderCell: (params) => {
-                const name = params.data.name;
-                const flow = params.data as IOFlow;
-                const title = Currency.format(flow.value)
-                    + " " + props.direction
-                    + " per " + Currency.format(1).split('.')[0];
+                const flow = params.row as IOFlow;
+                const name = flow.name;
+                const title =
+                  Currency.format(flow.value) +
+                  " " +
+                  props.direction +
+                  " per " +
+                  Currency.format(1).split(".")[0] +
+                  " spent";
                 return (
                     <div>
                         <Typography>{name}</Typography>
@@ -85,18 +89,25 @@ export const FlowList = (props: {
         {
             // the bar
             field: "ranking",
-            width: 150,
+            align:"right",
+            flex:2/10,
             renderCell: (params) => {
-                const flow = params.data as IOFlow;
-                const title = Currency.format(flow.value)
-                    + " " + props.direction
-                    + " per " + Currency.format(1).split('.')[0];
+                const flow = params.row as IOFlow;
+                let title =
+                  flow.share === 1 ? 100 : formatNumber(flow.share * 100);
+                  title+= " %";
+                const color = "#90a4ae";
+                // if (flow.share < 0.333)
+                //     color = "#f50057";
+                // else if (flow.share > 0.666)
+                //     color = "#428e55";
+
                 return (
                     <svg height="15" width="50"
                         style={{ float: "left", clear: "both" }}>
                         <title>{title}</title>
                         <rect x="0" y="2.5"
-                            height="10" fill="#f50057"
+                            height="10" fill={color}
                             width={50 * (0.05 + 0.95 * flow.share)} />
                     </svg>
                 );
@@ -104,16 +115,12 @@ export const FlowList = (props: {
         }
     ];
 
-    const onPageChange = (p: PageChangeParams) => {
-        if (!p) {
+    const onPageChange = (p: number) => {
+        if (p === page) {
             return;
         }
 
-        if (p.page === page) {
-            return;
-        }
-
-        setPage(p.page);
+        setPage(p);
     };
 
     return (
@@ -136,7 +143,7 @@ export const FlowList = (props: {
                         aria-label="Sort by..."
                         aria-controls={`${props.direction}-flow-list`}
                         aria-haspopup="true"
-                        onClick={e => setMenuElem(e.currentTarget)}>
+                        onClick={(e) => setMenuElem(e.currentTarget)}>
                         <Sort />
                     </IconButton>
                     <Menu
@@ -190,7 +197,7 @@ export const FlowList = (props: {
                     hideFooterRowCount
                     headerHeight={0}
                     onPageChange={onPageChange}
-                    rowsPerPageOptions={[]}
+                    rowsPerPageOptions={[pageSize]}
                 />
             </Grid>
         </Grid>

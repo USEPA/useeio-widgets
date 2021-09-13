@@ -36,7 +36,7 @@ export function fromConfig(config: Config, sectors: Sector[]): TMap<number> {
 
     // if the naics attribute is set, we select all sectors that are not
     // disabled explicitly
-    if (config.naics && config.naics.length > 0) {
+    if (config.naics && config.naics.length > 0 || config.all_sectors) {
         for (const sector of sectors) {
             if (disabled.indexOf(sector.code) >= 0) {
                 continue;

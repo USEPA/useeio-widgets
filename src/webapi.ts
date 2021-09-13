@@ -374,13 +374,7 @@ export interface Result {
  * The currently supported matrices, see:
  * https://github.com/USEPA/USEEIO_API/blob/master/doc/data_format.md
  */
-type MatrixName =
-    "A"
-    | "B"
-    | "C"
-    | "D"
-    | "L"
-    | "U";
+type MatrixName = "A" | "B" | "C" | "D" | "L" | "N" | "U";
 
 /**
  * Provides utility functions for working with matrix data.
@@ -483,6 +477,19 @@ export class Matrix {
         return m;
     }
 
+	/**
+	 * Scale the matrix withe given number `f`: `f * A`.
+	 */
+    public scaleMatrix (f: number) :Matrix {
+        const m = Matrix.zeros(this.rows, this.cols);
+         for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                m.set(row, col, this.get(row,col) * f);
+            }
+        }
+        return m;
+    }
+
     /**
      * Performs a matrix-vector-multiplication with the given `v`: `A * v`.
      */
@@ -543,6 +550,10 @@ export class Model {
         this._matrices = {};
         this._demands = {};
         this._totalResults = {};
+    }
+
+    getConf() {
+      return this._conf;
     }
 
     /**
@@ -649,6 +660,20 @@ export class Model {
      * Returns the matrix with the given name from the model.
      */
     async matrix(name: MatrixName): Promise<Matrix> {
+        // In the USEEIO model version >= 2.0, the matrix U is replaced with the N matrix
+        // So we check the model version, to decide wether we use the N or the U matrix
+        if (name === "N") {
+          try {
+            const pattern = /v(\d*\.?\d*)/i; // Pattern match the Model ID, that contains a v, followed by the version number (which can be a decimal number)
+            const modelVersion = parseFloat(this._conf.model.match(pattern)[1]);
+            if (isNaN(modelVersion)) throw new Error();
+            if (modelVersion < 2.0) name = "U";
+          } catch {
+            throw new Error(
+              "InvalidArgumentExcpetion - The model id is not properly formated. It should contains the character v followed by the version number"
+            );
+          }
+        }
         let m = this._matrices[name];
         if (m) {
             return m;
@@ -700,7 +725,7 @@ export class Model {
         });
 
         // calculate the perspective result
-        const U = await this.matrix("U");
+        const N = await this.matrix("N");
         let data: number[][];
         let L: Matrix, s: number[];
         switch (setup.perspective) {
@@ -713,20 +738,20 @@ export class Model {
             case "intermediate":
                 L = await this.matrix("L");
                 s = L.multiplyVector(demand);
-                data = U.scaleColumns(s).data;
+                data = N.scaleColumns(s).data;
                 break;
             case "final":
-                data = U.scaleColumns(demand).data;
+                data = N.scaleColumns(demand).data;
                 break;
             default:
                 throw new Error(`unknown perspective ${setup.perspective}`);
         }
 
         return {
-            data,
-            indicators: indicators.map(indicator => indicator.code),
-            sectors: sectors.map(sector => sector.id),
-            totals: U.multiplyVector(demand),
+          data,
+          indicators: indicators.map((indicator) => indicator.code),
+          sectors: sectors.map((sector) => sector.id),
+          totals: N.multiplyVector(demand),
         };
     }
 

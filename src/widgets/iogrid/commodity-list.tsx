@@ -1,39 +1,30 @@
-import React, { useEffect } from "react";
-
-import { CellParams, ColDef, DataGrid, PageChangeParams } from "@material-ui/data-grid";
 import {
-    Checkbox,
-    Grid,
-    IconButton,
-    ListItemIcon,
-    Menu,
-    MenuItem,
-    Slider,
-    TextField,
-    Tooltip,
-    Typography,
+  Checkbox,
+  Grid,
+  IconButton,
+  ListItemIcon,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Slider,
+  TextField,
+  Tooltip,
+  Typography
 } from "@material-ui/core";
-
 import {
-    CheckBoxOutlineBlankOutlined,
-    CheckBoxOutlined,
-    Sort,
+  CheckBoxOutlineBlankOutlined,
+  CheckBoxOutlined,
+  Sort
 } from "@material-ui/icons";
-
-import { Indicator, Sector } from "../../webapi";
+import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
+import React, { CSSProperties, useEffect } from "react";
 import { Config } from "../../";
-import { IOGrid } from "./iogrid";
-import { ifNone, isNone, isNoneOrEmpty, TMap } from "../../util";
+import { formatNumber, ifNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
-import * as selection from "./selection";
-
+import { Indicator, Sector } from "../../webapi";
 import { Commodity, SortOptions } from "./commodity-model";
-import { CSSProperties } from "@material-ui/styles";
-
-const IndicatorValue = new Intl.NumberFormat("en-US", {
-    minimumFractionDigits: 3,
-    maximumFractionDigits: 3,
-});
+import { IOGrid } from "./iogrid";
+import * as selection from "./selection";
 
 /**
  * Creates the list with the commodities for which the inputs and outputs
@@ -93,20 +84,21 @@ export const CommodityList = (props: {
 
     commodities = sortOpts.apply(commodities);
 
-    // If no sectors are selected initially, we select the top 10 by default
-    if (isNone(config.sectors)) {
-        const DEFAULT_SELECTED_SECTORS_NUMBER = 10;
-        let i = 0;
-        for (const commodity of commodities) {
+        // If no sectors are selected initially, we select the top 10 by default
+        if (config.sectors === undefined) {
+          config.sectors = [];
+          const selectedSectorsNumber = config.count ? config.count : 10;
+          let i = 0;
+          for (const commodity of commodities) {
             commodity.selected = true;
             selected[commodity.code] = 100;
+            config.sectors.push(commodity.code);
             i++;
-            if (i >= DEFAULT_SELECTED_SECTORS_NUMBER) {
-                break;
+            if (i >= selectedSectorsNumber) {
+              break;
             }
+          }
         }
-        fireSelectionChange(selected);
-    }
 
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
@@ -114,14 +106,18 @@ export const CommodityList = (props: {
     }
 
     // create the column definitions of the data grid.
-    const columns: ColDef[] = [
+    const columns: GridColDef[] = [
         {
             // the check box with click handler
             field: "selected",
-            width: 50,
+            headerName:"",
+            width: 30,
+            cellClassName: "commodityCheckbox",
+            
             renderCell: (params) => {
-                const commodity = params.data as Commodity;
-                return <Checkbox
+                const commodity = params.row as Commodity;
+                return <Checkbox id={commodity.id}
+                style={{paddingLeft:0}}
                     checked={commodity.selected}
                     title={commodity.description}
                     onClick={() => {
@@ -138,105 +134,61 @@ export const CommodityList = (props: {
             // sector name
             field: "name",
             headerName: "Sector",
-            width: 300,
+            flex:1,
             cellClassName: "commodityGridCell",
             renderCell: (params) =>
                 <NameCell
-                    commodity={params.data as Commodity}
+                    commodity={params.row as Commodity}
                     sortOpts={sortOpts}
                     grid={grid}
+                    selected={selected}
+                    fireSelectionChange={fireSelectionChange}
                 />,
         },
-        {
-            // the slider for the scaling factor
-            field: "value",
-            headerName: " ",
-            width: 100,
-            renderCell: (params) => {
-                const commodity = params.data as Commodity;
-                return (
-                    <Slider
-                        value={commodity.value}
-                        disabled={!commodity.selected}
-                        onChange={(_, value) => {
-                            selected[commodity.code] = value as number;
-                            fireSelectionChange(selected);
-                        }}
-                        min={0}
-                        max={500}
-                        ValueLabelComponent={SliderTooltip} />
-                );
-            }
-        }
     ];
 
-    // add a result indicator when the list is sorted
-    // by indicator results
-    if (sortOpts.isByIndicators) {
-        columns.push({
-            field: "code",
-            width: 150,
-            renderCell: (params) => {
-                const c = params.data as Commodity;
-                const result = sortOpts.indicatorResult(c);
-                const share = sortOpts.relativeIndicatorResult(c);
+    const onPageChange = (page: number,pageSize:number) => {
+      if (!page && !pageSize) {
+        return;
+      }
 
-                let title: JSX.Element = null;
-                if (sortOpts.hasSingleIndicator) {
-                    title = <title>
-                        {IndicatorValue.format(result)} {
-                            sortOpts.indicatorUnit
-                        } per $1.000
-                        </title>;
-                }
-
-                return (
-                    <svg height="25" width="25">
-                        {title}
-                        <rect x="0" y="2.5"
-                            height="10" fill="#f50057"
-                            width={50 * (0.05 + 0.95 * share)} />
-                    </svg>
-                );
-            },
-        });
-    }
-
-    const onPageChange = (p: PageChangeParams) => {
-        if (!p) {
-            return;
+      // avoid unnecessary change events
+      const currentPage = config.page - 1 || 0;
+      const currentSize = config.count || 10;
+      if (page === currentPage && pageSize === currentSize) {
+        return;
+      }
+      const sectors = selection.toConfig(config, props.sectors, selected);
+      if (pageSize !== currentSize) {
+        // jump back to page 1 when the page size changes
+        const changes: any = {
+          page: 1,
+          count: pageSize !== -1 ? pageSize : commodities.length,
+        };
+        if (config.sectors != sectors) {
+          changes.sectors = sectors;
         }
-
-        // avoid unnecessary change events
-        const currentPage = config.page || 1;
-        const currentSize = config.count || 10;
-        if (p.page === currentPage
-            && p.pageSize === currentSize) {
-            return;
-        }
-
-        if (p.pageSize !== currentSize) {
-            // jump back to page 1 when the page size changes
-            grid.fireChange({
-                page: 1,
-                count: (p.pageSize !== -1) ? p.pageSize : commodities.length,
-            });
-            return;
-        }
-
-        grid.fireChange({
-            page: p.page,
-            count: (p.pageSize !== -1) ? p.pageSize : commodities.length
-        });
+        grid.fireChange(changes);
+        return;
+      }
+      const changes = {
+        page: page +1,
+        count: pageSize !== -1 ? pageSize : commodities.length,
+        sectors: sectors,
+      };
+      if (config.sectors != sectors) {
+        changes.sectors = sectors;
+      }
+      grid.fireChange(changes);
     };
 
     // makes the selected value of what commodity is clicked to true
     // when its slider is clicked
-    const onSliderClicked = (e: CellParams) => {
+    const onSliderClicked = (e: GridCellParams) => {
         if (e.field !== "value") {
             return;
         }
-        const commodity = e.data as Commodity;
+        const commodity = e.value as Commodity;
         if (commodity.selected) {
             return;
         }
@@ -271,6 +223,9 @@ export const CommodityList = (props: {
                         keepMounted
                         open={menuElem ? true : false}
                         onClose={() => setMenuElem(null)}
+                        style={{
+                            zIndex: 10002,
+                        }}
                         PaperProps={{
                             style: {
                                 maxHeight: "85vh",
@@ -286,7 +241,7 @@ export const CommodityList = (props: {
                                 // close the menu
                                 setMenuElem(null);
                                 setSortOpts(nextOpts);
-                                // reset the page to 1 if the sorting type changes
+                                // reset the page to 0 if the sorting type changes
                                 if ((config.page && config.page > 1)
                                     || indicatorChange) {
                                     grid.fireChange({
@@ -306,26 +261,22 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={25 + 27 * clamp(sortOpts.indicators.length, 0, 4)}
+                    rowHeight={37 + 15* sortOpts.indicators.length}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
-                    page={ifNone(config.page, 1)}
-                    onPageChange={onPageChange}
-                    onPageSizeChange={onPageChange}
+                    page={ifNone(config.page, 1)-1} // Page will be at least 0
+                    onPageChange={(page) => onPageChange(page,config.count)}
+                    onPageSizeChange={(pageSize) =>onPageChange(config.page,pageSize)}
                     hideFooterSelectedRowCount
                     hideFooterRowCount
                     headerHeight={0}
-                    onCellClick={e => onSliderClicked(e)}
+                    onCellClick={(e: any) => onSliderClicked(e)}
                     rowsPerPageOptions={[10, 20, 30, 50, 100]}
                 />
             </Grid>
         </Grid>
     );
-};
-
-const clamp = (n: number, min: number, max: number) => {
-    return Math.min(Math.max(n, min), max);
 };
 
 /**
@@ -363,7 +314,7 @@ const SortMenu = React.forwardRef((props: {
  // Choose all commodities
         items.push(
             <MenuItem
-                key="sort-all-selected"
+                key="choose-all-selected"
                 onClick={() => {
                     const selected: TMap<number> = {};
                     if (!opts.isAllSelected) {
@@ -383,9 +334,9 @@ const SortMenu = React.forwardRef((props: {
                 Choose All Commodities
             </MenuItem>
         );
-    // Choose all commodities
+
     items.push(
-         <MenuItem
+        <MenuItem
             key="sort-all-visible-selected"
             onClick={() => {
                 const selected: TMap<number> = {};
@@ -409,17 +360,30 @@ const SortMenu = React.forwardRef((props: {
                 props.fireSelectionChange(selected);
             }}>
             <CheckBox checked={opts.isAllVisibleSelected} />
-            Choose All Visible
-        </MenuItem>
+           Choose All Visible
+       </MenuItem>
     );
-    if (props.withSelection) {
+
+    // Choose visible commodities
+    items.push(
+        <MenuItem
+            key="choose-all-visible-selected"
+            onClick={() => {
+                props.onChange(opts.swapUnselectAll());
+                props.fireSelectionChange({});
+            }}>
+            <CheckBox checked={opts.isAllUnselected} />
+                Unselect All
+            </MenuItem>
+    );
+
         // check box to filter only selected commodities
         items.push(
             <MenuItem
                 key="filter-selected-only"
                 onClick={() => props.onChange(opts.swapSelectedOnly())}>
                 <CheckBox checked={opts.isSelectedOnly} />
-                Selected Only
+                Show Selected Only
             </MenuItem>
         );
 
@@ -429,15 +393,15 @@ const SortMenu = React.forwardRef((props: {
                 key="sort-selected-first"
                 onClick={() => props.onChange(opts.swapSelectedFirst())}>
                 <CheckBox checked={opts.isSelectedFirst} />
-                Selected First
+                Show Selected First
             </MenuItem>
         );
-    }
 
     // alphabetical sorting
     items.push(
         <MenuItem
             key="sort-alphabetically"
+            style={{ borderTop: "#e3e0e0 solid 1px" }}
             onClick={() => {
                 if (!opts.isAlphabetical) {
                     props.onChange(opts.setAlphabetical());
@@ -467,71 +431,200 @@ const SortMenu = React.forwardRef((props: {
     return <>{items}</>;
 });
 
+// Green color for JOBS and VADD, orange color for other indicators
+const getIndicatorColor = (indicator: Indicator) => {
+  return indicator.code != "JOBS" && indicator.code != "VADD"
+    ? "#ffb347"
+    : "#a9c4ac";
+};
 
-const NameCell = (props: { commodity: Commodity, sortOpts: SortOptions, grid: IOGrid }) => {
-    const { commodity, sortOpts } = props;
-    let subTitles: JSX.Element[] = [];
-    if (sortOpts.hasSingleIndicator) {
-        const result = sortOpts.indicatorResult(commodity);
-        subTitles.push(
-            <Typography color='textSecondary'>
-                {IndicatorValue.format(result)} {sortOpts.indicatorUnit}
-            </Typography>);
-    } else {
-        subTitles = sortOpts.indicators.slice(0, 4).map(indicator => {
-            const values = sortOpts.getCommodityValues(indicator, commodity);
-            const toolTip = indicator.simpleunit || indicator.unit;
-            const containerStyles: CSSProperties = {
-                height: 20,
-                width: '100%',
-                margin: 7,
-                display: 'block'
-            };
+// Format the result value with the appropriate unit, prefixed with the indicator name
+const formatResultLabel = (indicator: Indicator, result: number) => {
+  const indicatorName = indicator.name || indicator.simplename;
+  let label = indicatorName + ": ";
+  let formatedResult = formatNumber(result);
+  if (indicator.unit === "$") {
+    formatedResult = "$" + formatedResult;
+  } else {
+    formatedResult += " " + indicator.simpleunit || indicator.unit;
+  }
+  label += formatedResult;
+  if (indicator.code === "VADD") {
+    label += " per $1 spent";
+  }
+  return label;
+};
 
-            const fillerStyles: CSSProperties = {
-                height: '100%',
-                width: `${values.share * 100}%`,
-                backgroundColor: '#e0e0de',
-                textAlign: 'left',
-                paddingBottom: '22px'
-            };
+const NameCell = (props: {
+  commodity: Commodity;
+  sortOpts: SortOptions;
+  grid: IOGrid;
+  selected: TMap<number>;
+  fireSelectionChange: (selected: TMap<number>) => void;
+}) => {
+  const useStyles = makeStyles({
+    firstRow: {
+      display: "inline-block",
+    },
+    container: {
+      display: "flex",
+    },
+    row: {
+      display: "flex",
+      flexDirection: "row",
+    },
+    col: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    rightItem: {
+      marginLeft: "auto",
+      marginRight: 10
+    },
+    share: {
+      paddingTop: 7,
+      paddingLeft: 5,
+    },
+    slider: {
+      paddingLeft: 15,
+    },
+    subRow: {
+      fontSize: 14,
+      marginTop: -4,
+    },
+  });
+  const classes = useStyles();
 
-            return (
-                <div style={containerStyles}>
-                    <div style={fillerStyles}>
-                    <Tooltip
-                    enterTouchDelay={0}
-                    placement="top"
-                    title={toolTip.length > 32 ? toolTip : ""}>
-                            {<Typography color='textSecondary'>
-                                {IndicatorValue.format(values.result)} {toolTip}
-                    </Typography>}
-                </Tooltip>
-                    </div>
-                </div>
+  const { commodity, sortOpts } = props;
+  let subTitles: JSX.Element[] = [];
+  if (sortOpts.hasSingleIndicator) {
+    const result = sortOpts.indicatorResult(commodity);
+    subTitles.push(
+      <Typography
+        color="textSecondary"
+        key={sortOpts.indicators[0].id}
+        className={classes.subRow}
+      >
+        {formatResultLabel(sortOpts.indicators[0], result)}
+      </Typography>
+    );
+  } else {
+    subTitles = sortOpts.indicators.map((indicator, idx) => {
+      const values = sortOpts.getCommodityValues(indicator, commodity);
+      let toolTip = indicator.simpleunit || indicator.unit;
+      if (indicator.code === "VADD") {
+        toolTip += " " + "per $ spent";
+      }
+      const containerStyles: CSSProperties = {
+        height: 17,
+        width: "100%",
+        marginTop: 7,
+        marginBottom: 7,
+        display: "block",
+      };
+      const firstContainerStyles: CSSProperties = {
+        height: 17,
+        width: "100%",
+        marginBottom: 7,
+        marginTop: -4,
+        display: "block",
+      };
 
+      const fillerStyles: CSSProperties = {
+        height: "3px",
+        width: `${values.share * 100}%`,
+        backgroundColor: getIndicatorColor(indicator),
+        marginTop: -4,
+      };
 
-            );
-        });
-    }
+      return (
+        <div
+          style={idx == 0 ? firstContainerStyles : containerStyles}
+          key={indicator.id}
+          className={classes.row}
+        >
+          <Tooltip
+            enterTouchDelay={0}
+            placement="top"
+            title={toolTip.length > 32 ? toolTip : ""}
+          >
+            {
+              <Typography color="textSecondary" className={classes.subRow}>
+                {formatResultLabel(indicator, values.result)}
+              </Typography>
+            }
+          </Tooltip>
+          <div style={fillerStyles}></div>
+        </div>
+      );
+    });
+  }
 
-    const items = <div>
-        <Tooltip
+  const share = sortOpts.relativeIndicatorResult(commodity);
+
+  const title: JSX.Element = <title>{share === 1?100:formatNumber(share  *  100)} %</title>;
+  const color = "#90a4ae";
+  // if (share < 0.333)
+  //   color = "#f50057";
+  // else if (share > 0.666)
+  //   color = "#428e55";
+  const items = (
+    <div>
+      <Grid container direction="row">
+        <Grid item xs={6} sm={8} style={{ overflowX: "hidden" }}>
+          <Tooltip
+            className={classes.col}
             enterTouchDelay={0}
             placement="top"
             title={commodity.name.length > 35 ? commodity.name : ""}
-        >
+          >
             {<Typography>{commodity.name}</Typography>}
-        </Tooltip>
-        <div>
-            {subTitles.map(subtitle => (
-                subtitle
-            ))}
-        </div>
-    </div>;
+          </Tooltip>
+        </Grid>
+        <Grid container item xs={6} sm={4} justifyContent="flex-end">
+          <Grid item xs={5} sm={7} className={classes.slider}>
+            <Slider
+              className={`${classes.col} ${classes.rightItem}`}
+              value={commodity.value}
+              style={{ width: 70 }}
+              disabled={!commodity.selected}
+              onChange={(_, value) => {
+                const s = props.selected;
+                s[commodity.code] = value as number;
+                props.fireSelectionChange(s);
+              }}
+              min={0}
+              max={500}
+              ValueLabelComponent={SliderTooltip}
+            />
+          </Grid>
+          {sortOpts.isByIndicators && (
+            <Grid item xs={7} sm={5} className={classes.share}>
+              <svg
+                className={`${classes.col} ${classes.rightItem}`}
+                height="25"
+                width="50"
+              >
+                {title}
+                <rect
+                  x="0"
+                  y="2.5"
+                  height="10"
+                  fill={color}
+                  width={50 * (0.05 + 0.95 * share)}
+                />
+              </svg>
+            </Grid>
+          )}
+        </Grid>
+      </Grid>
 
-    return items;
-    };
+      {subTitles.map((subtitle) => subtitle)}
+    </div>
+  );
+
+  return items;
+};
 
 
 const CheckBox = (props: { checked: boolean }) =>

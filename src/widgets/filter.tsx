@@ -1,10 +1,10 @@
-import { render } from "react-dom";
 import {
     createStyles, List, ListItem, makeStyles, Theme
 } from "@material-ui/core";
-
-import { Widget, Config } from "../";
 import React from "react";
+import { render } from "react-dom";
+import { Config, Widget } from "../";
+
 
 export class FilterWidget extends Widget {
 
