@@ -525,7 +525,7 @@ const NameCell = (props: {
 
     const fillerStyles: CSSProperties = {
       height: "3px",
-      width: `${values.share * 100}%`,
+      width: `${(values.share *99) }%`,
       backgroundColor: getIndicatorColor(indicator),
       marginTop: -4,
     };
