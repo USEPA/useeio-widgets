@@ -96,11 +96,11 @@ export const FlowList = (props: {
                 let title =
                   flow.share === 1 ? 100 : formatNumber(flow.share * 100);
                   title+= " %";
-                let color = "#90a4ae";
-                if (flow.share < 0.333)
-                    color = "#f50057";
-                else if (flow.share > 0.666)
-                    color = "#428e55";
+                const color = "#90a4ae";
+                // if (flow.share < 0.333)
+                //     color = "#f50057";
+                // else if (flow.share > 0.666)
+                //     color = "#428e55";
 
                 return (
                     <svg height="15" width="50"
@@ -143,7 +143,7 @@ export const FlowList = (props: {
                         aria-label="Sort by..."
                         aria-controls={`${props.direction}-flow-list`}
                         aria-haspopup="true"
-                        onClick={e => setMenuElem(e.currentTarget)}>
+                        onClick={(e) => setMenuElem(e.currentTarget)}>
                         <Sort />
                     </IconButton>
                     <Menu

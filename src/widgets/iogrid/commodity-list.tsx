@@ -111,12 +111,13 @@ export const CommodityList = (props: {
             // the check box with click handler
             field: "selected",
             headerName:"",
-            width: 50,
+            width: 30,
             cellClassName: "commodityCheckbox",
             
             renderCell: (params) => {
                 const commodity = params.row as Commodity;
                 return <Checkbox id={commodity.id}
+                style={{paddingLeft:0}}
                     checked={commodity.selected}
                     title={commodity.description}
                     onClick={() => {
@@ -478,10 +479,11 @@ const NameCell = (props: {
     },
     rightItem: {
       marginLeft: "auto",
+      marginRight: 10
     },
     share: {
       paddingTop: 7,
-      paddingLeft: 35,
+      paddingLeft: 5,
     },
     slider: {
       paddingLeft: 15,
@@ -561,15 +563,15 @@ const NameCell = (props: {
   const share = sortOpts.relativeIndicatorResult(commodity);
 
   const title: JSX.Element = <title>{share === 1?100:formatNumber(share  *  100)} %</title>;
-  let color = "#90a4ae";
-  if (share < 0.333)
-    color = "#f50057";
-  else if (share > 0.666)
-    color = "#428e55";
+  const color = "#90a4ae";
+  // if (share < 0.333)
+  //   color = "#f50057";
+  // else if (share > 0.666)
+  //   color = "#428e55";
   const items = (
     <div>
       <Grid container direction="row">
-        <Grid item xs={8} style={{ overflowX: "hidden" }}>
+        <Grid item xs={6} sm={8} style={{ overflowX: "hidden" }}>
           <Tooltip
             className={classes.col}
             enterTouchDelay={0}
@@ -579,8 +581,8 @@ const NameCell = (props: {
             {<Typography>{commodity.name}</Typography>}
           </Tooltip>
         </Grid>
-        <Grid container item xs={3} justifyContent="flex-end">
-          <Grid item xs={6} className={classes.slider}>
+        <Grid container item xs={6} sm={4} justifyContent="flex-end">
+          <Grid item xs={5} sm={7} className={classes.slider}>
             <Slider
               className={`${classes.col} ${classes.rightItem}`}
               value={commodity.value}
@@ -597,7 +599,7 @@ const NameCell = (props: {
             />
           </Grid>
           {sortOpts.isByIndicators && (
-            <Grid item xs={6} className={classes.share}>
+            <Grid item xs={7} sm={5} className={classes.share}>
               <svg
                 className={`${classes.col} ${classes.rightItem}`}
                 height="25"
