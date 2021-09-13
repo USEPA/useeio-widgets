@@ -196,6 +196,12 @@ export const CommodityList = (props: {
         selected[commodity.code] = commodity.value as number;
         fireSelectionChange(selected);
     };
+    let rowHeight = 40;
+    if (sortOpts.indicators.length == 1)
+      rowHeight = 53;
+    if(sortOpts.indicators.length >1)
+      rowHeight =40+ 20*sortOpts.indicators.length;
+      
     return (
         <Grid container direction="column" spacing={2}>
             <Grid item>
@@ -261,7 +267,7 @@ export const CommodityList = (props: {
             </Grid>
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
-                    rowHeight={37 + 15* sortOpts.indicators.length}
+                    rowHeight={rowHeight}
                     columns={columns}
                     rows={commodities}
                     pageSize={ifNone(config.count, 10)}
@@ -476,6 +482,8 @@ const NameCell = (props: {
     col: {
       display: "flex",
       flexDirection: "column",
+      margin: 0,
+      marginTop: 6
     },
     rightItem: {
       marginLeft: "auto",
@@ -484,9 +492,6 @@ const NameCell = (props: {
     share: {
       paddingTop: 7,
       paddingLeft: 5,
-    },
-    slider: {
-      paddingLeft: 15,
     },
     subRow: {
       fontSize: 14,
@@ -497,18 +502,18 @@ const NameCell = (props: {
 
   const { commodity, sortOpts } = props;
   let subTitles: JSX.Element[] = [];
-  if (sortOpts.hasSingleIndicator) {
-    const result = sortOpts.indicatorResult(commodity);
-    subTitles.push(
-      <Typography
-        color="textSecondary"
-        key={sortOpts.indicators[0].id}
-        className={classes.subRow}
-      >
-        {formatResultLabel(sortOpts.indicators[0], result)}
-      </Typography>
-    );
-  } else {
+  // if (sortOpts.hasSingleIndicator) {
+  //   const result = sortOpts.indicatorResult(commodity);
+  //   subTitles.push(
+  //     <Typography
+  //       color="textSecondary"
+  //       key={sortOpts.indicators[0].id}
+  //       className={classes.subRow}
+  //     >
+  //       {formatResultLabel(sortOpts.indicators[0], result)}
+  //     </Typography>
+  //   );
+  // } else {
     subTitles = sortOpts.indicators.map((indicator, idx) => {
       const values = sortOpts.getCommodityValues(indicator, commodity);
       let toolTip = indicator.simpleunit || indicator.unit;
@@ -526,7 +531,7 @@ const NameCell = (props: {
         height: 17,
         width: "100%",
         marginBottom: 7,
-        marginTop: -4,
+        marginTop: -13,
         display: "block",
       };
 
@@ -558,7 +563,7 @@ const NameCell = (props: {
         </div>
       );
     });
-  }
+  
 
   const share = sortOpts.relativeIndicatorResult(commodity);
 
@@ -582,7 +587,7 @@ const NameCell = (props: {
           </Tooltip>
         </Grid>
         <Grid container item xs={6} sm={4} justifyContent="flex-end">
-          <Grid item xs={5} sm={7} className={classes.slider}>
+          <Grid item xs={5} sm={7} >
             <Slider
               className={`${classes.col} ${classes.rightItem}`}
               value={commodity.value}
