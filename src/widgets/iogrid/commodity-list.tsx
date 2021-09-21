@@ -86,18 +86,19 @@ export const CommodityList = (props: {
 
         // If no sectors are selected initially, we select the top 10 by default
         if (config.sectors === undefined) {
-          config.sectors = [];
+          const sectors = [];
           const selectedSectorsNumber = config.count ? config.count : 10;
           let i = 0;
           for (const commodity of commodities) {
             commodity.selected = true;
             selected[commodity.code] = 100;
-            config.sectors.push(commodity.code);
+            sectors.push(commodity.code);
             i++;
             if (i >= selectedSectorsNumber) {
               break;
             }
           }
+          config.sectors = sectors; // Update config with the 10 first sectors
         }
 
     if (strings.isNotEmpty(searchTerm)) {

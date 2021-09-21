@@ -33,6 +33,10 @@
             model: model,
             selector: '#iogrid',
         });
+        config.withDefaults({
+            count: 10,
+            page:1
+        })
         config.join(ioGrid);
 
     </script>
