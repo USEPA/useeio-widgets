@@ -43,6 +43,7 @@ export const FlowList = (props: {
     const [page, setPage] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
     const [sortBy, setSortBy] = useState<SortBy>("contribution");
+    const [flowRows, setFlowRows] = useState<IOFlow[]>([]);
 
     // Update the pagination settings on config count changes
     useEffect(() => {
@@ -52,32 +53,38 @@ export const FlowList = (props: {
         }
     }, [props.config.count]);
 
-    // prepare the flow list
-    let flows: IOFlow[] = props.widget.rank(
-        props.config, props.direction);
-    if (strings.isNotEmpty(searchTerm)) {
-        flows = flows.filter(
-            f => strings.search(f.name, searchTerm) !== -1);
-    }
-    if (sortBy === "alphabetical") {
-        flows.sort((f1, f2) => strings.compare(f1.name, f2.name));
-    }
+    useEffect(() => {
+        // prepare the flow list
+        let flows: IOFlow[] = props.widget.rank(
+            props.config, props.direction);
+        if (strings.isNotEmpty(searchTerm)) {
+            flows = flows.filter(
+                f => strings.search(f.name, searchTerm) !== -1);
+        }
+        if (sortBy === "alphabetical") {
+            flows.sort((f1, f2) => strings.compare(f1.name, f2.name));
+        }
+        setFlowRows(flows);
+        console.log("change");
+    }, [props.config.sectors]);
+
+
 
     const columns: GridColDef[] = [
         {
             field: "name",
             headerName: "Sector",
-            flex:5/10,
+            flex: 5 / 10,
             renderCell: (params) => {
                 const flow = params.row as IOFlow;
                 const name = flow.name;
                 const title =
-                  Currency.format(flow.value) +
-                  " " +
-                  props.direction +
-                  " per " +
-                  Currency.format(1).split(".")[0] +
-                  " spent";
+                    Currency.format(flow.value) +
+                    " " +
+                    props.direction +
+                    " per " +
+                    Currency.format(1).split(".")[0] +
+                    " spent";
                 return (
                     <div>
                         <Typography>{name}</Typography>
@@ -89,13 +96,13 @@ export const FlowList = (props: {
         {
             // the bar
             field: "ranking",
-            align:"right",
-            flex:2/10,
+            align: "right",
+            flex: 2 / 10,
             renderCell: (params) => {
                 const flow = params.row as IOFlow;
                 let title =
-                  flow.share === 1 ? 100 : formatNumber(flow.share * 100);
-                  title+= " %";
+                    flow.share === 1 ? 100 : formatNumber(flow.share * 100);
+                title += " %";
                 const color = "#90a4ae";
                 // if (flow.share < 0.333)
                 //     color = "#f50057";
@@ -190,7 +197,7 @@ export const FlowList = (props: {
             <Grid item style={{ width: "100%", height: 600 }}>
                 <DataGrid
                     columns={columns}
-                    rows={flows}
+                    rows={flowRows}
                     pageSize={pageSize}
                     page={page}
                     hideFooterSelectedRowCount
