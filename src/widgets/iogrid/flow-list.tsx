@@ -65,7 +65,6 @@ export const FlowList = (props: {
             flows.sort((f1, f2) => strings.compare(f1.name, f2.name));
         }
         setFlowRows(flows);
-        console.log("change");
     }, [props.config.sectors]);
 
 
@@ -74,7 +73,7 @@ export const FlowList = (props: {
         {
             field: "name",
             headerName: "Sector",
-            flex: 5 / 10,
+            flex: 7 / 10,
             renderCell: (params) => {
                 const flow = params.row as IOFlow;
                 const name = flow.name;
@@ -97,7 +96,7 @@ export const FlowList = (props: {
             // the bar
             field: "ranking",
             align: "right",
-            flex: 2 / 10,
+            // flex: 2 / 10,
             renderCell: (params) => {
                 const flow = params.row as IOFlow;
                 let title =
