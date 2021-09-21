@@ -1,6 +1,6 @@
+import { Config } from "../../config";
 import { isNone, isNotNone, TMap } from "../../util/util";
 import { Sector } from "../../webapi";
-import { Config } from "../../widget";
 
 /**
  * Get the selected sectors for the IO grid in a map of `sector-code : share`
@@ -36,7 +36,7 @@ export function fromConfig(config: Config, sectors: Sector[]): TMap<number> {
 
     // if the naics attribute is set, we select all sectors that are not
     // disabled explicitly
-    if (config.naics && config.naics.length > 0) {
+    if (config.naics && config.naics.length > 0 || config.all_sectors) {
         for (const sector of sectors) {
             if (disabled.indexOf(sector.code) >= 0) {
                 continue;
@@ -58,11 +58,12 @@ export function toConfig(
         return Object.keys(selected)
             .map(code => [code, selected[code]])
             .filter(([_, share]) => isNotNone(share))
-            .map(([code, share]) => `${code}:${share}`);
+            // Don't display default share (100)
+            .map(([code, share]) => `${code}${share != 100 ? `:${share}` : ``}`);
     }
     return sectors.map(s => [s.code, selected[s.code]])
         .filter(([_, share]) => share !== 100)
         .map(([code, share]) => isNone(share)
             ? `${code}:disabled`
-            : `${code}:${share}`);
+            : `${code}${share != 100 ? `:${share}` : ``}`);
 }

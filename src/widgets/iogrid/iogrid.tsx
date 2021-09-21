@@ -1,18 +1,19 @@
+import { Card, CardContent, Grid, makeStyles, Typography } from "@material-ui/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
-import { Grid } from "@material-ui/core";
-
-import { Indicator, Matrix, Model, Sector } from "../../webapi";
-import { Config, Widget } from "../../widget";
-import { isNotNone, isNone, TMap } from "../../util/util";
-import { zeros } from "../../calc/calc";
-import * as strings from "../../util/strings";
+import { Config, Widget } from "../../";
+import { zeros } from "../../calc";
 import * as naics from "../../naics";
-import * as selection from "./selection";
-
+import { isNone, isNotNone, TMap } from "../../util";
+import * as strings from "../../util/strings";
+import { Indicator, Matrix, Model, Sector } from "../../webapi";
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
+import * as selection from "./selection";
+
+
+
+
 
 /**
  * The row type of the input or output list.
@@ -42,10 +43,9 @@ export class IOGrid extends Widget {
         private model: Model,
         private selector: string) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         if (!this.techMatrix) {
             await this.initialize();
         }
@@ -56,26 +56,33 @@ export class IOGrid extends Widget {
         // render the three columns:
         // inputs | commodities | outputs
         ReactDOM.render(
-            <Grid container spacing={3}>
-                <Grid item style={{ width: "30%" }}>
-                    <FlowList
-                        config={config}
-                        widget={this}
-                        direction="input" />
+            <>
+                {config.showabout && <AboutSection />}
+
+                <Grid container spacing={2} justifyContent="center">
+                    <Grid item xs={12} md  >
+                        <FlowList
+                            config={config}
+                            widget={this}
+                            direction="input"
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={5} >
+                        <CommodityList
+                            config={config}
+                            sectors={this.commoditySectors}
+                            widget={this}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md >
+                        <FlowList
+                            config={config}
+                            widget={this}
+                            direction="output"
+                        />
+                    </Grid>
                 </Grid>
-                <Grid item style={{ width: "40%" }}>
-                    <CommodityList
-                        config={config}
-                        sectors={this.commoditySectors}
-                        widget={this} />
-                </Grid>
-                <Grid item style={{ width: "30%" }}>
-                    <FlowList
-                        config={config}
-                        widget={this}
-                        direction="output" />
-                </Grid>
-            </Grid>,
+            </>,
             document.querySelector(this.selector)
         );
     }
@@ -255,3 +262,31 @@ export class IOGrid extends Widget {
     }
 
 }
+
+
+const AboutSection = () => {
+    const useStyles = makeStyles({
+        root: {
+            minWidth: 275,
+            maxWidth: 500,
+            fontSize: 12,
+            marginBottom: 20,
+            marginTop: 20
+        },
+        content: {
+            "&:last-child": {
+                paddingBottom: 16,
+            },
+        },
+    });
+    const classes = useStyles();
+    return (
+        <Card className={classes.root}>
+            <CardContent className={classes.content}>
+                <Typography>
+                    This widget displays the output for each selected impact categories. Thanks to the slider, you can change the amount of the selected commodity, and you see the overall impact of this commodity thanks to the grey bar. You also see the upstream and downstream commodities, which are linked to the selected commodities.
+                </Typography>
+            </CardContent>
+        </Card>
+    );
+};

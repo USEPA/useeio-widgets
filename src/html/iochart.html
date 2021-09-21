@@ -3,22 +3,23 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Industry list</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="widgets.css">
+    <title>IO Grid</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" type="text/css" href="iochart.css">
+
 </head>
 
 <body>
-    <div class="io">
-        <div style="margin: 0 auto;">
-            <div class="matrix-title">Goods & Services</div><br><br>
-            <div class="sector-list">
-            </div>
-        </div>
+    <div style="margin: auto;">
+        <div id="iogrid"></div>
     </div>
 
     <script src="lib/useeio_widgets.js"></script>
     <script>
+
+        var hiddenhash = {
+            indicators: "VADD"
+        };
 
         var config = useeio.urlConfig();
         var modelID = config.get().model || 'USEEIOv1.2';
@@ -28,15 +29,15 @@
             model: modelID,
             asJsonFiles: true,
         });
-
-        var sectorList = useeio.sectorList({
+        var ioGrid = useeio.ioGrid({
             model: model,
-            selector: '.sector-list',
+            selector: '#iogrid',
         });
         config.withDefaults({
             count: 10,
+            page:1
         })
-        config.join(sectorList);
+        config.join(ioGrid);
 
     </script>
 </body>

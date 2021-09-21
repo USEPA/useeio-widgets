@@ -35,11 +35,6 @@ const config = {
                 { from: 'src/**/*.html', to: buildDir, flatten: true },
                 { from: 'src/**/*.css', to: buildDir, flatten: true },
                 {
-                    from: 'node_modules/d3/dist/d3.min.js',
-                    to: buildDir + '/lib/d3.min.js',
-                    toType: 'file',
-                },
-                {
                     from: 'node_modules/apexcharts/dist/apexcharts.min.js',
                     to: buildDir + '/lib/apexcharts.min.js', 
                     toType: 'file'
@@ -68,7 +63,6 @@ const config = {
     ],
 
     externals: {
-        "d3": "d3",
         "apexcharts": "apexcharts",
         /*
         "react": "React",

@@ -1,8 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../widget";
+import { Config } from "../config";
 import { Model } from "../webapi";
+import { Widget } from "../widget";
 
 export class Paginator extends Widget {
 
@@ -10,11 +11,10 @@ export class Paginator extends Widget {
 
     constructor(private model: Model, private selector: string) {
         super();
-        this.ready();
-        this.handleUpdate({});
+        this.update({});
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
 
         // calculate the number of pages
         const total = await this.totalCount();
