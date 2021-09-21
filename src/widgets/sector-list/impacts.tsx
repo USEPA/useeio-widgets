@@ -1,18 +1,30 @@
+import { makeStyles } from "@material-ui/core/styles";
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import * as React from "react";
-
-import { Indicator, IndicatorGroup, Model } from "../../webapi";
-import { RowProps } from "./sector-list";
-import { Config } from "../../widget";
+import { Config } from "../../config";
+import * as constants from "../../constants";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
-import * as conf from "../../config";
+import { formatNumber, isNotNone } from "../../util/util";
+import { Indicator, IndicatorGroup, Model } from "../../webapi";
+import { indicatorSorter, RowProps } from "./sector-list";
 
-const INDICATOR_GROUPS = [
+
+const INDICATOR_GROUPS_POLICY = [
     IndicatorGroup.IMPACT_POTENTIAL,
     IndicatorGroup.RESOURCE_USE,
     IndicatorGroup.CHEMICAL_RELEASES,
     IndicatorGroup.WASTE_GENERATED,
     IndicatorGroup.ECONOMIC_SOCIAL,
+];
+
+const INDICATOR_GROUPS_PLANNING = [
+    IndicatorGroup.ECONOMIC_SOCIAL,
+    IndicatorGroup.RESOURCE_USE,
+    IndicatorGroup.IMPACT_POTENTIAL,
+    IndicatorGroup.CHEMICAL_RELEASES,
+    IndicatorGroup.WASTE_GENERATED,
 ];
 
 /**
@@ -23,24 +35,21 @@ const INDICATOR_GROUPS = [
 export async function selectIndicators(
     config: Config, model: Model): Promise<Indicator[]> {
 
-    if (!strings.isMember("mosaic", config.view)) {
-        return [];
-    }
     const all = await model.indicators();
     if (!all || all.length === 0) {
         return [];
     }
 
     // filter indicators by configuration codes
-    let codes = config.indicators;
+    let codes = config.view_indicators;
     if (!codes || codes.length === 0) {
-        codes = conf.DEFAULT_INDICATORS;
+        codes = constants.DEFAULT_INDICATORS;
     }
     const indicators = all.filter(i => codes.indexOf(i.code) >= 0);
     if (indicators.length <= 1) {
         return indicators;
     }
-
+    const INDICATOR_GROUPS: IndicatorGroup[] = getIndicatorOrder(config);
     // sort indicators by groups and names
     indicators.sort((i1, i2) => {
         if (i1.group === i2.group) {
@@ -59,11 +68,13 @@ export async function selectIndicators(
  */
 export const ImpactHeader = (props: {
     indicators: Indicator[],
-    onClick: (i: Indicator) => void
+    onClick: (i: Indicator) => void,
+    config: Config,
+    sorter: indicatorSorter
 }) => {
 
     // no indicators
-    if (!props.indicators || props.indicators.length === 0) {
+    if (!strings.isMember("mosaic", props.config.view) || !props.indicators || props.indicators.length === 0) {
         return <></>;
     }
 
@@ -86,7 +97,7 @@ export const ImpactHeader = (props: {
         // group header
         if (indicator.group !== g) {
             g = indicator.group;
-            const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
+            const gkey = g ? `group-${getIndicatorOrder(props.config).indexOf(g)}` : "null";
             items.push(
                 <th key={gkey} className="indicator">
                     <div className="indicator-group-parent">
@@ -97,13 +108,34 @@ export const ImpactHeader = (props: {
                 </th>
             );
         }
-
+        const useStyles = makeStyles({
+            arrow: {
+                width: "0.6em",
+                position: "relative",
+                float: "left"
+            },
+            indicatorSorted: {
+                position: "relative",
+                bottom: 3,
+                left: 5
+            }
+        });
+        const classes = useStyles();
         // indicator header
         const key = `<indicator-${indicator.code}`;
+        let arrow = <></>;
+        const sorted = props.sorter && props.sorter.indicators.includes(indicator);
+        if (sorted) {
+            if (props.sorter.state === "desc")
+                arrow = <ArrowDownwardIcon className={classes.arrow} />;
+            else
+                arrow = <ArrowUpwardIcon className={classes.arrow} />;
+        }
         items.push(
             <th key={key} className="indicator">
+                {arrow}
                 <div>
-                    <a onClick={() => props.onClick(indicator)}>
+                    <a onClick={() => props.onClick(indicator)} className={sorted ? classes.indicatorSorted : ""}>
                         {indicator.name} ({indicator.code})
                     </a>
                 </div>
@@ -124,7 +156,7 @@ export const ImpactResult = (props: RowProps) => {
     const config = props.widget.config;
     const indicators = props.widget.indicators;
     const result = props.widget.result;
-    if (!indicators || indicators.length === 0 || !result) {
+    if (!strings.isMember("mosaic", config.view) || !indicators || indicators.length === 0 || !result) {
         return <></>;
     }
 
@@ -134,11 +166,16 @@ export const ImpactResult = (props: RowProps) => {
         const color = colors.forIndicatorGroup(ind.group);
         const r = result.getResult(ind, props.sector);
         const share = result.getShare(ind, props.sector);
+        let formatedResult = config.showscientific ? r.toExponential(2) : r.toFixed(3);
+        if (ind.unit === "$")
+            formatedResult = ind.unit + formatedResult;
+        else
+            formatedResult + ind.unit;
         return (
             <td key={ind.id}>
                 <div>
                     <span style={{ float: "left" }}>
-                        {`${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`}
+                        {formatedResult}
                     </span>
                     <svg height="15" width="210"
                         style={{ float: "left", clear: "both" }}>
@@ -157,25 +194,76 @@ export const ImpactResult = (props: RowProps) => {
     for (const ind of indicators) {
         if (ind.group !== g) {
             // add an empty grey cell for the group
-            const gkey = g ? `group-${INDICATOR_GROUPS.indexOf(g)}` : "null";
+            const gkey = g ? `group-${getIndicatorOrder(config).indexOf(g)}` : "null";
             g = ind.group;
             items.push(<td key={gkey} className="noborder" />);
         }
         const r = result.getResult(ind, props.sector);
         const share = result.getShare(ind, props.sector);
-        let alpha = 0.1 + 0.9 * share;
-        if (props.sortIndicator && props.sortIndicator !== ind) {
-            alpha *= 0.25;
-        }
+        const alpha = 0.1 + 1.2 * Math.sqrt(Math.abs(share));
+        // Extra transparency on non sorted columns
+        // if (props.sortIndicator && props.sortIndicator !== ind) {
+        //     alpha *= 0.25;
+        // }
         const color = colors.forIndicatorGroup(ind.group, alpha);
-        const value = `${config.showscientific ? r.toExponential(2) : r.toFixed(3)} ${ind.unit}`;
+        let value = config.showscientific ? r.toExponential(2) : abbreviateNumberWithSI(r);
+        if (ind.unit === "$")
+            value = ind.unit + value;
+        else
+            value = value + " " + ind.unit;
+        let isIndicatorSelected = "";
+        // We box the sorted column
+        if (isNotNone(props.sortIndicator) && props.sortIndicator.includes(ind)) {
+            isIndicatorSelected = "sector-list-table_sorted-cell-side";
+            if (props.index === 0) {
+                isIndicatorSelected += " sector-list-table_sorted-cell-top";
+            } else if (props.index === config.count - 1) {
+                isIndicatorSelected += " sector-list-table_sorted-cell-bottom";
+            }
+        }
         items.push(
-            <td className="indicator-value" key={ind.id}
+            <td
+                className={`indicator-value ${isIndicatorSelected}`}
+                key={ind.id}
                 title={value}
-                style={{ backgroundColor: color }}>
+                style={{ backgroundColor: color }}
+            >
                 {config.showvalues ? value : ""}
             </td>
         );
     }
     return <>{items}</>;
 };
+
+/**
+ * Get the right indicators order, according to the config
+ */
+function getIndicatorOrder(config: Config) {
+    switch (config.indicators_order) {
+        case "planning":
+            return INDICATOR_GROUPS_PLANNING;
+        default: // "policy"
+            return INDICATOR_GROUPS_POLICY;
+    }
+}
+
+/**
+ * Add a suffix to the number if it is too big, like "k" for 1e3, "M" for 1e6, etc
+ * The suffix come from the SI :
+ * https://en.wikipedia.org/wiki/International_System_of_Units#Prefixes
+ * 
+ * @param number The number to abbreviate
+ * @returns The abbreviated number, followed by the appropriate suffix
+ */
+function abbreviateNumberWithSI(number: number) {
+    const SI_SYMBOL = ["", "k", "M", "G", "T", "P", "E"];
+
+    const tier = Math.log10(Math.abs(number)) / 3 | 0;
+    if (tier <= 0) return formatNumber(number);
+    const suffix = SI_SYMBOL[tier];
+    const scale = Math.pow(10, tier * 3);
+    const scaled = number / scale;
+
+    return formatNumber(scaled) + suffix;
+}
+

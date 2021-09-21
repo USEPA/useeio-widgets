@@ -1,8 +1,7 @@
 import * as apex from "apexcharts";
+import { Config, Widget } from "../";
 import { Model, Sector, Indicator } from "./../webapi";
-import { Widget, Config } from "../widget";
-import { SectorAnalysis } from "../calc/sector-analysis";
-import { max, zeros } from "../calc/calc";
+import { max, SectorAnalysis, zeros } from "../calc";
 
 export interface ProfileChartConfig {
     model: Model;
@@ -13,10 +12,9 @@ export class ProfileChart extends Widget {
 
     constructor(private _chartConfig: ProfileChartConfig) {
         super();
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         const options = await this.calculate(config);
         const chart = new ApexCharts(
             document.querySelector(this._chartConfig.selector),

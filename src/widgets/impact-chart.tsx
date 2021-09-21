@@ -1,10 +1,14 @@
-import * as d3 from "d3";
-import { Config, Widget } from "../widget";
+import React, { useState } from "react";
+import * as ReactDOM from "react-dom";
+import { createStyles, makeStyles, Theme, withStyles, Tooltip } from "@material-ui/core";
+
+import { Widget } from "../widget";
 import { Indicator, Sector, Model, DemandInfo } from "../webapi";
 import * as colors from "../util/colors";
-import * as conf from "../config";
-import { SectorAnalysis } from "../calc/sector-analysis";
-import { zeros } from "../calc/calc";
+import * as constants from "../constants";
+import { SectorAnalysis, zeros } from "../calc";
+import { LoadingComponent } from "../util/components";
+import { Config } from "../config";
 
 export interface ImpactChartConfig {
     model: Model;
@@ -15,79 +19,39 @@ export interface ImpactChartConfig {
     responsive?: boolean;
 }
 
-/**
- * Creates a responsive SVG element.
- * See: https://stackoverflow.com/a/25978286
- */
-function responsiveSVG(selector: string, width: number, height: number) {
-    return d3.select(selector)
-        .append("div")
-        .style("display", "inline-block")
-        .style("position", "relative")
-        .style("width", "100%")
-        .style("padding-bottom", "100%")
-        .style("vertical-aling", "top")
-        .style("overflow", "hidden")
-        .append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", `0 0 ${width} ${height}`)
-        .style("display", "inline-block")
-        .style("position", "absolute")
-        .style("top", 0)
-        .style("left", 0);
-}
 
 export class ImpactChart extends Widget {
 
     private model: Model;
-    private svg: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
+    private svg: any;
     private width: number;
     private height: number;
     private columns: number;
-
+    selector: string;
     async init(config: ImpactChartConfig) {
         this.model = config.model;
-
         this.width = config.width || 500;
         this.height = config.height || 500;
         this.columns = config.columns || 2;
-
-        // create the root SVG element
-        this.svg = config.responsive
-            ? responsiveSVG(
-                config.selector,
-                this.width,
-                this.height)
-            : d3.select(config.selector)
-                .append("div")
-                .style("margin", "auto")  // center the SVG
-                .style("width", `${this.width}px`)
-                .append("svg")
-                .attr("width", this.width)
-                .attr("height", this.height);
-        this.ready();
+        this.selector = config.selector;
+        ReactDOM.render(<LoadingComponent key={" "} />, document.querySelector(this.selector));
     }
 
-    async handleUpdate(config: Config) {
-        this.svg.selectAll("*").remove();
-        this.svg.append("text")
-            .text("Loading ...")
-            .attr("x", 40)
-            .attr("y", 40);
-
+    async update(config: Config) {
+        ReactDOM.render(<LoadingComponent key={" "} />, document.querySelector(this.selector));
         // get the data
         const indicators = await selectIndicators(this.model, config);
         if (!indicators || indicators.length === 0) {
-            this.svg.selectAll("*").remove();
-            this.svg.append("text")
-                .text("empty indicator selection")
-                .attr("x", 40)
-                .attr("y", 40);
+            ReactDOM.render(<ResponsiveSVG
+                responsive={config.responsive}
+                width={this.width}
+                height={this.height}
+                childrens={[<text key={" "} x={40} y={40}>empty indicator selection</text>]}
+            />, document.querySelector(this.selector));
             return;
         }
         const results = await getSectorResults(this.model, config);
         makeRelative(results, indicators);
-        this.svg.selectAll("*").remove();
 
         const indicatorCount = indicators.length;
         const columnCount = this.columns;
@@ -99,7 +63,7 @@ export class ImpactChart extends Widget {
         const cellHeaderHeight = 25;
         const cellChartHeight = cellHeight - cellHeaderHeight - 10;
 
-        indicators.forEach((indicator, i) => {
+        const chartList = indicators.map((indicator, i) => {
 
             // calculate the cell position
             const row = Math.floor(i / columnCount);
@@ -108,20 +72,21 @@ export class ImpactChart extends Widget {
             const cellOffsetY = row * cellHeight;
 
             // indicator name
-            this.svg.append("text")
-                .attr("x", cellOffsetX + 5)
-                .attr("y", cellOffsetY + cellHeaderHeight - 5)
-                .classed("useeio-impact-chart-indicator", true)
-                .text(indicators[i].name);
+            const text = <text
+                className={"useeio-impact-chart-indicator"}
+                x={cellOffsetX + 5}
+                y={cellOffsetY + cellHeaderHeight - 5}>
+                {indicators[i].name}
+            </text>;
 
             // baseline of the chart
-            this.svg.append("line")
-                .attr("x1", cellOffsetX + 5)
-                .attr("x2", cellOffsetX + 5)
-                .attr("y1", cellOffsetY + cellHeaderHeight)
-                .attr("y2", cellOffsetY + cellHeaderHeight + cellChartHeight)
-                .style("stroke-width", 1)
-                .style("stroke", "#90a4ae");
+            const line = <line
+                x1={cellOffsetX + 5}
+                x2={cellOffsetX + 5}
+                y1={cellOffsetY + cellHeaderHeight}
+                y2={cellOffsetY + cellHeaderHeight + cellChartHeight}
+                style={{ strokeWidth: 1, stroke: "#90a4ae" }}
+            />;
 
             const sectorCount = results.length;
             if (sectorCount === 0) {
@@ -138,36 +103,123 @@ export class ImpactChart extends Widget {
             }
             // the vertical margin of the bar within the bar box
             const barMarginY = (barBoxHeight - barHeight) / 2;
-            results.forEach((result, j) => {
+            const rectList = results.map((result, j) => {
                 const y = cellOffsetY + cellHeaderHeight
                     + j * barBoxHeight + barMarginY;
-                this.svg.append("rect")
-                    .attr("x", cellOffsetX + 5)
-                    .attr("y", y)
-                    .attr("width", result.profile[indicator.index] * (cellWidth - 25))
-                    .attr("height", barHeight)
-                    .style("fill", colors.css(j))
-                    .style("opacity", "0.6")
-                    .on("mouseover", function () {
-                        d3.select(this).style("opacity", "1.0");
-                    })
-                    .on("mouseout", function () {
-                        d3.select(this).style("opacity", "0.6");
-                    })
-                    .append("title")
-                    .text(result.sector.name);
-            });
+                return (
+                    <Bar
+                        key={result.sector.name}
 
+                        x={cellOffsetX + 5}
+                        y={y}
+                        width={result.profile[indicator.index] * (cellWidth - 25)}
+                        height={barHeight}
+                        color={colors.css(j)}
+                        sectorName={result.sector.name}
+                    />
+                );
+            });
+            return <Chart key={indicators[i].name} text={text} line={line} rectList={rectList} />;
         });
-        this.ready();
+        ReactDOM.render(<ResponsiveSVG
+            responsive={config.responsive}
+            width={this.width}
+            height={this.height}
+            childrens={chartList}
+        />, document.querySelector(this.selector));
     }
 
 }
 
+/**
+ * Creates a responsive SVG element.
+ * See: https://stackoverflow.com/a/25978286
+ */
+type SVGProps = { responsive: boolean, width: number, height: number, childrens: JSX.Element[] };
+const ResponsiveSVG = ({ responsive, width, height, childrens }: SVGProps) => {
+    const useStyles = makeStyles(() =>
+        createStyles({
+            parentSVGResponsive: {
+                display: "inline-block",
+                position: "relative",
+                width: "100%",
+                paddingBottom: "100%",
+                verticalAlign: "top",
+                overflow: "hidden"
+            },
+            svgResponsive: {
+                display: "inline-block",
+                position: "absolute",
+                top: 0,
+                left: 0
+            },
+            parentSVG: {
+                margin: "auto",
+                width: `${width}px`
+            },
+            mySvg: {
+                width: width,
+                height: height
+            }
+        }),
+    );
+    const classes = useStyles();
+    return (
+        <div className={responsive ? classes.parentSVGResponsive : classes.parentSVG}>
+            <svg
+                preserveAspectRatio="xMinYMin meet"
+                viewBox={`0 0 ${width} ${height}`}
+                className={responsive ? classes.svgResponsive : classes.mySvg}>
+                {childrens.map(children => children)}
+            </svg>
+        </div>
+    );
+};
+
+
+const Chart = ({ text, line, rectList }: { text: JSX.Element, line: JSX.Element, rectList: any[] }) => {
+    return (
+        <>
+            { text}
+            { line}
+            { rectList.map(rect => rect)};
+        </>
+    );
+};
+
+type BarProps = { x: number, y: number, width: number, height: number, color: string, sectorName: string };
+const Bar = ({ x, y, width, height, color, sectorName }: BarProps) => {
+    const [opacity, setOpacity] = useState("0.6");
+    const LightTooltip = withStyles((theme: Theme) => ({
+        tooltip: {
+            backgroundColor: theme.palette.common.white,
+            color: 'rgba(0, 0, 0, 0.87)',
+            boxShadow: theme.shadows[1],
+            fontSize: 11,
+        },
+    }))(Tooltip);
+
+    return (
+        <>
+            <LightTooltip title={sectorName}>
+                <rect
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    style={{ fill: color, opacity: opacity }}
+                    onMouseEnter={() => setOpacity("1.0")}
+                    onMouseLeave={() => setOpacity("0.6")}
+                />
+            </LightTooltip>
+        </>
+    );
+};
+
 async function selectIndicators(model: Model, c: Config): Promise<Indicator[]> {
     if (!model) return [];
     const _codes = !c || !c.indicators || c.indicators.length === 0
-        ? conf.DEFAULT_INDICATORS
+        ? constants.DEFAULT_INDICATORS
         : c.indicators;
     const indicators = await model.indicators();
     const selected = [];

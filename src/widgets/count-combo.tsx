@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Widget, Config } from "../widget";
+import { Config, Widget } from "../";
 import { Model } from "../webapi";
 
 export class CountCombo extends Widget {
@@ -11,10 +11,9 @@ export class CountCombo extends Widget {
         ReactDOM.render(
             <Combo count={-1} widget={this} />,
             document.querySelector(selector));
-        this.ready();
     }
 
-    protected async handleUpdate(config: Config) {
+    async update(config: Config) {
         const count = config.count || -1;
         ReactDOM.render(
             <Combo count={count} widget={this} />,

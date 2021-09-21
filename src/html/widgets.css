@@ -68,7 +68,7 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
+/* 
 .io input[type="text"], .io input[type="search"], .io select {
     height: 30px;
     font-size: 18px;
@@ -76,11 +76,11 @@ a:hover {
     border-radius: 5px;
     margin-right: 15px;
     padding: 0 5px 0 10px;
-}
+} */
 
-.io label {
+/* .io label {
     line-height: 25px;
-}
+} */
 
 .text-center {
     text-align: center;
@@ -199,11 +199,59 @@ a:hover {
 }
 
 .matrix-search {
-    min-width: 98%;
+    display: block;
+    min-width: 400px;
+    max-width: 400px;
+    /* min-width: 98%; */
     padding: 5px;
     margin-bottom: 10px;
     border: 1px solid #ddd;
 }
+
+
+.sector-list .noborder {
+    background-color: transparent;
+}
+.sector-list-table tbody td {
+    position: relative;
+  }
+.sector-list-table_sorted-cell-top:after{
+    top: -4px !important;
+    border-top: 1px solid #333;
+}
+.sector-list-table_sorted-cell-bottom:after {
+    bottom: -4px !important;
+    border-bottom: 1px solid #333;
+}
+.sector-list-table_sorted-cell-side:after {
+  content: "";
+  position: absolute;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
+  left: -1px;
+  bottom: 0px;
+  top: -2px;
+  width: 100%;
+  z-index: 1;
+}
+
+.sector-list-table thead td:first-child {
+    max-width: 400px;
+}
+.sector-list-table tbody td:first-child {
+    width:100%;
+    max-height: 30px;
+    height: 30px;
+    display: block;
+    overflow: hidden;
+    font-size: 12px;
+}
+.sector-list-table tbody td:first-child > div {
+    overflow-x: scroll;
+    height:44px;
+    max-width: 400px;
+}
+
 
 .arrowdown {
     width: 0;
@@ -274,6 +322,7 @@ a:hover {
 
 .indicator-value {
     font-size: .9em;
+    text-align: right;
 }
 
 /*

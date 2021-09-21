@@ -36,7 +36,6 @@
 
     </div>
 
-    <script src="lib/d3.min.js"></script>
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
@@ -62,11 +61,13 @@
             model: model,
             selector: '.impact-chart',
         });
-
+        config.withDefaults({
+            showsettings: true,
+        });
         config.join(settings);
         config.join(sectorDelete);
         config.join(impactChart);
-
+        
         config.updateIfAbsent({
             perspective: 'direct',
             analysis: 'Consumption',

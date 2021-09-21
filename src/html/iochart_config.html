@@ -5,14 +5,31 @@
     <meta charset="utf-8">
     <title>IO Grid</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" type="text/css" href="iochart.css">
+    <style>
+        .flex-container {
+          display: flex;
+          /* margin-bottom: 25px; */
+        }
+  
+        .start {
+          display:flex;
+        }
+        .end {
+          flex: 1;
+        }
+      </style>
 </head>
 
 <body>
-    <div style="max-width: 90%; margin: auto;">
+    <div class="flex-container">
+        <div id="useeio-settings-widget" class="start"></div>
+        <div id="dotsMenu" class="end"></div></div>
+    </div>
+    <div style="margin: auto;">
         <div id="iogrid"></div>
     </div>
 
-    <script src="lib/d3.min.js"></script>
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
@@ -28,10 +45,20 @@
             model: modelID,
             asJsonFiles: true,
         });
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '#useeio-settings-widget',
+        });
+        var dotsMenu = useeio.dotsMenu({
+            model: model,
+            selector: "#dotsMenu",
+        });
         var ioGrid = useeio.ioGrid({
             model: model,
             selector: '#iogrid',
         });
+        config.join(settings);
+        config.join(dotsMenu);
         config.join(ioGrid);
 
     </script>

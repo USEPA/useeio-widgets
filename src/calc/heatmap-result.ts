@@ -77,7 +77,7 @@ export class HeatmapResult {
         }
         const j = sector.index;
         const sum = indicators.reduce((sum, indicator) => {
-            const n = this.value(this.normalized, indicator.index, j)
+            const n = this.value(this.normalized, indicator.index, j);
             return sum + Math.pow(n, 2);
         }, 0);
         return Math.sqrt(sum);

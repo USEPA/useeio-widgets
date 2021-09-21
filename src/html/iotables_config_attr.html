@@ -51,14 +51,53 @@
                   </div>
               </div>
             </div>
-
         </div>
+
+        <div id="config-element" data-config="perspective=direct&analysis=consumption&sectors=334111,334210,334220"></div>
 
     </div>
 
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
+        const config = useeio.htmlAttributeConfig('#config-element', 'data-config');
+        var modelID = config.get().model || 'USEEIOv1.2';
+
+        var model = useeio.model({
+            endpoint: './api',
+            model: modelID,
+            asJsonFiles: true,
+        });
+
+        var settings = useeio.settingsWidget({
+            model: model,
+            selector: '.useeio-settings-widget',
+        });
+
+        var inputs = useeio.inputList({
+            model: model,
+            selector: '#inputs',
+        });
+
+        var sectorList = useeio.sectorList({
+            model: model,
+            selector: '#sector-list',
+        });
+
+        var outputs = useeio.outputList({
+            model: model,
+            selector: '#outputs',
+        })
+
+        config.withDefaults({
+            count: 10,  // defaults are not serialized
+        });
+        config.join(settings);
+        config.join(inputs);
+        config.join(sectorList);
+        config.join(outputs);
+
+        // add naics values to the config
         var naics = '11,45,62,211,314,331,425,452,488,521,561,721,925,1122,'
             + '1151,2213,2389,3121,3161,3251,3272,3322,3333,3346,'
             + '3366,4234,4245,4422,4482,4541,4851,4872,4922,5174,'
@@ -89,54 +128,10 @@
             + '811121,811411,812210,812990,813920,921190,923130,'
             + '926150';
 
-        document.querySelector('#sector-list')
-            .setAttribute('data-naics', naics);
-
-        var config = useeio.urlConfig();
-        var modelID = config.get().model || 'USEEIOv1.2';
-
-        var model = useeio.model({
-            endpoint: './api',
-            model: modelID,
-            asJsonFiles: true,
-        });
-
-        var settings = useeio.settingsWidget({
-            model: model,
-            selector: '.useeio-settings-widget',
-        });
-
-        var inputs = useeio.inputList({
-            model: model,
-            selector: '#inputs',
-        });
-
-        var sectorList = useeio.sectorList({
-            model: model,
-            selector: '#sector-list',
-        });
-
-        var outputs = useeio.outputList({
-            model: model,
-            selector: '#outputs',
-        })
-
-        config.withDefaults({
-            count: 10,
-            showsettings: true
-        });
-        config.join(settings);
-        config.join(inputs);
-        config.join(sectorList);
-        config.join(outputs);
-
-       
-
-        config.updateIfAbsent({
-            perspective: 'direct',
-            analysis: 'Consumption',
-            sectors: ['334111', '334210', '334220'],
-        });
+        const elem = document.getElementById('config-element');
+        elem.setAttribute(
+            'data-config', 
+            elem.getAttribute('data-config') + '&naics=' + naics);
 
     </script>
 
