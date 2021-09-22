@@ -144,7 +144,7 @@ async function download(modelID) {
 
     // download index and matrix files (non-blocking)
     const paths = ["/sectors", "/flows", "/indicators"];
-    ["A", "B", "C", "D", "L", "U", "N"].forEach((matrix) => {
+    ["A", "B", "C", "D", "L", "N"].forEach((matrix) => {
         paths.push("/matrix/" + matrix);
     });
     for (const path of paths) {
