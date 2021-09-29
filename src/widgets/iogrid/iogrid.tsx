@@ -6,7 +6,7 @@ import { zeros } from "../../calc";
 import * as naics from "../../naics";
 import { isNone, isNotNone, TMap } from "../../util";
 import * as strings from "../../util/strings";
-import { Indicator, Matrix, Model, Sector } from "../../webapi";
+import { Indicator, Matrix, WebModel, Sector } from "useeio";
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
 import * as selection from "./selection";
@@ -40,7 +40,7 @@ export class IOGrid extends Widget {
     private commoditySectors: Sector[] = [];
 
     constructor(
-        private model: Model,
+        private model: WebModel,
         private selector: string) {
         super();
     }

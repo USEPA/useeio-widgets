@@ -1,7 +1,7 @@
 
 import { isNone } from "./util";
 import * as strings from "./util/strings";
-import { DemandType, ResultPerspective } from "./webapi";
+import { DemandType, ResultPerspective } from "useeio";
 
 /**
  * A common configuration object of our widgets. Often our widgets take the same

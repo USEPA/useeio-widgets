@@ -21,7 +21,7 @@ import React, { CSSProperties, useEffect } from "react";
 import { Config } from "../../";
 import { formatNumber, ifNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
-import { Indicator, Sector } from "../../webapi";
+import { Indicator, Sector } from "useeio";
 import { Commodity, SortOptions } from "./commodity-model";
 import { IOGrid } from "./iogrid";
 import * as selection from "./selection";

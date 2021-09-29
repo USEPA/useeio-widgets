@@ -1,4 +1,4 @@
-import { Sector } from "./webapi";
+import { Sector } from "useeio";
 import { TMap } from "./util/util";
 
 /**

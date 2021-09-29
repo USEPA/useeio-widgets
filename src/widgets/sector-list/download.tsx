@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { SectorList } from "./sector-list";
-import { Sector, Indicator } from "../../webapi";
+import { Sector, Indicator } from "useeio";
 
 export const DownloadSection = (props: {
     widget: SectorList,

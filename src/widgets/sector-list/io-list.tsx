@@ -6,7 +6,7 @@ import { Config, Widget } from "../../";
 import { ifNone } from "../../util";
 import * as paging from "../../util/paging";
 import * as strings from "../../util/strings";
-import { Matrix, Model, Sector } from "../../webapi";
+import { Matrix, WebModel, Sector } from "useeio";
 import { ListHeader } from "./list-header";
 import { otherSorter, TableHeader } from "./sector-list";
 
@@ -18,7 +18,7 @@ export class IOList extends Widget {
     sectorIndex: { [code: string]: number };
 
     constructor(
-        private model: Model,
+        private model: WebModel,
         private direction: "inputs" | "outputs",
         private selector: string) {
         super();

@@ -11,7 +11,7 @@ import * as naics from "../../naics";
 import * as paging from "../../util/paging";
 import * as strings from "../../util/strings";
 import { isNone, isNoneOrEmpty } from "../../util/util";
-import { Indicator, Matrix, Model, Sector } from "../../webapi";
+import { Indicator, Matrix, WebModel, Sector } from "useeio";
 import { Widget } from "../../widget";
 import { MatrixCombo } from "../matrix-selector";
 import { DownloadSection } from "./download";
@@ -50,7 +50,7 @@ export class SectorList extends Widget {
 
     _naicsCodes: string[];
 
-    constructor(private model: Model, private selector: string) {
+    constructor(private model: WebModel, private selector: string) {
         super();
         const parent = document.querySelector(selector);
         if (parent) {
@@ -160,7 +160,7 @@ export class SectorList extends Widget {
     }
 }
 
-async function calculate(model: Model, config: Config): Promise<HeatmapResult> {
+async function calculate(model: WebModel, config: Config): Promise<HeatmapResult> {
     // for plain matrices => wrap the matrix into a result
     if (!config.analysis) {
         const M = config.perspective === "direct"

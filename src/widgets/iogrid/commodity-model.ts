@@ -1,5 +1,5 @@
 import { isNone, isNoneOrEmpty } from "../../util";
-import { Indicator } from "../../webapi";
+import { Indicator } from "useeio";
 import * as strings from "../../util/strings";
 import { IOGrid } from "./iogrid";
 import { Config } from "../../";
