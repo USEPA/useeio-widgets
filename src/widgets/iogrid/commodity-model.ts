@@ -1,8 +1,8 @@
-import { isNone, isNoneOrEmpty } from "../../util";
 import { Indicator } from "useeio";
+import { Config } from "../../";
+import { isNone, isNoneOrEmpty } from "../../util";
 import * as strings from "../../util/strings";
 import { IOGrid } from "./iogrid";
-import { Config } from "../../";
 
 /**
  * The row type of the commodity list.
@@ -261,11 +261,16 @@ export class SortOptions {
         let list = this._selectedOnly
             ? commodities.filter(c => c.selected)
             : commodities;
-            
+        if(this._selectAll){
+            list = commodities.map(c => {c.selected = true;return c;});
+            this._selectAll = false;
+        }
+        if(this._unselectAll){
+            list = commodities.map(c => {c.selected = false;return c;});
+            this._unselectAll = false;
+        }
         if (this._selectAllVisible)
             this._selectAllVisible = false;
-        if (this._unselectAll)
-            this._unselectAll = false;
         list = list.sort((c1, c2) => {
 
             // if selected first and if the selection
