@@ -27,11 +27,11 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/styles": "^4.11.4",
-    "@mui/x-data-grid": "^4.0.0",
+    "@mui/x-data-grid": "^4.0.1",
     "apexcharts": "^3.24.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "useeio": "git+https://github.com/msrocka/useeio.js.git"
+    "useeio": "github:msrocka/useeio.js"
   },
   "devDependencies": {
     "@types/jasmine": "^3.5.14",

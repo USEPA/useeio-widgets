@@ -4,6 +4,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import React, { FC, useState } from "react";
 import * as ReactDOM from "react-dom";
+import { Indicator, Matrix, NaicsMap, Sector, WebModel } from "useeio";
 import { ones } from "../../calc/calc";
 import { HeatmapResult } from "../../calc/heatmap-result";
 import { Config } from "../../config";
@@ -11,7 +12,6 @@ import * as naics from "../../naics";
 import * as paging from "../../util/paging";
 import * as strings from "../../util/strings";
 import { isNone, isNoneOrEmpty } from "../../util/util";
-import { Indicator, Matrix, WebModel, Sector } from "useeio";
 import { Widget } from "../../widget";
 import { MatrixCombo } from "../matrix-selector";
 import { DownloadSection } from "./download";
@@ -49,6 +49,7 @@ export class SectorList extends Widget {
     matrixA: Matrix;
 
     _naicsCodes: string[];
+    private naicsMap: NaicsMap;
 
     constructor(private model: WebModel, private selector: string) {
         super();
@@ -96,7 +97,13 @@ export class SectorList extends Widget {
 
         this.sectors.sort((s1, s2) => strings.compare(s1.name, s2.name));
         const naicsCodes = this._naicsCodes || config.naics;
-        this.sectors = naics.filterByNAICS(naicsCodes, this.sectors);
+        
+        // Lazy load the naicsMap
+        if (config.naics !== undefined && this.naicsMap === undefined) {
+            this.naicsMap = await NaicsMap.of(this.model);
+        }
+        this.sectors = naics.filterByNAICS(
+            naicsCodes, this.sectors, this.naicsMap);
 
         // load the matrix A for the display of sector inputs or outputs
         // if this is required
