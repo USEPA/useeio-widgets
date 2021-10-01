@@ -6,10 +6,10 @@ import { NaicsMap, Sector } from "useeio";
  */
 export function filterByNAICS(
     naicsCodes: string | string[], sectors: Sector[], naicsMap: NaicsMap): Sector[] {
-    if (!sectors) {
+    if (!sectors ) {
         return [];
     }
-    if (!naicsCodes || naicsCodes.length === 0) {
+    if (!naicsCodes || naicsCodes.length === 0 || !naicsMap) {
         return sectors;
     }
     const sectorsCode = naicsMap.toBea(naicsCodes);
