@@ -31,7 +31,7 @@
     "apexcharts": "^3.24.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "useeio": "github:msrocka/useeio.js"
+    "useeio": "github:USEPA/useeio.js"
   },
   "devDependencies": {
     "@types/jasmine": "^3.5.14",
