@@ -24,7 +24,7 @@ function lexLine(line) {
             word = '';
             continue;
         }
-        word += char
+        word += char;
     }
     return words;
 }
@@ -55,9 +55,9 @@ export function toBEA(naicsCode: string): string | undefined {
 }
 
 const naicsToBEA: { [code: string]: string } = ${json};
-`
+`;
     fs.writeFileSync(ts, module);
 
-};
+}
 
 main();

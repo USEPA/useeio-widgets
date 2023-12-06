@@ -5,9 +5,9 @@ import { Config, Widget } from "../";
 import * as strings from "../util/strings";
 import {
     DemandType,
-    Model,
+    WebModel,
     ResultPerspective
-} from "../webapi";
+} from "useeio";
 
 
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export interface SettingsWidgetConfig {
     selector: string;
-    model: Model;
+    model: WebModel;
 }
 
 export class SettingsWidget extends Widget {
@@ -34,7 +34,7 @@ export class SettingsWidget extends Widget {
     years: number[] = [];
     locations: string[] = [];
     config: Config;
-    model: Model;
+    model: WebModel;
     constructor(private settingsConfig: SettingsWidgetConfig) {
         super();
     }
@@ -113,7 +113,7 @@ const ModelVersion: FC<{ widget: SettingsWidget }> = ({ widget }) => {
                 value={"modelId"}
                 label="Model version"
             >
-                <MenuItem value={"modelId"}>{widget.model.getConf().model}</MenuItem>
+                <MenuItem value={"modelId"}>{widget.model.id()}</MenuItem>
             </Select>
         </FormControl>
     );

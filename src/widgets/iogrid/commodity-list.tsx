@@ -1,27 +1,27 @@
 import {
-  Checkbox,
-  Grid,
-  IconButton,
-  ListItemIcon,
-  makeStyles,
-  Menu,
-  MenuItem,
-  Slider,
-  TextField,
-  Tooltip,
-  Typography
+	Checkbox,
+	Grid,
+	IconButton,
+	ListItemIcon,
+	makeStyles,
+	Menu,
+	MenuItem,
+	Slider,
+	TextField,
+	Tooltip,
+	Typography
 } from "@material-ui/core";
 import {
-  CheckBoxOutlineBlankOutlined,
-  CheckBoxOutlined,
-  Sort
+	CheckBoxOutlineBlankOutlined,
+	CheckBoxOutlined,
+	Sort
 } from "@material-ui/icons";
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid';
 import React, { CSSProperties, useEffect } from "react";
+import { Indicator, Sector } from "useeio";
 import { Config } from "../../";
 import { formatNumber, ifNone, isNoneOrEmpty, TMap } from "../../util";
 import * as strings from "../../util/strings";
-import { Indicator, Sector } from "../../webapi";
 import { Commodity, SortOptions } from "./commodity-model";
 import { IOGrid } from "./iogrid";
 import * as selection from "./selection";
@@ -81,26 +81,15 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
-
-    commodities = sortOpts.apply(commodities);
-
-        // If no sectors are selected initially, we select the top 10 by default
-        if (config.sectors === undefined) {
-          const sectors = [];
-          const selectedSectorsNumber = config.count ? config.count : 10;
-          let i = 0;
-          for (const commodity of commodities) {
-            commodity.selected = true;
-            selected[commodity.code] = 100;
-            sectors.push(commodity.code);
-            i++;
-            if (i >= selectedSectorsNumber) {
-              break;
-            }
-          }
-          config.sectors = sectors; // Update config with the 10 first sectors
-        }
-
+	if (config.sectors === undefined) {
+		const opts = sortOpts.swapSelectAll();
+		setSortOpts(opts);
+		commodities = opts.apply(commodities);
+		config.sectors = commodities.map(c => c.code);
+	} else {
+		commodities = sortOpts.apply(commodities);
+	}
+  
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
             c => strings.search(c.name, searchTerm) !== -1);
@@ -319,105 +308,96 @@ const SortMenu = React.forwardRef((props: {
     const items: JSX.Element[] = [];
     const opts = props.options;
  // Choose all commodities
-        items.push(
-            <MenuItem
-                key="choose-all-selected"
-                onClick={() => {
-                    const selected: TMap<number> = {};
-                    if (!opts.isAllSelected) {
-                        props.commodities.forEach(c => {
-                            c.selected = true;
-                            selected[c.code] = ifNone(c.value, 100);
-                        });
-                    } else {
-                        props.commodities.forEach(c => {
-                            c.selected = false;
-                        });
-                    }
-                    props.onChange(opts.swapSelectAll());
-                    props.fireSelectionChange(selected);
-                }}>
-                <CheckBox checked={opts.isAllSelected} />
-                Choose All Commodities
-            </MenuItem>
-        );
+	items.push(
+		<MenuItem
+			key="choose-all-selected"
+			onClick={() => {
+				const selected: TMap<number> = {};
+				props.onChange(opts.swapSelectAll());
+				props.commodities.forEach(c => selected[c.code] = ifNone(c.value, 100));
+				props.fireSelectionChange(selected);
+			}}>
+			<CheckBox checked={false} />
+			Choose All Commodities
+		</MenuItem>
+	);
 
-    items.push(
-        <MenuItem
-            key="sort-all-visible-selected"
-            onClick={() => {
-                const selected: TMap<number> = {};
-                if (!opts.isAllVisibleSelected) {
-                    const page = ifNone(props.config.page, 1);
-                    const pageSize = ifNone(props.config.count, 10);
-                    const start = pageSize * (page - 1);
-                    const end = pageSize * page;
-                    for (let index = start; index < end; index++) {
-                        const c = props.commodities[index];
-                        c.selected = true;
-                        selected[c.code] = ifNone(c.value, 100);
-                    }
-                } else {
-                    props.commodities.forEach(c => {
-                        c.selected = false;
-                    });
-                }
+	items.push(
+		<MenuItem
+			key="sort-all-visible-selected"
+			onClick={() => {
+				const selected: TMap<number> = {};
+				if (!opts.isAllVisibleSelected) {
+					const page = ifNone(props.config.page, 1);
+					const pageSize = ifNone(props.config.count, 10);
+					const start = pageSize * (page - 1);
+					const end = pageSize * page;
+					for (let index = start; index < end; index++) {
+						const c = props.commodities[index];
+						c.selected = true;
+						selected[c.code] = ifNone(c.value, 100);
+					}
+				} else {
+					props.commodities.forEach(c => {
+						c.selected = false;
+					});
+				}
 
-                props.onChange(opts.swapSelectAllVisible());
-                props.fireSelectionChange(selected);
-            }}>
-            <CheckBox checked={opts.isAllVisibleSelected} />
-           Choose All Visible
-       </MenuItem>
-    );
+				props.onChange(opts.swapSelectAllVisible());
+				props.fireSelectionChange(selected);
+			}}>
+			<CheckBox checked={opts.isAllVisibleSelected} />
+			Choose All Visible
+		</MenuItem>
+	);
 
-    // Choose visible commodities
-    items.push(
-        <MenuItem
-            key="choose-all-visible-selected"
-            onClick={() => {
-                props.onChange(opts.swapUnselectAll());
-                props.fireSelectionChange({});
-            }}>
-            <CheckBox checked={opts.isAllUnselected} />
-                Unselect All
-            </MenuItem>
-    );
+	// Choose visible commodities
+	items.push(
+		<MenuItem
+			key="choose-all-visible-selected"
+			onClick={() => {
+				props.onChange(opts.swapUnselectAll());
+				props.fireSelectionChange({});
+			}}>
+			<CheckBox checked={false} />
+			Unselect All
+		</MenuItem>
+	);
 
-        // check box to filter only selected commodities
-        items.push(
-            <MenuItem
-                key="filter-selected-only"
-                onClick={() => props.onChange(opts.swapSelectedOnly())}>
-                <CheckBox checked={opts.isSelectedOnly} />
-                Show Selected Only
-            </MenuItem>
-        );
+	// check box to filter only selected commodities
+	items.push(
+		<MenuItem
+			key="filter-selected-only"
+			onClick={() => props.onChange(opts.swapSelectedOnly())}>
+			<CheckBox checked={opts.isSelectedOnly} />
+			Show Selected Only
+		</MenuItem>
+	);
 
-        // sort by selection
-        items.push(
-            <MenuItem
-                key="sort-selected-first"
-                onClick={() => props.onChange(opts.swapSelectedFirst())}>
-                <CheckBox checked={opts.isSelectedFirst} />
-                Show Selected First
-            </MenuItem>
-        );
+	// sort by selection
+	items.push(
+		<MenuItem
+			key="sort-selected-first"
+			onClick={() => props.onChange(opts.swapSelectedFirst())}>
+			<CheckBox checked={opts.isSelectedFirst} />
+			Show Selected First
+		</MenuItem>
+	);
 
-    // alphabetical sorting
-    items.push(
-        <MenuItem
-            key="sort-alphabetically"
-            style={{ borderTop: "#e3e0e0 solid 1px" }}
-            onClick={() => {
-                if (!opts.isAlphabetical) {
-                    props.onChange(opts.setAlphabetical());
-                }
-            }}>
-            <CheckBox checked={opts.isAlphabetical} />
-            Alphabetical
-        </MenuItem>
-    );
+	// alphabetical sorting
+	items.push(
+		<MenuItem
+			key="sort-alphabetically"
+			style={{ borderTop: "#e3e0e0 solid 1px" }}
+			onClick={() => {
+				if (!opts.isAlphabetical) {
+					props.onChange(opts.setAlphabetical());
+				}
+			}}>
+			<CheckBox checked={opts.isAlphabetical} />
+			Alphabetical
+		</MenuItem>
+	);
 
 
     // sort items for the indicators

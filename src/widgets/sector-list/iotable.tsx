@@ -2,7 +2,7 @@ import * as React from "react";
 import { SectorList } from "./sector-list";
 import { Config } from "../../";
 import * as strings from "../../util/strings";
-import { Sector } from "../../webapi";
+import { Sector } from "useeio";
 
 type Display = "inputs" | "outputs" | "nothing";
 
