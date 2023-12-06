@@ -1,16 +1,15 @@
 import { Card, CardContent, Grid, makeStyles, Typography } from "@material-ui/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Indicator, Matrix, NaicsMap, Sector, WebModel } from "useeio";
 import { Config, Widget } from "../../";
 import { zeros } from "../../calc";
 import * as naics from "../../naics";
 import { isNone, isNotNone, TMap } from "../../util";
 import * as strings from "../../util/strings";
-import { Indicator, Matrix, Model, Sector } from "../../webapi";
 import { CommodityList } from "./commodity-list";
 import { FlowList } from "./flow-list";
 import * as selection from "./selection";
-
 
 
 
@@ -38,9 +37,10 @@ export class IOGrid extends Widget {
     private techMatrix: Matrix;
     private directImpacts: Matrix;
     private commoditySectors: Sector[] = [];
+    private naicsMap: NaicsMap;
 
     constructor(
-        private model: Model,
+        private model: WebModel,
         private selector: string) {
         super();
     }
@@ -49,9 +49,13 @@ export class IOGrid extends Widget {
         if (!this.techMatrix) {
             await this.initialize();
         }
-
+        // Lazy load the naicsMap
+        if (config.naics !== undefined && this.naicsMap === undefined) {
+            this.naicsMap = await NaicsMap.of(this.model);
+        }
         this.commoditySectors = naics.filterByNAICS(
-            config.naics, this.sectors);
+            config.naics, this.sectors, this.naicsMap);
+        
 
         // render the three columns:
         // inputs | commodities | outputs

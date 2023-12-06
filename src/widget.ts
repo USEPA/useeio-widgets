@@ -1,8 +1,8 @@
 import { Config } from "./config";
-import { Model } from "./webapi";
+import { WebModel } from "useeio";
 
 export interface WidgetArgs {
-    model: Model;
+    model: WebModel;
     selector: string;
 }
 

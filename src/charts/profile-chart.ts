@@ -1,10 +1,10 @@
 import * as apex from "apexcharts";
 import { Config, Widget } from "../";
-import { Model, Sector, Indicator } from "./../webapi";
+import { WebModel, Sector, Indicator } from "useeio";
 import { max, SectorAnalysis, zeros } from "../calc";
 
 export interface ProfileChartConfig {
-    model: Model;
+    model: WebModel;
     selector: string;
 }
 
