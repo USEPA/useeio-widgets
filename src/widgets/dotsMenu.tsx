@@ -4,14 +4,14 @@ import * as React from "react";
 import { FC, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { Config } from "../config";
-import { Model } from "../webapi";
+import { WebModel } from "useeio";
 import { Widget } from "../widget";
 
 
 export class DotsMenu extends Widget {
 
     config: Config;
-    constructor(private model: Model, private selector: string) {
+    constructor(private model: WebModel, private selector: string) {
         super();
         this.update({});
         this.config = null;

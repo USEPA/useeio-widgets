@@ -7,7 +7,7 @@ import * as constants from "../../constants";
 import * as colors from "../../util/colors";
 import * as strings from "../../util/strings";
 import { formatNumber, isNotNone } from "../../util/util";
-import { Indicator, IndicatorGroup, Model } from "../../webapi";
+import { Indicator, IndicatorGroup, WebModel } from "useeio";
 import { indicatorSorter, RowProps } from "./sector-list";
 
 
@@ -33,7 +33,7 @@ const INDICATOR_GROUPS_PLANNING = [
  * empty list is returned.
  */
 export async function selectIndicators(
-    config: Config, model: Model): Promise<Indicator[]> {
+    config: Config, model: WebModel): Promise<Indicator[]> {
 
     const all = await model.indicators();
     if (!all || all.length === 0) {

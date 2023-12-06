@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { createStyles, makeStyles, Theme, withStyles, Tooltip } from "@material-ui/core";
 
 import { Widget } from "../widget";
-import { Indicator, Sector, Model, DemandInfo } from "../webapi";
+import { Indicator, Sector, WebModel, DemandInfo } from "useeio";
 import * as colors from "../util/colors";
 import * as constants from "../constants";
 import { SectorAnalysis, zeros } from "../calc";
@@ -11,7 +11,7 @@ import { LoadingComponent } from "../util/components";
 import { Config } from "../config";
 
 export interface ImpactChartConfig {
-    model: Model;
+    model: WebModel;
     selector: string;
     width?: number;
     height?: number;
@@ -22,7 +22,7 @@ export interface ImpactChartConfig {
 
 export class ImpactChart extends Widget {
 
-    private model: Model;
+    private model: WebModel;
     private svg: any;
     private width: number;
     private height: number;
@@ -216,7 +216,7 @@ const Bar = ({ x, y, width, height, color, sectorName }: BarProps) => {
     );
 };
 
-async function selectIndicators(model: Model, c: Config): Promise<Indicator[]> {
+async function selectIndicators(model: WebModel, c: Config): Promise<Indicator[]> {
     if (!model) return [];
     const _codes = !c || !c.indicators || c.indicators.length === 0
         ? constants.DEFAULT_INDICATORS
@@ -237,7 +237,7 @@ type SectorResult = {
     profile: number[],
 };
 
-async function getSectorResults(model: Model, c: Config): Promise<SectorResult[]> {
+async function getSectorResults(model: WebModel, c: Config): Promise<SectorResult[]> {
     if (!c || !c.sectors)
         return [];
 
@@ -276,7 +276,7 @@ async function getSectorResults(model: Model, c: Config): Promise<SectorResult[]
     return results;
 }
 
-async function getNormalizationTotals(model: Model, c: Config): Promise<number[]> {
+async function getNormalizationTotals(model: WebModel, c: Config): Promise<number[]> {
     const demandSpec: Partial<DemandInfo> = {
         type: c.analysis ? c.analysis : "Consumption",
     };

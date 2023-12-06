@@ -2,14 +2,14 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Config } from "../config";
-import { Model } from "../webapi";
+import { WebModel } from "useeio";
 import { Widget } from "../widget";
 
 export class Paginator extends Widget {
 
     private _totalCount: number;
 
-    constructor(private model: Model, private selector: string) {
+    constructor(private model: WebModel, private selector: string) {
         super();
         this.update({});
     }
