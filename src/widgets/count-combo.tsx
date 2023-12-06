@@ -2,11 +2,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { Config, Widget } from "../";
-import { Model } from "../webapi";
+import { WebModel } from "useeio";
 
 export class CountCombo extends Widget {
 
-    constructor(private model: Model, private selector: string) {
+    constructor(private model: WebModel, private selector: string) {
         super();
         ReactDOM.render(
             <Combo count={-1} widget={this} />,

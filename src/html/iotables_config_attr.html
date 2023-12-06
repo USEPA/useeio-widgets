@@ -60,7 +60,7 @@
     <script src="lib/useeio_widgets.js"></script>
     <script>
 
-        const config = useeio.htmlAttributeConfig('#config-element', 'data-config');
+        var config = useeio.urlConfig();
         var modelID = config.get().model || 'USEEIOv2.0';
 
         var model = useeio.model({
@@ -91,6 +91,10 @@
 
         config.withDefaults({
             count: 10,  // defaults are not serialized
+            perspective: "direct",
+            analysis: "consumption",
+            sectors:"334111,334210,334220",
+            showsettings: true
         });
         config.join(settings);
         config.join(inputs);

@@ -1,4 +1,4 @@
-import { Sector, Model, Indicator } from "../webapi";
+import { Sector, WebModel, Indicator } from "useeio";
 import { zeros } from ".";
 
 export class SectorAnalysis {
@@ -8,7 +8,7 @@ export class SectorAnalysis {
 
     constructor(
         public sector: Sector,
-        public model: Model,
+        public model: WebModel,
         public normalizationTotals: number[],
     ) { }
 

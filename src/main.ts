@@ -20,7 +20,7 @@ import { IOList } from "./widgets/sector-list/io-list";
 import { SectorDelete } from "./widgets/sector-list";
 import { ImpactChart, ImpactChartConfig } from "./widgets/impact-chart";
 import { SettingsWidget, SettingsWidgetConfig } from "./widgets/settings";
-import { WebApiConfig, Model } from "./webapi";
+import { WebApiConfig, WebModel, modelOf } from "useeio";
 import { ProfileChart, ProfileChartConfig } from "./charts/profile-chart";
 import { Paginator } from "./widgets/paginator";
 import { CountCombo } from "./widgets/count-combo";
@@ -29,7 +29,6 @@ import { IOGrid } from "./widgets/iogrid/iogrid";
 import { DotsMenu } from "./widgets/dotsMenu";
 
 export * from "./naics";
-export * from "./webapi";
 
 /**
  * Creates a new model for the given web-API configuration. A `Model` instance
@@ -46,8 +45,8 @@ export * from "./webapi";
  * });
  * ```
  */
-export function model(conf: WebApiConfig): Model {
-    return new Model(conf);
+export function model(conf: WebApiConfig & {model: string}): WebModel {
+    return modelOf(conf);
 }
 
 export function filterWidget(conf: { selector: string }): FilterWidget {

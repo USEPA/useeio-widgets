@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { Sector, Model } from "../webapi";
+import { Sector, WebModel } from "useeio";
 import { Config, Widget } from "../";
 import * as colors from "../util/colors";
 import * as strings from "../util/strings";
@@ -11,7 +11,7 @@ export class SectorDelete extends Widget {
     private sectors: Sector[];
     private selection: Sector[] = [];
 
-    constructor(private model: Model, private selector: string) {
+    constructor(private model: WebModel, private selector: string) {
         super();
     }
 

@@ -1,11 +1,11 @@
-import { Result, Model, Sector, Indicator } from "../webapi";
+import { Result, WebModel, Sector, Indicator } from "useeio";
 
 export class HeatmapResult {
 
     private normalized: number[][];
     private shares: number[][];
 
-    static async from(model: Model, result: Result): Promise<HeatmapResult> {
+    static async from(model: WebModel, result: Result): Promise<HeatmapResult> {
         const [sectors, r] = await aggregateByRegions(result, model);
         return new HeatmapResult(sectors, r);
     }
@@ -107,7 +107,7 @@ export class HeatmapResult {
  * sector. If the given model describes a single region, the result and sectors
  * are returned without modification.
  */
-async function aggregateByRegions(result: Result, model: Model): Promise<[Sector[], Result]> {
+async function aggregateByRegions(result: Result, model: WebModel): Promise<[Sector[], Result]> {
     const isMultiRegional = await model.isMultiRegional();
     const sectors = await model.sectors();
     if (!isMultiRegional) {
