@@ -12,7 +12,8 @@
     "Michael Srocka",
     "Loren Heyns",
     "Yilun Zha",
-    "Wesley Ingwersen"
+    "Wesley Ingwersen",
+    "Hui Zhou"
   ],
   "scripts": {
     "build": "webpack --config webpack.config.js --mode=production",
@@ -24,16 +25,13 @@
     "test": "ts-node ./node_modules/jasmine/bin/jasmine --config=jasmine.json"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/styles": "^4.11.4",
-    "@mui/material": "^5.15.4",
-    "@mui/x-data-grid": "^6.18.7",
+    "@mui/x-data-grid": "^4.0.1",
     "apexcharts": "^3.45.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "useeio": "github:USEPA/useeio.js"
   },
   "devDependencies": {
@@ -56,3 +54,4 @@
     "webpack-cli": "^5.1.4"
   }
 }
+  
