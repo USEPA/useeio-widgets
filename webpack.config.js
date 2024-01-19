@@ -32,8 +32,8 @@ const config = {
     plugins: [
         new CopyPlugin({
             patterns: [
-                { from: 'src/**/*.html', to:path.resolve(__dirname, 'build','html','[name][ext]')},
-                { from: 'src/**/*.css', to: path.resolve(__dirname, 'build','css','[name][ext]')},
+                { from: 'src/**/*.html', to:path.resolve(__dirname, 'build','','[name][ext]')},
+                { from: 'src/**/*.css', to: path.resolve(__dirname, 'build','','[name][ext]')},
                 {
                     from: 'node_modules/apexcharts/dist/apexcharts.min.js',
                     to: buildDir + '/lib/apexcharts.min.js', 
