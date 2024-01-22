@@ -72,8 +72,8 @@ export const DownloadSection = (props: {
         const file = format === "JSON"
             ? "heatmap.json"
             : "heatmap.csv";
-        if (window.navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveOrOpenBlob(blob, file);
+        if ((window.navigator as any).msSaveBlob) {
+                (window.navigator as any).msSaveBlob(blob, file);
         } else {
             const elem = window.document.createElement("a");
             const url = window.URL.createObjectURL(blob);
@@ -88,15 +88,13 @@ export const DownloadSection = (props: {
     return (
         <div className="download-section">
             <span>Download: </span>
-            <a className="download-link"
-                onClick={() => onDownload("JSON")}>
+            <button className="download-link" onClick={() => onDownload("JSON")}>
                 JSON
-            </a>
+            </button>
             <span> | </span>
-            <a className="download-link"
-                onClick={() => onDownload("CSV")}>
+            <button className="download-link" onClick={() => onDownload("CSV")}>
                 CSV
-            </a>
+            </button>
         </div>
     );
 };

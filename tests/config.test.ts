@@ -17,9 +17,9 @@ describe("Serialize and parse configurations", () => {
     });
 
     it("should pass through simple string attributes", () => {
-        const s = "model=USEEIOv2.0&location=US";
+        const s = "model=USEEIOv2.0.1-411&location=US";
         const config = configOf(s);
-        expect(config.model).toBe("USEEIOv2.0");
+        expect(config.model).toBe("USEEIOv2.0.1-411");
         expect(config.location).toBe("US");
     });
 

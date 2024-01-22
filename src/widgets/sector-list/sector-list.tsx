@@ -244,18 +244,18 @@ const Component = (props: { widget: SectorList }) => {
         } = {};
         let ind: Indicator[];
         if (config.indicators === undefined) {
-            // Exlude JOBS and VADD frome default combined sort
+            // Exclude JOBS and VADD from default combined sort
             ind = indicators.filter(i => (i.code !== "JOBS" && i.code !== "VADD"));
         }
-        result.getRanking(!isNoneOrEmpty(sorter.indicators) ? sorter.indicators : ind).reduce((r, rank) => {
+        const reducedRanks = result.getRanking(!isNoneOrEmpty(sorter.indicators) ? sorter.indicators : ind).reduce((r, rank) => {
             const sector = rank[0];
             const value = rank[1];
             r[sector.code] = value;
             return r;
         }, ranks);
         ranking = sectors.map((sector) => {
-            const value = ranks[sector.code];
-            return [sector, value ? value : 0];
+            const value = reducedRanks[sector.code] || 0;
+            return [sector, value];
         });
     }
     // Sort by sector code, name or demand
@@ -324,9 +324,9 @@ const Component = (props: { widget: SectorList }) => {
         />
     ));
     let marginTop = 0;
-    if (config.view && config.view.includes("mosaic") && config.showvalues)
+    if (config.view?.includes("mosaic") && config.showvalues)
         marginTop = 80;
-    if (config.view && config.view.includes("mosaic") && !config.showvalues)
+    if (config.view?.includes("mosaic") && !config.showvalues)
         marginTop = 100;
 
 
@@ -519,7 +519,13 @@ const GlobalExplanation: FC<{ config: Config }> = ({ config }) => {
     );
 };
 
-const TabItem: FC<{ index: number, value: number }> = ({ index, value, children }) => {
+interface TabItemProps {
+    index: number;
+    value: number;
+    children: React.ReactNode; // This line allows the component to accept children
+  }
+  
+const TabItem: FC<TabItemProps> = ({ index, value, children }) => {
     if (index === value)
         return (
             <>
