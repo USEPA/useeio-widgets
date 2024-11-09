@@ -1,7 +1,7 @@
 import { Card, CardContent, Grid, makeStyles, Typography } from "@material-ui/core";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Indicator, Matrix, NaicsMap, Sector, WebModel } from "useeio";
+import { Indicator, Matrix, NaicsMap, Sector, WebModel, Tensor } from "useeio";
 import { Config, Widget } from "../../";
 import { zeros } from "../../calc";
 import * as naics from "../../naics";
@@ -93,8 +93,8 @@ export class IOGrid extends Widget {
 
     private async initialize() {
         const rawSectors = await this.model.sectors();
-        const rawA = await this.model.matrix("A");
-        const rawD = await this.model.matrix("D");
+        const rawA = await this.model.matrix(Tensor.A);
+        const rawD = await this.model.matrix(Tensor.D);
         const isMultiRegional = await this.model.isMultiRegional();
         this.indicators = await this.model.indicators();
 

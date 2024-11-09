@@ -6,7 +6,7 @@ import { Config, Widget } from "../../";
 import { ifNone } from "../../util";
 import * as paging from "../../util/paging";
 import * as strings from "../../util/strings";
-import { Matrix, WebModel, Sector } from "useeio";
+import { Matrix, WebModel, Sector, Tensor } from "useeio";
 import { ListHeader } from "./list-header";
 import { otherSorter, TableHeader } from "./sector-list";
 
@@ -37,7 +37,7 @@ export class IOList extends Widget {
 
     private async initFields() {
         const rawSectors = await this.model.sectors();
-        const rawA = await this.model.matrix("A");
+        const rawA = await this.model.matrix(Tensor.A);
         const isMultiRegional = await this.model.isMultiRegional();
         if (!isMultiRegional) {
             this.A = rawA;

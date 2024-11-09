@@ -4,7 +4,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import React, { FC, useState } from "react";
 import * as ReactDOM from "react-dom";
-import { Indicator, Matrix, NaicsMap, Sector, WebModel } from "useeio";
+import { Indicator, Matrix, NaicsMap, Sector, WebModel, Tensor } from "useeio";
 import { ones } from "../../calc/calc";
 import { HeatmapResult } from "../../calc/heatmap-result";
 import { Config } from "../../config";
@@ -111,7 +111,7 @@ export class SectorList extends Widget {
             && (strings.isMember("inputs", config.view)
                 || strings.isMember("outputs", config.view))
         ) {
-            this.matrixA = await this.model.matrix("A");
+            this.matrixA = await this.model.matrix(Tensor.A);
         }
 
         // load the demand vector if required
@@ -171,8 +171,8 @@ async function calculate(model: WebModel, config: Config): Promise<HeatmapResult
     // for plain matrices => wrap the matrix into a result
     if (!config.analysis) {
         const M = config.perspective === "direct"
-            ? await model.matrix("D")
-            : await model.matrix("N");
+            ? await model.matrix(Tensor.D)
+            : await model.matrix(Tensor.N);
 
         const indicators = await model.indicators();
         const sectors = await model.sectors();

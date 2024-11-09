@@ -1,4 +1,4 @@
-import { Sector, WebModel, Indicator } from "useeio";
+import { Sector, WebModel, Indicator, Tensor } from "useeio";
 import { zeros } from ".";
 
 export class SectorAnalysis {
@@ -14,8 +14,8 @@ export class SectorAnalysis {
 
     async getEnvironmentalProfile(directOnly = false): Promise<number[]> {
         const matrix = directOnly
-          ? this.model.matrix("D")
-          : this.model.matrix("N");
+          ? this.model.matrix(Tensor.D)
+          : this.model.matrix(Tensor.N);
         const profile = (await matrix).getCol(this.sector.index);
         return profile.map((x, i) => {
             const total = this.normalizationTotals[i];
@@ -34,8 +34,8 @@ export class SectorAnalysis {
     async getPartition(): Promise<{
         totals: number[], direct: number[], upstream: number[],
     }> {
-        const D = this.model.matrix("D");
-        const N = this.model.matrix("N");
+        const D = this.model.matrix(Tensor.D);
+        const N = this.model.matrix(Tensor.N);
         const direct = (await D).getCol(this.sector.index);
         const totals = (await N).getCol(this.sector.index);
         const upstream = totals.map((total, i) => total - direct[i]);
@@ -70,7 +70,7 @@ export class SectorAnalysis {
         // to correctly assign the upstream contributions to the
         // respective location
         const s = await this.scalingVector();
-        const G = (await this.model.matrix("D")).scaleColumns(s);
+        const G = (await this.model.matrix(Tensor.D)).scaleColumns(s);
         const totals = zeros(G.rows);
         const direct = zeros(G.rows);
         const upstreamInRegion = zeros(G.rows);
@@ -108,7 +108,7 @@ export class SectorAnalysis {
 
     async getPurchaseContributions(indicators: Indicator | Indicator[]):
         Promise<number[]> {
-        const N = await this.model.matrix("N");
+        const N = await this.model.matrix(Tensor.N);
         const purchases = await this.purchaseVector();
 
         if (!Array.isArray(indicators)) {
@@ -134,7 +134,7 @@ export class SectorAnalysis {
      * analysis.
      */
     async getContributionsOfOrigins(indicators: Indicator | Indicator[]): Promise<number[]> {
-        const D = await this.model.matrix("D");
+        const D = await this.model.matrix(Tensor.D);
         const scaling = await this.scalingVector();
 
         if (!Array.isArray(indicators)) {
@@ -157,7 +157,7 @@ export class SectorAnalysis {
         if (this._scalingVector) {
             return this._scalingVector;
         }
-        this._scalingVector = await this.model.column("L", this.sector.index);
+        this._scalingVector = await this.model.column(Tensor.L, this.sector.index);
         return this._scalingVector;
     }
 
@@ -165,7 +165,7 @@ export class SectorAnalysis {
         if (this._purchaseVector) {
             return this._purchaseVector;
         }
-        this._purchaseVector = await this.model.column("A", this.sector.index);
+        this._purchaseVector = await this.model.column(Tensor.A, this.sector.index);
         return this._purchaseVector;
     }
 }
