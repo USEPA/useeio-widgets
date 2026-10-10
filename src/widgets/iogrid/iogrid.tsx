@@ -55,7 +55,9 @@ export class IOGrid extends Widget {
         }
         this.commoditySectors = naics.filterByNAICS(
             config.naics, this.sectors, this.naicsMap);
-        
+        if (config.sectors === undefined) {
+            config = { ...config, sectors: this.commoditySectors.map(s => s.code) };
+        }
 
         // render the three columns:
         // inputs | commodities | outputs
@@ -151,7 +153,7 @@ export class IOGrid extends Widget {
                         continue;
                     }
                     const sum = this.directImpacts.get(i, col) + val;
-                    this.techMatrix.set(i, col, sum);
+                    this.directImpacts.set(i, col, sum);
                 }
             }
         }

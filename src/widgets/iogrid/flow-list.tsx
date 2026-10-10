@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { RadioButtonChecked, RadioButtonUnchecked, Sort } from "@material-ui/icons";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Config } from "../..";
 import { formatNumber, ifNone } from "../../util";
 import * as strings from "../../util/strings";
@@ -43,7 +43,6 @@ export const FlowList = (props: {
     const [page, setPage] = useState<number>(0);
     const [pageSize, setPageSize] = useState<number>(ifNone(props.config.count, 10));
     const [sortBy, setSortBy] = useState<SortBy>("contribution");
-    const [flowRows, setFlowRows] = useState<IOFlow[]>([]);
 
     // Update the pagination settings on config count changes
     useEffect(() => {
@@ -53,8 +52,7 @@ export const FlowList = (props: {
         }
     }, [props.config.count]);
 
-    useEffect(() => {
-        // prepare the flow list
+    const flowRows = useMemo(() => {
         let flows: IOFlow[] = props.widget.rank(
             props.config, props.direction);
         if (strings.isNotEmpty(searchTerm)) {
@@ -64,8 +62,8 @@ export const FlowList = (props: {
         if (sortBy === "alphabetical") {
             flows.sort((f1, f2) => strings.compare(f1.name, f2.name));
         }
-        setFlowRows(flows);
-    }, [props.config.sectors]);
+        return flows;
+    }, [props.config.sectors, searchTerm, sortBy]);
 
 
 
@@ -144,7 +142,10 @@ export const FlowList = (props: {
                         placeholder="Search"
                         style={{ width: "100%" }}
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)} />
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setPage(0);
+                        }} />
                     <IconButton
                         aria-label="Sort by..."
                         aria-controls={`${props.direction}-flow-list`}

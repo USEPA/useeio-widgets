@@ -161,7 +161,7 @@ const Component = (props: {
         }
     };
 
-    let ranking = props.ranking;
+    let ranking = props.ranking.slice();
 
     if (sorter) {
         let factor = 1;
@@ -178,11 +178,11 @@ const Component = (props: {
         ranking.sort(([_s1, rank1], [_s2, rank2]) => (rank2 - rank1));
     }
 
-    ranking = paging.select(ranking, { page: page + 1, count: pageSize });
-
     if (searchTerm) {
         ranking = ranking.filter(([s]) => strings.search(s.name, searchTerm) >= 0);
     }
+    const total = ranking.length;
+    ranking = paging.select(ranking, { page: page + 1, count: pageSize });
     const rows = ranking.map(elem => {
         const sector = elem[0];
         return (
@@ -218,7 +218,10 @@ const Component = (props: {
     return (
         <>
             <ListHeader
-                onSearch={(term) => setSearchTerm(term)}
+                onSearch={(term) => {
+                    setSearchTerm(term);
+                    setPage(0);
+                }}
             />
             <table>
                 <thead>
@@ -234,7 +237,7 @@ const Component = (props: {
             <TablePagination
                 style={{ position: "relative", float: "left" }}
                 component="div"
-                count={props.ranking.length}
+                count={total}
                 page={page}
                 rowsPerPage={pageSize}
                 rowsPerPageOptions={[]}

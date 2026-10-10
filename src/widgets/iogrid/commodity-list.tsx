@@ -81,15 +81,8 @@ export const CommodityList = (props: {
             description: s.description,
         };
     });
-	if (config.sectors === undefined) {
-		const opts = sortOpts.swapSelectAll();
-		setSortOpts(opts);
-		commodities = opts.apply(commodities);
-		config.sectors = commodities.map(c => c.code);
-	} else {
-		commodities = sortOpts.apply(commodities);
-	}
-  
+    commodities = sortOpts.apply(commodities);
+
     if (strings.isNotEmpty(searchTerm)) {
         commodities = commodities.filter(
             c => strings.search(c.name, searchTerm) !== -1);
@@ -442,6 +435,37 @@ const formatResultLabel = (indicator: Indicator, result: number) => {
   return label;
 };
 
+const useNameCellStyles = makeStyles({
+  firstRow: {
+    display: "inline-block",
+  },
+  container: {
+    display: "flex",
+  },
+  row: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  col: {
+    display: "flex",
+    flexDirection: "column",
+    margin: 0,
+    marginTop: 6
+  },
+  rightItem: {
+    marginLeft: "auto",
+    marginRight: 10
+  },
+  share: {
+    paddingTop: 7,
+    paddingLeft: 5,
+  },
+  subRow: {
+    fontSize: 14,
+    marginTop: -4,
+  },
+});
+
 const NameCell = (props: {
   commodity: Commodity;
   sortOpts: SortOptions;
@@ -449,37 +473,7 @@ const NameCell = (props: {
   selected: TMap<number>;
   fireSelectionChange: (selected: TMap<number>) => void;
 }) => {
-  const useStyles = makeStyles({
-    firstRow: {
-      display: "inline-block",
-    },
-    container: {
-      display: "flex",
-    },
-    row: {
-      display: "flex",
-      flexDirection: "row",
-    },
-    col: {
-      display: "flex",
-      flexDirection: "column",
-      margin: 0,
-      marginTop: 6
-    },
-    rightItem: {
-      marginLeft: "auto",
-      marginRight: 10
-    },
-    share: {
-      paddingTop: 7,
-      paddingLeft: 5,
-    },
-    subRow: {
-      fontSize: 14,
-      marginTop: -4,
-    },
-  });
-  const classes = useStyles();
+  const classes = useNameCellStyles();
 
   const { commodity, sortOpts } = props;
   let subTitles: JSX.Element[] = [];

@@ -187,17 +187,18 @@ const Chart = ({ text, line, rectList }: { text: JSX.Element, line: JSX.Element,
     );
 };
 
+const LightTooltip = withStyles((theme: Theme) => ({
+    tooltip: {
+        backgroundColor: theme.palette.common.white,
+        color: 'rgba(0, 0, 0, 0.87)',
+        boxShadow: theme.shadows[1],
+        fontSize: 11,
+    },
+}))(Tooltip);
+
 type BarProps = { x: number, y: number, width: number, height: number, color: string, sectorName: string };
 const Bar = ({ x, y, width, height, color, sectorName }: BarProps) => {
     const [opacity, setOpacity] = useState("0.6");
-    const LightTooltip = withStyles((theme: Theme) => ({
-        tooltip: {
-            backgroundColor: theme.palette.common.white,
-            color: 'rgba(0, 0, 0, 0.87)',
-            boxShadow: theme.shadows[1],
-            fontSize: 11,
-        },
-    }))(Tooltip);
 
     return (
         <>
