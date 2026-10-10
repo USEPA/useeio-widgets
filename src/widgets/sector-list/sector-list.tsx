@@ -543,20 +543,19 @@ type TableHeaderProps = {
     style?: CSSProperties
 };
 // Contains a clickable th : either ID, name or demand. Allow to sort the table with descendant,ascendant or with no order
-const useTableHeaderStyles = makeStyles({
-    arrow: {
-        // width: "0.6em",
-        height: "0.6em",
-        position: "relative",
-        top: "2px"
-    },
-    margin: {
-        marginLeft: 15
-    }
-});
-
 export const TableHeader = ({ code, label, sorter, updateOtherSorter, style = {} }: TableHeaderProps) => {
-    const classes = useTableHeaderStyles();
+    const useStyles = makeStyles({
+        arrow: {
+            // width: "0.6em",
+            height: "0.6em",
+            position: "relative",
+            top: "2px"
+        },
+        margin: {
+            marginLeft: 15
+        }
+    });
+    const classes = useStyles();
     let arrow = <></>;
     if (sorter && sorter.name === code) {
         if (sorter.state === "desc")

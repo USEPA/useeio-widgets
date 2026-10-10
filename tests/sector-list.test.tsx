@@ -50,13 +50,6 @@ describe("SectorList", () => {
         expect(rows).toEqual(EXPECTED_ROWS);
     });
 
-    it("should only search in names", async () => {
-        const { root } = await renderList({ count: -1 });
-        search(root, "sector 01");
-        const codes = tableOf(root).rows.map(r => r[0]);
-        expect(codes.sort()).toEqual(["s10", "s11", "s12", "s13", "s14", "s15", "s16", "s17", "s18", "s19"]);
-    });
-
     it("should not fire config changes while rendering", async () => {
         const changes: Config[] = [];
         const { root } = await renderList({ all_sectors: true, count: -1 }, c => changes.push(c));

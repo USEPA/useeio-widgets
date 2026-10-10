@@ -11,7 +11,7 @@ const GROUPS = [
     IndicatorGroup.CHEMICAL_RELEASES,
 ];
 
-export type FakeModelSpec = {
+type FakeModelSpec = {
     sectors?: number,
     indicators?: number,
     regions?: string[],
@@ -38,7 +38,7 @@ export function makeIndicators(count: number): Indicator[] {
     }));
 }
 
-export function makeSectors(count: number, location?: string, offset = 0): Sector[] {
+function makeSectors(count: number, location?: string, offset = 0): Sector[] {
     return Array.from({ length: count }, (_, i) => ({
         id: location ? `s${i}/${location}` : `s${i}`,
         index: offset + i,
@@ -82,16 +82,13 @@ export function makeModel(spec: FakeModelSpec = {}) {
     aggSectors.forEach((s, i) => index[s.code] = i);
 
     const model = {
-        id: () => "FAKE",
         sectors: async () => sectors.map(s => ({ ...s })),
         indicators: async () => indicators.map(i => ({ ...i })),
         isMultiRegional: async () => multi,
         singleRegionSectors: async () => ({ sectors: aggSectors.map(s => ({ ...s })), index }),
         matrix: async (name: string) => matrices[name],
         findDemand: async () => "demand",
-        demands: async (): Promise<unknown[]> => [],
         demand: async () => demand,
-        getTotalResults: async () => indicators.map(() => 1),
         calculate: async () => ({
             indicators: indicators.map(i => i.code),
             sectors: sectors.map(s => s.id),
@@ -99,7 +96,7 @@ export function makeModel(spec: FakeModelSpec = {}) {
             totals: indicators.map(() => 1),
         }),
     };
-    return { model: model as unknown as WebModel, matrices, sectors, aggSectors, indicators };
+    return { model: model as unknown as WebModel, matrices, sectors, indicators };
 }
 
 export function container(): HTMLElement {
