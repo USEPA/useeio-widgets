@@ -137,6 +137,10 @@ export class SectorList extends Widget {
 
         this.indicators = await selectIndicators(config, this.model);
 
+        if (config.all_sectors && config.sectors?.length !== this.sectors.length) {
+            this.fireChange({ sectors: this.sectors.map(s => s.code) });
+        }
+
         ReactDOM.render(
             <Component widget={this} />,
             document.querySelector(this.selector),
@@ -225,11 +229,6 @@ const Component = (props: { widget: SectorList }) => {
     const [otherSorter, setOtherSorter] = useState<otherSorter>(null);
     const [searchTerm, setSearchTerm] = React.useState<string | null>(null);
     let sectors = props.widget.sectors;
-    if (config.all_sectors) {
-        const codes = sectors.map(s => s.code);
-        if (!config.sectors || config.sectors.length !== codes.length)
-            props.widget.fireChange({ sectors: sectors.map(s => s.code) });
-    }
     if (searchTerm) {
         sectors = sectors.filter((s) => strings.search(s.name, searchTerm) >= 0);
     }
@@ -645,6 +644,20 @@ export type RowProps = {
     config: Config;
 };
 
+const useRowStyles = makeStyles({
+    rank: {
+        borderTop: "lightgray solid 1px",
+        padding: "5px 0px",
+        whiteSpace: "nowrap",
+    },
+    td: {
+        borderTop: "lightgray solid 1px",
+        padding: "5px 0px",
+        whiteSpace: "nowrap",
+        fontSize: 12
+    }
+});
+
 const Row = (props: RowProps) => {
     const config = props.widget.config;
     const sector = props.sector;
@@ -696,20 +709,7 @@ const Row = (props: RowProps) => {
             </td>
         );
     }
-    const useStyles = makeStyles({
-        rank: {
-            borderTop: "lightgray solid 1px",
-            padding: "5px 0px",
-            whiteSpace: "nowrap",
-        },
-        td: {
-            borderTop: "lightgray solid 1px",
-            padding: "5px 0px",
-            whiteSpace: "nowrap",
-            fontSize: 12
-        }
-    });
-    const classes = useStyles();
+    const classes = useRowStyles();
 
     // display the ranking value if view=ranking
     let rank;

@@ -27,6 +27,19 @@ const INDICATOR_GROUPS_PLANNING = [
     IndicatorGroup.WASTE_GENERATED,
 ];
 
+const useStyles = makeStyles({
+    arrow: {
+        width: "0.6em",
+        position: "relative",
+        float: "left"
+    },
+    indicatorSorted: {
+        position: "relative",
+        bottom: 3,
+        left: 5
+    }
+});
+
 /**
  * Select the indicators for the given configuration from the given model. If
  * no indicator result should be displayed according to the configuration, an
@@ -72,6 +85,7 @@ export const ImpactHeader = (props: {
     config: Config,
     sorter: indicatorSorter
 }) => {
+    const classes = useStyles();
 
     // no indicators
     if (!strings.isMember("mosaic", props.config.view) || !props.indicators || props.indicators.length === 0) {
@@ -108,19 +122,6 @@ export const ImpactHeader = (props: {
                 </th>
             );
         }
-        const useStyles = makeStyles({
-            arrow: {
-                width: "0.6em",
-                position: "relative",
-                float: "left"
-            },
-            indicatorSorted: {
-                position: "relative",
-                bottom: 3,
-                left: 5
-            }
-        });
-        const classes = useStyles();
         // indicator header
         const key = `<indicator-${indicator.code}`;
         let arrow = <></>;
